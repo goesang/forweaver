@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+	<cacheManagerEventListenerFactory
+		class="" />
+	<defaultCache maxElementsInMemory="50" eternal="false"
+		overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="project" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="lecture" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="repo" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="gitSimpleFileInfoList" eternal="false"
+		maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+		timeToIdleSeconds="0" timeToLiveSeconds="300"
+		memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="gitCommitLogList" eternal="false"
+		maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+		timeToIdleSeconds="0" timeToLiveSeconds="300"
+		memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="gitCommitLog" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="gitCommitCount" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="post" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="600"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="postList" eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="600"
+		timeToLiveSeconds="0" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="push" eternal="false" maxElementsInMemory="5000"
+		overflowToDisk="false" diskPersistent="false" timeToLiveSeconds="86400"
+		memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="chatRoom" eternal="false" maxElementsInMemory="10000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
+		memoryStoreEvictionPolicy="LFU">
+		<searchable>
+			<searchAttribute name="chatID" expression="value.getChatID()" />
+			<searchAttribute name="category" expression="value.getCategory()" />
+			<searchAttribute name="description" expression="value.getDescription()" />
+		</searchable>
+	</cache>
+	
+	<cache name="chatWeaver" eternal="false" maxElementsInMemory="500000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="200"
+		memoryStoreEvictionPolicy="LFU" />
+
+</ehcache>

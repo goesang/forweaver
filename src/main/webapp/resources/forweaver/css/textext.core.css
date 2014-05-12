@@ -1,0 +1,30 @@
+.text-core {
+	position: relative;
+}
+
+.text-core .text-wrap {
+	background: #fff;
+	position: absolute;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 2px;
+}
+
+.text-core .text-wrap textarea,.text-core .text-wrap input {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border: 1px solid #9daccc;
+	outline: none;
+	resize: none;
+	position: absolute;
+	z-index: 1;
+	background: none;
+	overflow: hidden;
+	padding: 5px 5px 4px 5px;
+	white-space: nowrap;
+	font: 13px "lucida grande", tahoma, verdana, arial, sans-serif;
+	line-height: 13px;
+	height: auto;
+	width: 830px !important;
+}

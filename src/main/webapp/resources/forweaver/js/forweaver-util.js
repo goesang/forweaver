@@ -1,0 +1,255 @@
+var editorMode = false; 
+
+function containsObject(list,obj ) { // 배열에 객체가 있는지 조사.
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+function imgCheck(fileName) {
+    if(!/(\.bmp|\.png|\.gif|\.jpg|\.jpeg)$/i.test(fileName)) {    
+        return false;   
+    }   
+    return true; 
+ }
+
+function deleteReply(postID,rePostID,number){
+	if (confirm("정말 댓글을 삭제하시겠습니까?")){
+		window.location =	"/community/"+postID+"/"+rePostID+"/"+number+"/delete";
+	}else{
+	    return;
+	}
+}
+
+function pushPost(postID){
+	if (confirm("정말 추천하시겠습니까?")){
+		window.location =	"/community/"+postID+"/push";
+	}else{
+	    return;
+	}
+}
+
+function deletePost(postID){
+	if (confirm("정말 삭제하시겠습니까?")){
+		window.location =	"/community/"+postID+"/delete";
+	}else{
+	    return;
+	}
+}
+
+function pushRePost(postID,rePostID){
+	if (confirm("정말 추천하시겠습니까?")){
+		window.location =	"/community/"+postID+"/"+rePostID+"/push";
+	}else{
+	    return;
+	}
+}
+
+function deleteRePost(postID,rePostID){
+	if (confirm("답글을 삭제하시겠습니까?")){
+		window.location =	"/community/"+postID+"/"+rePostID+"/delete";
+	}else{
+	    return;
+	}
+}
+
+function spacialSignEncoder(str) {
+	str = str.split(" ").join("@$@");
+	str = str.split("+").join("@#@");
+	str = str.split("%").join("@!@");
+	str = str.split("&").join("@4@");
+	return str;
+}
+
+function specialSignDecoder(str) {
+	str = str.split("@$@").join(" ");
+	str = str.split("@#@").join("+");
+	str = str.split("@!@").join("%");
+	str = str.split("@4@").join("&");
+	return str;
+}
+
+
+function getSearchWord(url){
+	if(url.indexOf("/search:")==-1)
+		return [];
+	url =  decodeURI(url);
+	url = url.substring(url.indexOf("search:")+7);
+	if(url.indexOf("/")!=-1)
+		url = url.substring(0,url.indexOf("/"));
+	return url;
+}
+
+
+function getTagList(url){
+	if(url.indexOf("/tags:")==-1)
+		return [];
+	url =  decodeURI(url);
+	var tagList = new Array();
+	url = url.substring(url.indexOf("tags:")+5);
+	if(url.indexOf("/")!=-1)
+		url = url.substring(0,url.indexOf("/"));
+	$.each(url.split(","), function(index, value) {
+		value = value.replace('>', '/');
+		tagList.push(value);
+	});
+	return tagList;
+}
+
+function getSort(url){
+	if(url.indexOf("/sort:")==-1)
+		return "age-desc";
+	var sort = url.substring(url.indexOf("sort:")+5);
+	
+	if(sort.indexOf("/")==-1)
+		return sort;
+	return sort.substring(0,sort.indexOf("/"));
+}
+
+function mobileGetTagList(url){
+	if(url.indexOf("/tags:")==-1)
+		return "";
+	url =  decodeURI(url);
+	url = url.substring(url.indexOf("tags:")+5);
+	if(url.indexOf("/")!=-1)
+		url = url.substring(0,url.indexOf("/"));
+	url.replace('>', '/');
+		
+	return url;
+}
+
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+function filePathTransform(path) {
+	path = path.split(".").join(",");
+	path = path.split("/").join(">");
+	return path;
+}
+
+function extensionSeach(url){
+	if(endsWith(url,"java") || endsWith(url,"pde"))
+		return "java";
+	else if(endsWith(url,"css"))
+		return "css";
+	else if(endsWith(url,"xml" || endsWith(url,"html")))
+		return "xml";
+	else if(endsWith(url,"php"))
+		return "php";
+	else if(endsWith(url,"pl"))
+		return "perl";
+	else if(endsWith(url,"js"))
+		return "jscript";
+	else if(endsWith(url,"diff"))
+		return "diff";
+	else if(endsWith(url,"c") || endsWith(url,"h") || endsWith(url,"cpp") || endsWith(url,"ino"))
+		return "cpp";
+	else if(endsWith(url,"cs"))
+		return "csharp";
+	else if(endsWith(url,"sql"))
+		return "sql";
+	else if(endsWith(url,"py"))
+		return "python";
+	else
+		return "text";
+}
+
+
+function movePage(tagArrayString,searchWord){
+	if(editorMode)
+		return;
+	var tagArray = eval(tagArrayString);
+	var url = document.location.href;
+	
+	if(url.indexOf("/tags:") != -1)
+		url = url.substring(0,url.indexOf("/tags:"))+'/';
+	else if(url.indexOf("/community") != -1)
+		url = url.substring(0,url.indexOf("/community")+10)+'/';
+	else if(url.indexOf("/chat") != -1)
+		url = url.substring(0,url.indexOf("/chat")+5)+'/';
+	else if(url.indexOf("/project") != -1)
+		url = url.substring(0,url.indexOf("/project")+8)+'/';
+	else if(url.indexOf("/code") != -1)
+		url = url.substring(0,url.indexOf("/code")+5)+'/';
+	else if(url.indexOf("/lecture") != -1)
+		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
+	else
+		url = "/community/";
+	if(tagArray.length == 0){
+		window.location = url;
+		return;
+	}
+	url = url + "tags:"+	tagInputValueConverter(tagArray);
+	url = url.substring(0,url.length-1);
+	
+	if(searchWord.length != 0)
+		url = url +"/search:"+ searchWord;
+	window.location = url;
+}
+
+
+function mobileMovePage(tagArrayString,searchWord){
+	
+	
+	var url  = document.location.href;
+
+	if(url.indexOf("/tags:") != -1)
+		url = url.substring(0,url.indexOf("/tags:"))+'/';
+	else if(url.indexOf("/m/community") != -1)
+		url = url.substring(0,url.indexOf("/m/community")+12)+'/';
+	else if(url.indexOf("/m/chat") != -1)
+		url = url.substring(0,url.indexOf("/m/chat")+7)+'/';
+	else if(url.indexOf("/m/code") != -1)
+		url = url.substring(0,url.indexOf("/m/code")+7)+'/';
+	else if(url.indexOf("/m/project") != -1)
+		url = url.substring(0,url.indexOf("/m/project")+10)+'/';
+	else if(url.indexOf("/m/lecture") != -1)
+		url = url.substring(0,url.indexOf("/m/lecture")+10)+'/';
+	else
+		url = "/m/community/";
+	
+	if(tagArrayString.length == 0){
+		
+		window.location = url+"/sort:age-desc/page:1";
+		return;
+	}
+
+	url = url + "tags:"+	tagArrayString;
+	if(searchWord.length != 0)
+		url = url +"/search:"+ searchWord;
+	
+	window.location = url+"/sort:age-desc/page:1";
+}
+
+function tagInputValueConverter(tagArray){
+	var simpleArray="";
+	$.each(tagArray, function(index, value) {
+		simpleArray = simpleArray+ value.replace('/', '>')+",";
+	});
+	return simpleArray;
+}
+
+function textAreaResize(obj) {
+	  obj.style.height = "1px";
+	  obj.style.height = (20+obj.scrollHeight)+"px";
+}
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+
+}
