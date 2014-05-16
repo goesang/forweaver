@@ -23,7 +23,6 @@
 <script src="/resources/forweaver/js/textext.core.js"></script>
 <script src="/resources/forweaver/js/textext.plugin.tags.js"></script>
 <script src="/resources/forweaver/js/bootstrap-paginator.js"></script>
-<script src="/resources/forweaver/js/jquery.tabSlideOut.v1.3.js"></script>
 <script src="/resources/forweaver/js/jasny-bootstrap.min.js"></script>
 
 <meta name="robots" content="noindex">

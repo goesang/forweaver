@@ -27,10 +27,8 @@
 	<properties>
 		<java-version>1.6</java-version>
 		<org.springframework-version>3.2.2.RELEASE</org.springframework-version>
-		<spring-mobile-device-version>1.1.0.M2</spring-mobile-device-version>
 		<org.aspectj-version>1.6.11</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
-		<spring-social.version>1.0.2.RELEASE</spring-social.version>
 		<org.springframework.social-facebook-version>1.0.2.RELEASE</org.springframework.social-facebook-version>
 	</properties>
 
@@ -60,12 +58,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
-		</dependency>
-		<!-- mobile -->
-		<dependency>
-			<groupId>org.springframework.mobile</groupId>
-			<artifactId>spring-mobile-device</artifactId>
-			<version>${spring-mobile-device-version}</version>
 		</dependency>
 
 		<!-- security -->
@@ -231,32 +223,6 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.1.1</version>
 		</dependency>
-		<!-- org.springframework.social -->
-
-		<dependency>
-			<groupId>org.springframework.social</groupId>
-			<artifactId>spring-social-core</artifactId>
-			<version>${spring-social.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.social</groupId>
-			<artifactId>spring-social-web</artifactId>
-			<version>${spring-social.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.social</groupId>
-			<artifactId>spring-social-facebook</artifactId>
-			<version>${org.springframework.social-facebook-version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.twitter4j</groupId>
-			<artifactId>twitter4j-core</artifactId>
-			<version>3.0.6-SNAPSHOT</version>
-		</dependency>
-
 
 	<dependency>
 		<groupId>org.hibernate</groupId>
@@ -264,19 +230,19 @@
 		<version>4.3.1.Final</version>
 	</dependency>
 	<dependency>
-		<groupId>org.eclipse.jgit</groupId>
-		<artifactId>org.eclipse.jgit</artifactId>
-		<version>3.2.0.201312181205-r</version>
-	</dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>3.3.2.201404171909-r</version>
+    </dependency>
+	 <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.http.server</artifactId>
+      <version>3.3.2.201404171909-r</version>
+    </dependency>
 	<dependency>
 		<groupId>org.eclipse.jgit</groupId>
-		<artifactId>org.eclipse.jgit.http.server</artifactId>
-		<version>3.2.0.201312181205-r</version>
-	</dependency>
-	<dependency>
-		<groupId>com.bacoder.jgit</groupId>
 		<artifactId>org.eclipse.jgit.archive</artifactId>
-		<version>3.1.0-201308312337-r</version>
+		<version>3.3.2.201404171909-r</version>
 	</dependency>
 	</dependencies>
 
@@ -294,17 +260,6 @@
 			<id>sonatype-ossrh</id>
 			<name>Sonatype Open Source Software Repository Hosting</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>twitter4j.org</id>
-			<name>twitter4j.org Repository</name>
-			<url>http://twitter4j.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
 		</repository>
 	</repositories>
 </project>

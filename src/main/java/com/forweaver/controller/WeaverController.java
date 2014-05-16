@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import twitter4j.auth.RequestToken;
-
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.PostService;
@@ -28,8 +26,6 @@ import com.forweaver.util.WebUtil;
 
 @Controller
 public class WeaverController {
-
-	private RequestToken requestToken;
 
 	@Autowired
 	WeaverService weaverService;
@@ -66,129 +62,6 @@ public class WeaverController {
 		return "redirect:/";
 	}
 
-	/*
-	 * @RequestMapping(value = "/facebook/call") public ModelAndView
-	 * callFacebook(Device device) {
-	 * 
-	 * if (device.isMobile()) { RedirectView redirectView = new RedirectView(
-	 * "http://www.facebook.com/dialog/oauth?client_id=587971871251695&redirect_uri=http://www.forweaver.com/m/facebook/login&scope=email"
-	 * ); return new ModelAndView(redirectView); } else { RedirectView
-	 * redirectView = new RedirectView(
-	 * "http://www.facebook.com/dialog/oauth?client_id=587971871251695&redirect_uri=http://www.forweaver.com/facebook/login&scope=email"
-	 * ); return new ModelAndView(redirectView); }
-	 * 
-	 * }
-	 * 
-	 * @RequestMapping(value = "/facebook/join") public ModelAndView
-	 * joinFacebook(@Validated Weaver weaver,Device device, BindingResult
-	 * result,HttpServletRequest request) { if (result.hasErrors()) return new
-	 * ModelAndView("/join"); if(weaverService.get(weaver.getName()) != null )
-	 * return new ModelAndView("/join"); weaverService.add(weaver);
-	 * 
-	 * if (device.isMobile()) { RedirectView redirectView = new RedirectView(
-	 * "http://www.facebook.com/dialog/oauth?client_id=587971871251695&redirect_uri=http://www.forweaver.com/m/facebook/login&scope=email"
-	 * ); return new ModelAndView(redirectView); } else { RedirectView
-	 * redirectView = new RedirectView(
-	 * "http://www.facebook.com/dialog/oauth?client_id=587971871251695&redirect_uri=http://www.forweaver.com/facebook/login&scope=email"
-	 * ); return new ModelAndView(redirectView); } }
-	 * 
-	 * @RequestMapping(value = "/facebook/login") public ModelAndView
-	 * loginFacebook(Model model,Device device,HttpServletRequest request) {
-	 * String appKey = "587971871251695"; String appSecret =
-	 * "7f3874bd2ecabc1f9277831460a0fa0a"; String code =
-	 * request.getParameter("code"); String accesstoken = ""; String result =
-	 * ""; try{ if( code != null ) { HttpGet get = null; if (device.isMobile())
-	 * { get = new HttpGet("https://graph.facebook.com/oauth/access_token"+
-	 * "?client_id="+appKey+ "&client_secret="+appSecret+
-	 * "&redirect_uri=http://www.forweaver.com/m/facebook/login" +
-	 * "&code="+code); } else { get = new
-	 * HttpGet("https://graph.facebook.com/oauth/access_token"+
-	 * "?client_id="+appKey+ "&client_secret="+appSecret+
-	 * "&redirect_uri=http://www.forweaver.com/facebook/login" + "&code="+code);
-	 * }
-	 * 
-	 * DefaultHttpClient http = new DefaultHttpClient(); result =
-	 * http.execute(get, new BasicResponseHandler());
-	 * 
-	 * accesstoken = result.substring(result.indexOf("=")+1); accesstoken =
-	 * accesstoken.substring(0, accesstoken.indexOf("&")); } }catch(Exception
-	 * e){
-	 * 
-	 * RedirectView redirectView = new RedirectView("/login"); return new
-	 * ModelAndView(redirectView); } Facebook facebook = new
-	 * FacebookTemplate(accesstoken); FacebookProfile profile =
-	 * facebook.userOperations().getUserProfile(); Weaver weaver =
-	 * weaverService.get(profile.getEmail());
-	 * 
-	 * if(weaver == null){ model.addAttribute("email", profile.getEmail());
-	 * model.addAttribute("imgSrc",
-	 * "http://graph.facebook.com/"+profile.getId()+"/picture?type=normal");
-	 * RedirectView redirectView = new RedirectView("/weaver/facebookJoin");
-	 * return new ModelAndView(redirectView); }else{ if(weaver.getSocialMode()
-	 * == 0 || weaver.getSocialMode() == 2){ RedirectView redirectView = new
-	 * RedirectView("/login"); return new ModelAndView(redirectView); }
-	 * weaverService.autoLoginWeaver(weaver, request); RedirectView redirectView
-	 * = new RedirectView("/"); return new ModelAndView(redirectView); }
-	 * 
-	 * 
-	 * }
-	 * 
-	 * @RequestMapping(value = "/twitter/call") public ModelAndView
-	 * callTwitter(Model model,Device device) { Twitter twitter = new
-	 * TwitterFactory().getInstance(); if (device.isMobile()) {
-	 * twitter.setOAuthConsumer("5xj6xvEEzTlcdwrFIvw",
-	 * "wykduLSeWhn9i002QszizUpk8IrCMfjKQ4VydiegwM"); } else {
-	 * twitter.setOAuthConsumer("cVkDOCmIPmpZ0gdSQRXTw",
-	 * "gCy9Zh56gWV9lukiSs8ja6p6XEDJlle5sH6iJCd24"); }
-	 * 
-	 * try { this.requestToken = twitter.getOAuthRequestToken(); } catch
-	 * (TwitterException e) { } RedirectView redirectView = new
-	 * RedirectView(this.requestToken.getAuthorizationURL()); return new
-	 * ModelAndView(redirectView); }
-	 * 
-	 * 
-	 * @RequestMapping(value = "/twitter/join") public String
-	 * joinTwitter(@Validated Weaver weaver, BindingResult
-	 * result,HttpServletRequest request) { if (result.hasErrors()) return
-	 * "/join"; if(weaverService.get(weaver.getName()) != null ) return "/join";
-	 * weaverService.add(weaver); weaverService.autoLoginWeaver(weaver,
-	 * request); return "redirect:/"; }
-	 * 
-	 * @RequestMapping(value = "/twitter/login") public ModelAndView
-	 * loginTwitter(Model model,Device device,HttpServletRequest request) {
-	 * Twitter twitter = new TwitterFactory().getInstance();
-	 * 
-	 * if (device.isMobile()) { twitter.setOAuthConsumer("5xj6xvEEzTlcdwrFIvw",
-	 * "wykduLSeWhn9i002QszizUpk8IrCMfjKQ4VydiegwM"); } else {
-	 * twitter.setOAuthConsumer("cVkDOCmIPmpZ0gdSQRXTw",
-	 * "gCy9Zh56gWV9lukiSs8ja6p6XEDJlle5sH6iJCd24"); } String oauthToken =
-	 * request.getParameter("oauth_token"); String oauthVerifier =
-	 * request.getParameter("oauth_verifier"); AccessToken accessToken = null;
-	 * if (this.requestToken.getToken().equals(oauthToken)) { try { accessToken
-	 * = twitter.getOAuthAccessToken(this.requestToken,oauthVerifier);
-	 * twitter.setOAuthAccessToken(accessToken); User user =
-	 * twitter.showUser(twitter.getId());
-	 * 
-	 * Weaver weaver = weaverService.get(twitter.getId());
-	 * 
-	 * if(weaver == null){ model.addAttribute("imgSrc",
-	 * user.getProfileImageURL()); model.addAttribute("twitterID",
-	 * twitter.getId()); return new ModelAndView("/weaver/twitterJoin"); }else{
-	 * if(weaver.getSocialMode() == 0 || weaver.getSocialMode() == 1){
-	 * RedirectView redirectView = new RedirectView("/login"); return new
-	 * ModelAndView(redirectView); } weaverService.autoLoginWeaver(weaver,
-	 * request);
-	 * 
-	 * RedirectView redirectView = new RedirectView("/"); return new
-	 * ModelAndView(redirectView); }
-	 * 
-	 * } catch (TwitterException e) { RedirectView redirectView = new
-	 * RedirectView("/login"); return new ModelAndView(redirectView); } }
-	 * RedirectView redirectView = new RedirectView("/login"); return new
-	 * ModelAndView(redirectView);
-	 * 
-	 * }
-	 */
 	@RequestMapping("/{id}")
 	public String home(@PathVariable("id") String id, Model model) {
 
