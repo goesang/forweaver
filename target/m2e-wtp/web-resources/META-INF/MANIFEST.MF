@@ -1,10 +1,5 @@
 Manifest-Version: 1.0
-<<<<<<< HEAD
 Built-By: go
 Build-Jdk: 1.8.0_05
-=======
-Build-Jdk: 1.6.0_31
-Built-By: angie
->>>>>>> 2a6740fc78335b342182c7fd46c628623e61385a
 Created-By: Maven Integration for Eclipse
 
