@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <sec:authentication property="principal" var="currentUser"/>
 <h1>
-	forWeaver <small>학생들을 위한 소셜 코딩!</small>
+	ForWeaver <small>학생들을 위한 소셜 코딩!</small>
 </h1>
 
 <div class="navbar navbar-inverse">
@@ -9,11 +9,12 @@
 		<div class="container-fluid">
 			<div class="nav-collapse collapse">
 				<ul class="nav">
-					<li><a href="/"><i class="fa fa-home icon-white"></i> 처음화면</a></li>
-					<li><a href="/forweaver"><i class="fa fa-quote-left icon-white"></i> 소개</a></li>
-					<li><a href="/project/"><i class="fa fa-bookmark icon-white"></i> 프로젝트</a></li>
-					<li><a href="/code/"><i class="fa fa-rocket  icon-white"></i> 코드</a></li>
-					<li><a href="/community/"><i class="fa fa-comments  icon-white"></i> 커뮤니티</a></li>
+					<li><a href="/">처음화면</a></li>
+					<li><a href="/forweaver">소개</a></li>
+					<li><a href="/project/"><i class="fa fa-graduation-cap icon-white"></i>&nbsp;&nbsp;강의</a></li>
+					<li><a href="/project/"><i class="fa fa-bookmark icon-white"></i>&nbsp;프로젝트</a></li>
+					<li><a href="/code/"><i class="fa fa-rocket  icon-white"></i>&nbsp;코드</a></li>
+					<li><a href="/community/"><i class="fa fa-comments  icon-white"></i>&nbsp;커뮤니티</a></li>
 				</ul>
 
 				<ul class="nav pull-right">

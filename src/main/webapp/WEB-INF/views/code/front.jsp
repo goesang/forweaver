@@ -31,11 +31,11 @@
 	}
 	
 		function showPostContent() {
-			/*var tags = $("input[name='tags']").val();
+			var tags = $("input[name='tags']").val();
 			if(tags.length == 2){
 				alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 				return;
-			}*/
+			}
 			$('#page-pagination').hide();
 			$('#post-table').hide();
 			$('#post-content-textarea').fadeIn('slow');
@@ -142,7 +142,7 @@
 					<button class="btn btn-warning">
 						<b>COUNT : ${codeCount}</b>
 					</button>
-
+	<%@ include file="/WEB-INF/common/nav.jsp"%>
 				</div>
 			</h5>
 		</div>

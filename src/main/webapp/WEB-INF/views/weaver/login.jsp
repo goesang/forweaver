@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
-<title>Forweaver : 학생들을 위한 소셜 코딩!</title>
+<title>ForWeaver : 학생들을 위한 소셜 코딩!</title>
 </head>
 <body>
 	<div class="container">
@@ -63,7 +63,7 @@
 							<div class="form-actions-white">
 								<button style="width:145px;" class="btn btn-inverse" type="submit"><i class="fa fa-user icon-white"></i>&nbsp;&nbsp;접속하기</button>
 								<a style="width:120px;" class="btn btn-inverse" rel="popover" href="/join"><i class="fa fa-pencil-square icon-white"></i>&nbsp;&nbsp;회원가입 </a>
-								<a class="btn full-button btn-primary" href="/forweaver"><i class="fa fa-quote-left icon-white"></i>&nbsp;&nbsp;ForWeaver.com을 소개합니다.</a>
+								<a class="btn full-button btn-primary" href="/forweaver"><i class="fa fa-quote-left icon-white"></i>&nbsp;ForWeaver.com을 소개합니다.</a>
 							</div>
 						</fieldset>
 					</form>

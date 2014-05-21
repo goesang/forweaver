@@ -127,34 +127,36 @@ $(document).ready(function() {
 						<div class="span4">
 						
 						<div class ="control-group" style="text-align:center;">
-						<img id="preview" style="height:90px;width:90px;" class="img-polaroid" src="">
+						<img id="preview" style="height:150px;width:150px;" class="img-polaroid" src="">
 						</div>
 						
 						
 						<div class="control-group">
-							<div class="fileinput fileinput-new" data-provides="fileinput">
-  <div class="input-group">
-    <div class="form-control" data-trigger="fileinput"><i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
-    <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="..."></span>
-    <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-  </div>
-</div>
+							<div id="file-div" style="padding-left: 20px;">
+					<div class='fileinput fileinput-new' data-provides='fileinput'>
+					  <div class='input-group' style="width: 340px;">
+					    <div class='form-control' data-trigger='fileinput' style="width: 210px;" ><i class='icon-file '></i> <span class='fileinput-filename'></span></div>
+					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
+					    <i class='icon-upload icon-white'></i></span>
+					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
+						<input onchange ='fileUploadChange(this);' type='file' id='file' multiple='true' name='file'></span>
+					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+					  </div>
+					</div>
 						</div>
-					
+					</div>
 						</div>
 						<div class="span11">
 						<div class="control-group">
 							<label for="say" class="control-label">자기소개</label>
 							<div class="controls">
-								<input id="say" class="input-xxlarge" type="text"/>
+								<input id="say" style="width:90%;" type="text"/>
 
 							</div>
 						</div>
 						<div class="join-form-actions-white">
 
 							<button type="submit" class="btn btn-block btn-inverse"><i class="fa fa-pencil-square icon-white"></i>&nbsp;&nbsp;가입하기</button>
-							<a class="btn btn-block btn-primary" href="/facebook/call"><i class="fa fa-facebook-square icon-white"></i>&nbsp;&nbsp;페이스북으로 가입하기</a>
-							<a class="btn btn-block btn-primary" href="/twitter/call"><i class="fa fa-twitter-square icon-white"></i>&nbsp;&nbsp;트위터로 가입하기</a>
 						</div>
 						</div>
 					</fieldset>

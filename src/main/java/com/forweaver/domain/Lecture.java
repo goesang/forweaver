@@ -11,29 +11,29 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
 @Document
-public class Project implements Serializable {
+public class Lecture implements Serializable {
 
-	static final long serialVersionUID = 4231232323123124234L;
+	static final long serialVersionUID = 42313124234L;
 	@Id
-	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 1이면 공개 프로젝트 2이면 비공개 프로젝트.
-	private String description; // 프로젝트 소개
-	private Date openingDate; // 프로젝트 시작일
-	private String creatorName; // 프로젝트 개설자 이름
-	private String creatorEmail; // 프로젝트 개설자 이메일
-	private Data image; // 프로젝트 이미지
-	private int push; // 프로젝트 추천수
+	private String name; //강의 이름 이게 기본 키
+	private int category; // 강의 종류 값이 1이면 공개 강의 2이면 비공개 강의.
+	private String description; // 강의 소개
+	private Date openingDate; // 강의 시작일
+	private String creatorName; // 강의 개설자 이름
+	private String creatorEmail; // 강의 개설자 이메일
+	private Data image; // 강의 이미지
+	private int push; // 강의 추천수
 	
-	private List<String> tags = new ArrayList<String>(); // 프로젝트의 태그 모음
+	private List<String> tags = new ArrayList<String>(); // 강의의 태그 모음
 	
 	private List<String> adminWeavers = new ArrayList<String>(); // 관리자들
 	private List<String> joinWeavers = new ArrayList<String>(); // 비 관리자 회원들
 	
-	public Project() {
+	public Lecture() {
 		
 	}
 	
-	public Project(String name, int category, String description,
+	public Lecture(String name, int category, String description,
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
