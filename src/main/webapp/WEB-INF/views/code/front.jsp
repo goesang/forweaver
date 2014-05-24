@@ -142,7 +142,7 @@
 					<button class="btn btn-warning">
 						<b>COUNT : ${codeCount}</b>
 					</button>
-	<%@ include file="/WEB-INF/common/nav.jsp"%>
+
 				</div>
 			</h5>
 		</div>

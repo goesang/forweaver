@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.ArchiveCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -38,7 +39,7 @@ import com.forweaver.domain.git.GitSimpleFileInfo;
 
 public class GitUtil {
 
-	public static String GitPath = "/home/goesang/git/";
+	public static String GitPath = "/home/git/";
 	private String path;
 	private Repository localRepo;
 	private Git git;
@@ -58,9 +59,9 @@ public class GitUtil {
 		}
 	}
 
-	public GitUtil(String parentDirctoryName, String repositoryName) {
+	public GitUtil(String creatorName, String repositoryName) {
 		try {
-			this.path = GitPath + parentDirctoryName + "/" + repositoryName
+			this.path = GitPath + creatorName + "/" + repositoryName
 					+ ".git";
 			this.localRepo = RepositoryCache.open(RepositoryCache.FileKey
 					.lenient(new File(this.path), FS.DETECTED), true);
@@ -80,6 +81,10 @@ public class GitUtil {
 			File hide = new File(path + "/refs/heads/edih");
 			hide.mkdir();
 		}
+	}
+	
+	public void deleteRepository() throws Exception {
+		FileUtils.deleteDirectory(new File(this.path));
 	}
 
 	public GitFileInfo getFileInfor(String commitID, String filePath) {

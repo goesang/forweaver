@@ -17,6 +17,7 @@ public class LectureDao {
 	private MongoTemplate mongoTemplate;
 	
 	public void insert(Lecture lecture) { // 강의 생성함.
+		
 		if (!mongoTemplate.collectionExists(Lecture.class)) {
 			mongoTemplate.createCollection(Lecture.class);
 		}
@@ -52,8 +53,7 @@ public class LectureDao {
 		
 		if(search != null)
 			criteria.orOperator(new Criteria("name").regex(search),
-					new Criteria("content").regex(search),
-					new Criteria("readme").regex(search));
+					new Criteria("description").regex(search));
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);

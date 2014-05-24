@@ -10,23 +10,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.forweaver.service.WeaverService;
 
-public class ProjectIntercepter extends HandlerInterceptorAdapter {
-	//before the actual handler will be executed
-
+public class Permission extends HandlerInterceptorAdapter {
 	
 		public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)
 		    throws Exception {
-			System.out.println("preHandle");
+			System.out.println(request.getLocalAddr());
 			return true;
 		}
 	 
-		//after the handler is executed
-		public void postHandle(
-			HttpServletRequest request, HttpServletResponse response, 
-			Object handler, ModelAndView modelAndView)
-			throws Exception {
-	 
-			System.out.println("postHandle");
-		}
 }

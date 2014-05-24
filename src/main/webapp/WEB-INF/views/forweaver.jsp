@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<title>Forweaver : 포위버란 무엇인가?</title>
 </head>
 
 <body>
@@ -11,8 +12,7 @@
 	<div  class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 				<ul class="nav nav-tabs" id="myTab">
-					<li class="active"><a href="/forweaver">포위버란 무엇인가</a></li>
-					<li><a href="/weavernest">위버네스트란 무엇인가?</a></li>
+					<li class="active"><a href="/forweaver">포위버란 무엇인가?</a></li>
 				</ul>
 		
 			<div class='page-header'>

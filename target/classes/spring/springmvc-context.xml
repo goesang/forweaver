@@ -19,7 +19,7 @@
 	<mvc:interceptors>
     <mvc:interceptor>
     <mvc:mapping path="/*"/>
-    <bean class="com.forweaver.intercepter.ProjectIntercepter"/>
+    <bean class="com.forweaver.intercepter.Permission"/>
     </mvc:interceptor>
 </mvc:interceptors>
 

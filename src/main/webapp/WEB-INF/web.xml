@@ -89,7 +89,7 @@
      <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
      <init-param>
        <param-name>base-path</param-name>
-       <param-value>/home/goesang/git/</param-value>
+       <param-value>/home/git/</param-value>
      </init-param>
      <init-param>
        <param-name>export-all</param-name>

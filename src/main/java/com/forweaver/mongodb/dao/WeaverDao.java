@@ -21,7 +21,6 @@ public class WeaverDao {
         if (!mongoTemplate.collectionExists(Weaver.class)) {
             mongoTemplate.createCollection(Weaver.class);
         }       
-        
         mongoTemplate.insert(weaver);
     }
      

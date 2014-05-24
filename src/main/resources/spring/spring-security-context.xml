@@ -19,54 +19,6 @@
 
 <!-- Empty filter chain for the login page -->
 <security:http pattern="/resources/**" security="none"/>
-<security:http pattern="/m/resources/**" security="none"/>
-
-<security:http pattern="/wn/**">
-<security:intercept-url pattern="/wn/login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-<security:intercept-url pattern='/wn/**' access='ROLE_USER' />
-<security:form-login login-page='/wn/login' default-target-url='/wn/front' />
-<security:logout logout-url="/wn/logout" logout-success-url="/wn/login"/>
-<security:session-management session-authentication-strategy-ref="sas"/>
-</security:http> 
-
-<!-- Additional filter chain for normal users, matching all other requests -->
-<security:http pattern="/m/**" auto-config='true' use-expressions="true">
-<security:intercept-url pattern="/m/login" access="isAnonymous()" />
-<security:intercept-url pattern="/m/facebook/login" access="isAnonymous()" />
-<security:intercept-url pattern="/m/facebook/call" access="isAnonymous()" />
-<security:intercept-url pattern="/m/twitter/login" access="isAnonymous()" />
-<security:intercept-url pattern="/m/twitter/call" access="isAnonymous()" />
-<security:intercept-url pattern="/m/join" access="isAnonymous()" />
-<security:intercept-url pattern="/m/check" access="isAnonymous()" />
-<security:intercept-url pattern="/m/" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/manage" access="hasRole('ROLE_USER')" />
-
-<security:intercept-url pattern="/m/community/add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/community/*/delete" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/community/*/update" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/community/**" access="isAnonymous() or isAuthenticated()" />
-<security:intercept-url pattern="/m/community/*/repost-add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/community//*/edit" access="hasRole('ROLE_USER')" />
-
-<security:intercept-url pattern="/m/project/*/*/add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/project/*/*/delete" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/project/*/*/push" access="hasRole('ROLE_USER')" />
-
-<security:intercept-url pattern="/m/chat/add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/chat/*/update" access="hasRole('ROLE_USER')" />
-
-<security:intercept-url pattern="/m/lecture/*/add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/lecture/*/*/delete" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/lecture/*/*/push" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/m/lecture/*/repo/*" access="hasRole('ROLE_USER')" />
-
-<security:intercept-url pattern="/m/**" access="isAnonymous() or isAuthenticated()"/>
-<security:form-login login-page='/m/login'  default-target-url='/m/' />
-<security:session-management session-authentication-strategy-ref="sas"/>
-<security:logout />
-</security:http> 
-
-
 
 <!-- Additional filter chain for normal users, matching all other requests -->
 <security:http pattern="/**" auto-config='true' use-expressions="true">

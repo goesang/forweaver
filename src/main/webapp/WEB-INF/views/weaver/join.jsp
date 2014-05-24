@@ -11,7 +11,7 @@ var check = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 $(document).ready(function() {
 	
-	$("#file").change(function(){
+	$("#image").change(function(){
         readURL(this);
     });
 	
@@ -139,7 +139,7 @@ $(document).ready(function() {
 					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
 					    <i class='icon-upload icon-white'></i></span>
 					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
-						<input onchange ='fileUploadChange(this);' type='file' id='file' multiple='true' name='file'></span>
+						<input onchange ='fileUploadChange(this);' type='file' id='image' multiple='true' name='image'></span>
 					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
 					  </div>
 					</div>
@@ -150,7 +150,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="say" class="control-label">자기소개</label>
 							<div class="controls">
-								<input id="say" style="width:90%;" type="text"/>
+								<input name="say" id="say" style="width:90%;" type="text"/>
 
 							</div>
 						</div>

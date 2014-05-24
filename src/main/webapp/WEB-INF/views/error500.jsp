@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<title>Forweaver : 에러!</title>
 </head>
 <body>
 
