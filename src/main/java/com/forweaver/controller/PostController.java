@@ -167,14 +167,14 @@ public class PostController {
         String content = request.getParameter("content");
         
 		if(tags == null || title == null) // 태그가 없을 때
-			return "false";
+			return "redirect:"+"/community";
 		else if(content.equals(""))
 			content = "";
 		List<String> tagList = tagService.stringToTagList(
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
-			return "false";
+			return "redirect:"+"/community";
 		
 		for (MultipartFile file : files.values()) {
 			if(!file.isEmpty())
@@ -187,7 +187,7 @@ public class PostController {
 				tagList);
 		
 		postService.add(post,datas);
-		return "true";
+		return "redirect:"+"/community";
 	}
 	
 	

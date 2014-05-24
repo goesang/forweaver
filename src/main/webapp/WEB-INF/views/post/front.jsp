@@ -258,8 +258,9 @@
 					<tbody>
 						<c:forEach items="${posts}" var="post">
 							<tr>
-								<td class="td-post-writer-img" rowspan="2"><img
-									src="${post.getImgSrc()}"></td>
+								<td class="td-post-writer-img" rowspan="2">
+								<a href="/${post.writerName}">
+								<img src="${post.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/community/${post.postID}"> <c:if
 											test="${post.isLong()}">
@@ -288,7 +289,7 @@
 									</span></a></td>
 							</tr>
 							<tr>
-								<td class="post-bottom"><b>${post.writerName}</b>
+								<td class="post-bottom"><a href="/${post.writerName}"><b>${post.writerName}</b></a>
 									${post.getFormatCreated()}</td>
 								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
 										var="tag">

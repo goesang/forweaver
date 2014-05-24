@@ -229,7 +229,10 @@ public class WeaverController {
 		if (weaver == null) {
 			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
 			return;
-		} else if (weaver.getImage().getContent().length > 0) {
+		}else if (weaver.getImage().getName().length() ==0) {
+			res.sendRedirect("http://www.gravatar.com/avatar/"
+					+ WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
+		} else {
 			byte[] imgData = weaver.getImage().getContent();
 			res.setContentType(weaver.getImage().getType());
 			OutputStream o = res.getOutputStream();
@@ -237,12 +240,7 @@ public class WeaverController {
 			o.flush();
 			o.close();
 			return;
-		} else if (weaver.getRealImgSrc() == null) {
-			res.sendRedirect("http://www.gravatar.com/avatar/"
-					+ WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
-		} else {
-			res.sendRedirect(weaver.getRealImgSrc());
-		}
+		} 
 
 	}
 

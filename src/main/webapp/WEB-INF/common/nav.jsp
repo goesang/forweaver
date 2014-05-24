@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <sec:authentication property="principal" var="currentUser"/>
 <h1>
-	ForWeaver <small>학생들을 위한 소셜 코딩!</small>
+	<a href="/">ForWeaver</a> <small>학생들을 위한 소셜 코딩!</small>
 </h1>
 
 <div class="navbar navbar-inverse">

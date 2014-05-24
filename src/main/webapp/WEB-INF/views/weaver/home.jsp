@@ -79,14 +79,14 @@
 								var exist = false;
 								var tagNames = $("input[name='tags']").val();
 								if (tagNames.length == 2)
-									movePage("[\"" + tagname + "\"]","");
+									moveUserPage("${weaver.getId()}","[\"" + tagname + "\"]","");
 								var tagArray = eval(tagNames);
 								$.each(tagArray, function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									movePage(tagNames.substring(0,
+									moveUserPage("${weaver.getId()}",tagNames.substring(0,
 											tagNames.length - 1)
 											+ ",\"" + tagname + "\"]","");
 								}
@@ -95,7 +95,7 @@
 					$('#search-button').click(
 							function() {
 									var tagNames = $("input[name='tags']").val();
-									movePage(tagNames,$('#post-title-input').val());							
+									moveUserPage("${weaver.getId()}",tagNames,$('#post-title-input').val());							
 							});
 					
 					$('#post-ok').click(function(){
@@ -115,7 +115,7 @@
 							function(e) {
 								if(!editorMode && e.keyCode == 13){
 									var tagNames = $("input[name='tags']").val();
-									movePage(tagNames,$('#post-title-input').val());
+									moveUserPage("${weaver.getId()}",tagNames,$('#post-title-input').val());
 								}
 							});
 					var pageCount = ${postCount+1}/${number};
@@ -204,25 +204,15 @@
 			<form id="postForm" onsubmit="return checkPost()" action="/community/add"
 				enctype="multipart/form-data" method="post">
 
-				<div class="span9">
-					<input name="title" id="post-title-input" class="title span9"
+				<div class="span11">
+					<input name="title" id="post-title-input" class="title span11"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text" />
 				</div>
-				<div class="span3">
+				<div class="span1">
 					<span> <a id='search-button'
 						class="post-button btn btn-primary"> <i
 							class="icon-search icon-white"></i>
-					</a> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
-					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
-					</a>
-						<button id='post-ok' class="post-button btn btn-primary">
-							<i class="icon-ok icon-white"></i>
-						</button>
-
+					</a> 
 					</span>
 				</div>
 				<div class="span12">

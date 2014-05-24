@@ -102,7 +102,7 @@
 					<tbody>
 						<tr>
 							<td class="td-post-writer-img none-top-border" rowspan="2">
-								<img src="${post.getImgSrc()}">
+								<a href="/${post.writerName}"><img src="${post.getImgSrc()}"></a>
 							</td>
 							<td  colspan="2" class="post-top-title none-top-border">
 							<a rel="external" class="a-post-title"	href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>"> 
@@ -118,8 +118,8 @@
 						</tr>
 						<tr>
 							<td class="post-bottom">
-																		
-								<b>${post.writerName}</b>
+								<a href="/${post.writerName}">								
+								<b>${post.writerName}</b></a>
 								${post.getFormatCreated()}
 								</td>	
 								<td class="post-bottom-tag">

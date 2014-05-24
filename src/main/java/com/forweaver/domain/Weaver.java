@@ -20,11 +20,9 @@ public class Weaver implements UserDetails,Serializable {
 	private String password;
 	private String email;
 	private String say;
-	private int twitterID;
 	private String imgSrc;
 	private Data image;
 	private List<Pass> passes = new ArrayList<Pass>();
-	private List<String> pushPost = new ArrayList<String>();
 	
 	public Weaver(){}
 	
@@ -73,22 +71,13 @@ public class Weaver implements UserDetails,Serializable {
 	public void setPasses(List<Pass> passes) {
 		this.passes = passes;
 	}
-		
-	public int getTwitterID() {
-		return twitterID;
-	}
-
-	public void setTwitterID(int twitterID) {
-		this.twitterID = twitterID;
-	}
-	
 	
 		
 	public String getSay() {
 		if(this.say != null)
 			return say;
 		else
-			return "자기소개를 입력해주세요!";
+			return "Hello World!";
 	}
 
 
@@ -183,15 +172,6 @@ public class Weaver implements UserDetails,Serializable {
 		this.id = id;
 	}
 
-
-	public List<String> getPushPost() {
-		return pushPost;
-	}
-
-
-	public void setPushPost(List<String> pushPost) {
-		this.pushPost = pushPost;
-	}
 	
 	public List<String> getPassJoinNames(){
 		List<String> passNames = new ArrayList<String>();

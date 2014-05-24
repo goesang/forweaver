@@ -112,17 +112,6 @@ function getSort(url){
 	return sort.substring(0,sort.indexOf("/"));
 }
 
-function mobileGetTagList(url){
-	if(url.indexOf("/tags:")==-1)
-		return "";
-	url =  decodeURI(url);
-	url = url.substring(url.indexOf("tags:")+5);
-	if(url.indexOf("/")!=-1)
-		url = url.substring(0,url.indexOf("/"));
-	url.replace('>', '/');
-		
-	return url;
-}
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -180,7 +169,7 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/code")+5)+'/';
 	else if(url.indexOf("/lecture") != -1)
 		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
-	else
+	else	
 		url = "/community/";
 	if(tagArray.length == 0){
 		window.location = url;
@@ -194,39 +183,24 @@ function movePage(tagArrayString,searchWord){
 	window.location = url;
 }
 
-
-function mobileMovePage(tagArrayString,searchWord){
+function moveUserPage(userName,tagArrayString,searchWord){
+	if(editorMode)
+		return;
+	var tagArray = eval(tagArrayString);
+	var url = document.location.href;
 	
-	
-	var url  = document.location.href;
-
-	if(url.indexOf("/tags:") != -1)
-		url = url.substring(0,url.indexOf("/tags:"))+'/';
-	else if(url.indexOf("/m/community") != -1)
-		url = url.substring(0,url.indexOf("/m/community")+12)+'/';
-	else if(url.indexOf("/m/chat") != -1)
-		url = url.substring(0,url.indexOf("/m/chat")+7)+'/';
-	else if(url.indexOf("/m/code") != -1)
-		url = url.substring(0,url.indexOf("/m/code")+7)+'/';
-	else if(url.indexOf("/m/project") != -1)
-		url = url.substring(0,url.indexOf("/m/project")+10)+'/';
-	else if(url.indexOf("/m/lecture") != -1)
-		url = url.substring(0,url.indexOf("/m/lecture")+10)+'/';
-	else
-		url = "/m/community/";
-	
-	if(tagArrayString.length == 0){
-		
-		window.location = url+"/sort:age-desc/page:1";
+	if(tagArray.length == 0){
+		window.location = url;
 		return;
 	}
-
-	url = url + "tags:"+	tagArrayString;
+	url = "/"+userName +"/"+ "tags:"+	tagInputValueConverter(tagArray);
+	url = url.substring(0,url.length-1);
+	
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
-	
-	window.location = url+"/sort:age-desc/page:1";
+	window.location = url;
 }
+
 
 function tagInputValueConverter(tagArray){
 	var simpleArray="";
