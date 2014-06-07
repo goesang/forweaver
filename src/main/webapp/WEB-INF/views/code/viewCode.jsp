@@ -153,10 +153,8 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
-								<div class="function-div pull-right">
-									<a href="/code/${code.codeID}/update"> <span
-										class="function-button">수정</span></a> <a
-										href="javascript:deletePost(${code.codeID})"> <span
+								<div class="function-div pull-right"> <a
+										href="javascript:deleteCode(${code.codeID})"> <span
 										class="function-button">삭제</span></a>
 								</div></td>
 

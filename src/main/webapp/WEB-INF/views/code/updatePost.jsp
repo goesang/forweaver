@@ -104,9 +104,7 @@
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
 					fileName = fileName.substring(12);
-				
-				if(imgCheck(fileName))
-					$("#post-content-textarea").val($("#post-content-textarea").val()+"[tmpimg "+fileName+"]");
+			
 					
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 			fileCount++;

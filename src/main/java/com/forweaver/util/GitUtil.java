@@ -32,6 +32,7 @@ import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
 
 import com.forweaver.domain.Project;
+import com.forweaver.domain.Repo;
 import com.forweaver.domain.git.GitCommitLog;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
@@ -46,6 +47,18 @@ public class GitUtil {
 	private StoredConfig config;
 	private boolean isRepo;
 
+	public GitUtil(Repo repo) {
+		try {
+			this.path = GitPath + repo.getLectureName() + "/" + repo.getName()
+					+ ".git";
+			this.localRepo = new FileRepository(this.path);
+			this.git = new Git(localRepo);
+			this.config = localRepo.getConfig();
+			this.isRepo = true;
+		} catch (Exception e) {
+
+		}
+	}
 
 	public GitUtil(Project pro) {
 		try {
@@ -77,8 +90,8 @@ public class GitUtil {
 		config.setString("http", null, "receivepack", "true");
 		config.save();
 		if (this.isRepo){
-			new File(path + "/refs/tags").setWritable(false, false);
-			File hide = new File(path + "/refs/heads/edih");
+			new File(path + "/refs/tags").setWritable(false, false); // 숙제 및 예제 저장소는 태그 생성 불가
+			File hide = new File(path + "/refs/heads/edih"); // 저장소 접근을 막기 위한 디렉토리 추가
 			hide.mkdir();
 		}
 	}

@@ -206,14 +206,15 @@
 					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
 					    <i class='icon-upload icon-white'></i></span>
 					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
-						<input onchange ='fileUploadChange(this);' type='file' id='file' multiple='true' name='file'></span>
+						<input type='file' id='file' multiple='true' name='file'></span>
 					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
 					  </div>
 					</div>
-					<div class="pull-right"><a class="btn btn-inverse">
+					</div>
+					<!--<div class="pull-right"><a class="btn btn-inverse">
 					<i class="fa fa-pencil icon-white"></i> 코드 직접 입력하기</a></div>
 				</div>
-				<!--  <div class="span12">
+				  <div class="span12">
 					<textarea name="content" id="post-content-textarea"
 						class="post-content span12" onkeyup="textAreaResize(this)"
 						placeholder="여기에 글을 작성하시면 파일 배포시 자동으로 readme.md 파일이 생성됩니다. 만약 코드 소개에 충분히 설명하셨다면 이부분을 비워두셔도 상관없습니다!"></textarea>

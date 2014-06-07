@@ -119,8 +119,7 @@ public class CodeController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		
+				
 		int pageNum;
 		int number = 15;
 		
@@ -129,10 +128,6 @@ public class CodeController {
 			number = Integer.parseInt(page.split(",")[1]);
 		}else{
 			pageNum =Integer.parseInt(page);
-		}
-		
-		if(!tagService.validateTag(tagList,currentWeaver)){
-			return "redirect:/code/sort:age-desc/page:1";
 		}
 		
 		model.addAttribute("codes", 
@@ -166,8 +161,6 @@ public class CodeController {
 				WebUtil.removeHtml(URLDecoder.decode(tags)));
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
-			return "redirect:/code/";
 		codeService.add(new Code(weaver, name, content, tagList), file);
 		return "redirect:/code/";
 	}
@@ -177,14 +170,20 @@ public class CodeController {
 		return "redirect:/code/"+codeID+"/sort:age-desc";
 	}
 	
+	@RequestMapping("/{codeID}/delete")
+	public String delete(@PathVariable("codeID") int codeID){
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		Code code = codeService.get(codeID);
+		if(currentWeaver.getId().equals(code.getWriterName()))
+			codeService.delete(code);
+		return "redirect:/code/";
+	}
+	
 	@RequestMapping("/{codeID}/sort:{sort}")
 	public String view(Model model, @PathVariable("codeID") int codeID,
 			@PathVariable("sort") String sort) {
-		Weaver weaver = weaverService.getCurrentWeaver();
 		Code code = codeService.get(codeID);
 		
-		if(!tagService.validateTag(code.getTags(),weaver)) // 태그에 권한이 없을때
-			return "redirect:/code/sort:age-desc/page:1";
 		model.addAttribute("code", code);
 		model.addAttribute("rePosts", rePostService.get(codeID,4,sort));
 		

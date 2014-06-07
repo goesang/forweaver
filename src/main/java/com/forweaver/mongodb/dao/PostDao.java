@@ -26,7 +26,10 @@ public class PostDao {
 			return;
 		}
 		Post lastPost = getLast();
-		post.setPostID(lastPost.getPostID() + 1);
+		if(lastPost == null)
+			post.setPostID(1);
+		else
+			post.setPostID(lastPost.getPostID() + 1);
 		mongoTemplate.insert(post);
 	}
 
@@ -81,12 +84,12 @@ public class PostDao {
 		return mongoTemplate.find(query, Post.class);
 	}
 
-	public long countPostsWithProjectTags(
+	public long countPostsWithPrivateTags(
 			// 프로젝트 태그를 이용하여 글을 파악하고 셈
-			List<String> projectTags, String search, String writerName,
+			List<String> privateTags, String search, String writerName,
 			String sort) {
 		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
-				.all(projectTags); // 일반 공개글을 불러옴;
+				.all(privateTags); // 일반 공개글을 불러옴;
 
 		if (writerName != null)
 			criteria.and("writerName").is(writerName);
@@ -99,13 +102,13 @@ public class PostDao {
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 
-	public List<Post> getPostsWithProjectTags(
+	public List<Post> getPostsWithPrivateTags(
 			// 프로젝트 태그를 이용하여 글을 검색함
-			List<String> projectTags, String search, String writerName,
+			List<String> privateTags, String search, String writerName,
 			String sort, int page, int size) {
 
 		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
-				.all(projectTags); // 일반 공개글을 불러옴;
+				.all(privateTags); // 일반 공개글을 불러옴;
 
 		if (writerName != null)
 			criteria.and("writerName").is(writerName);
@@ -127,36 +130,34 @@ public class PostDao {
 			List<String> massageTags, String search, String writerName,
 			boolean my, String sort) {
 		Criteria criteria;
-
 		if (my)
-			criteria = new Criteria()
-					.orOperator(
-							Criteria.where("kind")
-									.is(3)
-									.andOperator(
-											Criteria.where("tags").in(
-													massageTags)),
-							Criteria.where("kind").is(3).and("writerName")
-									.is(writerName));
+			criteria = new Criteria().orOperator(
+					Criteria.where("kind").is(3).andOperator(
+					Criteria.where("tags").in(massageTags)),
+					Criteria.where("kind").is(3).and("writerName")
+							.is(writerName));
 		else
-			criteria = Criteria.where("kind").is(3)
-					.andOperator(Criteria.where("tags").in(massageTags));
+			criteria = Criteria.where("kind").is(3).and("writerName")
+					.is(writerName).and("tags").in(massageTags);
+
+		if (search != null)
+			criteria.andOperator(new Criteria().orOperator(
+					Criteria.where("title").regex(search),
+					Criteria.where("content").regex(search)));
 
 		this.filter(criteria, sort);
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
-
 	public List<Post> getPostsWithMassageTag(
 			// 메세지 태그를 이용하여 글을 검색
-			List<String> massageTags, String writerName, String search,
+			List<String> massageTags, String search,String writerName, 
 			boolean my, String sort, int page, int size) {
-
 		Criteria criteria;
 
 		if (my)
 			criteria = new Criteria().orOperator(
-					Criteria.where("kind").is(3).and("writerName")
-							.is(writerName).and("tags").in(massageTags),
+					Criteria.where("kind").is(3).andOperator(
+					Criteria.where("tags").in(massageTags)),
 					Criteria.where("kind").is(3).and("writerName")
 							.is(writerName));
 		else
@@ -287,12 +288,12 @@ public class PostDao {
 
 	public long countMyPosts(
 			// 자신의 글 숫자를 셈.
-			List<String> publicTags, String writerName, String search,
+			List<String> publicTags,List<String> privateTags, String writerName, String search,
 			String sort) {
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(Criteria.where("writerName").is(writerName),
-				Criteria.where("tags").in("@" + writerName));
+				Criteria.where("tags").in(privateTags));
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -309,12 +310,12 @@ public class PostDao {
 
 	public List<Post> getMyPosts(
 			// 자기글과 자기한테 온 메세지를 검색함.
-			List<String> publicTags, String writerName, String search,
+			List<String> publicTags,List<String> privateTags,  String writerName, String search,
 			String sort, int page, int size) {
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(Criteria.where("writerName").is(writerName),
-				Criteria.where("tags").in("@" + writerName));
+				Criteria.where("tags").in(privateTags));
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -334,8 +335,8 @@ public class PostDao {
 	}
 
 	public long countMyProjectPosts( // 자기가 진행중인 프로젝트 글 숫자를 셈.
-			List<String> projectTags, String search, String sort) {
-		Criteria criteria = new Criteria("tags").in(projectTags);
+			List<String> privateTags, String search, String sort) {
+		Criteria criteria = new Criteria("tags").in(privateTags);
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -349,9 +350,9 @@ public class PostDao {
 
 	public List<Post> getMyProjectPosts(
 			// 자기가 진행중인 프로젝트의 글을 검색함.
-			List<String> projectTags, String search, String sort, int page,
+			List<String> privateTags, String search, String sort, int page,
 			int size) {
-		Criteria criteria = new Criteria("tags").in(projectTags);
+		Criteria criteria = new Criteria("tags").in(privateTags);
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(

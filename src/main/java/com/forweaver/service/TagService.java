@@ -15,7 +15,7 @@ public class TagService {
 	public boolean validateTag(List<String> tagList,Weaver weaver) {
 
 		List<String> publicTags = new ArrayList<String>();
-		List<String> projectTags = new ArrayList<String>();
+		List<String> privateTags = new ArrayList<String>();
 		List<String> massageTags = new ArrayList<String>();
 
 		if (tagList.size() == 0)
@@ -23,7 +23,7 @@ public class TagService {
 		for (String tag : tagList) {
 			if (tag.startsWith("@")){
 				if (tag.contains("/"))
-					projectTags.add(tag);
+					privateTags.add(tag);
 				else
 					massageTags.add(tag);
 			}
@@ -31,13 +31,13 @@ public class TagService {
 				publicTags.add(tag);
 		}
 
-		if (projectTags.size() == 0) // 권한을 가진 태그가 없고
+		if (privateTags.size() == 0) // 권한을 가진 태그가 없고
 			if ((massageTags.size() == 0 && publicTags.size() > 0) || 
 					// 개인 태그와 일반 태그 둘중 하나가 없을때
 					(massageTags.size() > 0 && publicTags.size() == 0 && weaver != null)) {
 				return true;
 			}
-		if (projectTags.size() >= 2) // 권한을 가진 태그가 2개일때
+		if (privateTags.size() >= 2) // 권한을 가진 태그가 2개일때
 			return false;
 
 		if (massageTags.size() >= 1) // 권한을 가진 태그가 있고 메세지 태그가 있을때
@@ -47,7 +47,7 @@ public class TagService {
 			return false;
 
 		for (Pass pass : weaver.getPasses()) { // 권한 검증
-			if (projectTags.get(0).
+			if (privateTags.get(0).
 					equals("@" + pass.getJoinName())) {
 				return true;
 			}

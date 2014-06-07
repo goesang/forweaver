@@ -182,8 +182,8 @@ public class PostController {
         }
 		
 		Post post = new Post(weaver,
-				WebUtil.simpleStringToMarkup(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title)))), 
-				WebUtil.stringToMarkup(WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))))), 
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
 				tagList);
 		
 		postService.add(post,datas);
@@ -236,7 +236,7 @@ public class PostController {
 		
 		RePost rePost = new RePost(postID,
 				weaver,
-				WebUtil.stringToMarkup(WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))))),
+				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))),
 				post.getKind());
 		post.setRecentRePostDate(rePost.getCreated());
 		post.addRePostCount();		
@@ -260,7 +260,7 @@ public class PostController {
 			return "redirect:/community/"+rePost.getOriginalPostID();
 		
 		rePost.addReply(new Reply(weaver.getId(), weaver.getEmail(), 
-				WebUtil.simpleStringToMarkup(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))))));
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
 		rePostService.update(rePost);	
 						
 		return "redirect:/community/"+rePost.getOriginalPostID();
@@ -317,13 +317,11 @@ public class PostController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(post == null || weaver == null || !post.getWriterName().equals(weaver.getId()))
 			return "redirect:/community";	
-		post.setContent(WebUtil.markupToString(post.getContent()));
-		post.setTitle(WebUtil.markupToString(post.getTitle()));
 		model.addAttribute("post", post);
 		
 		return "/post/updatePost";
 	}
-	
+	// 수정 필요함
 	@RequestMapping(value="/{postID}/update", method = RequestMethod.POST)
 	public String update(@PathVariable("postID") int postID,HttpServletRequest request) throws UnsupportedEncodingException {		
 		
@@ -346,11 +344,11 @@ public class PostController {
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
 			return "redirect:/community/"+postID;	
 		
-		post.setTitle(WebUtil.simpleStringToMarkup(WebUtil.removeHtml(WebUtil.specialSignDecoder(title))));
-		post.setContent(WebUtil.stringToMarkup(WebUtil.convertHtml(WebUtil.specialSignDecoder(WebUtil.removeHtml(content)))));
+		post.setTitle(WebUtil.removeHtml(WebUtil.specialSignDecoder(title)));
+		post.setContent(WebUtil.convertHtml(WebUtil.specialSignDecoder(WebUtil.removeHtml(content))));
 		post.setTags(tagService.stringToTagList(tags));		
 		
-		//postService.update(post);
+		postService.update(post,fileRemoveList);
 						
 		return "redirect:/community/"+postID;	
 	}
@@ -364,7 +362,6 @@ public class PostController {
 		if(post == null || rePost == null || weaver == null || !rePost.getWriterName().equals(weaver.getId()))
 			return "redirect:/community/"+postID;	
 		model.addAttribute("post", post);
-		rePost.setContent(WebUtil.markupToString(rePost.getContent()));
 		model.addAttribute("rePost", rePost);
 		
 		return "/post/updateRePost";
@@ -385,7 +382,6 @@ public class PostController {
 		if(!tagService.validateTag(post.getTags(),weaver)) // 태그에 권한이 없을때
 			return "redirect:/community";	
 		
-		rePost.setContent(WebUtil.stringToMarkup(WebUtil.convertHtml(WebUtil.specialSignDecoder(WebUtil.removeHtml(content)))));		
 		rePostService.update(rePost);
 						
 		return "redirect:/community/"+postID;	

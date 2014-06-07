@@ -187,7 +187,7 @@ public class Weaver implements UserDetails,Serializable {
 			if(!pass.getJoinName().startsWith("ROLE"))
 			passNames.add("@"+pass.getJoinName());
 		}
-		passNames.add("@"+this.id);
+		passNames.add("$"+this.id);
 		return passNames;
 	}
 	

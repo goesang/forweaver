@@ -150,10 +150,7 @@
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
 					fileName = fileName.substring(12);
-				
-				if(imgCheck(fileName))
-					$("#post-content-textarea").val($("#post-content-textarea").val()+"[tmpimg "+fileName+"]");
-					
+								
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 			fileCount++;
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
@@ -291,14 +288,13 @@
 							<tr>
 								<td class="post-bottom"><a href="/${post.writerName}"><b>${post.writerName}</b></a>
 									${post.getFormatCreated()}</td>
-								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
-										var="tag">
+								<td class="post-bottom-tag"><c:forEach	items="${post.tags}" var="tag">
 										<span
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private
 										</c:if>
-										<c:if test="${tag.startsWith('@') && tag.contains('/')}">
+										<c:if test="${tag.startsWith('$')}">
 										tag-massage
 										</c:if>
 										">${tag}</span>

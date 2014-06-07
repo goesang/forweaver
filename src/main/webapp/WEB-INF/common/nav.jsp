@@ -11,7 +11,7 @@
 				<ul class="nav">
 					<li><a href="/">처음화면</a></li>
 					<li><a href="/forweaver">소개</a></li>
-					<li><a href="/project/"><i class="fa fa-graduation-cap icon-white"></i>&nbsp;&nbsp;강의</a></li>
+					<li><a href="/lecture/"><i class="fa fa-graduation-cap icon-white"></i>&nbsp;&nbsp;강의</a></li>
 					<li><a href="/project/"><i class="fa fa-bookmark icon-white"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket  icon-white"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments  icon-white"></i>&nbsp;커뮤니티</a></li>

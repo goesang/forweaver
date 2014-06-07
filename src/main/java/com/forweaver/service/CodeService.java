@@ -3,6 +3,7 @@ package com.forweaver.service;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -25,7 +26,9 @@ public class CodeService {
 
 	public void add(Code code, MultipartFile file) {
 		try {
-			if (file.getContentType().equals("application/x-zip-compressed")) { 
+			System.out.println(file.getOriginalFilename());
+			
+			if (file.getContentType().equals("application/x-zip-compressed") && file.getOriginalFilename().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
 				
 				ZipInputStream in = new ZipInputStream(file.getInputStream());
@@ -50,15 +53,30 @@ public class CodeService {
 					entry = in.getNextEntry();
 				}
 				in.close();
-
-			} else { // 압축파일이 아닌 일반 파일의 경우
-				code.addSimpleCode(new SimpleCode(file.getName(), file
-						.getBytes().toString())); // 일반 파일의 경우
+				codeDao.insert(code);
+			} else if(file.getOriginalFilename().endsWith(".c") || file.getOriginalFilename().endsWith(".h")|| file.getOriginalFilename().endsWith(".ino")
+					|| file.getOriginalFilename().endsWith(".java")|| file.getOriginalFilename().endsWith(".py")|| file.getOriginalFilename().endsWith(".cpp")
+					|| file.getOriginalFilename().endsWith(".html")|| file.getOriginalFilename().endsWith(".css")|| file.getOriginalFilename().endsWith(".pl")
+					|| file.getOriginalFilename().endsWith(".sql")|| file.getOriginalFilename().endsWith(".asm")|| file.getOriginalFilename().endsWith(".cs")
+					|| file.getOriginalFilename().endsWith(".rb")|| file.getOriginalFilename().endsWith(".txt")|| file.getOriginalFilename().endsWith(".js")){ // 압축파일이 아닌 일반 파일의 경우
+				
+				byte[] buf = new byte[1024];
+				int len;
+				String content = "";
+				InputStream is = file.getInputStream();
+                while ((len = is.read(buf)) != -1)
+                {
+                	content += new String(buf, 0, len);
+                }
+                
+				code.addSimpleCode(new SimpleCode(file.getOriginalFilename(), content)); // 일반 파일의 경우
+				codeDao.insert(code);
 			}
+			
 		} catch (IOException e) {
 			return;
 		}
-		codeDao.insert(code);
+		
 	}
 
 	public Code get(int codeID) {

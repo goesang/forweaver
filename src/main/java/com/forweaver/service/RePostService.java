@@ -34,9 +34,10 @@ public class RePostService {
 	private CacheManager cacheManager;
 	
 	public void add(RePost rePost,List<Data> datas) {
-		Map<String,String> fileMap = dataDao.insert(datas);
-		rePost.insertDataList(fileMap);
-		rePost.setContent(WebUtil.stringToMarkup(rePost.getContent(), fileMap));
+		if(datas.size() > 0){
+			Map<String,String> fileMap = dataDao.insert(datas);
+			rePost.insertDataList(fileMap);
+		}
 		rePostDao.insert(rePost);
 		cacheManager.getCache("post").remove(rePost.getOriginalPostID());
 	}

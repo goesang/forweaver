@@ -9,9 +9,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Project;
 
+@Repository
 public class ProjectDao {
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -38,7 +40,6 @@ public class ProjectDao {
 		Update update = new Update();
 		update.set("category", project.getCategory());
 		update.set("description", project.getDescription());
-		update.set("image", project.getImage());
 		update.set("tags", project.getTags());
 		update.set("push", project.getPush());
 		mongoTemplate.updateFirst(query, update, Project.class);

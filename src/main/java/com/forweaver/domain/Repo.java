@@ -27,7 +27,10 @@ public class Repo implements Serializable {
 		this.description = description;
 		this.openingDate = new Date();
 		int day = (1000*60*60*24);
-		this.deadLine = new Date(this.openingDate.getTime()+day*deadLine);
+		if(deadLine == 0)
+			this.deadLine = null;
+		else
+			this.deadLine = new Date(this.openingDate.getTime()+day*deadLine);
 		this.lectureName = lecture.getName();
 	}
 

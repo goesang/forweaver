@@ -26,6 +26,9 @@ public class CodeDao {
 			return;
 		}
 		Code lastCode = getLast();
+		if(lastCode == null)
+			code.setCodeID(1);
+		else
 		code.setCodeID(lastCode.getCodeID() + 1);
 		mongoTemplate.insert(code);
 	}

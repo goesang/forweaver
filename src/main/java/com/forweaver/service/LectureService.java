@@ -1,6 +1,9 @@
-/*package com.forweaver.service;
+package com.forweaver.service;
 
+import java.io.File;
 import java.util.List;
+
+import javax.servlet.jsp.tagext.Tag;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -9,52 +12,47 @@ import net.sf.ehcache.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.forweaver.dao.LectureDao;
-import com.forweaver.dao.PassDao;
-import com.forweaver.dao.RepoDao;
-import com.forweaver.dao.TagDao;
-import com.forweaver.dao.WeaverDao;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
-import com.forweaver.domain.Project;
 import com.forweaver.domain.Repo;
-import com.forweaver.domain.Tag;
 import com.forweaver.domain.Weaver;
+import com.forweaver.mongodb.dao.LectureDao;
+import com.forweaver.mongodb.dao.WeaverDao;
+import com.forweaver.util.GitUtil;
 
 @Service
 public class LectureService {
 	@Autowired
 	private LectureDao lectureDao;
 	@Autowired
-	private PassDao passDao;
-	@Autowired
 	private WeaverDao weaverDao;
-	@Autowired
-	private RepoDao repoDao;
-	@Autowired
-	private TagDao tagDao;
 	@Autowired
 	private CacheManager cacheManager;
 
 	public void add(Lecture lecture,Weaver currentWeaver) {
 		
-		int lectureID = lectureDao.add(lecture);
+		if(weaverDao.get(lecture.getName()) != null || lectureDao.get(lecture.getName()) != null)
+			return; // 중복 검사
 		
-		if(lecture.getCategory() != 2)
-		for (Tag tag : lecture.getTags()) {
-			tagDao.add(tag.getTagName());
-			tagDao.insertLAT(tagDao.get(tag.getTagName()).getTagID(),lectureID);
+		lecture.addAdminWeaver(currentWeaver);
+		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0, lecture);
+		lecture.addRepo(repo);
+		lectureDao.add(lecture);
+		
+		Pass pass = new Pass(lecture.getName(), 1); // 강의의 생성자 권한을 부여
+		currentWeaver.addPass(pass);
+		weaverDao.update(currentWeaver);
+		
+		
+		File file = new File(GitUtil.GitPath + lecture.getName());
+		file.mkdir();
+		
+		try{
+			GitUtil gitUtil = new GitUtil(repo);
+			gitUtil.createRepository();
+		} catch (Exception e) {
+			System.err.println("예제 저장소 생성 불가");
 		}
-		
-		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",3, lecture);
-		
-		repoDao.add(repo);
-
-
-		Pass pass = new Pass(lecture.getCreatorName(), lecture.getName(), 1, 1); 
-		// 강의의 생성자 권한을 부여
-		currentWeaver.getPasses().add(pass);
-		passDao.add(pass);
 		
 		Cache cache = cacheManager.getCache("lecture");
 		Element newElement = new Element(lecture.getName(), lecture);
@@ -67,7 +65,6 @@ public class LectureService {
 		Element element = cache.get(name);
 		if (element == null) {
 			Lecture lecture = lectureDao.get(name);
-			
 			Element newElement = new Element(name, lecture);
 			cache.put(newElement);
 			return lecture;
@@ -80,64 +77,53 @@ public class LectureService {
 		if (lecture == null || deleteWeaver == null
 				|| deleteWeaver.getPass(lecture.getName()) == null) {
 		}
-		if (lecture.getCreatorName().equals(currentWeaver.getNickName()) || // 관리자가 탈퇴시키거나
-				currentWeaver.getNickName().equals(deleteWeaver.getNickName())) { // 본인이 나가거나
+		else if (lecture.getCreatorName().equals(currentWeaver.getId()) || // 관리자가 탈퇴시키거나
+				currentWeaver.getId().equals(deleteWeaver.getId())) { // 본인이 나가거나
 			deleteWeaver.deletePass(lecture.getName());
-			for (int i = 0; i < lecture.getJoinWeavers().size(); i++) {
-				if (lecture.getJoinWeavers().get(i).getNickName()
-						.equals(deleteWeaver.getNickName())) {
-					passDao.deleteWeaverOnLecture(lecture.getName(),
-							deleteWeaver.getNickName());
-					lecture.getJoinWeavers().remove(i);
-					return true;
-				}
-			}
+			lecture.removeJoinWeaver(deleteWeaver);
+			
+			weaverDao.update(deleteWeaver);
+			lectureDao.update(lecture);
+			
+			return true;
 		}
 		return false;
 	}
 
-	public void delete(Lecture lecture) {
+	public boolean delete(Weaver weaver,Lecture lecture) {
 		// TODO Auto-generated method stub
-
-		lectureDao.delete(lecture);
-		tagDao.deleteAllLAT(lecture.getLectureID());
-		passDao.deleteLecturePass(lecture.getName());
-		cacheManager.getCache("lecture").remove(lecture.getName());
+		if(weaver.getId().equals(lecture.getCreatorName())){
+			lectureDao.delete(lecture);
+			cacheManager.getCache("lecture").remove(lecture.getName());
+			return true;
+		}
+		return false;
 	}
 
-	public int countLectures() {
+	public long countLectures(String sort) {
 		// TODO Auto-generated method stub
-		return lectureDao.countLectures();
+		return lectureDao.countLectures(null, null, null, sort);
 	}
 
-	public List<Lecture> getLectures(int pageNumber, int lineNumber) {
+	public List<Lecture> getLectures(String sort,int pageNumber, int lineNumber) {
 		// TODO Auto-generated method stub
-		return lectureDao.getLectures(pageNumber, lineNumber);
+		return lectureDao.getLectures(null, null, null, sort, pageNumber, lineNumber);
 	}
 
-	public int countLecturesWithTags(List<Tag> tags) {
+	public long countLecturesWithTags(List<String> tags,String sort) {
 		// TODO Auto-generated method stub
-		return lectureDao.countLecturesWithTags(tags);
+		return lectureDao.countLectures(tags, null, null, sort);
 	}
 
-	public List<Lecture> getLecturesWithTags(List<Tag> tags, int pageNumber,
+	public List<Lecture> getLecturesWithTags(List<String> tags,String sort, int pageNumber,
 			int lineNumber) {
 		// TODO Auto-generated method stub
-		return lectureDao.getLecturesWithTags(tags, pageNumber, lineNumber);
+		return lectureDao.getLectures(tags, null, null, sort, pageNumber, lineNumber);
 	}
 
 	public List<Lecture> checkJoinLecture(List<Lecture> lectures,
 			Weaver currentWeaver) {
-		if (currentWeaver == null)
-			return lectures;
-		for (Lecture lecture : lectures) {
-			for (Pass pass : currentWeaver.getPasses()) {
-				if (lecture.getName().equals(pass.getJoinName())) {
-					lecture.setTmpPermission(pass.getPermission() + 1);
-				}
-			}
-		}
-		return lectures;
+		return null;
 	}
 
 	public boolean push(Lecture lecture, Weaver weaver) {
@@ -150,11 +136,10 @@ public class LectureService {
 		if (element == null) {
 			lecture.push();
 			lectureDao.update(lecture);
-			Element newElement = new Element(lecture.getName(), weaver.getNickName());
+			Element newElement = new Element(lecture.getName(), weaver.getId());
 			cache.put(newElement);
 			return true;
 		}
 		return false;
 	}
 }
-*/

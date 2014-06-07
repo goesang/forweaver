@@ -7,70 +7,8 @@
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
-	<script type="text/javascript">
-	var fileCount = 1;
-	
-	function checkPost(){
-		var fileArray = [];
-		for(var i=0;i<fileCount;i++){
-			var fileName = $("#file"+(i+1)).val();
-			
-			if(fileName.indexOf("C:\\fakepath\\") != -1)
-				fileName = fileName.substring(12);
-			
-			if(containsObject(fileArray,fileName)){
-				alert("중복되는 파일이 있습니다!");
-				return false;
-			}
-			else
-				fileArray[i] = fileName;
-			
-		}
-		
-		if($('#post-title-input').val() == ""){
-			alert("아무것도 입력하시지 않았습니다!");
-			return false;
-		}else
-			return true;
-	}
-	
-		function showPostContent() {
-			$('#page-pagination').hide();
-			$('#post-table').hide();
-			$('#post-content-textarea').fadeIn('slow');
-
-			$('#show-content-button').hide();
-			$('#hide-content-button').show();
-			$('.file-div').fadeIn('slow');
-			editorMode = true;
-		}
-
-		function hidePostContent() {
-			$('#page-pagination').show();
-			$('#post-table').show();
-			$('#post-content-textarea').hide();
-
-			$('#show-content-button').show();
-			$('#hide-content-button').hide();
-			$('.file-div').hide();
-			editorMode = false;
-		}
-
+	<script type="text/javascript">	
 		$(function() {
-			
-			hidePostContent();
-			
-			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-					    "<i class='icon-upload icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
-					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-					  "</div>"+
-					"</div>");
-			
-			
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
 			
 					$('.tag-name').click(
@@ -95,29 +33,13 @@
 					$('#search-button').click(
 							function() {
 									var tagNames = $("input[name='tags']").val();
+									if(tagNames.length == 2){
+										alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
+										return;
+									}
 									moveUserPage("${weaver.getId()}",tagNames,$('#post-title-input').val());							
 							});
 					
-					$('#post-ok').click(function(){
-						var title = encodeURI(spacialSignEncoder($('#post-title-input').val()));
-						if(title.length == 0){
-							alert("글 제목을 입력하시지 않았습니다. 글 제목을 입력해주세요!");
-							return;
-						}
-						if(editorMode)
-							content = encodeURI(spacialSignEncoder($('#post-content-textarea').val()));
-						
-					});
-					
-					$('#post-title-input').val(getSearchWord(document.location.href));
-					
-					$('#post-title-input').keyup(
-							function(e) {
-								if(!editorMode && e.keyCode == 13){
-									var tagNames = $("input[name='tags']").val();
-									moveUserPage("${weaver.getId()}",tagNames,$('#post-title-input').val());
-								}
-							});
 					var pageCount = ${postCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
@@ -133,37 +55,6 @@
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
 		});
 
-		function fileUploadChange(fileUploader){
-			var fileName = $(fileUploader).val();
-			
-			$(function (){
-			if(fileName !=""){ // 파일을 업로드하거나 수정함
-				if(fileName.indexOf("C:\\fakepath\\") != -1)
-					fileName = fileName.substring(12);
-				
-				if(imgCheck(fileName))
-					$("#post-content-textarea").val($("#post-content-textarea").val()+"[tmpimg "+fileName+"]");
-					
-				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-			fileCount++;
-			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-					    "<i class='icon-upload icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-					   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-					  "</div>"+
-					"</div>");
-				}
-			}else{
-				if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
-					
-				$("#file"+fileCount).parent().parent().remove();
-
-					--fileCount;
-			}}});
-		}
 		
 	</script>
 	<div class="container">
@@ -201,9 +92,6 @@
 				</ul>
 			</div>
 
-			<form id="postForm" onsubmit="return checkPost()" action="/community/add"
-				enctype="multipart/form-data" method="post">
-
 				<div class="span11">
 					<input name="title" id="post-title-input" class="title span11"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text" />
@@ -215,19 +103,6 @@
 					</a> 
 					</span>
 				</div>
-				<div class="span12">
-
-
-					<textarea name="content" id="post-content-textarea"
-						class="post-content span12" onkeyup="textAreaResize(this)"
-						placeholder="글 내용을 입력해주세요!"></textarea>
-					<div class="file-div"></div>
-
-				</div>
-
-
-			</form>
-
 			<div class="span12">
 
 				<table id="post-table" class="table table-hover">

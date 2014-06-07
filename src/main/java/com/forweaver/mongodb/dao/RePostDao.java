@@ -25,7 +25,10 @@ public class RePostDao {
 			return;
 		}
 		RePost lastRePost = getLast();
-		rePost.setRePostID(lastRePost.getRePostID() + 1);
+		if(lastRePost == null)
+			rePost.setRePostID(1);
+		else
+			rePost.setRePostID(lastRePost.getRePostID() + 1);
 		mongoTemplate.insert(rePost);
 	}
 

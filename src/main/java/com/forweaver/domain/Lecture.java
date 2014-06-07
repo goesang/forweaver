@@ -16,12 +16,10 @@ public class Lecture implements Serializable {
 	static final long serialVersionUID = 42313124234L;
 	@Id
 	private String name; //강의 이름 이게 기본 키
-	private int category; // 강의 종류 값이 1이면 공개 강의 2이면 비공개 강의.
 	private String description; // 강의 소개
 	private Date openingDate; // 강의 시작일
 	private String creatorName; // 강의 개설자 이름
 	private String creatorEmail; // 강의 개설자 이메일
-	private Data image; // 강의 이미지
 	private int push; // 강의 추천수
 	
 	private List<String> tags = new ArrayList<String>(); // 강의의 태그 모음
@@ -29,20 +27,20 @@ public class Lecture implements Serializable {
 	private List<String> adminWeavers = new ArrayList<String>(); // 관리자들
 	private List<String> joinWeavers = new ArrayList<String>(); // 비 관리자 회원들
 	
+	private List<Repo> repos = new ArrayList<Repo>(); 
+	
 	public Lecture() {
 		
 	}
 	
-	public Lecture(String name, int category, String description,
+	public Lecture(String name, String description,
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
-		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();
 		this.creatorName = weaver.getId();
 		this.creatorEmail = weaver.getEmail();
-		this.image = weaver.getImage();
 		this.adminWeavers.add(creatorName);
 		this.tags = tagList;
 	}
@@ -53,14 +51,6 @@ public class Lecture implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public int getCategory() {
-		return category;
-	}
-
-	public void setCategory(int category) {
-		this.category = category;
 	}
 
 	public String getDescription() {
@@ -107,21 +97,16 @@ public class Lecture implements Serializable {
 	public void addJoinWeaver(Weaver weaver){
 		this.joinWeavers.add(weaver.getId());
 	}
+	
+	public void removeJoinWeaver(Weaver weaver){
+		this.joinWeavers.remove(weaver.getId());
+	}
 	public List<String> getTags() {
 		return tags;
 	}
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
-	}
-
-
-	public Data getImage() {
-		return image;
-	}
-
-	public void setImage(Data image) {
-		this.image = image;
 	}
 
 	public int getPush() {
@@ -151,6 +136,28 @@ public class Lecture implements Serializable {
 	public void setJoinWeavers(List<String> joinWeavers) {
 		this.joinWeavers = joinWeavers;
 	}
+
+	public List<Repo> getRepos() {
+		return repos;
+	}
+
+	public void setRepos(List<Repo> repos) {
+		this.repos = repos;
+	}
 	
+	public void addRepo(Repo repo){
+		this.repos.add(repo);
+	}
+	
+	public void removeRepo(Repo repo){
+		this.repos.remove(repo);
+	}
+	
+	public Repo getRepo(String repoName){
+		for(Repo repo: this.repos)
+			if(repo.getName().equals(repoName))
+				return repo;
+		return null;
+	}
 	
 }

@@ -21,7 +21,6 @@ public class Project implements Serializable {
 	private Date openingDate; // 프로젝트 시작일
 	private String creatorName; // 프로젝트 개설자 이름
 	private String creatorEmail; // 프로젝트 개설자 이메일
-	private Data image; // 프로젝트 이미지
 	private int push; // 프로젝트 추천수
 	
 	private List<String> tags = new ArrayList<String>(); // 프로젝트의 태그 모음
@@ -42,7 +41,6 @@ public class Project implements Serializable {
 		this.openingDate = new Date();
 		this.creatorName = weaver.getId();
 		this.creatorEmail = weaver.getEmail();
-		this.image = weaver.getImage();
 		this.adminWeavers.add(creatorName);
 		this.tags = tagList;
 	}
@@ -115,14 +113,6 @@ public class Project implements Serializable {
 		this.tags = tags;
 	}
 
-
-	public Data getImage() {
-		return image;
-	}
-
-	public void setImage(Data image) {
-		this.image = image;
-	}
 
 	public int getPush() {
 		return push;

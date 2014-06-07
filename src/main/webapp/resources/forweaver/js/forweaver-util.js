@@ -43,6 +43,14 @@ function deletePost(postID){
 	}
 }
 
+function deleteCode(codeID){
+	if (confirm("정말로 코드를 삭제하시겠습니까?")){
+		window.location =	"/code/"+codeID+"/delete";
+	}else{
+	    return;
+	}
+}
+
 function pushRePost(postID,rePostID){
 	if (confirm("정말 추천하시겠습니까?")){
 		window.location =	"/community/"+postID+"/"+rePostID+"/push";

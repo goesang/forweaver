@@ -9,14 +9,16 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Lecture;
 
+@Repository
 public class LectureDao {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
-	public void insert(Lecture lecture) { // 강의 생성함.
+	public void add(Lecture lecture) { // 강의 생성함.
 		
 		if (!mongoTemplate.collectionExists(Lecture.class)) {
 			mongoTemplate.createCollection(Lecture.class);
@@ -36,18 +38,16 @@ public class LectureDao {
 	public void update(Lecture lecture) { // 강의 수정하기
 		Query query = new Query(Criteria.where("_id").is(lecture.getName()));
 		Update update = new Update();
-		update.set("category", lecture.getCategory());
 		update.set("description", lecture.getDescription());
-		update.set("image", lecture.getImage());
 		update.set("tags", lecture.getTags());
 		update.set("push", lecture.getPush());
 		mongoTemplate.updateFirst(query, update, Lecture.class);
 	}
 	
-	public long countLectures( // 로그인하지 않은 회원이 글을 셈.
+	public long countLectures( // 강의 검색하고 숫자를 셈
 			List<String> tags,
 			String search,
-			String writerName,
+			String creatorName,
 			String sort) {
 		Criteria criteria = new Criteria();
 		
@@ -57,15 +57,16 @@ public class LectureDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(writerName != null)
-			criteria.and("writerName").is(writerName);
+		
+		if(creatorName != null)
+			criteria.and("writerName").is(creatorName);
 			
 		this.filter(criteria, sort);
 
 		return mongoTemplate.count(new Query(criteria), Lecture.class);
 	}
 	
-	public List<Lecture> getLectures( // 로그인하지 않은 회원이 강의를 검색
+	public List<Lecture> getLectures( // 강의를 검색
 			List<String> tags,
 			String search,
 			String creatorName,
