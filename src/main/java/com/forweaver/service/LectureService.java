@@ -3,8 +3,6 @@ package com.forweaver.service;
 import java.io.File;
 import java.util.List;
 
-import javax.servlet.jsp.tagext.Tag;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -34,7 +32,6 @@ public class LectureService {
 		if(weaverDao.get(lecture.getName()) != null || lectureDao.get(lecture.getName()) != null)
 			return; // 중복 검사
 		
-		lecture.addAdminWeaver(currentWeaver);
 		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0, lecture);
 		lecture.addRepo(repo);
 		lectureDao.add(lecture);
@@ -58,6 +55,7 @@ public class LectureService {
 		Element newElement = new Element(lecture.getName(), lecture);
 		cache.put(newElement);
 	}
+	
 
 	public Lecture get(String name) {
 		// TODO Auto-generated method stub
@@ -79,6 +77,7 @@ public class LectureService {
 		}
 		else if (lecture.getCreatorName().equals(currentWeaver.getId()) || // 관리자가 탈퇴시키거나
 				currentWeaver.getId().equals(deleteWeaver.getId())) { // 본인이 나가거나
+			
 			deleteWeaver.deletePass(lecture.getName());
 			lecture.removeJoinWeaver(deleteWeaver);
 			
@@ -89,6 +88,28 @@ public class LectureService {
 		}
 		return false;
 	}
+	
+	
+	public boolean addWeaver(Lecture lecture, Weaver currentWeaver,
+			Weaver deleteWeaver) { // 강의중인 학생을 탈퇴시킴
+		if (lecture == null || deleteWeaver == null
+				|| deleteWeaver.getPass(lecture.getName()) == null) {
+		}
+		else if (lecture.getCreatorName().equals(currentWeaver.getId()) || // 관리자가 탈퇴시키거나
+				currentWeaver.getId().equals(deleteWeaver.getId())) { // 본인이 나가거나
+			
+			deleteWeaver.deletePass(lecture.getName());
+			lecture.removeJoinWeaver(deleteWeaver);
+			
+			weaverDao.update(deleteWeaver);
+			lectureDao.update(lecture);
+			
+			return true;
+		}
+		return false;
+	}
+	
+	
 
 	public boolean delete(Weaver weaver,Lecture lecture) {
 		// TODO Auto-generated method stub
@@ -105,9 +126,17 @@ public class LectureService {
 		return lectureDao.countLectures(null, null, null, sort);
 	}
 
-	public List<Lecture> getLectures(String sort,int pageNumber, int lineNumber) {
+	public List<Lecture> getLectures(Weaver currentWeaver,String sort,int pageNumber, int lineNumber) {
 		// TODO Auto-generated method stub
-		return lectureDao.getLectures(null, null, null, sort, pageNumber, lineNumber);
+		List<Lecture> lectures = lectureDao.getLectures(null, null, null, sort, pageNumber, lineNumber);
+		
+		if(currentWeaver != null)
+			for(Lecture lecture:lectures){
+				if(currentWeaver.getPass(lecture.getName()) != null)
+					lecture.setJoin(true);
+			}
+				
+		return lectures;
 	}
 
 	public long countLecturesWithTags(List<String> tags,String sort) {
@@ -115,31 +144,22 @@ public class LectureService {
 		return lectureDao.countLectures(tags, null, null, sort);
 	}
 
-	public List<Lecture> getLecturesWithTags(List<String> tags,String sort, int pageNumber,
+	public List<Lecture> getLecturesWithTags(Weaver currentWeaver,List<String> tags,String sort, int pageNumber,
 			int lineNumber) {
-		// TODO Auto-generated method stub
-		return lectureDao.getLectures(tags, null, null, sort, pageNumber, lineNumber);
-	}
-
-	public List<Lecture> checkJoinLecture(List<Lecture> lectures,
-			Weaver currentWeaver) {
-		return null;
-	}
-
-	public boolean push(Lecture lecture, Weaver weaver) {
-		if(lecture == null || weaver == null)
-			return false;
+		// TODO Auto-generated method stub	
+		List<Lecture> lectures = lectureDao.getLectures(tags, null, null, sort, pageNumber, lineNumber);
 		
-		cacheManager.getCache("lecture").remove(lecture.getName());
-		Cache cache = cacheManager.getCache("push");
-		Element element = cache.get(lecture.getName());
-		if (element == null) {
-			lecture.push();
-			lectureDao.update(lecture);
-			Element newElement = new Element(lecture.getName(), weaver.getId());
-			cache.put(newElement);
-			return true;
-		}
-		return false;
+		if(currentWeaver != null)
+			for(Lecture lecture:lectures){
+				if(currentWeaver.getPass(lecture.getName()) != null)
+					lecture.setJoin(true);
+			}
+				
+		return lectures;
+	}
+
+	
+	public void update(Lecture lecture) {
+		lectureDao.update(lecture);
 	}
 }

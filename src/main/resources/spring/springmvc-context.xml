@@ -18,7 +18,7 @@
 <mvc:annotation-driven/>
 	<mvc:interceptors>
     <mvc:interceptor>
-    <mvc:mapping path="/*"/>
+    <mvc:mapping path="/lecture/**"/>
     <bean class="com.forweaver.intercepter.Permission"/>
     </mvc:interceptor>
 </mvc:interceptors>

@@ -12,7 +12,7 @@
 var repoList = new Array();
 var lectureName = "${lecture.name}";
 
-<c:forEach items="${lecture.repoes}" var="repo">
+<c:forEach items="${lecture.repos}" var="repo">
 repoList.push({
 	"name": "${repo.name}",
 	"openDate": "${repo.getOpeningDateFormat()}",
@@ -68,7 +68,7 @@ var editorMode = false;
 				$.ajax({
 		               type: "POST",
 		               url: "/lecture/${lecture.name}/repo/add",
-		               data: 'name='+name+'&description='+description+'&period='+period+'&category='+category,
+		               data: 'name='+name+'&description='+description+'&period='+period,
 		               success: function(msg){
 		            	   window.location = "/lecture/${lecture.name}/repo/"+name+"/browser";
 		               }
@@ -157,17 +157,9 @@ var editorMode = false;
 			
 				<div class="title-write-span">
 					<div style= "width:0px;"class="span1"></div>
-					<div class="span4 create-lecture">
-						<input class="title span4" placeholder="숙제명을 입력해주세요!"
+					<div class="span7 create-lecture">
+						<input class="title span7" placeholder="숙제명을 입력해주세요!"
 							id="repo-name-input" type="text"/>
-					</div>
-
-					<div class="span3 create-lecture">
-						<select id="repo-category-select">
-							<option disabled="disabled">이메일 알림여부</option>
-							<option value="1">승락</option>
-							<option value="2" selected="selected">거부</option>
-						</select>
 					</div>
 					<div class="span3 create-lecture">
 						<select id="repo-period-select">
@@ -199,7 +191,6 @@ var editorMode = false;
 				<%@ include file="/WEB-INF/common/footer.jsp"%>
 			</div>
 		</div>
-	</div>
 
 </body>
 </html>

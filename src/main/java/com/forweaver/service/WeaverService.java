@@ -81,11 +81,6 @@ public class WeaverService implements UserDetailsService {
 		return weaver;
 	}
 	
-	public Weaver get(long twitterID) { // 트위터 아이디로 회원 불러오기
-		Weaver weaver = weaverDao.getWithTwitterID(twitterID);
-		return weaver;
-	}
-	
 	
 
 	public Weaver getLoginWeaver(String id) {

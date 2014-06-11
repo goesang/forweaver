@@ -57,7 +57,7 @@ public class CodeService {
 			} else if(file.getOriginalFilename().endsWith(".c") || file.getOriginalFilename().endsWith(".h")|| file.getOriginalFilename().endsWith(".ino")
 					|| file.getOriginalFilename().endsWith(".java")|| file.getOriginalFilename().endsWith(".py")|| file.getOriginalFilename().endsWith(".cpp")
 					|| file.getOriginalFilename().endsWith(".html")|| file.getOriginalFilename().endsWith(".css")|| file.getOriginalFilename().endsWith(".pl")
-					|| file.getOriginalFilename().endsWith(".sql")|| file.getOriginalFilename().endsWith(".asm")|| file.getOriginalFilename().endsWith(".cs")
+					|| file.getOriginalFilename().endsWith(".sql")|| file.getOriginalFilename().endsWith(".php")|| file.getOriginalFilename().endsWith(".cs")
 					|| file.getOriginalFilename().endsWith(".rb")|| file.getOriginalFilename().endsWith(".txt")|| file.getOriginalFilename().endsWith(".js")){ // 압축파일이 아닌 일반 파일의 경우
 				
 				byte[] buf = new byte[1024];

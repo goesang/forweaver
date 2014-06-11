@@ -7,8 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.web.multipart.MultipartFile;
 
 @Document
 public class Lecture implements Serializable {
@@ -20,12 +21,16 @@ public class Lecture implements Serializable {
 	private Date openingDate; // 강의 시작일
 	private String creatorName; // 강의 개설자 이름
 	private String creatorEmail; // 강의 개설자 이메일
-	private int push; // 강의 추천수
+	
+	@Transient
+	private boolean isJoin;
 	
 	private List<String> tags = new ArrayList<String>(); // 강의의 태그 모음
 	
-	private List<String> adminWeavers = new ArrayList<String>(); // 관리자들
-	private List<String> joinWeavers = new ArrayList<String>(); // 비 관리자 회원들
+	@DBRef
+	private List<Weaver> adminWeavers = new ArrayList<Weaver>(); // 관리자들
+	@DBRef
+	private List<Weaver> joinWeavers = new ArrayList<Weaver>(); // 비 관리자 회원들
 	
 	private List<Repo> repos = new ArrayList<Repo>(); 
 	
@@ -36,12 +41,12 @@ public class Lecture implements Serializable {
 	public Lecture(String name, String description,
 			Weaver weaver,List<String> tagList) {
 		super();
-		this.name = weaver.getId()+"/"+name;
+		this.name = name;
 		this.description = description;
 		this.openingDate = new Date();
 		this.creatorName = weaver.getId();
 		this.creatorEmail = weaver.getEmail();
-		this.adminWeavers.add(creatorName);
+		this.adminWeavers.add(weaver);
 		this.tags = tagList;
 	}
 
@@ -91,15 +96,15 @@ public class Lecture implements Serializable {
 		this.creatorEmail = creatorEmail;
 	}
 	public void addAdminWeaver(Weaver weaver){
-		this.adminWeavers.add(weaver.getId());
+		this.adminWeavers.add(weaver);
 	}
 	
 	public void addJoinWeaver(Weaver weaver){
-		this.joinWeavers.add(weaver.getId());
+		this.joinWeavers.add(weaver);
 	}
 	
 	public void removeJoinWeaver(Weaver weaver){
-		this.joinWeavers.remove(weaver.getId());
+		this.joinWeavers.remove(weaver);
 	}
 	public List<String> getTags() {
 		return tags;
@@ -109,31 +114,19 @@ public class Lecture implements Serializable {
 		this.tags = tags;
 	}
 
-	public int getPush() {
-		return push;
-	}
-
-	public void setPush(int push) {
-		this.push = push;
-	}
-	
-	public void push(){
-		this.push +=1;
-	}
-
-	public List<String> getAdminWeavers() {
+	public List<Weaver> getAdminWeavers() {
 		return adminWeavers;
 	}
 
-	public void setAdminWeavers(List<String> adminWeavers) {
+	public void setAdminWeavers(List<Weaver> adminWeavers) {
 		this.adminWeavers = adminWeavers;
 	}
 
-	public List<String> getJoinWeavers() {
+	public List<Weaver> getJoinWeavers() {
 		return joinWeavers;
 	}
 
-	public void setJoinWeavers(List<String> joinWeavers) {
+	public void setJoinWeavers(List<Weaver> joinWeavers) {
 		this.joinWeavers = joinWeavers;
 	}
 
@@ -159,5 +152,17 @@ public class Lecture implements Serializable {
 				return repo;
 		return null;
 	}
+
+	public boolean isJoin() {
+		return isJoin;
+	}
+
+	public void setJoin(boolean isJoin) {
+		this.isJoin = isJoin;
+	}
+	public String getImgSrc(){
+		return "/img/"+this.creatorName;
+	}
+	
 	
 }

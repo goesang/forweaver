@@ -18,12 +18,12 @@ public class PostDao {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	public void insert(Post post) { // 글 추가하기
+	public int insert(Post post) { // 글 추가하기
 		if (!mongoTemplate.collectionExists(Post.class)) {
 			mongoTemplate.createCollection(Post.class);
 			post.setPostID(1);
 			mongoTemplate.insert(post);
-			return;
+			return 1;
 		}
 		Post lastPost = getLast();
 		if(lastPost == null)
@@ -31,6 +31,7 @@ public class PostDao {
 		else
 			post.setPostID(lastPost.getPostID() + 1);
 		mongoTemplate.insert(post);
+		return post.getPostID();
 	}
 
 	public Post get(int postID) { // 글 가져오기
@@ -89,7 +90,7 @@ public class PostDao {
 			List<String> privateTags, String search, String writerName,
 			String sort) {
 		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
-				.all(privateTags); // 일반 공개글을 불러옴;
+				.all(privateTags); // 비밀 글 가져오기
 
 		if (writerName != null)
 			criteria.and("writerName").is(writerName);

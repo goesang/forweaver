@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import com.forweaver.domain.Pass;
+import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
 
 @Repository
@@ -30,10 +33,6 @@ public class WeaverDao {
         return mongoTemplate.findOne(query,Weaver.class);
     }
     
-    public Weaver getWithTwitterID(long twitterID) { // 회원의 이름으로 정보 갖고오기
-    	Query query = new Query(Criteria.where("twitterID").is(twitterID));
-        return mongoTemplate.findOne(query,Weaver.class);
-    }
     
     public List<Weaver> list() {
         return mongoTemplate.findAll(Weaver.class);
@@ -49,6 +48,14 @@ public class WeaverDao {
     }
      
     public void update(Weaver weaver) {
-        mongoTemplate.insert(weaver);      
+    	Query query = new Query(Criteria.where("_id").is(weaver.getId()));
+		Update update = new Update();
+		update.set("email", weaver.getEmail());
+		update.set("password", weaver.getPassword());
+		update.set("passes", weaver.getPasses());
+		update.set("image", weaver.getImage());
+		update.set("imgSrc", weaver.getImgSrc());
+		update.set("say", weaver.getSay());
+		mongoTemplate.updateFirst(query, update, Weaver.class);     
     }
 }

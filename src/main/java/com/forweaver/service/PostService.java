@@ -31,7 +31,7 @@ public class PostService {
 	@Autowired
 	private CacheManager cacheManager;
 
-	public void add(Post post,List<Data> datas) {
+	public int add(Post post,List<Data> datas) {
 
 		if (post.getContent().length() >= 10)
 			post.setLong(true);
@@ -40,23 +40,25 @@ public class PostService {
 			post.setContent("");
 		}
 		if (post.getTitle().length() <= 1)
-			return;
-
+			return -1;
+		post.setKind(1);
 		for (String tag : post.getTags()) {
-			if (tag.startsWith("@"))
+			if (tag.startsWith("@")) {
 				post.setKind(2);
-			else if (tag.startsWith("$")) {
+				break;
+			} else if (tag.startsWith("$")) {
 				post.setKind(3);
-			}else
-				post.setKind(1);
+				break;
+			}
+				
 		}
 		if(datas != null && datas.size() > 0){
 			Map<String,String> fileMap = dataDao.insert(datas);
 			post.insertDataList(fileMap);
 		}
-		postDao.insert(post);
+		
 
-		return;
+		return postDao.insert(post);
 
 	}
 

@@ -71,7 +71,7 @@
 							$.ajax({
 					               type: "POST",
 					               url: "/lecture/add",
-					               data: 'name='+name+'&description='+description+'&tags='+tags+'&period='+period+'&category='+category,
+					               data: 'name='+name+'&description='+description+'&tags='+tags,
 					               success: function(msg){
 					            	   var tagNames = $("input[name='tags']").val();
 					            	   movePage(tagNames,"");
@@ -79,9 +79,8 @@
 					         });
 						});
 							
-						var pageCount = ${lectureCount}/10;
-						pageCount = Math.ceil(pageCount);
-						
+						var pageCount = ${lectureCount+1}/${number};
+						pageCount = Math.ceil(pageCount);					
 						var options = {
 					            currentPage: ${pageIndex},
 					            totalPages: pageCount,
@@ -111,35 +110,17 @@
 		</div>
 		<div class="row">
 
-			<div class=" span12">
-				<div class="span10">
-					
-					<div class="span4 create-lecture"
-						style="margin-left: 0px;">
+							
+					<div class="span3">
 
-						<input class="title span4" placeholder="강의명을 입력해주세요!"
+						<input placeholder="강의명을 입력해주세요!"
 							id="lecture-name-input" type="text" value="" />
 					</div>
-
-					<div class="span3 create-lecture">
-						<select id="lecture-category-select">
-							<option disabled="disabled">강의 공개여부</option>
-							<option value="0">공개</option>
-							<option value="1" selected="selected">비공개</option>
-							<option value="2">완전 비공개</option>
-						</select>
-					</div>
-					<div class="span3 create-lecture">
-						<select id="lecture-period-select">
-							<option disabled="disabled">강의 기간</option>
-							<option value="0">한 달</option>
-							<option value="1" selected="selected">한 학기</option>
-							<option value="2">일 년</option>
-							<option value="3">영원히</option>
-						</select>
-					</div>
+					<div class="span8">
+					<input style="margin-left:-20px;"class="span8" type="text" id="lecture-description" 
+						placeholder="강의에 대해 설명해주세요!"></input>
 				</div>
-				<div class="span1">
+					<div class="span1">
 					<span>
 						<button id="lecture-ok-button"
 							type="submit" class="post-button btn btn-primary create-lecture">
@@ -147,11 +128,8 @@
 						</button>
 					</span>
 				</div>
-				<div class="span11">
-					<input class= "span11" type="text" id="lecture-description" 
-						placeholder="강의에 대해 설명해주세요!"></input>
-				</div>
-
+				
+		<div class=" span12">	
 				<table id="lecture-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${lectures}" var="lecture">
@@ -165,36 +143,26 @@
 										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
 								</a></td>
 								<td class="td-button" rowspan="2">
-									<c:if test="${lecture.category != 0}">
-								<a href="/lecture/${lecture.name}/join"> 
-									<span class="span-button"><i class="fa fa-key"></i><p class="p-button">비공개</p>
-									</span>
-									</a>
-								</c:if>
-									
-									<c:if test="${lecture.category == 0}">
-									<a href="/lecture/${lecture.name}"> 
-									<span class="span-button">${lecture.push}<p class="p-button">추천</p>
-									</span>
+								<sec:authorize ifNotGranted="ROLE_USER">
+								<a	href="/lecture/${lecture.name}/join"> 
+								<span class="span-button"><i class="fa fa-times-circle"></i><p class="p-button">가입</p></span>
 								</a>
-								</c:if>
-								</td>
-								<td class="td-button" rowspan="2">
-								<c:if test="${lecture.tmpPermission == 0}">
+								</sec:authorize>
+								<sec:authorize ifAnyGranted="ROLE_USER">
+								<c:if test="${!lecture.isJoin() && lecture.creatorName != currentUser.username}">
 								<a	href="/lecture/${lecture.name}/join"> 
 								<span class="span-button"><i class="fa fa-times-circle"></i><p class="p-button">가입</p></span>
 								</a>
 								</c:if>
-								<c:if test="${lecture.tmpPermission == 1}">
+								<c:if test="${lecture.isJoin() && lecture.creatorName != currentUser.username}">
 								<a	href="/lecture/${lecture.name}">
-								 <span class="span-button"><i class="fa fa-dot-circle-o"></i></i><p class="p-button">가입</p></span>
+								 <span class="span-button"><i class="fa fa-circle-o"></i></i><p class="p-button">가입</p></span>
 								 </a>
 								</c:if>
-								<sec:authorize ifAnyGranted="ROLE_USER">
 									<c:if test="${lecture.creatorName == currentUser.username}">
 									<a	href="/lecture/${lecture.name}">
 									<span class='span-button'><i class="fa fa-user"></i>
-									<p class='p-button'>괸리자</p>"
+									<p class='p-button'>관리자</p>"
 									</span>
 									</c:if>
 								</sec:authorize>

@@ -40,7 +40,8 @@ public class LectureDao {
 		Update update = new Update();
 		update.set("description", lecture.getDescription());
 		update.set("tags", lecture.getTags());
-		update.set("push", lecture.getPush());
+		update.set("joinWeavers", lecture.getJoinWeavers());
+		update.set("adminWeavers", lecture.getAdminWeavers());
 		mongoTemplate.updateFirst(query, update, Lecture.class);
 	}
 	

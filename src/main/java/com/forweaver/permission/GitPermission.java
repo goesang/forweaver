@@ -30,7 +30,7 @@ public class GitPermission implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain filterchain) throws IOException, ServletException {
-		
+/*		
 		String requestUrl = ((HttpServletRequest) req).getRequestURI();
 		String[] requstUrlArray = requestUrl.split("/");
 		String weaverName = requstUrlArray[2];
@@ -42,7 +42,7 @@ public class GitPermission implements Filter {
 		
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if (weaver.getPass(weaverName+"/"+projectName) != null)
+		if (weaver.getPass(weaverName+"/"+projectName) != null)*/
 			filterchain.doFilter(req, res);		
 		
 	}

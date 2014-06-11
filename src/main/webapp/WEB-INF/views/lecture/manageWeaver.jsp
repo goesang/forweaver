@@ -13,7 +13,7 @@ var weaverList = new Array();
 <c:forEach items="${lecture.adminWeavers}" var="adminWeaver">
 weaverList.push({
 	"admin": true,
-	"nickName": "${adminWeaver.nickName}",
+	"id": "${adminWeaver.id}",
 	"email": "${adminWeaver.email}",
 	"img": "${adminWeaver.getImgSrc()}"
 });
@@ -21,10 +21,10 @@ weaverList.push({
 <c:forEach items="${lecture.joinWeavers}" var="joinWeaver">
 weaverList.push({
 	"admin": false,
-	"nickName": " ${joinWeaver.nickName}",
+	"id": " ${joinWeaver.id}",
 	"email": "${joinWeaver.email}",
 	"img": "${joinWeaver.getImgSrc()}",
-	"removeLink": "/lecture/${lecture.name}/weaver:${joinWeaver.nickName}/delete"
+	"removeLink": "/lecture/${lecture.name}/weaver:${joinWeaver.id}/delete"
 });
 </c:forEach>
 $(document).ready(function() {
@@ -33,7 +33,7 @@ $(document).ready(function() {
 		var weaverName = $('#weaverName').val();
 		
 		if(weaverName.length != 0)
-			window.location = "http//forweaver.com/lecture/${lecture.name}/weaver:${joinWeaver.nickName}/add-weaver";
+			window.location = "/lecture/${lecture.name}/weaver:"+weaverName+"/add-weaver";
 	});
 	
 	
