@@ -28,7 +28,7 @@ public class LectureIntercepter extends HandlerInterceptorAdapter {
 				lectureName= uri.split("/")[2];
 			Weaver weaver = weaverService.getCurrentWeaver();
 			Lecture lecture = lectureService.get(lectureName);
-			if(lecture == null && weaver.getPass(lectureName) == null){
+			if(lecture == null || weaver.getPass(lectureName) == null){
 				response.sendRedirect("/error404");
 				return false;
 			}
