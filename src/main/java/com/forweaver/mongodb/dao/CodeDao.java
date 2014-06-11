@@ -41,7 +41,7 @@ public class CodeDao {
 	public void delete(Code code) { // 코드 가져오기
 		mongoTemplate.remove(code);
 	}
-	
+
 	public void update(Code code) { // 글 수정하기
 		Query query = new Query(Criteria.where("_id").is(code.getCodeID()));
 		Update update = new Update();

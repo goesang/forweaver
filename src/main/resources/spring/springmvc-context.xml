@@ -19,7 +19,15 @@
 	<mvc:interceptors>
     <mvc:interceptor>
     <mvc:mapping path="/lecture/**"/>
-    <bean class="com.forweaver.intercepter.Permission"/>
+    <bean class="com.forweaver.intercepter.LectureIntercepter"/>
+    </mvc:interceptor>
+        <mvc:interceptor>
+    <mvc:mapping path="/community/**"/>
+    <bean class="com.forweaver.intercepter.CommunityIntercepter"/>
+    </mvc:interceptor>
+        <mvc:interceptor>
+    <mvc:mapping path="/project/**"/>
+    <bean class="com.forweaver.intercepter.ProjectIntercepter"/>
     </mvc:interceptor>
 </mvc:interceptors>
 
