@@ -27,6 +27,14 @@ function deleteReply(postID,rePostID,number){
 	}
 }
 
+function deleteCodeReply(postID,rePostID,number){
+	if (confirm("정말 댓글을 삭제하시겠습니까?")){
+		window.location =	"/code/"+postID+"/"+rePostID+"/"+number+"/delete";
+	}else{
+	    return;
+	}
+}
+
 function pushPost(postID){
 	if (confirm("정말 추천하시겠습니까?")){
 		window.location =	"/community/"+postID+"/push";

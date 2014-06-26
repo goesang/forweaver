@@ -25,9 +25,8 @@ public class RePost implements Serializable {
 	private String writerEmail;
 	private String imgSrc;
 	private int push;
-	private int replysCount;
 	private Date recentReplyDate;
-	private int kind;
+	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변 , 4가 코드의 답변.
 
 	private List<String> dataIDs = new ArrayList<String>();
 	private List<String> dataNames = new ArrayList<String>();
@@ -133,7 +132,6 @@ public class RePost implements Serializable {
 		else
 			reply.setNumber(this.replys.get(0).getNumber() + 1);
 		this.replys.add(0, reply);
-		this.replysCount = this.replys.size();
 	}
 
 	public void updateReply(Reply reply, Weaver weaver, int number) {
@@ -145,22 +143,15 @@ public class RePost implements Serializable {
 		}
 	}
 
-	public void removeReply(Weaver weaver, int number) {
+	public boolean removeReply(Weaver weaver, int number) {
 		for (int i = 0; i < this.replys.size(); i++) {
 			if (this.replys.get(i).getNumber() == number
 					&& weaver.getId()
 							.equals(this.replys.get(i).getWriterName()))
 				this.replys.remove(i);
+			return true;
 		}
-		this.replysCount = this.replys.size();
-	}
-
-	public int getReplysCount() {
-		return replysCount;
-	}
-
-	public void setReplysCount(int replysCount) {
-		this.replysCount = replysCount;
+		return false;
 	}
 
 	public Date getRecentReplyDate() {

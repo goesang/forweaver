@@ -13,7 +13,7 @@ var weaverList = new Array();
 <c:forEach items="${project.adminWeavers}" var="adminWeaver">
 weaverList.push({
 	"admin": true,
-	"nickName": "${adminWeaver.nickName}",
+	"id": "${adminWeaver.id}",
 	"email": "${adminWeaver.email}",
 	"img": "${adminWeaver.getImgSrc()}"
 });
@@ -21,10 +21,10 @@ weaverList.push({
 <c:forEach items="${project.joinWeavers}" var="joinWeaver">
 weaverList.push({
 	"admin": false,
-	"nickName": " ${joinWeaver.nickName}",
+	"id": " ${joinWeaver.id}",
 	"email": "${joinWeaver.email}",
 	"img": "${joinWeaver.getImgSrc()}",
-	"removeLink": "/project/${project.name}/weaver:${joinWeaver.nickName}/delete"
+	"removeLink": "/project/${project.name}/weaver:${joinWeaver.id}/delete"
 });
 </c:forEach>
 $(document).ready(function() {

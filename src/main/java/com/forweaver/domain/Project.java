@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,17 +18,22 @@ public class Project implements Serializable {
 	static final long serialVersionUID = 4231232323123124234L;
 	@Id
 	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 1이면 공개 프로젝트 2이면 비공개 프로젝트.
+	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트.
 	private String description; // 프로젝트 소개
 	private Date openingDate; // 프로젝트 시작일
 	private String creatorName; // 프로젝트 개설자 이름
 	private String creatorEmail; // 프로젝트 개설자 이메일
 	private int push; // 프로젝트 추천수
 	
+	@Transient
+	private boolean isJoin;
+	
 	private List<String> tags = new ArrayList<String>(); // 프로젝트의 태그 모음
 	
-	private List<String> adminWeavers = new ArrayList<String>(); // 관리자들
-	private List<String> joinWeavers = new ArrayList<String>(); // 비 관리자 회원들
+	@DBRef
+	private List<Weaver> adminWeavers = new ArrayList<Weaver>(); // 관리자들
+	@DBRef
+	private List<Weaver> joinWeavers = new ArrayList<Weaver>(); // 비 관리자 회원들
 	
 	public Project() {
 		
@@ -41,7 +48,7 @@ public class Project implements Serializable {
 		this.openingDate = new Date();
 		this.creatorName = weaver.getId();
 		this.creatorEmail = weaver.getEmail();
-		this.adminWeavers.add(creatorName);
+		this.adminWeavers.add(weaver);
 		this.tags = tagList;
 	}
 
@@ -99,11 +106,11 @@ public class Project implements Serializable {
 		this.creatorEmail = creatorEmail;
 	}
 	public void addAdminWeaver(Weaver weaver){
-		this.adminWeavers.add(weaver.getId());
+		this.adminWeavers.add(weaver);
 	}
 	
 	public void addJoinWeaver(Weaver weaver){
-		this.joinWeavers.add(weaver.getId());
+		this.joinWeavers.add(weaver);
 	}
 	public List<String> getTags() {
 		return tags;
@@ -126,21 +133,35 @@ public class Project implements Serializable {
 		this.push +=1;
 	}
 
-	public List<String> getAdminWeavers() {
+	public List<Weaver> getAdminWeavers() {
 		return adminWeavers;
 	}
 
-	public void setAdminWeavers(List<String> adminWeavers) {
+	public void setAdminWeavers(List<Weaver> adminWeavers) {
 		this.adminWeavers = adminWeavers;
 	}
 
-	public List<String> getJoinWeavers() {
+	public List<Weaver> getJoinWeavers() {
 		return joinWeavers;
 	}
 
-	public void setJoinWeavers(List<String> joinWeavers) {
+	public void setJoinWeavers(List<Weaver> joinWeavers) {
 		this.joinWeavers = joinWeavers;
 	}
 	
+	public boolean isJoin() {
+		return isJoin;
+	}
+
+	public void setJoin(boolean isJoin) {
+		this.isJoin = isJoin;
+	}
+	public String getImgSrc(){
+		return "/img/"+this.creatorName;
+	}
+	
+	public void removeJoinWeaver(Weaver weaver){
+		this.joinWeavers.remove(weaver);
+	}
 	
 }

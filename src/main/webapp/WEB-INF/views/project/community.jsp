@@ -207,7 +207,7 @@ var editorMode = false;
 									${post.getFormatCreated()}
 									&nbsp;&nbsp;
 									<c:forEach items="${post.tags}" var="tag">
-										<c:if test="${!fn:startsWith(tag.tagName, '@')}">
+										<c:if test="${!fn:startsWith(tag, '@')}">
 											<span class = "tag-name">${tag}</span>
 										</c:if>
 									</c:forEach>

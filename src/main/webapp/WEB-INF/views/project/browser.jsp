@@ -3,13 +3,32 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <head>
-<title>${project.name} - forWeaver</title>
+<title>${project.name}-forWeaver</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
 </head>
 <body>
-<script>
+	<script>
+
+function showUploadContent() {
+	
+	$('#show-content-button').hide();
+	$('#hide-content-button').show();
+	$('#upload-form').fadeIn('slow');
+	$('#fileBrowserTable').fadeIn('slow');
+}
+
+function hideUploadContent() {
+	$('#show-content-button').show();
+	$('#hide-content-button').hide();
+	$('#upload-form').hide();
+	$('#fileBrowserTable').show('slow');
+}
+
+
 $(document).ready(function() {
+	
+	hideUploadContent();
 	$('#labelPath').append("/");
 	$('#tags-input').textext()[0].tags().addTags(
 			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
@@ -46,7 +65,7 @@ showFileBrowser("/");
 
 		<div class="page-header">
 			<h5>
-				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big> 
+				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big>
 				<small>${project.description}</small>
 			</h5>
 		</div>
@@ -67,24 +86,64 @@ showFileBrowser("/");
 						class="input-block-level">
 				</div>
 			</div>
-			
-			<div class="span12 row">	
-				<div class="span8"><label id ="labelPath"></label></div>
-				<div style = "margin-right:-10px;" class="span1">
-					<a class="btn btn-primary" href="/project/down/${project.name}-${fn:substring(selectBranch,0,20)}.zip">
-					<i style="zoom: 1.3; -moz-transform: scale(1.3);" class="icon-white icon-circle-arrow-down">
-					</i></a>
-				</div>				
-								
+
+			<div class="span12 row">
+				<div class="span7">
+					<label id="labelPath"></label>
+				</div>
+				<div style="width: 90px;" class="span2">
+					<a id="show-content-button" class="btn btn-primary"
+						href="javascript:showUploadContent();"> <i
+						style="zoom: 1.3; -moz-transform: scale(1.3);"
+						class="icon-white icon-circle-arrow-up"> </i></a> <a
+						id="hide-content-button" class="btn btn-primary"
+						href="javascript:hideUploadContent();"> <i
+						style="zoom: 1.3; -moz-transform: scale(1.3);"
+						class="icon-white icon-circle-arrow-up"> </i></a> <a
+						class="btn btn-primary"
+						href="/project/down/${project.name}-${fn:substring(selectBranch,0,20)}.zip">
+						<i style="zoom: 1.3; -moz-transform: scale(1.3);"
+						class="icon-white icon-circle-arrow-down"> </i>
+					</a>
+
+				</div>
+
 				<select id="selectBranch" class="span3">
-					<option value="/project/${project.name}/browser/commit:${selectBranch}">${fn:substring(selectBranch,0,20)}</option>
+					<option
+						value="/project/${project.name}/browser/commit:${selectBranch}">${fn:substring(selectBranch,0,20)}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/project/${project.name}/browser/commit:${gitBranchName}">${fn:substring(gitBranchName,0,20)}</option>
+						<option
+							value="/project/${project.name}/browser/commit:${gitBranchName}">${fn:substring(gitBranchName,0,20)}</option>
 					</c:forEach>
 				</select>
-				
+				<form id="upload-form" enctype="multipart/form-data" action="/project/${project.name}/upload"
+					method="post">
+					<div class="span12">
+						<input class="title span10" type="text" name="message"
+							placeholder="커밋 내역을 입력해주세요!"></input>
+						<button type="submit" class="post-button btn btn-primary"
+							style="margin-top: -10px; display: inline-block;">
+							<i class="icon-ok icon-white"></i>
 
-							
+						</button>
+					</div>
+					<div id="file-div" style="padding-left: 20px;">
+						<div class='fileinput fileinput-new' data-provides='fileinput'>
+							<div class='input-group'>
+								<div class='form-control' data-trigger='fileinput'>
+									<i class='icon-file '></i> <span class='fileinput-filename'></span>
+								</div>
+								<span class='input-group-addon btn btn-primary btn-file'><span
+									class='fileinput-new'> <i class='icon-upload icon-white'></i></span>
+									<span class='fileinput-exists'><i
+										class='icon-repeat icon-white'></i></span> <input type='file'
+									id='file' multiple='true' name='zip'></span> <a href='#'
+									class='input-group-addon btn btn-primary fileinput-exists'
+									data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+							</div>
+						</div>
+					</div>
+				</form>
 				<table id="fileBrowserTable" class="table table-hover">
 				</table>
 			</div>

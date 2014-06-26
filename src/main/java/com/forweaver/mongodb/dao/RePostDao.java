@@ -66,7 +66,6 @@ public class RePostDao {
 		update.set("content", rePost.getContent());
 		update.set("push", rePost.getPush());
 		update.set("replys", rePost.getReplys());
-		update.set("replysCount", rePost.getReplysCount());
 		update.set("recentReplyDate", rePost.getRecentReplyDate());
 		mongoTemplate.updateFirst(query, update, RePost.class);
 	}
@@ -80,9 +79,9 @@ public class RePostDao {
 		if (sort.equals("push-desc")) {
 			criteria.and("push").gt(0);
 		} else if (sort.equals("reply-many")) {
-			criteria.and("replysCount").gt(0);
+			criteria.and("replys").not().size(0); 
 		} else if (sort.equals("reply-desc")) {
-			criteria.and("replysCount").gt(0);
+			criteria.and("replys").not().size(0); 
 		}
 	}
 

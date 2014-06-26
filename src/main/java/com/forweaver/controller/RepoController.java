@@ -1,4 +1,4 @@
-/*package com.forweaver.controller;
+package com.forweaver.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Repo;
@@ -20,8 +22,6 @@ import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.service.GitService;
 import com.forweaver.service.LectureService;
-import com.forweaver.service.PermissionService;
-import com.forweaver.service.RepoService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
 
@@ -34,29 +34,22 @@ public class RepoController {
 	@Autowired
 	LectureService lectureService;
 	@Autowired
-	RepoService repoService;
-	@Autowired
 	GitService gitService;
-	@Autowired
-	PermissionService permissionService;
 	
 	@RequestMapping(value = "/add")
-	@ResponseBody
-	public boolean add(@PathVariable("lectureName") String lectureName,
+	public String add(@PathVariable("lectureName") String lectureName,
 			@RequestParam Map<String, String> params) {
 		Lecture lecture = lectureService.get(lectureName);
-		
-		if(!permissionService.repoPermission(lecture, weaverService.getCurrentWeaver()))
-			return false; 
-		
-		Repo repo = new Repo(params.get("name"), 
-				Integer.parseInt(params.get("category")), 
+		String repoName = params.get("name");		
+		Repo repo = new Repo(repoName, 
+				1, 
 				WebUtil.removeHtml(params.get("description")), 
 				Integer.parseInt(params.get("period")), 
 				lecture);	
-		lecture.getRepoes().add(repo);
-		repoService.add(repo);
-		return true;
+		
+		lectureService.addRepo(lecture, repo);
+		
+		return "redirect:/lecture/"+lectureName+"/repo/"+repoName; 
 	}
 	
 	@RequestMapping("/{repoName}/delete")
@@ -65,13 +58,11 @@ public class RepoController {
 			@PathVariable("repoName") String repoName) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
-		Weaver weaver = weaverService.getCurrentWeaver();
-		
-		if(repo == null ||!permissionService.repoPermission(lecture, weaver))
-			return "redirect:/lecture/"; 
-		repoService.delete(repo);
+		lectureService.removeRepo(lecture, repo);
 		return "redirect:/lecture/"+lectureName+"/repo"; 
 	}
+	
+	
 	
 	@RequestMapping("/{repoName}/browser")
 	public String manage(Model model,@PathVariable("lectureName") String lectureName,
@@ -80,14 +71,12 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(repo == null || !permissionService.lecturePermission(lecture,weaver))
-			return "redirect:/lecture/"; 
 		
 		List<String> gitBranchList;
-		if(permissionService.repoPermission(lecture,weaver))
+		if(lecture.getCreatorName().equals(weaver.getId()))
 			gitBranchList = gitService.getBranchList(lectureName, repoName);
 		else
-			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getNickName());
+			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getId());
 		
 		model.addAttribute("repo", repo);
 		model.addAttribute("gitFileInfoList", 
@@ -107,17 +96,13 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(repo == null || !permissionService.lecturePermission(lecture, weaver))
-			return "redirect:/lecture/"; 
-		
+
 		List<String> gitBranchList;
 		
-		if(!permissionService.repoPermission(lecture,weaver)){ // 만약 강사가 아닌 경우
-			if(!gitService.isReadCommit(lectureName, repoName, weaver, commit)) 
-				return "redirect:/lecture/"; // 읽을 수 있는 커밋 네임을 입력했는지 검사
-			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getNickName());
-		}else
+		if(!lecture.getCreatorName().equals(weaver.getId())) // 만약 강사인 경우
 			gitBranchList = gitService.getBranchList(lectureName, repoName);
+		else
+			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getId());
 		
 		
 		model.addAttribute("repo", repo);
@@ -140,18 +125,14 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(repo == null || !permissionService.lecturePermission(lecture, weaver))
-			return "redirect:/lecture/"; 
 		
 		GitFileInfo gitFileInfo;
 	
-		if(!permissionService.repoPermission(lecture,weaver)){ // 만약 강사가 아닌 경우{
-			if(!gitService.isReadCommit(lectureName, repoName, weaver, commitID)) 
-				return "redirect:/lecture/"; 
-			gitFileInfo = gitService.getFileInfo(
-					lectureName,repoName, commitID, filePath,weaver.getNickName());
-		}else
+		if(lecture.getCreatorName().equals(weaver.getId())) // 만약 강사인 경우
 			gitFileInfo = gitService.getFileInfo(lectureName,repoName, commitID, filePath);
+		else
+			gitFileInfo = gitService.getFileInfo(
+					lectureName,repoName, commitID, filePath,weaver.getId());
 		// 읽을 수 있는 커밋 네임을 입력했는지 검사
 		
 		model.addAttribute("repo", repo);
@@ -171,14 +152,12 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(repo == null || !permissionService.lecturePermission(lecture,weaver))
-			return "redirect:/lecture/"; 
-		
 		List<String> gitBranchList;
-		if(permissionService.repoPermission(lecture,weaver))
+		gitBranchList = gitService.getBranchList(lectureName, repoName);
+		if(lecture.getCreatorName().equals(weaver.getId()))
 			gitBranchList = gitService.getBranchList(lectureName, repoName);
 		else
-			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getNickName());
+			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getId());
 		
 		if(gitBranchList.size() > 1)
 		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
@@ -207,17 +186,12 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(repo == null || !permissionService.lecturePermission(lecture, weaver))
-			return "redirect:/lecture/"; 
-		
 		List<String> gitBranchList;
 		
-		if(!permissionService.repoPermission(lecture,weaver)){ // 만약 강사가 아닌 경우
-			if(!gitService.isReadCommit(lectureName, repoName, weaver, commit)) 
-				return "redirect:/lecture/"; // 읽을 수 있는 커밋 네임을 입력했는지 검사
-			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getNickName());
-		}else
+		if(lecture.getCreatorName().equals(weaver.getId()))// 만약 강사인 경우
 			gitBranchList = gitService.getBranchList(lectureName, repoName);
+		else
+			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getId());
 		
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
@@ -240,17 +214,12 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		if(repo == null || !permissionService.lecturePermission(lecture, weaver))
-			return "redirect:/lecture/"; 
-		
 		List<String> gitBranchList;
 		
-		if(!permissionService.repoPermission(lecture,weaver)){ // 만약 강사가 아닌 경우
-			if(!gitService.isReadCommit(lectureName, repoName, weaver, commit)) 
-				return "redirect:/lecture/"; // 읽을 수 있는 커밋 네임을 입력했는지 검사
-			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getNickName());
-		}else
+		if(lecture.getCreatorName().equals(weaver.getId()))// 만약 강사인 경우
 			gitBranchList = gitService.getBranchList(lectureName, repoName);
+		else
+			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getId());
 		
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
@@ -270,16 +239,7 @@ public class RepoController {
 			@PathVariable("commit") String commit,Model model) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
-		Weaver weaver = weaverService.getCurrentWeaver();
-		
-		if(repo == null || !permissionService.lecturePermission(lecture, weaver))
-			return "redirect:/lecture/"; 
-		
-		if(!permissionService.repoPermission(lecture,weaver)) // 만약 강사가 아닌 경우
-			if(!gitService.isReadCommit(lectureName, repoName, weaver, commit)) 
-				return "redirect:/lecture/"; 
-		// 읽을 수 있는 커밋 네임을 입력했는지 검사
-		
+				
 		model.addAttribute("repo", repo);
 		model.addAttribute("gitCommitLog", 
 				gitService.getGitCommitLog(lectureName,repoName, commit));
@@ -291,26 +251,27 @@ public class RepoController {
 			@PathVariable("repoName") String repoName,
 			@PathVariable("commitName") String commitName,
 			HttpServletResponse response) {
-		Lecture lecture = lectureService.get(lectureName);
-		Repo repo = lecture.getRepo(repoName);
-		Weaver weaver = weaverService.getCurrentWeaver();
-		
-		if(repo == null || !permissionService.lecturePermission(lecture, weaver))
-			return;
 		
 		if(repoName.equals("example") && 
 				gitService.existCommit(lectureName, repoName, commitName))
 			gitService.getProjectZip(lectureName, repoName, commitName, response);
-			
-		if(!permissionService.repoPermission(lecture,weaver)) // 만약 강사가 아닌 경우
-			if(!gitService.isReadCommit(lectureName, repoName, weaver, commitName)) 
-				return; 
-		// 읽을 수 있는 커밋 네임을 입력했는지 검사
-		
-		gitService.getProjectZip(lectureName, repoName, commitName, response);
+		else			
+			gitService.getProjectZip(lectureName, repoName, commitName, response);
 		
 		return;
 	}
+	
+	@RequestMapping(value="/{repoName}/upload", method=RequestMethod.POST)
+	public String uploadZip(Model model,
+			@PathVariable("lectureName") String lectureName,
+			@PathVariable("repoName") String repoName,
+			@RequestParam("message") String message,
+			@RequestParam("zip") MultipartFile zip) {
+		Lecture lecture = lectureService.get(lectureName);
+		Repo repo = lecture.getRepo(repoName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		lectureService.uploadZip(lecture,repo, currentWeaver, message, zip);
+		return "redirect:/lecture/"+lectureName+"/repo/"+repoName+"/browser"; 
+	}
 
 }
-*/

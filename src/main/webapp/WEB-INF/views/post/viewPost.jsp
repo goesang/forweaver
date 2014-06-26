@@ -104,9 +104,10 @@
 							<td class="td-post-writer-img none-top-border" rowspan="2">
 								<a href="/${post.writerName}"><img src="${post.getImgSrc()}"></a>
 							</td>
-							<td  colspan="2" class="post-top-title none-top-border">
-							<a rel="external" class="a-post-title"	href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>"> 
-							${post.title}</a></td>
+							<td colspan="2" class="post-top-title none-top-border"><a
+								rel="external" class="a-post-title"
+								href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>">
+									${post.title}</a></td>
 							<td class="td-button none-top-border" rowspan="2"><span
 								class="span-button">${post.push}
 									<p class="p-button">추천</p>
@@ -117,15 +118,12 @@
 							</span></td>
 						</tr>
 						<tr>
-							<td class="post-bottom">
-								<a href="/${post.writerName}">								
-								<b>${post.writerName}</b></a>
-								${post.getFormatCreated()}
-								</td>	
-								<td class="post-bottom-tag">
-									<c:forEach	items="${post.tags}" var="tag">
-										<span
-											class="tag-name
+							<td class="post-bottom"><a href="/${post.writerName}"> <b>${post.writerName}</b></a>
+								${post.getFormatCreated()}</td>
+							<td class="post-bottom-tag"><c:forEach items="${post.tags}"
+									var="tag">
+									<span
+										class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private
 										</c:if>
@@ -133,17 +131,17 @@
 										tag-massage
 										</c:if>
 										">${tag}</span>
-									</c:forEach>
-									<div class = "function-div pull-right">
-									<a href="/community/${post.postID}/update">
-									<span class="function-button">수정</span></a>	
-									<a href="javascript:deletePost(${post.postID})">
-									<span class="function-button">삭제</span></a>									
-									</div>	
-								</td>
+								</c:forEach>
+								<div class="function-div pull-right">
+									<!--  	<a href="/community/${post.postID}/update"> <span
+										class="function-button">수정</span></a>
+										-->
+									<a href="javascript:deletePost(${post.postID})"> <span
+										class="function-button">삭제</span></a>
+								</div></td>
 
 						</tr>
-						<c:if	test="${post.dataNames.size() > 0}">
+						<c:if test="${post.dataNames.size() > 0}">
 							<tr>
 								<td colspan="5"><c:forEach var="index" begin="0"
 										end="${post.dataNames.size()-1}">
@@ -155,7 +153,20 @@
 							</tr>
 						</c:if>
 						<!-- 글내용 시작 -->
-						<c:if test="${post.isLong()}">				
+						<c:if test="${post.isLong()}">
+							<c:forEach var="index" begin="0" end="${post.dataNames.size()-1}">
+								<c:if
+									test="${post.dataNames.get(index).endsWith('jpg')||
+									post.dataNames.get(index).endsWith('png') ||
+										post.dataNames.get(index).endsWith('bmp') ||
+										post.dataNames.get(index).endsWith('jpeg')}">
+
+									<tr>
+										<td colspan="5"><img class="post-img"
+											src="/data/${post.dataIDs.get(index)}"></td>
+									</tr>
+								</c:if>
+							</c:forEach>
 							<tr>
 								<td colspan="5">${post.content}</td>
 							</tr>
@@ -163,17 +174,17 @@
 						<!-- 글내용 끝 -->
 					</tbody>
 				</table>
-				
-		
-				<!-- 답변에 관련된 테이블 시작-->
-				
-				<form enctype="multipart/form-data" id ="repost-form" action="/community/${post.postID}/add-repost"
-					method="POST">
 
-					<div style ="margin-left:0px" class="span11">
-						<textarea name="content"
-							id="repost-content" class="post-content span10"
-							onkeyup="textAreaResize(this)" placeholder="답변할 내용을 입력해주세요!"></textarea>
+
+				<!-- 답변에 관련된 테이블 시작-->
+
+				<form enctype="multipart/form-data" id="repost-form"
+					action="/community/${post.postID}/add-repost" method="POST">
+
+					<div style="margin-left: 0px" class="span11">
+						<textarea name="content" id="repost-content"
+							class="post-content span10" onkeyup="textAreaResize(this)"
+							placeholder="답변할 내용을 입력해주세요!"></textarea>
 					</div>
 					<div class="span1">
 						<span>
@@ -182,39 +193,49 @@
 							</button>
 						</span>
 					</div>
-					<div class = "file-div"></div>
+					<div class="file-div"></div>
 				</form>
-				
+
 				<c:if test="${post.rePostCount != 0}">
-				
+
 					<div class="span12"></div>
-						<ul class="nav nav-tabs" id="myTab">
-						<li id = "age-desc"><a href="/community/${post.postID}/sort:age-desc">최신순</a></li>
-						<li id = "push-desc"><a href="/community/${post.postID}/sort:push-desc">추천순</a></li>
-						<li id = "reply-desc"><a href="/community/${post.postID}/sort:reply-desc">최신 답변순</a></li>
-						<li id = "reply-many"><a href="/community/${post.postID}/sort:reply-many">많은 답변순</a></li>
-						<li id = "age-asc"><a href="/community/${post.postID}/sort:age-asc">오래된순</a></li>
+					<ul class="nav nav-tabs" id="myTab">
+						<li id="age-desc"><a
+							href="/community/${post.postID}/sort:age-desc">최신순</a></li>
+						<li id="push-desc"><a
+							href="/community/${post.postID}/sort:push-desc">추천순</a></li>
+						<li id="reply-desc"><a
+							href="/community/${post.postID}/sort:reply-desc">최신 답변순</a></li>
+						<li id="reply-many"><a
+							href="/community/${post.postID}/sort:reply-many">많은 답변순</a></li>
+						<li id="age-asc"><a
+							href="/community/${post.postID}/sort:age-asc">오래된순</a></li>
 					</ul>
-				
+
 				</c:if>
 				<table id="repost-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${rePosts}" var="rePost">
 							<tr>
 								<td class=" td-post-writer-img "><img
-									src="${rePost.getImgSrc()}">
-								</td>
-								
+									src="${rePost.getImgSrc()}"></td>
+
 								<td class="font-middle"><b>${rePost.writerName}</b>
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
-									<div class = "pull-right">
-									<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span class="function-button function-comment">댓글달기</span></a>
-									<a href="/community/${post.postID}/${rePost.rePostID}/update">
-									<span class="function-button">수정</span></a>	
-									<a href='javascript:deleteRePost(${post.postID},${rePost.rePostID})'>
-									<span class="function-button">삭제</span></a>									
-									</div>	
+									<div class="pull-right">
+										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
+											class="function-button function-comment">댓글달기</span></a>
+										<!--
+											<a
+											href="/community/${post.postID}/${rePost.rePostID}/update">
+											<span class="function-button">수정</span>
+										</a>-->
+										<a
+											href='javascript:deleteRePost(${post.postID},${rePost.rePostID})'>
+											<span class="function-button">삭제</span>
+										</a>
+									</div>
 								</td>
 								<td class="td-button"><span class="span-button">${rePost.push}
 										<p class="p-button">추천</p>
@@ -223,22 +244,52 @@
 										<p class="p-button">댓글</p>
 								</span></td>
 							</tr>
+							<c:if test="${rePost.dataNames.size() > 0}">
+								<tr>
+									<td colspan="5"><c:forEach var="index" begin="0"
+											end="${rePost.dataNames.size()-1}">
+											<a href='/data/${rePost.dataIDs.get(index)}'><span
+												class="function-button function-file"><i
+													class='icon-file icon-white'></i>
+													${rePost.dataNames.get(index)}</span></a>
+										</c:forEach></td>
+								</tr>
+								<c:forEach var="index" begin="0"
+									end="${rePost.dataNames.size()-1}">
+									<c:if
+										test="${rePost.dataNames.get(index).endsWith('jpg')||
+									rePost.dataNames.get(index).endsWith('png') ||
+										rePost.dataNames.get(index).endsWith('bmp') ||
+										rePost.dataNames.get(index).endsWith('jpeg')}">
+
+										<tr>
+											<td colspan="5"><img class="post-img"
+												src="/data/${rePost.dataIDs.get(index)}"></td>
+										</tr>
+									</c:if>
+								</c:forEach>
+							</c:if>
 							<tr>
-									<td class="none-top-border repost-top-title" colspan="5">${rePost.content}</td>
+								<td class="none-top-border repost-top-title" colspan="5">${rePost.content}</td>
 							</tr>
-							
-							<tr> <td id = "comment-form-td-${rePost.rePostID}" class="none-top-border" colspan="5"> 
-								 </td>
-								 
+
+							<tr>
+								<td id="comment-form-td-${rePost.rePostID}"
+									class="none-top-border" colspan="5"></td>
+
 							</tr>
 							<c:forEach items="${rePost.replys}" var="reply">
-								<tr> <td class="none-top-border"></td><td class="reply dot-top-border" colspan="4"> 
-											<b>${reply.number}.</b> ${reply.content} - <b>${reply.writerName}</b> ${reply.getFormatCreated()}
-											<div class = "function-div pull-right">
-									<a href="javascript:deleteReply(${post.postID},${rePost.rePostID},${reply.number})">
-									<i class='icon-remove'></i></a>	
-									</div>
-									 </td>
+								<tr>
+									<td class="none-top-border"></td>
+									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
+										${reply.content} - <b>${reply.writerName}</b>
+										${reply.getFormatCreated()}
+										<div class="function-div pull-right">
+											<a
+												href="javascript:deleteReply(${post.postID},${rePost.rePostID},${reply.number})">
+												<i class='icon-remove'></i>
+											</a>
+										</div></td>
 								</tr>
 							</c:forEach>
 						</c:forEach>
@@ -246,7 +297,7 @@
 					</tbody>
 				</table>
 				<!-- 답변에 관련된 테이블 끝-->
-			
+
 			</div>
 		</div>
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

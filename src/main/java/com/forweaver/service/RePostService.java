@@ -10,14 +10,15 @@ import net.sf.ehcache.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Weaver;
+import com.forweaver.mongodb.dao.CodeDao;
 import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RePostDao;
-import com.forweaver.util.WebUtil;
 
 @Service
 public class RePostService {
@@ -29,6 +30,9 @@ public class RePostService {
 	
 	@Autowired
 	private DataDao dataDao;
+	
+	@Autowired
+	private CodeDao codeDao;
 	
 	@Autowired
 	private CacheManager cacheManager;
@@ -78,8 +82,18 @@ public class RePostService {
 		post.rePostCountDown();
 		postDao.update(post);
 		rePostDao.delete(rePost);
-		cacheManager.getCache("post").remove(rePost.getRePostID());
+		cacheManager.getCache("post").remove(rePost.getOriginalPostID());
 
+		return true;
+	}
+	
+	public boolean delete(Code code,RePost rePost,Weaver weaver){
+
+		if(code == null || rePost == null || !rePost.getWriterName().equals(weaver.getId()))
+			return false;
+		code.setRePostCount(code.getRePostCount()-1);
+		codeDao.update(code);
+		rePostDao.delete(rePost);
 		return true;
 	}
 }

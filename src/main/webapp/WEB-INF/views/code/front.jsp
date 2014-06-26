@@ -9,7 +9,7 @@
 <body>
 	<script type="text/javascript">
 	
-	function checkPost(){
+	function checkCode(){
 		var fileName = $("#file").val();
 		var tags = $("input[name='tags']").val();
 		
@@ -30,7 +30,7 @@
 		}
 	}
 	
-		function showPostContent() {
+		function showCodeContent() {
 			var tags = $("input[name='tags']").val();
 			if(tags.length == 2){
 				alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
@@ -49,7 +49,7 @@
 			editorMode = true;
 		}
 
-		function hidePostContent() {
+		function hideCodeContent() {
 			$('#page-pagination').show();
 			$('#post-table').show();
 			$('#search-div').show();
@@ -65,7 +65,7 @@
 
 		$(function() {
 			
-			hidePostContent();
+			hideCodeContent();
 			
 			$( "#post-search-input" ).keypress(function() {
 				var tags = $("input[name='tags']").val();
@@ -140,7 +140,7 @@
 				<div style="margin-top: -10px" class="pull-right">
 
 					<button class="btn btn-warning">
-						<b>COUNT : ${codeCount}</b>
+						<b><i class="fa fa-database"></i> ${codeCount}</b>
 					</button>
 
 				</div>
@@ -168,15 +168,15 @@
 			</div>
 			<div id="search-div" class="span10">
 				<input id="post-search-input" class="title span10"
-					placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text" />
+					placeholder="검색어를 입력하여 코드를 찾아보세요!" type="text" />
 			</div>
-			<form onsubmit="return checkPost()" id="codeForm" action="/code/add"
+			<form onsubmit="return checkCode()" id="codeForm" action="/code/add"
 				enctype="multipart/form-data" method="post">
 
 				<div id="post-div" class="span10">
-					<input name = "name" id="post-name" class="title span3"
-						placeholder="코드명을 입력해주세요!" type="text" /> 
-					<input name = "content"	id="post-content" class="title span7"
+					<input name="name" id="post-name" class="title span3"
+						placeholder="코드명을 입력해주세요!" type="text" /> <input name="content"
+						id="post-content" class="title span7"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
 				</div>
 
@@ -184,12 +184,12 @@
 
 
 					<span> <a id="show-content-button"
-						href="javascript:showPostContent();"
+						href="javascript:showCodeContent();"
 						class="post-button btn btn-primary"> <i
 							class="icon-edit icon-white"></i>
 					</a> <a id='search-button' class="post-button btn btn-primary"> <i
 							class="icon-search icon-white"></i>
-					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
+					</a> <a id="hide-content-button" href="javascript:hideCodeContent();"
 						class="post-button btn btn-primary"> <i
 							class="icon-edit icon-white"></i>
 					</a>
@@ -201,17 +201,21 @@
 				</div>
 				<div id="file-div" style="padding-left: 20px;">
 					<div class='fileinput fileinput-new' data-provides='fileinput'>
-					  <div class='input-group'>
-					    <div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>
-					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
-					    <i class='icon-upload icon-white'></i></span>
-					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
-						<input type='file' id='file' multiple='true' name='file'></span>
-					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
-					  </div>
+						<div class='input-group'>
+							<div class='form-control' data-trigger='fileinput'>
+								<i class='icon-file '></i> <span class='fileinput-filename'></span>
+							</div>
+							<span class='input-group-addon btn btn-primary btn-file'><span
+								class='fileinput-new'> <i class='icon-upload icon-white'></i></span>
+								<span class='fileinput-exists'><i
+									class='icon-repeat icon-white'></i></span> <input type='file'
+								id='file' multiple='true' name='file'></span> <a href='#'
+								class='input-group-addon btn btn-primary fileinput-exists'
+								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+						</div>
 					</div>
-					</div>
-					<!--<div class="pull-right"><a class="btn btn-inverse">
+				</div>
+				<!--<div class="pull-right"><a class="btn btn-inverse">
 					<i class="fa fa-pencil icon-white"></i> 코드 직접 입력하기</a></div>
 				</div>
 				  <div class="span12">
@@ -245,16 +249,16 @@
 								<td class="td-post-writer-img" rowspan="2"><img
 									src="${code.getImgSrc()}"></td>
 								<td colspan="2" class="post-top-title"><a
-									class="a-post-title" href="/code/${code.codeID}"> 
-											<i class="fa fa-download"></i>&nbsp;${code.name} - ${code.content}
+									class="a-post-title" href="/code/${code.codeID}"> <i
+										class="fa fa-download"></i>&nbsp;${code.name} -
+										${code.content}
 								</a></td>
-								<td class="td-button" rowspan="2">
-										<a href="/code/${code.codeID}/${code.name}.zip"> <span
-											class="span-button"> ${code.downCount}
-												<p class="p-button">다운</p>
-										</span>
-										</a>
-								</td>
+								<td class="td-button" rowspan="2"><a
+									href="/code/${code.codeID}/${code.name}.zip"> <span
+										class="span-button"> ${code.downCount}
+											<p class="p-button">다운</p>
+									</span>
+								</a></td>
 								<td class="td-button" rowspan="2"><a
 									href="/code/${code.codeID}"> <span class="span-button">${code.rePostCount}
 											<p class="p-button">답변</p>

@@ -55,31 +55,42 @@ public class TagService {
 
 		return false;
 	}
-	
+
 	public List<String> stringToTagList(String tagNames) {
 		List<String> tags = new ArrayList<String>();
-		
+
 		if(tagNames == null)
 			return tags;	
-		
+
 		if(tagNames.startsWith("[")){
 			tagNames = tagNames.substring(1, tagNames.length()-1);
 		}
-			
+
 		for (String tagName : tagNames.split(",")) {
-			
+
 			if(tagName.startsWith("\""))
 				tagName = tagName.substring(1, tagName.length()-1);
-			
+
 			if(tagName.equals(" ") || tagName.length() <= 0)
 				break;
-			
+
 			tagName = tagName.replace(">", "/");
 			tags.add(tagName);
 		}
 		return tags;
 	}
-	
+
+	public boolean isPublicTags(List<String> tags) {
+		
+		if (tags.size() == 0)
+			return false; 
+		
+		for (String tag : tags) {
+			if (tag.startsWith("@") || tag.startsWith("$"))
+				return false;
+		}
+		return true;
+	}
 
 
 }

@@ -97,7 +97,9 @@ public class ProjectDao {
 			criteria.and("push").gt(0);
 		} else if (sort.equals("push-null")) {
 			criteria.and("push").is(0);
-		} 
+		} else if (sort.equals("solo")) {
+			criteria.where("adminWeavers").size(1).and("joinWeavers").size(0);
+		}
 	}
 	
 	public void sorting(Query query,String sort){

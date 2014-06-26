@@ -11,7 +11,7 @@
 				<ul class="nav">
 					<li><a href="/">처음화면</a></li>
 					<li><a href="/forweaver">소개</a></li>
-					<li><a href="/lecture/"><i class="fa fa-graduation-cap icon-white"></i>&nbsp;&nbsp;강의</a></li>
+					<li><a href="/lecture/"><i class="fa fa-book icon-white"></i>&nbsp;&nbsp;강의</a></li>
 					<li><a href="/project/"><i class="fa fa-bookmark icon-white"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket  icon-white"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments  icon-white"></i>&nbsp;커뮤니티</a></li>
@@ -28,7 +28,8 @@
 							<img style="height:28px;width:28px;" src='<c:out value="${currentUser.getImgSrc()}" escapeXml="false"></c:out>' />&nbsp;&nbsp;${currentUser.username}
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="/manage"><i class="icon-cog"></i>&nbsp;&nbsp;관리화면</a></li>
+								<li><a href="/manage"><i class="icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
+								<li><a href="/${currentUser.id}/edit"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>

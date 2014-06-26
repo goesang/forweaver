@@ -38,11 +38,7 @@ public class Weaver implements UserDetails,Serializable {
 		this.image = image;
 	}
 	
-	public Weaver(String id,String password,String email){
-		this.id = id;
-		this.password = password;
-		this.email = email;
-	}
+
 	
 	public Weaver(String id,String password,String email,String say,Data image){
 		this.id = id;

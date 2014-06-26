@@ -38,6 +38,13 @@ public class GitService {
 		return gitUtil.getFileInfor(commitID, filePath);
 	}
 	
+	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
+			String commitID,String filePath,String WeaverName){
+		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
+		filePath = filePath.replace('>', '/');
+		filePath = filePath.replace(',', '.');
+		return gitUtil.getFileInfor(commitID, filePath,WeaverName);
+	}
 	
 	public List<String> getBranchList(String parentDirctoryName,
 			String repositoryName){
@@ -134,6 +141,30 @@ public class GitService {
 		return (List<GitSimpleCommitLog>) element.getValue();
 	}
 	
+	public boolean isReadCommit(String parentDirctoryName,
+			String repositoryName,Weaver weaver,String commitName){
+				
+		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
+
+		if(commitName.endsWith("-"+weaver.getId()))
+			return true;
+		
+		try{
+		RevCommit revCommit = gitUtil.getCommit(commitName);
+		if(revCommit == null)
+			return false;
+		}catch(Exception e){
+			return false;
+		}
+		
+		for(String branchName : gitUtil.readBranchList(weaver.getId())){
+			if(gitUtil.isReadCommit(branchName,commitName))
+				return true;
+		}
+				
+		return false;
+	}
+	
 	public GitCommitLog getGitCommitLog(String parentDirctoryName,
 			String repositoryName,String branchName) {
 		Cache cache = cacheManager.getCache("gitCommitLog");
@@ -166,7 +197,7 @@ public class GitService {
 		for(GitSimpleCommitLog gitSimpleCommitLog : gitSimpleCommitLogList){
 			Weaver loadWeaver =  weaverDao.get(gitSimpleCommitLog.getCommiterName());
 			if (loadWeaver != null)
-				gitSimpleCommitLog.setImgSrc("/"+loadWeaver.getId()+"/img");
+				gitSimpleCommitLog.setImgSrc("/img/"+loadWeaver.getId());
 		}
 		
 		return gitSimpleCommitLogList;

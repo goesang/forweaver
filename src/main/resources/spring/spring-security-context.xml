@@ -23,10 +23,6 @@
 <!-- Additional filter chain for normal users, matching all other requests -->
 <security:http pattern="/**" auto-config='true' use-expressions="true">
 <security:intercept-url pattern="/login" access="isAnonymous()" />
-<security:intercept-url pattern="/facebook/login" access="isAnonymous()" />
-<security:intercept-url pattern="/facebook/call" access="isAnonymous()" />
-<security:intercept-url pattern="/twitter/login" access="isAnonymous()" />
-<security:intercept-url pattern="/twitter/call" access="isAnonymous()" />
 <security:intercept-url pattern="/join" access="isAnonymous()" />
 <security:intercept-url pattern="/check" access="isAnonymous()" />
 <security:intercept-url pattern="/" access="hasRole('ROLE_USER')" />

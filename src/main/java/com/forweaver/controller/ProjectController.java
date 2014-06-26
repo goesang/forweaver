@@ -1,6 +1,35 @@
 package com.forweaver.controller;
 
-/*
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.forweaver.domain.Post;
+import com.forweaver.domain.Project;
+import com.forweaver.domain.Weaver;
+import com.forweaver.domain.git.GitFileInfo;
+import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.service.GitService;
+import com.forweaver.service.PostService;
+import com.forweaver.service.ProjectService;
+import com.forweaver.service.RePostService;
+import com.forweaver.service.TagService;
+import com.forweaver.service.WeaverService;
+import com.forweaver.util.WebUtil;
+
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
@@ -16,67 +45,108 @@ public class ProjectController {
 	GitService gitService;
 	@Autowired
 	TagService tagService;
-	@Autowired
-	PermissionService permissionService;
 
 	@RequestMapping("/")
-	public String projects(Model model) {
-		model.addAttribute("projects", projectService.checkJoinProject(
-				projectService.getProjects(0, 10),weaverService.getCurrentWeaver()));
-		model.addAttribute("projectCount", projectService.countProjects());
-		model.addAttribute("pageIndex", 1);
-		model.addAttribute("pageUrl", "/project/page:");
-		return "/project/projects";
+	public String projects() {
+		return "redirect:/project/sort:age-desc/page:1";
 	}
 		
-	@RequestMapping("/page:{page}")
-	public String projectsWithPage(Model model,@PathVariable("page") int page) {
-		model.addAttribute("projects", projectService.checkJoinProject(
-				projectService.getProjects((page-1)*10, 10),weaverService.getCurrentWeaver()));
-		model.addAttribute("projectCount", projectService.countProjects());
-		model.addAttribute("pageIndex", page);
-		model.addAttribute("pageUrl", "/project/page:");
+	@RequestMapping("/sort:{sort}/page:{page}")
+	public String projectsWithPage(@PathVariable("page") String page,
+			@PathVariable("sort") String sort,Model model) {
+		int pageNum;
+		int number = 15;
+		
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,sort, pageNum, number));
+		model.addAttribute("projectCount", projectService.countProjects(sort));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", number);
+		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
+	
+	
 	
 	@RequestMapping("/tags:{tagNames}")
-	public String projectsWithTags(Model model,@PathVariable("tagNames") String tagNames) {
-		List<Tag> tagList = tagService.stringToTagList(tagNames);
-		model.addAttribute("projects", projectService.checkJoinProject(
-				projectService.getProjectsWithTags(tagList, 0, 10),weaverService.getCurrentWeaver()));
-		model.addAttribute("projectCount", projectService.countProjectsWithTags(tagList));
-		model.addAttribute("pageIndex", 1);
-		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/page:");
+	public String projectsWithTags(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
+	}
+	
+	@RequestMapping("/tags:{tagNames}/sort:{sort}/page:{page}")
+	public String projectsWithTags(@PathVariable("tagNames") String tagNames,
+			@PathVariable("page") String page,
+			@PathVariable("sort") String sort,Model model) {
+		int pageNum;
+		int number = 15;
+		List<String> tagList = tagService.stringToTagList(tagNames);
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}		
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		model.addAttribute("projects", projectService.getProjectsWithTags(currentWeaver,tagList,sort, pageNum, number));
+		model.addAttribute("projectCount", projectService.countProjectsWithTags(tagList,sort));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", number);
+		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"sort:"+sort+"/page:");
 		return "/project/projects";
 	}
 	
-	@RequestMapping("/tags:{tagNames}/page:{page}")
-	public String projectsWithTags(Model model,
-			@PathVariable("tagNames") String tagNames,@PathVariable("page") int page) {
-		List<Tag> tagList = tagService.stringToTagList(tagNames);
-		model.addAttribute("projects", projectService.checkJoinProject(
-				projectService.getProjectsWithTags(tagList, (page-1)*10, 10),weaverService.getCurrentWeaver()));
-		model.addAttribute("projectCount", projectService.countProjectsWithTags(tagList));
-		model.addAttribute("pageIndex", page);
-		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/page:");
+	@RequestMapping("/tags:{tagNames}/search:{search}")
+	public String tagsWithSearch(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
+	}
+	
+	@RequestMapping("/tags:{tagNames}/search:{search}/sort:{sort}/page:{page}")
+	public String tagsWithSearch(@PathVariable("tagNames") String tagNames,
+			@PathVariable("page") String page,
+			@PathVariable("search") String search,
+			@PathVariable("sort") String sort,Model model) {
+		int pageNum;
+		int number = 15;
+		List<String> tagList = tagService.stringToTagList(tagNames);
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}		
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		model.addAttribute("projects", projectService.getProjectsWithTagsAndSearch(currentWeaver,tagList,search,sort, pageNum, number));
+		model.addAttribute("projectCount", projectService.countProjectsWithTagsAndSearch(tagList,search,sort));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", number);
+		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/search:"+search+"/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@ResponseBody
-	public boolean add(@RequestParam Map<String, String> params) {
+	public String add(@RequestParam Map<String, String> params) {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		List<Tag> tagList = tagService.stringToTagList(params.get("tags"));
+		List<String> tagList = tagService.stringToTagList(params.get("tags"));
+		int category = 1;
+		if(params.get("category")!= null && params.get("category").equals("on"))
+			category= 0;
 		if(!tagService.isPublicTags(tagList))
-			return false;
+			return "redirect:/project/";
+		
+		
 		Project project = new Project(params.get("name"), 
-										Integer.parseInt(params.get("category")), 
+										category, 
 										WebUtil.removeHtml(params.get("description")), 
-										Integer.parseInt(params.get("period")), 
 										currentWeaver,
 										tagList);
 		projectService.add(project,currentWeaver);
-		return true;
+		return "redirect:/project/"+project.getName();
 	}
 	
 	
@@ -84,13 +154,9 @@ public class ProjectController {
 	public String delete(Model model,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("projectName") String projectName) {
-		if(!creatorName.equals(weaverService.getCurrentWeaver().getName()))
-			return "redirect:/project/";
 		Project project = projectService.get(creatorName+"/"+projectName);
-		if(project == null)
-			return "redirect:/project/";
-		weaverService.deleteCurrentWeaverPass(project.getWeavers(), project.getName());
-		projectService.delete(project);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		projectService.delete(currentWeaver, project);
 		return "redirect:/project/";
 	}
 	
@@ -99,11 +165,6 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commitName") String commitName,
 			HttpServletResponse response) {
-		Project project = projectService.get(creatorName+"/"+projectName);
-
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver()))
-			return;
-
 		if(!gitService.existCommit(creatorName, projectName, commitName))
 			return;
 
@@ -118,14 +179,8 @@ public class ProjectController {
 		"/{creatorName}/{projectName}/browser"}
 	)
 	public String browser(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,Model model,Device device) {
+			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
 		
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		
@@ -140,14 +195,10 @@ public class ProjectController {
 	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commit}")
 	public String browser(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model,Device device) {
+			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
+
 		model.addAttribute("project", project);
 		model.addAttribute("gitFileInfoList", 
 				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit));
@@ -163,14 +214,10 @@ public class ProjectController {
 	public String fileViewer(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commitID") String commitID,
-			@PathVariable("filePath") String filePath,Model model,Device device) {
+			@PathVariable("filePath") String filePath,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
+
 		
 		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
@@ -184,23 +231,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping("/{creatorName}/{projectName}/community")
-	public String community(HttpServletRequest request,
-			@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,Model model,Device device) {
-		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
-		List<Tag> tagList = new ArrayList<Tag>();
-		tagList.add(new Tag("@"+creatorName+"/"+projectName));
-		
-		if(!tagService.validateTag(tagList)){
-			return "redirect:/"+creatorName+"/"+projectName+"/community/";
-		}
+	public String community(HttpServletRequest request) {
 		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
 	}
 	
@@ -208,52 +239,34 @@ public class ProjectController {
 	public String community(@PathVariable("projectName") String projectName,
 			@PathVariable("sort") String sort,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("page") int page,Model model,Device device) {
+			@PathVariable("page") String page,Model model) {
+		int pageNum;
+		int number = 15;
+		
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}	
+		
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
-		List<Tag> tagList = new ArrayList<Tag>();
-		tagList.add(new Tag("@"+creatorName+"/"+projectName));
-		
-		if(!tagService.validateTag(tagList)){
-			return "redirect:/"+creatorName+"/"+projectName+"/community/";
-		}
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		List<String> tagList = new ArrayList<String>();
+		tagList.add(new String("@"+creatorName+"/"+projectName));
 		
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				tagService.getPostsWhenWeaver(sort,tagList,tagList.size()-1,(page-1)*10,10));
+				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
 		model.addAttribute("postCount", 
-				tagService.countPostsWhenWeaver(sort,tagList,tagList.size()-1));
-		model.addAttribute("pageIndex", page);
+				postService.countPostsWithTags(currentWeaver, tagList, sort));
+		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/sort:"+sort+"/page:");
 		return "/project/community";
 	}
 
 	@RequestMapping("/{creatorName}/{projectName}/community/tags:{tagNames}")
-	public String tags(HttpServletRequest request,
-			@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,
-			@PathVariable("tagNames") String tagNames,Model model,Device device){
-		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
-		List<Tag> tagList = tagService.stringToTagList(tagNames);
-		tagList.add(new Tag("@"+creatorName+"/"+projectName));
-		
-		if(!tagService.validateTag(tagList)){
-			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
-		}
-		
+	public String tags(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
 	}
 	
@@ -262,30 +275,31 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("tagNames") String tagNames,
 			@PathVariable("sort") String sort,
-			@PathVariable("page") int page,Model model,Device device){
+			@PathVariable("page") String page,Model model){
+		int pageNum;
+		int number = 15;
+		
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}	
+		
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
-		List<Tag> tagList = tagService.stringToTagList(tagNames);
-		tagList.add(new Tag("@"+creatorName+"/"+projectName));
-		
-		if(!tagService.validateTag(tagList)){
-			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
-		}
-		
+		List<String> tagList = tagService.stringToTagList(tagNames);
+		tagList.add(new String("@"+creatorName+"/"+projectName));
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+	
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				tagService.getPostsWhenWeaver(sort,tagList,tagList.size()-1,(page-1)*10,10));
+				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
 		model.addAttribute("postCount", 
-				tagService.countPostsWhenWeaver(sort,tagList,tagList.size()-1));
+				postService.countPostsWithTags(currentWeaver, tagList, sort));
 
-		model.addAttribute("pageIndex", page);
-		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/tags:"+tagNames+"/sort:"+sort+"/page:");
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("pageUrl", 
+				"/project/"+projectName+"/community/tags:"+tagNames+"/sort:"+sort+"/page:");
 		return "/project/community";
 	}
 	
@@ -302,9 +316,9 @@ public class ProjectController {
 			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
 		else if(content == null)
 			content = "";
-		List<Tag> tagList = tagService.stringToTagList(
+		List<String> tagList = tagService.stringToTagList(
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
-		tagList.add(new Tag("@"+creatorName+"/"+projectName));
+		tagList.add(new String("@"+creatorName+"/"+projectName));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
@@ -315,21 +329,15 @@ public class ProjectController {
 				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))), 
 				tagList);
 		
-		postService.add(post);
+		postService.add(post,null);
 		return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
 	}
 	
 	@RequestMapping("/{creatorName}/{projectName}/commitlog")
 	public String commitLog(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,Model model,Device device) {
+			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
+	
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		
 		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
@@ -347,15 +355,9 @@ public class ProjectController {
 	@RequestMapping("/{creatorName}/{projectName}/commitlog/commit:{commit}")
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model,Device device) {
+			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
+
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
@@ -373,14 +375,8 @@ public class ProjectController {
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,
-			@PathVariable("page") int page,Model model,Device device) {
+			@PathVariable("page") int page,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
 		
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		gitBranchList.remove(commit);
@@ -398,15 +394,8 @@ public class ProjectController {
 	@RequestMapping("/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}")
 	public String commitLogViewer(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model,Device device) {
+			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-
 		model.addAttribute("project", project);
 		model.addAttribute("gitCommitLog", 
 				gitService.getGitCommitLog(creatorName, projectName, commit));
@@ -416,15 +405,8 @@ public class ProjectController {
 		
 	@RequestMapping("/{creatorName}/{projectName}/weaver")
 	public String manageWeaver(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,Model model,Device device) {
+			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-		if(!permissionService.projectPermission(project, weaverService.getCurrentWeaver())){
-			  if (device.isMobile())
-				  return "redirect:/m/project/";
-			return "redirect:/project/";
-		}
-		
 		model.addAttribute("project", project);
 		return "/project/manageWeaver";
 	}
@@ -439,26 +421,37 @@ public class ProjectController {
 		
 		if(projectService.deleteWeaver(project, currentWeaver,deleteWeaver)){
 			Post post;
-			if(currentWeaver.getName().equals(project.getCreatorName())){//관리자가 탈퇴시킬시에 메세지
+			if(currentWeaver.getId().equals(project.getCreatorName())){//관리자가 탈퇴시킬시에 메세지
 				post = new Post(currentWeaver, 
-						deleteWeaver.getName()+"님을 탈퇴 처리하였습니다.", "", 
+						deleteWeaver.getId()+"님을 탈퇴 처리하였습니다.", "", 
 						tagService.stringToTagList("@"+project.getName()+",탈퇴"));//프로젝트에 메세지 보냄
-				postService.add(post);
+				postService.add(post,null);
 				post = new Post(currentWeaver, 
 						"프로젝트명:"+project.getName()+"에서 탈퇴당하셨습니다.", "", 
-						tagService.stringToTagList("$"+deleteWeaver.getName()));//프로젝트에 메세지 보냄
-				postService.add(post);
+						tagService.stringToTagList("$"+deleteWeaver.getId()));//프로젝트에 메세지 보냄
+				postService.add(post, null);
 			}else{//사용자가 탈퇴할시에 메세지
 				post = new Post(currentWeaver, 
-						deleteWeaver.getName()+"님이 탈퇴하셨습니다.", "", 
+						deleteWeaver.getId()+"님이 탈퇴하셨습니다.", "", 
 						tagService.stringToTagList("@"+project.getName()+",탈퇴"));//프로젝트에 메세지 보냄
-				postService.add(post);
+				postService.add(post, null);
 			}
 			
 		}
 		return "redirect:/";
 	}
 	
+	@RequestMapping(value="/{creatorName}/{projectName}/upload" , method=RequestMethod.POST)
+	public String upload(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@RequestParam("message") String message,
+			@RequestParam("zip") MultipartFile zip) {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		projectService.uploadZip(project, currentWeaver, message, zip);
+		
+		return "redirect:/project/"+creatorName+"/"+projectName;
+	}
 	
 	@RequestMapping("/{creatorName}/{projectName}/push")
 	public String push(@PathVariable("projectName") String projectName,
@@ -472,4 +465,3 @@ public class ProjectController {
 	}
 
 }
-*/

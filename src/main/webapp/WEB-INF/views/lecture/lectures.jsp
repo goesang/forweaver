@@ -9,7 +9,82 @@
 <body>
 	<script>
 		
-		$(document).ready(function() {
+	function checkLecture(){
+		var objPattern = /^[a-zA-Z0-9]+$/;
+		var name = $('#lecture-name').val();
+		var description = $('#lecture-description').val();
+		var tags = $("input[name='tags']").val();
+		tags = tagInputValueConverter(eval(tags));
+		if(tags.length == 0){
+			$("alert").append("<div class='alert alert-error'>"+
+					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
+					  "<strong>경고!</strong> 태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!"+
+					"</div>");
+			return false;
+		}else if(!objPattern.test(name)){
+			$("alert").append("<div class='alert alert-error'>"+
+					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
+					  "<strong>경고!</strong> 강의명은 영문 숙자 조합이어야 합니다. 다시 입력해주세요!"+
+					"</div>");
+			return false;
+		}
+		else if(name.length == 0){
+			$("alert").append("<div class='alert alert-error'>"+
+					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
+					  "<strong>경고!</strong> 강의명을 입력하시지 않았습니다. 강의명을 입력해주세요!"+
+					"</div>");
+			return false;
+		}else if(description.lenght == 0){
+			$("alert").append("<div class='alert alert-error'>"+
+					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
+					  "<strong>경고!</strong> 강의 소개를 입력하시지 않았습니다. 강의 소개를 입력해주세요!"+
+					"</div>");
+			return false;
+		}else{
+			$("form:first").append($("input[name='tags']"));
+			return true;
+		}
+	}
+	
+	function showPostContent() {
+		var tags = $("input[name='tags']").val();
+		if(tags.length == 2){
+			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
+			return;
+		}
+		$('#page-pagination').hide();
+		$('#post-table').hide();
+		$('#post-ok').show();
+		$('#search-button').hide();
+		$('#search-div').hide();
+		$('#post-div').fadeIn('slow');
+		$('#show-content-button').hide();
+		$('#hide-content-button').show();
+		editorMode = true;
+	}
+
+	function hidePostContent() {
+		$('#page-pagination').show();
+		$('#post-table').show();
+		$('#search-div').show();
+		$('#post-div').hide();
+		$('#post-ok').hide();
+		$('#search-button').show();
+		$('#show-content-button').show();
+		$('#hide-content-button').hide();
+		editorMode = false;
+	}
+	
+	
+	$(function() {
+			
+			hidePostContent();
+			$('#search-button').click(
+					function() {
+							var tagNames = $("input[name='tags']").val();
+							movePage(tagNames,$('#post-search-input').val());							
+					});
+			
 					$('.tag-name').click(
 							function() {
 								var tagname = $(this).text();
@@ -28,57 +103,6 @@
 											+ ",\"" + tagname + "\"]","");
 							});
 
-						$("select").selectpicker({
-							style : 'btn-inverse',
-							menuStyle : 'dropdown-inverse'
-						});
-
-						$('#lecture-ok-button').click(function(){
-							var objPattern = /^[a-zA-Z0-9]+$/;
-							var name = $('#lecture-name-input').val();
-							var description = $('#lecture-description').val();
-							var period = $('#lecture-period-select').val();
-							var category = $('#lecture-category-select').val();
-							var tags = $("input[name='tags']").val();
-							tags = tagInputValueConverter(eval(tags));
-							if(tags.length == 0){
-								$("alert").append("<div class='alert alert-error'>"+
-										  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-										  "<strong>경고!</strong> 태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!"+
-										"</div>");
-								return;
-							}else if(!objPattern.test(name)){
-								$("alert").append("<div class='alert alert-error'>"+
-										  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-										  "<strong>경고!</strong> 강의명은 영문 숙자 조합이어야 합니다. 다시 입력해주세요!"+
-										"</div>");
-								return;
-							}
-							else if(name.length == 0){
-								$("alert").append("<div class='alert alert-error'>"+
-										  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-										  "<strong>경고!</strong> 강의명을 입력하시지 않았습니다. 강의명을 입력해주세요!"+
-										"</div>");
-								return;
-							}else if(description.lenght == 0){
-								$("alert").append("<div class='alert alert-error'>"+
-										  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-										  "<strong>경고!</strong> 강의 소개를 입력하시지 않았습니다. 강의 소개를 입력해주세요!"+
-										"</div>");
-								return;
-							}
-
-							$.ajax({
-					               type: "POST",
-					               url: "/lecture/add",
-					               data: 'name='+name+'&description='+description+'&tags='+tags,
-					               success: function(msg){
-					            	   var tagNames = $("input[name='tags']").val();
-					            	   movePage(tagNames,"");
-					               }
-					         });
-						});
-							
 						var pageCount = ${lectureCount+1}/${number};
 						pageCount = Math.ceil(pageCount);					
 						var options = {
@@ -97,85 +121,101 @@
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 		<div class="page-header">
-		<alert></alert>		
+			<alert></alert>
 			<h5>
-				<big><big><i class=" fa fa-book"></i> 수강해보세요!</big></big>
-				<small>강의를 찾아 수강 신청을 해보거나 수업에 필요한 저장소를 만들어보세요!</small>
-				<div style="margin-top:-10px" class="pull-right">
-							<button class="btn btn-warning">
-											<b>COUNT : ${lectureCount}</b>
-							</button>
+				<big><big><i class=" fa fa-book"></i> 수강해보세요!</big></big> <small>강의를
+					찾아 수강 신청을 해보거나 수업에 필요한 저장소를 만들어보세요!</small>
+				<div style="margin-top: -10px" class="pull-right">
+					<button class="btn btn-warning">
+						<b><b><i class="fa fa-database"></i> ${lectureCount}</b></b>
+					</button>
 				</div>
 			</h5>
 		</div>
 		<div class="row">
 
-							
-					<div class="span3">
 
-						<input placeholder="강의명을 입력해주세요!"
-							id="lecture-name-input" type="text" value="" />
-					</div>
-					<div class="span8">
-					<input style="margin-left:-20px;"class="span8" type="text" id="lecture-description" 
-						placeholder="강의에 대해 설명해주세요!"></input>
+			<div id="search-div" class="span10">
+				<input id="post-search-input" class="title span10"
+					placeholder="검색어를 입력하여 강의를 찾아보세요!" type="text" />
+			</div>
+			<form onsubmit="return checkLecture()" id="lectureForm"
+				action="/lecture/add" method="post">
+
+				<div id="post-div" class="span10">
+					<input name="name" id="lecture-name" class="title span3"
+						placeholder="강의명을 입력해주세요!" type="text" /> <input
+						name="description" id="lecture-description" class="title span7"
+						placeholder="강의에 대해 소개해주세요!" type="text" />
 				</div>
-					<div class="span1">
-					<span>
-						<button id="lecture-ok-button"
-							type="submit" class="post-button btn btn-primary create-lecture">
+
+				<div class="span2">
+
+
+					<span> <a id="show-content-button"
+						href="javascript:showPostContent();"
+						class="post-button btn btn-primary"> <i
+							class="icon-edit icon-white"></i>
+					</a> <a id='search-button' class="post-button btn btn-primary"> <i
+							class="icon-search icon-white"></i>
+					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
+						class="post-button btn btn-primary"> <i
+							class="icon-edit icon-white"></i>
+					</a>
+						<button type="submit" id='post-ok' class="post-button btn btn-primary">
 							<i class="icon-ok icon-white"></i>
 						</button>
+
 					</span>
 				</div>
-				
-		<div class=" span12">	
+			</form>
+
+			<div class=" span12">
 				<table id="lecture-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${lectures}" var="lecture">
 							<tr>
 								<td class="td-post-writer-img" rowspan="2"><img
-									src="${lecture.getImgSrc()}">
-								</td>
-								<td  colspan="2" class="post-top-title"><a class="a-post-title"
-									href="/lecture/${lecture.name}"> <i class='icon-book'></i>
-										&nbsp;${lecture.name} ~
+									src="${lecture.getImgSrc()}"></td>
+								<td colspan="2" class="post-top-title"><a
+									class="a-post-title" href="/lecture/${lecture.name}"> <i
+										class='icon-book'></i> &nbsp;${lecture.name} ~
 										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
 								</a></td>
-								<td class="td-button" rowspan="2">
-								<sec:authorize ifNotGranted="ROLE_USER">
-								<a	href="/lecture/${lecture.name}/join"> 
-								<span class="span-button"><i class="fa fa-times-circle"></i><p class="p-button">가입</p></span>
-								</a>
-								</sec:authorize>
-								<sec:authorize ifAnyGranted="ROLE_USER">
-								<c:if test="${!lecture.isJoin() && lecture.creatorName != currentUser.username}">
-								<a	href="/lecture/${lecture.name}/join"> 
-								<span class="span-button"><i class="fa fa-times-circle"></i><p class="p-button">가입</p></span>
-								</a>
-								</c:if>
-								<c:if test="${lecture.isJoin() && lecture.creatorName != currentUser.username}">
-								<a	href="/lecture/${lecture.name}">
-								 <span class="span-button"><i class="fa fa-circle-o"></i></i><p class="p-button">가입</p></span>
-								 </a>
-								</c:if>
-									<c:if test="${lecture.creatorName == currentUser.username}">
-									<a	href="/lecture/${lecture.name}">
-									<span class='span-button'><i class="fa fa-user"></i>
-									<p class='p-button'>관리자</p>"
-									</span>
-									</c:if>
-								</sec:authorize>
-								</td>
+								<td class="td-button" rowspan="2"><sec:authorize
+										ifNotGranted="ROLE_USER">
+										<a href="/lecture/${lecture.name}/join"> <span
+											class="span-button"><i class="fa fa-times-circle"></i>
+												<p class="p-button">가입</p></span>
+										</a>
+									</sec:authorize> <sec:authorize ifAnyGranted="ROLE_USER">
+										<c:if
+											test="${!lecture.isJoin() && lecture.creatorName != currentUser.username}">
+											<a href="/lecture/${lecture.name}/join"> <span
+												class="span-button"><i class="fa fa-times-circle"></i>
+													<p class="p-button">가입</p></span>
+											</a>
+										</c:if>
+										<c:if
+											test="${lecture.isJoin() && lecture.creatorName != currentUser.username}">
+											<a href="/lecture/${lecture.name}"> <span
+												class="span-button"><i class="fa fa-circle-o"></i>
+													<p class="p-button">가입</p></span>
+											</a>
+										</c:if>
+										<c:if test="${lecture.creatorName == currentUser.username}">
+											<a href="/lecture/${lecture.name}"> <span
+												class='span-button'><i class="fa fa-user"></i>
+													<p class='p-button'>관리자</p>" </span>
+											</a>
+										</c:if>
+									</sec:authorize></td>
 							</tr>
 							<tr>
-								<td class="post-bottom">
-																		
-								<b>${lecture.creatorName}</b>
-								${lecture.getOpeningDateFormat()}
-								</td>	
-								<td class="post-bottom-tag">
-									<c:forEach	items="${lecture.tags}" var="tag">
+								<td class="post-bottom"><b>${lecture.creatorName}</b>
+									${lecture.getOpeningDateFormat()}</td>
+								<td class="post-bottom-tag"><c:forEach
+										items="${lecture.tags}" var="tag">
 										<span
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
@@ -185,16 +225,14 @@
 										tag-massage
 										</c:if>
 										">${tag}</span>
-									</c:forEach>
-					
-									</td>
+									</c:forEach></td>
 
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
 
-				<div class = "text-center">
+				<div class="text-center">
 					<div id="page-pagination"></div>
 				</div>
 			</div>

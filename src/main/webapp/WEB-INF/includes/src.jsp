@@ -17,12 +17,13 @@
 <script src="/resources/forweaver/js/jquery-1.11.0.min.js"></script>
 <script src="/resources/forweaver/js/bootstrap.min.js"></script>
 <script src="/resources/forweaver/js/bootstrap-select.js"></script>
-<script src="/resources/forweaver/js/bootstrap-switch.js"></script>
 <script src="/resources/forweaver/js/flatui-checkbox.js"></script>
 <script src="/resources/forweaver/js/flatui-radio.js"></script>
 <script src="/resources/forweaver/js/textext.core.js"></script>
 <script src="/resources/forweaver/js/textext.plugin.tags.js"></script>
 <script src="/resources/forweaver/js/bootstrap-paginator.js"></script>
 <script src="/resources/forweaver/js/jasny-bootstrap.min.js"></script>
-
+<script src="/resources/forweaver/js/jquery-ui-1.10.4.min.js"></script>
+<script src="/resources/forweaver/js/jquery.placeholder.js"></script>
+<script src="/resources/forweaver/js/application.js"></script>
 <meta name="robots" content="noindex">

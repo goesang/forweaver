@@ -2,6 +2,7 @@ package com.forweaver.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
+import com.forweaver.domain.Lecture;
+import com.forweaver.domain.Pass;
+import com.forweaver.domain.Project;
 import com.forweaver.domain.Weaver;
+import com.forweaver.service.CodeService;
+import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
+import com.forweaver.service.ProjectService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
@@ -32,6 +40,15 @@ public class WeaverController {
 
 	@Autowired
 	PostService postService;
+	
+	@Autowired
+	ProjectService projectService;
+	
+	@Autowired
+	LectureService lectureService;
+	
+	@Autowired
+	CodeService codeService;
 
 	@Autowired
 	TagService tagService;
@@ -68,6 +85,61 @@ public class WeaverController {
 		return "redirect:/" + id + "/sort:age-desc/page:1";
 	}
 
+	@RequestMapping("/{id}/project")
+	public String project(@PathVariable("id") String id, Model model) {
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null)
+			return "redirect:/";
+		
+		List<Project> projects = new ArrayList<Project>();
+		
+		for(Pass pass :weaver.getPasses()){
+			Project project = projectService.get(pass.getJoinName());
+			if(project != null)
+				projects.add(project);
+		}
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("projects", projects);
+		model.addAttribute("search", false);
+		return "/weaver/home";
+	}
+	
+	@RequestMapping("/{id}/lecture")
+	public String lecture(@PathVariable("id") String id, Model model) {
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null) {
+			return "redirect:/";
+		}
+
+		List<Lecture> lectures = new ArrayList<Lecture>();
+		
+		for(Pass pass :weaver.getPasses()){
+			Lecture lecture = lectureService.get(pass.getJoinName());
+			if(lecture != null)
+				lectures.add(lecture);
+		}
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("lectures", lectures);
+		model.addAttribute("search", false);
+		return "/weaver/home";
+	}
+	
+	@RequestMapping("/{id}/code")
+	public String code(@PathVariable("id") String id, Model model) {
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null) {
+			return "redirect:/";
+		}
+		
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("codes", codeService.getCodesWhenWeaverHome(id, "", 1, 10000));
+		model.addAttribute("search", false);
+		return "/weaver/home";
+	}
+	
 	@RequestMapping("/{id}/sort:{sort}/page:{page}")
 	public String page(@PathVariable("id") String id,
 			@PathVariable("page") String page,
@@ -200,22 +272,32 @@ public class WeaverController {
 		return "/weaver/home";
 	}
 
+	
+	@RequestMapping(value = "/{id}/edit")
+	public String editWeaver(@PathVariable("id") String id,Model model) {
+		Weaver weaver = weaverService.getCurrentWeaver();
+		if (!weaver.getId().equals(id)) // 본인이 아닐 경우
+			return "redirect:/manage";
+		model.addAttribute("weaver", weaver);
+		return "/weaver/edit";
+	}
+	
 	@RequestMapping(value = "/{id}/edit", method = RequestMethod.POST)
 	public String editWeaver(@PathVariable("id") String id,
-			HttpServletRequest req) {
-
-		String currentPassword = req.getParameter("currentPassword");
-		String password = req.getParameter("password");
-		String email = req.getParameter("email");
-
-		if (!weaverService.getCurrentWeaver().getId().equals(id)) // 본인이 아닐 경우
+			@RequestParam("password") String password,
+			@RequestParam("say") String say,
+			@RequestParam("image") MultipartFile image) {
+		Weaver weaver = weaverService.getCurrentWeaver();
+		if (!weaver.getId().equals(id)) // 본인이 아닐 경우
 			return "redirect:/manage";
 
-		if (!weaverService.getCurrentWeaver().getPassword()
-				.equals(currentPassword))
-			return "redirect:/manage";
-
-		Weaver weaver = new Weaver(id, password, email);
+		if(image != null && image.getSize() > 0)
+			weaver.setImage(new Data(image, weaver.getId()));
+		
+		if(password != null && !password.equals(""))
+			weaver.setPassword(password);
+		if(say != null && !say.equals(""))
+			weaver.setSay(say);
 
 		weaverService.update(weaver);
 
@@ -249,5 +331,7 @@ public class WeaverController {
 	public boolean nickNameCheck(HttpServletRequest req) {
 		return weaverService.idCheck(req.getParameter("id"));
 	}
+	
+	
 
 }

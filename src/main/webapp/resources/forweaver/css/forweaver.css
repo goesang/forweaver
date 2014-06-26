@@ -1,3 +1,7 @@
+.radio-period{
+	display: inline;
+	margin: 0px 10px;
+}
 h1 a{
 	color:#34495E;
 }
@@ -224,6 +228,8 @@ ul.unstyled a {
 
 .post-img{
 	max-width:900px;
+	display: block;
+    margin: 0 auto;
 	
 }
 

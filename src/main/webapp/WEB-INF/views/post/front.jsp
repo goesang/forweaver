@@ -183,7 +183,7 @@
 				<div style="margin-top: -10px" class="pull-right">
 
 					<button class="btn btn-warning">
-						<b>COUNT : ${postCount}</b>
+						<b><i class="fa fa-database"></i> ${postCount}</b>
 					</button>
 
 				</div>
@@ -212,8 +212,8 @@
 				</ul>
 			</div>
 
-			<form id="postForm" onsubmit="return checkPost()" action="/community/add"
-				enctype="multipart/form-data" method="post">
+			<form id="postForm" onsubmit="return checkPost()"
+				action="/community/add" enctype="multipart/form-data" method="post">
 
 				<div class="span9">
 					<input name="title" id="post-title-input" class="title span9"
@@ -255,9 +255,8 @@
 					<tbody>
 						<c:forEach items="${posts}" var="post">
 							<tr>
-								<td class="td-post-writer-img" rowspan="2">
-								<a href="/${post.writerName}">
-								<img src="${post.getImgSrc()}"></a></td>
+								<td class="td-post-writer-img" rowspan="2"><a
+									href="/${post.writerName}"> <img src="${post.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/community/${post.postID}"> <c:if
 											test="${post.isLong()}">
@@ -267,13 +266,13 @@
 										</c:if> &nbsp;${post.title}
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind == 2}">
+										test="${post.kind >= 2}">
 										<a href="/community/${post.postID}/delete"> <span
 											class="span-button"> X
 												<p class="p-button">삭제</p>
 										</span>
 										</a>
-									</c:if> <c:if test="${post.kind != 2}">
+									</c:if> <c:if test="${post.kind < 2}">
 										<a href="/community/${post.postID}/push"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>
@@ -288,7 +287,8 @@
 							<tr>
 								<td class="post-bottom"><a href="/${post.writerName}"><b>${post.writerName}</b></a>
 									${post.getFormatCreated()}</td>
-								<td class="post-bottom-tag"><c:forEach	items="${post.tags}" var="tag">
+								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
+										var="tag">
 										<span
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">

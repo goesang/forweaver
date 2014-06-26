@@ -9,6 +9,7 @@ import net.sf.ehcache.Element;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
@@ -32,7 +33,7 @@ public class LectureService {
 		if(weaverDao.get(lecture.getName()) != null || lectureDao.get(lecture.getName()) != null)
 			return; // 중복 검사
 		
-		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0, lecture);
+		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0,lecture);
 		lecture.addRepo(repo);
 		lectureDao.add(lecture);
 		
@@ -54,6 +55,28 @@ public class LectureService {
 		Cache cache = cacheManager.getCache("lecture");
 		Element newElement = new Element(lecture.getName(), lecture);
 		cache.put(newElement);
+	}
+	
+	public void addRepo(Lecture lecture,Repo repo){
+		try{
+			GitUtil gitUtil = new GitUtil(repo);
+			gitUtil.createRepository();
+		} catch (Exception e) {
+			return;
+		}
+		lecture.addRepo(repo);
+		lectureDao.update(lecture);
+	}
+	
+	public void removeRepo(Lecture lecture,Repo repo){
+		try{
+			GitUtil gitUtil = new GitUtil(repo);
+			gitUtil.deleteRepository();
+		} catch (Exception e) {
+			return;
+		}
+		lecture.removeRepo(repo);
+		lectureDao.update(lecture);
 	}
 	
 
@@ -121,14 +144,14 @@ public class LectureService {
 		return false;
 	}
 
-	public long countLectures(String sort) {
+	public long countLectures() {
 		// TODO Auto-generated method stub
-		return lectureDao.countLectures(null, null, null, sort);
+		return lectureDao.countLectures(null, null, null);
 	}
 
-	public List<Lecture> getLectures(Weaver currentWeaver,String sort,int pageNumber, int lineNumber) {
+	public List<Lecture> getLectures(Weaver currentWeaver,int pageNumber, int lineNumber) {
 		// TODO Auto-generated method stub
-		List<Lecture> lectures = lectureDao.getLectures(null, null, null, sort, pageNumber, lineNumber);
+		List<Lecture> lectures = lectureDao.getLectures(null, null, null, pageNumber, lineNumber);
 		
 		if(currentWeaver != null)
 			for(Lecture lecture:lectures){
@@ -139,15 +162,34 @@ public class LectureService {
 		return lectures;
 	}
 
-	public long countLecturesWithTags(List<String> tags,String sort) {
+	public long countLecturesWithTags(List<String> tags) {
 		// TODO Auto-generated method stub
-		return lectureDao.countLectures(tags, null, null, sort);
+		return lectureDao.countLectures(tags, null, null);
 	}
 
-	public List<Lecture> getLecturesWithTags(Weaver currentWeaver,List<String> tags,String sort, int pageNumber,
+	public List<Lecture> getLecturesWithTags(Weaver currentWeaver,List<String> tags, int pageNumber,
 			int lineNumber) {
 		// TODO Auto-generated method stub	
-		List<Lecture> lectures = lectureDao.getLectures(tags, null, null, sort, pageNumber, lineNumber);
+		List<Lecture> lectures = lectureDao.getLectures(tags, null, null, pageNumber, lineNumber);
+		
+		if(currentWeaver != null)
+			for(Lecture lecture:lectures){
+				if(currentWeaver.getPass(lecture.getName()) != null)
+					lecture.setJoin(true);
+			}
+				
+		return lectures;
+	}
+	
+	public long countLecturesWithTagsAndSearch(List<String> tags,String search) {
+		// TODO Auto-generated method stub
+		return lectureDao.countLectures(tags, search, null);
+	}
+
+	public List<Lecture> getLecturesWithTagsAndSearch(Weaver currentWeaver,List<String> tags ,String search, int pageNumber,
+			int lineNumber) {
+		// TODO Auto-generated method stub	
+		List<Lecture> lectures = lectureDao.getLectures(tags, search, null, pageNumber, lineNumber);
 		
 		if(currentWeaver != null)
 			for(Lecture lecture:lectures){
@@ -162,4 +204,46 @@ public class LectureService {
 	public void update(Lecture lecture) {
 		lectureDao.update(lecture);
 	}
+	
+	public void uploadZip(Lecture lecture,Repo repo,Weaver weaver,String message,MultipartFile zip){
+		if(message==null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
+			return;
+		GitUtil gitUtil = new GitUtil(repo);
+		List<String> beforeBranchList = gitUtil.getBranchList();
+		try{
+			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+		if (lecture.getCreatorName().equals(weaver.getId())) { // 강의 개설자의 경우
+			if (repo.getCategory() == 1) {
+				gitUtil.createStudentBranch(beforeBranchList,	lecture);
+			}
+			return;
+		} else if (weaver.getPass(lecture.getName()) != null) { 
+			// 강의 수강자의 경우
+			
+			if (repo.getCategory() == 0) { // 예제 저장소의 경우
+
+				gitUtil.notWriteBranches();
+				gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+				gitUtil.writeBranches();
+			} else{ // 숙제 저장소의 경우
+
+				if(repo.getDDay() == -1) // 마감일이 지났을 못올림.
+				{
+					return;
+				}
+				gitUtil.hideNotUserBranches(weaver.getId());
+				gitUtil.checkOutBranch(weaver.getId());
+				gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+				gitUtil.showBranches();
+				gitUtil.checkOutMasterBranch();
+
+			}
+		} else {
+			return;
+		}
+		}catch(Exception e){
+			System.err.println(e.getLocalizedMessage());
+		}
+	}
+
 }

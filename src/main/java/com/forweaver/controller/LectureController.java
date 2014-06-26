@@ -1,5 +1,7 @@
 ﻿package com.forweaver.controller;
 
+import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -23,18 +24,19 @@ import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
+import com.forweaver.domain.Repo;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.service.GitService;
 import com.forweaver.service.LectureService;
-import com.forweaver.service.PermissionService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WaitJoinService;
 import com.forweaver.service.WeaverService;
+import com.forweaver.util.GitUtil;
 import com.forweaver.util.WebUtil;
 
 @Controller
@@ -55,17 +57,15 @@ public class LectureController {
 	PostService postService;
 	@Autowired
 	RePostService rePostService;
-	@Autowired
-	PermissionService permissionService;
+
 	
 	@RequestMapping("/")
 	public String lectures() {
-		return "redirect:/lecture/sort:age-desc/page:1";
+		return "redirect:/lecture/page:1";
 	}
 		
-	@RequestMapping("/sort:{sort}/page:{page}")
-	public String lecturesWithPage(@PathVariable("page") String page,
-			@PathVariable("sort") String sort,Model model) {
+	@RequestMapping("/page:{page}")
+	public String page(@PathVariable("page") String page,Model model) {
 		int pageNum;
 		int number = 15;
 		
@@ -76,25 +76,24 @@ public class LectureController {
 			pageNum =Integer.parseInt(page);
 		}
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLectures(currentWeaver,sort, pageNum, number));
-		model.addAttribute("lectureCount", lectureService.countLectures(sort));
+		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, pageNum, number));
+		model.addAttribute("lectureCount", lectureService.countLectures());
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", number);
-		model.addAttribute("pageUrl", "/lecture/sort:"+sort+"/page:");
+		model.addAttribute("pageUrl", "/lecture/page:");
 		return "/lecture/lectures";
 	}
 	
 	
 	
 	@RequestMapping("/tags:{tagNames}")
-	public String lecturesWithTags(HttpServletRequest request){
-		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
+	public String tagsWithPage(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI() +"/page:1";
 	}
 	
-	@RequestMapping("/tags:{tagNames}/sort:{sort}/page:{page}")
-	public String lecturesWithTags(@PathVariable("tagNames") String tagNames,
-			@PathVariable("page") String page,
-			@PathVariable("sort") String sort,Model model) {
+	@RequestMapping("/tags:{tagNames}/page:{page}")
+	public String tagsWithPage(@PathVariable("tagNames") String tagNames,
+			@PathVariable("page") String page,Model model) {
 		int pageNum;
 		int number = 15;
 		List<String> tagList = tagService.stringToTagList(tagNames);
@@ -105,20 +104,46 @@ public class LectureController {
 			pageNum =Integer.parseInt(page);
 		}		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLecturesWithTags(currentWeaver,tagList,sort, pageNum, number));
-		model.addAttribute("lectureCount", lectureService.countLecturesWithTags(tagList,sort));
+		model.addAttribute("lectures", lectureService.getLecturesWithTags(currentWeaver,tagList,pageNum, number));
+		model.addAttribute("lectureCount", lectureService.countLecturesWithTags(tagList));
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", number);
-		model.addAttribute("pageUrl", "/lecture/tags:"+tagNames+"sort:"+sort+"/page:");
+		model.addAttribute("pageUrl", "/lecture/tags:"+tagNames+"/page:");
+		return "/lecture/lectures";
+	}
+	
+	
+	@RequestMapping("/tags:{tagNames}/search:{search}")
+	public String tagsWithSearch(HttpServletRequest request){
+		return "redirect:"+ request.getRequestURI() +"/page:1";
+	}
+	@RequestMapping("/tags:{tagNames}/search:{search}/page:{page}")
+	public String tagsWithSearch(@PathVariable("tagNames") String tagNames,
+			@PathVariable("search") String search,
+			@PathVariable("page") String page,Model model) {
+		int pageNum;
+		int number = 15;
+		List<String> tagList = tagService.stringToTagList(tagNames);
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}		
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		model.addAttribute("lectures", lectureService.getLecturesWithTagsAndSearch(currentWeaver,tagList,search,pageNum, number));
+		model.addAttribute("lectureCount", lectureService.countLecturesWithTagsAndSearch(tagList,search));
+		model.addAttribute("pageIndex", page);
+		model.addAttribute("number", number);
+		model.addAttribute("pageUrl", "/lecture/tags:"+tagNames+"/search:"+search+"/page:");
 		return "/lecture/lectures";
 	}
 			
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@ResponseBody
 	public String add(@RequestParam Map<String, String> params) {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
-		if(!tagService.validateTag(tagList, currentWeaver))
+		if(!tagService.isPublicTags(tagList))
 			return "redirect:/lecture/";
 		Lecture lecture = new Lecture(params.get("name"),
 										WebUtil.removeHtml(params.get("description")),
@@ -137,8 +162,8 @@ public class LectureController {
 	}
 	
 	@RequestMapping(value = "/{lectureName}/community")
-	public String community(@PathVariable("lectureName") String lectureName,Model model) {			
-		return "redirect:/lecture/"+lectureName+"/community/sort:age-desc/page:1";
+	public String community(HttpServletRequest request) {
+		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
 	}
 	
 	@RequestMapping("/{lectureName}/community/sort:{sort}/page:{page}")
@@ -172,8 +197,7 @@ public class LectureController {
 	}
 
 	@RequestMapping("/{lectureName}/community/tags:{tagNames}")
-	public String tags(HttpServletRequest request,@PathVariable("lectureName") String lectureName,
-			@PathVariable("tagNames") String tagNames,Model model){
+	public String tags(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
 	}
 	
@@ -246,7 +270,7 @@ public class LectureController {
 				tagList);
 		
 		postService.add(post,datas);
-		return "redirect:/lecture/"+lectureName;
+		return "redirect:/lecture/"+lectureName+"/community";
 	}
 	
 	@RequestMapping(value = {"/{lectureName}/example","/{lectureName}"})
@@ -488,5 +512,6 @@ public class LectureController {
 		
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
+	
 
 }

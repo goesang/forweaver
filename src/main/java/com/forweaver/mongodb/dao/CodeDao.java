@@ -50,7 +50,7 @@ public class CodeDao {
 		update.set("readme", code.getReadme());
 		update.set("tags", code.getTags());
 		update.set("codes", code.getCodes());
-		update.set("reCodeCount", code.getRePostCount());
+		update.set("rePostCount", code.getRePostCount());
 		update.set("recentReCodeDate", code.getRecentRePostDate());
 		mongoTemplate.updateFirst(query, update, Code.class);
 	}

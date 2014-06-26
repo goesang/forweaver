@@ -199,12 +199,10 @@ public class PostController {
 	@RequestMapping("/{postID}/sort:{sort}")
 	public String view(Model model, @PathVariable("postID") int postID,
 			@PathVariable("sort") String sort) {
-		Weaver weaver = weaverService.getCurrentWeaver();
 		Post post = postService.get(postID);
-		
-		
-		if(!tagService.validateTag(post.getTags(),weaver)) // 태그에 권한이 없을때
-			return "redirect:/community/sort:age-desc/page:1";
+		Weaver weaver = weaverService.getCurrentWeaver();
+		if(!tagService.validateTag(post.getTags(), weaver))
+			return "redirect:/community/";
 		model.addAttribute("post", post);
 		model.addAttribute("rePosts", rePostService.get(postID,post.getKind(),sort));
 		
@@ -240,7 +238,6 @@ public class PostController {
 				post.getKind());
 		post.setRecentRePostDate(rePost.getCreated());
 		post.addRePostCount();		
-	//	postService.update(post,fileRemoveList);
 		rePostService.add(rePost,datas);
 		
 						
@@ -310,7 +307,7 @@ public class PostController {
 		
 		return "redirect:/community/sort:age-desc/page:1";
 	}
-	
+	/* 개발 기한이 촉박한 관계로 일시중단!!!!!!!!!
 	@RequestMapping("/{postID}/update")
 	public String update(Model model, @PathVariable("postID") int postID) {		
 		Post post = postService.get(postID);
@@ -321,7 +318,7 @@ public class PostController {
 		
 		return "/post/updatePost";
 	}
-	// 수정 필요함
+
 	@RequestMapping(value="/{postID}/update", method = RequestMethod.POST)
 	public String update(@PathVariable("postID") int postID,HttpServletRequest request) throws UnsupportedEncodingException {		
 		
@@ -386,9 +383,9 @@ public class PostController {
 						
 		return "redirect:/community/"+postID;	
 	}
-	
+	*/
 	@RequestMapping("/{postID}/delete")
-	public String delete(Model model, @PathVariable("postID") int postID) {
+	public String deletePost(Model model, @PathVariable("postID") int postID) {
 		if(postService.delete(postService.get(postID),weaverService.getCurrentWeaver()))
 			return "redirect:/community/sort:age-desc/page:1";
 		
@@ -396,7 +393,7 @@ public class PostController {
 	}
 	
 	@RequestMapping("/{postID}/{rePostID}/delete")
-	public String delete(Model model, @PathVariable("postID") int postID, @PathVariable("rePostID") int rePostID) {
+	public String deleteRePost(Model model, @PathVariable("postID") int postID, @PathVariable("rePostID") int rePostID) {
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver =weaverService.getCurrentWeaver();

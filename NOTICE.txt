@@ -1,0 +1,13 @@
+sprimg framework - http://projects.spring.io/spring-framework/
+ehcache - http://ehcache.org/
+jgit - http://www.jgit.org/
+gitective - https://github.com/kevinsawicki/gitective
+mongodb - www.mongodb.org
+Log4j http://logging.apache.org/log4j/2.x/
+
+bootstrap - http://getbootstrap.com/
+bootstrap flat ui - http://designmodo.github.io/Flat-UI/
+jasny bootstrap- http://jasny.github.io/bootstrap/
+nounproject - http://www.thenounproject.com/
+syntaxhighlighter - http://alexgorbatchev.com/SyntaxHighlighter/
+jQuery TextExt Plugin - http://textextjs.com

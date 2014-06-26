@@ -153,8 +153,9 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
-								<div class="function-div pull-right"> <a
-										href="javascript:deleteCode(${code.codeID})"> <span
+								<div class="function-div pull-right">
+									<a onclick="return confirm('정말로 삭제하시겠습니까?');"
+										href="/code/${code.codeID})"> <span
 										class="function-button">삭제</span></a>
 								</div></td>
 
@@ -162,13 +163,13 @@
 						<c:forEach items="${code.codes}" var="simpleCode"
 							varStatus="status">
 							<tr>
-								<td colspan="5">
-								<span onclick="javascript:hideAndShowSourceCode(${status.count})"
+								<td colspan="5"><span
+									onclick="javascript:hideAndShowSourceCode(${status.count})"
 									class="function-button function-file"> <i
 										class='icon-file icon-white'></i> ${simpleCode.fileName}
 								</span></td>
 							</tr>
-							
+
 							<tr>
 								<td
 									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
@@ -228,11 +229,12 @@
 								<td class="function-div font-middle">
 									<div class="pull-right">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
-											class="function-button function-comment">댓글달기</span></a> <a
-											href="/code/${code.codeID}/${rePost.rePostID}/update"> <span
-											class="function-button">수정</span></a> <a
-											href='javascript:deleteRePost(${code.codeID},${rePost.rePostID})'>
-											<span class="function-button">삭제</span>
+											class="function-button function-comment">댓글달기</span></a>
+										<!-- <a href="/code/${code.codeID}/${rePost.rePostID}/update"> <span
+											class="function-button">수정</span></a>-->
+										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
+											href='/code/${code.codeID}/${rePost.rePostID}/delete'> <span
+											class="function-button">삭제</span>
 										</a>
 									</div>
 								</td>
@@ -243,6 +245,31 @@
 										<p class="p-button">댓글</p>
 								</span></td>
 							</tr>
+							<c:if test="${rePost.dataNames.size() > 0}">
+								<tr>
+									<td colspan="5"><c:forEach var="index" begin="0"
+											end="${rePost.dataNames.size()-1}">
+											<a href='/data/${rePost.dataIDs.get(index)}'><span
+												class="function-button function-file"><i
+													class='icon-file icon-white'></i>
+													${rePost.dataNames.get(index)}</span></a>
+										</c:forEach></td>
+								</tr>
+								<c:forEach var="index" begin="0"
+									end="${rePost.dataNames.size()-1}">
+									<c:if
+										test="${rePost.dataNames.get(index).endsWith('jpg')||
+									rePost.dataNames.get(index).endsWith('png') ||
+										rePost.dataNames.get(index).endsWith('bmp') ||
+										rePost.dataNames.get(index).endsWith('jpeg')}">
+
+										<tr>
+											<td colspan="5"><img class="post-img"
+												src="/data/${rePost.dataIDs.get(index)}"></td>
+										</tr>
+									</c:if>
+								</c:forEach>
+							</c:if>
 							<tr>
 								<td class="none-top-border repost-top-title" colspan="5">${rePost.content}</td>
 							</tr>
@@ -259,8 +286,8 @@
 										${reply.content} - <b>${reply.writerName}</b>
 										${reply.getFormatCreated()}
 										<div class="function-div pull-right">
-											<a
-												href="javascript:deleteReply(${code.codeID},${rePost.rePostID},${reply.number})">
+											<a onclick="return confirm('정말로 삭제하시겠습니까?');"
+												href='/code/${code.codeID}/${rePost.rePostID}/${reply.number}/delete'>
 												<i class='icon-remove'></i>
 											</a>
 										</div></td>

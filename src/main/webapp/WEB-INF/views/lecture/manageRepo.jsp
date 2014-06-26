@@ -3,12 +3,12 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <head>
-<title>${lecture.name} ~ ${lecture.description}</title>
+<title>${lecture.name}~ ${lecture.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/repoBrowser.js"></script>
 </head>
 <body>
-<script>
+	<script>
 var repoList = new Array();
 var lectureName = "${lecture.name}";
 
@@ -42,8 +42,7 @@ var editorMode = false;
 				var objPattern = /^[a-zA-Z0-9]+$/;
 				var name = $('#repo-name-input').val();
 				var description = $('#repo-description').val();
-				var period = $('#repo-period-select').val();
-				var category = $('#repo-category-select').val();
+				var period = $('input:radio[name="period"]:checked').val();
 
 				if(name.length == 0){
 					$("alert").append("<div class='alert alert-error'>"+
@@ -130,67 +129,78 @@ var editorMode = false;
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
 		<div class="page-header">
-		<alert></alert>
+			<alert></alert>
 			<h5>
-				<big><big><i class="fa fa-book"></i> ${lecture.name}</big></big> 
-			<small>${lecture.description}</small>
+				<big><big><i class="fa fa-book"></i> ${lecture.name}</big></big> <small>${lecture.description}</small>
 			</h5>
 		</div>
 
 		<div class="row">
-		
+
 			<div class="span8">
 				<ul class="nav nav-tabs">
 					<li><a href="/lecture/${lecture.name}/">예제소스</a></li>
 					<li><a href="/lecture/${lecture.name}/community">커뮤니티</a></li>
-					<li class="active"><a href="/lecture/${lecture.name}/repo">숙제 저장소</a></li>
+					<li class="active"><a href="/lecture/${lecture.name}/repo">숙제
+							저장소</a></li>
 					<li><a href="/lecture/${lecture.name}/weaver">수강생</a></li>
 				</ul>
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-link"></i></span> <input
-						value="http://forweaver.com/${lecture.name}/example.git" type="text"
-						class="input-block-level">
+						value="http://forweaver.com/${lecture.name}/example.git"
+						type="text" class="input-block-level">
 				</div>
 			</div>
-			
-				<div class="title-write-span">
-					<div style= "width:0px;"class="span1"></div>
-					<div class="span7 create-lecture">
-						<input class="title span7" placeholder="숙제명을 입력해주세요!"
-							id="repo-name-input" type="text"/>
-					</div>
-					<div class="span3 create-lecture">
-						<select id="repo-period-select">
-							<option disabled="disabled">마감 기간</option>
-							<option value="0" selected="selected">일주일 뒤</option>
-							<option value="1">한 달 뒤</option>
-							<option value="2">한 학기 뒤</option>
-							<option value="3">영원히</option>
-						</select>
-					</div>
-					<div style="margin-left: 13px" class="span1">
-						<button id="repo-ok-button"
-							class="post-button btn btn-primary create-lecture">
-							<i class="icon-ok icon-white"></i>
-						</button>
-					</div>
-					<div style= "padding-left:20px;" class="span11">
-						<input class="title span11" placeholder="숙재를 소개해주세요!" id="repo-description" type="text" value="" />
-					</div>
-					
-					<div class="span12">
-						<table id="repoTable" class="table table-hover"></table>
-						<div id="pageNavigation" class="text-center pagination"></div>
-					</div>
+
+			<div class="title-write-span">
+				<div style="width: 0px;" class="span1"></div>
+				<div class="span4">
+					<input class="span4" placeholder="숙제명을 입력해주세요!"
+						id="repo-name-input" type="text" />
+				</div>
+				<div class="span6">
+					<p title="말풍선입니다" class="btn btn-danger">
+						<span class="fui-time"></span>
+					</p>
+					<label class="radio radio-period"> 일주일 <input type="radio"
+						name="period" value="0" data-toggle="radio"
+						checked="checked">
+
+					</label> <label class="radio radio-period"> <input type="radio"
+						name="period" value="1" data-toggle="radio">
+						한달
+					</label> <label class="radio radio-period"> <input type="radio"
+						name="period" value="2" data-toggle="radio">
+						한학기
+					</label> <label class="radio radio-period"> <input type="radio"
+						name="period" value="3" data-toggle="radio">
+						영원히
+					</label>
+				</div>
+				<div style="margin-left: 13px" class="span1">
+					<button id="repo-ok-button"
+						class="post-button btn btn-primary create-lecture">
+						<i class="icon-ok icon-white"></i>
+					</button>
+				</div>
+				<div style="padding-left: 20px;" class="span11">
+					<input class="title span11" placeholder="숙재를 소개해주세요!"
+						id="repo-description" type="text" value="" />
 				</div>
 
+				<div class="span12">
+					<table id="repoTable" class="table table-hover"></table>
+					<div id="pageNavigation" class="text-center pagination"></div>
+				</div>
 			</div>
-			<div class="span12">
-				<%@ include file="/WEB-INF/common/footer.jsp"%>
-			</div>
+
 		</div>
+		<div class="span12">
+			<%@ include file="/WEB-INF/common/footer.jsp"%>
+		</div>
+	</div>
 
 </body>
 </html>
