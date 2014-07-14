@@ -28,12 +28,13 @@
 <security:intercept-url pattern="/" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/manage" access="hasRole('ROLE_USER')" />
 
-<security:intercept-url pattern="/community/**" access="isAnonymous() or isAuthenticated()" />
 <security:intercept-url pattern="/community/add" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/community/*/delete" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/community/*/update" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/community/*/repost-add" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/community/*/edit" access="hasRole('ROLE_USER')" />
+<security:intercept-url pattern="/community/**" access="isAnonymous() or isAuthenticated()" />
+
 
 <security:intercept-url pattern="/project/*/*/add" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/project/*/*/delete" access="hasRole('ROLE_USER')" />
