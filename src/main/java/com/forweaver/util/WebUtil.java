@@ -1,5 +1,7 @@
 package com.forweaver.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -69,6 +71,12 @@ public class WebUtil {
 		<h2>This is an H2</h2>			-> 			## This is an H2
 		<h3>This is an H3</h3>						### This is an H3*/
 		return str;
+	}
+	
+	public static OutputStream pptToImg(InputStream is){
+		// ppt 파일을 이미지로 출력해주는 메서드
+		// 때에 따라서 매개변수 타입과 반환값의 타입이 다를 수 있음.
+		return null;
 	}
 
 }
