@@ -1,15 +1,11 @@
 package com.forweaver.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
+//각종 웹 유틸 클래스
 public class WebUtil {
-
+	//MD5 변환을 위한 메서드
 	public static String convertMD5(String str) {
 		// TODO Auto-generated method stub
 		String email = str;
@@ -23,7 +19,7 @@ public class WebUtil {
 		}
 
 	}
-
+	//스크립트 해킹을 막기 위한 메서드입니다.
 	public static String convertHtml(String str) {
 		// TODO Auto-generated method stub
 		if (str.length() == 0)
@@ -60,5 +56,19 @@ public class WebUtil {
 		return str;
 	}
 	
+	public static String markDownEncoder(String str){
+		//마크 다운 코드가 들어가면 html 코드로 바뀜
+		/*# This is an H1						<h1>This is an H1</h1>
+		## This is an H2			-> 			<h2>This is an H2</h2>
+		### This is an H3						<h3>This is an H3</h3>*/
+		return str;
+	}
+	public static String markDownDecoder(String str){
+		// html 코드가 들어가면 마크다운 코드로 바뀜
+		/*<h1>This is an H1</h1>						# This is an H1	
+		<h2>This is an H2</h2>			-> 			## This is an H2
+		<h3>This is an H3</h3>						### This is an H3*/
+		return str;
+	}
 
 }
