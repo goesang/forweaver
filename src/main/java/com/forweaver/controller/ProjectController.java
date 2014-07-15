@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Post;
@@ -352,6 +353,27 @@ public class ProjectController {
 		return "/project/commitLog";
 	}
 	
+	@RequestMapping("/{creatorName}/{projectName}/commitlog") //  Hack 데이 이슈 : 게시물 RSS 출력
+	@ResponseBody
+	public String rss(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,Model model) {
+		// 다음 코드는 예시 코드이며 return에 rss화된 문자열을 반환하면 됩니다!
+		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+		
+		for(GitSimpleCommitLog commitLog:gitService.getGitCommitLogList(creatorName, projectName,gitBranchList.get(0),1,10)){
+			//아래는 GitSimpleCommitLog에서 정보를 보는 방법
+			System.out.println(commitLog.getShortMassage()); // 커밋 로그
+			System.out.println(commitLog.getCommitDate()); // 커밋 날자
+			System.out.println(commitLog.getCommiterName()); // 커밋한 사람 이름
+			System.out.println(commitLog.getCommiterEmail()); // 커밋한 사람 이메일
+			System.out.println(commitLog.getImgSrc()); // 커밋한 사람 사진
+		}
+			
+		return ""; // 여기에 최종 rss화된 문자열을 반환하면 됩니다!
+	}
+	
+
+	
 	@RequestMapping("/{creatorName}/{projectName}/commitlog/commit:{commit}")
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -411,7 +433,7 @@ public class ProjectController {
 		return "/project/manageWeaver";
 	}
 	
-	@RequestMapping(value = "/{creatorName}/{projectName}/weaver:{weaverName}/delete") // 회원 삭제용
+	@RequestMapping(value = "/{creatorName}/{projectName}/weaver/{weaverName}/delete") // 회원 삭제용
 	public String deleteWeaver(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("weaverName") String weaverName) {

@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -47,6 +48,28 @@ public class PostController {
 	@RequestMapping("/")
 	public String front(){
 		return "redirect:/community/sort:age-desc/page:1";
+	}
+	
+	@RequestMapping("/sort:{sort}.xml")
+	@ResponseBody
+	public String rss(@PathVariable("sort") String sort){ //  Hack 데이 이슈 : 게시물 RSS 출력
+		// 다음 코드는 예시 코드이며 return에 rss화된 문자열을 반환하면 됩니다!
+		
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		for(Post post:postService.getPosts(currentWeaver, sort, 1, 15)){ // 게시물을 15개 가져옴
+			
+			//아래는 Post에서 정보를 보는 방법
+			System.out.println(post.getTitle()); // 게시물 제목
+			System.out.println(post.getContent()); // 게시물 내용
+			System.out.println(post.getCreated()); // 게시물 날짜
+			System.out.println(post.getTitle()); // 게시물 추천수
+			System.out.println(post.getTitle()); // 게시물 답변수
+			System.out.println(post.getWriterName()); // 글쓴이 이름
+			System.out.println(post.getWriterEmail()); // 글쓴이 이메일
+			System.out.println(post.getImgSrc()); // 글쓴이 사진
+			
+		}
+		return ""; // 여기에 최종 rss화된 문자열을 반환하면 됩니다!
 	}
 	
 	
@@ -232,7 +255,8 @@ public class PostController {
 				datas.add(new Data(file,weaver.getId()));
         }
 		
-		RePost rePost = new RePost(postID,
+		RePost rePost = new RePost(post.getPostID(),
+				post.getWriter(),
 				weaver,
 				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))),
 				post.getKind());
@@ -256,9 +280,9 @@ public class PostController {
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
 			return "redirect:/community/"+rePost.getOriginalPostID();
 		
-		rePost.addReply(new Reply(weaver.getId(), weaver.getEmail(), 
+		rePost.addReply(new Reply(weaver, 
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
-		rePostService.update(rePost);	
+		rePostService.update(rePost,null);	
 						
 		return "redirect:/community/"+rePost.getOriginalPostID();
 	}
@@ -279,7 +303,7 @@ public class PostController {
 			return "redirect:/community/"+rePost.getOriginalPostID();
 		
 		rePost.removeReply(weaver, number);
-		rePostService.update(rePost);	
+		rePostService.update(rePost,null);	
 						
 		return "redirect:/community/"+rePost.getOriginalPostID();
 	}
