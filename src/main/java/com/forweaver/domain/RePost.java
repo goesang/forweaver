@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -21,24 +22,25 @@ public class RePost implements Serializable {
 	private int originalPostID;
 	private String content;
 	private Date created;
-	private String writerName;
-	private String writerEmail;
-	private String imgSrc;
 	private int push;
 	private Date recentReplyDate;
 	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변 , 4가 코드의 답변.
-
-	private List<String> dataIDs = new ArrayList<String>();
-	private List<String> dataNames = new ArrayList<String>();
+	@DBRef
+	private Weaver writer;
+	@DBRef
+	private Weaver origianlWriter;
+	
+	@DBRef
+	private List<Data> datas = new ArrayList<Data>();
+	
 	private List<Reply> replys = new ArrayList<Reply>();
 
 	public RePost() {
 	}
 
-	public RePost(int originalPostID, Weaver weaver, String content,int kind) {
-		this.writerName = weaver.getId();
-		this.writerEmail = weaver.getEmail();
-		this.imgSrc = weaver.getImgSrc();
+	public RePost(int originalPostID,Weaver origianlWriter, Weaver writer, String content,int kind) {
+		this.writer = writer;
+		this.origianlWriter = origianlWriter;
 		this.content = content;
 		this.kind = kind;
 		this.created = new Date();
@@ -75,11 +77,7 @@ public class RePost implements Serializable {
 	}
 
 	public String getWriterName() {
-		return writerName;
-	}
-
-	public void setWriterName(String writerName) {
-		this.writerName = writerName;
+		return this.writer.getId();
 	}
 
 	public int getPush() {
@@ -99,20 +97,13 @@ public class RePost implements Serializable {
 	}
 
 	public String getWriterEmail() {
-		return writerEmail;
-	}
-
-	public void setWriterEmail(String writerEmail) {
-		this.writerEmail = writerEmail;
+		return this.writer.getEmail();
 	}
 
 	public String getImgSrc() {
-		return imgSrc;
+		return this.writer.getImgSrc();
 	}
 
-	public void setImgSrc(String imgSrc) {
-		this.imgSrc = imgSrc;
-	}
 
 	public void push() {
 		this.push += 1;
@@ -162,52 +153,26 @@ public class RePost implements Serializable {
 		this.recentReplyDate = recentReplyDate;
 	}
 
-	public List<String> getDataIDs() {
-		return dataIDs;
+	public void addData(Data data){
+		this.datas.add(data);
 	}
-
-	public void setDataIDs(List<String> dataIDs) {
-		this.dataIDs = dataIDs;
-	}
-
-	public List<String> getDataNames() {
-		return dataNames;
-	}
-
-	public void setDataNames(List<String> dataNames) {
-		this.dataNames = dataNames;
-	}
-
-	public void insertDataList(Map<String, String> fileMap) {
-		this.dataNames.clear();
-		this.dataIDs.clear();
-
-		for (Object dataID : fileMap.values())
-			this.dataIDs.add((String) dataID);
-
-		for (Object dataName : fileMap.keySet())
-			this.dataNames.add((String) dataName);
-
-	}
-
-	public void deleteData(String name) {
-		for (int i = 0; i < dataNames.size(); i++) {
-			if (dataNames.get(i).equals(name)) {
-				dataNames.remove(i);
-				dataIDs.remove(i);
+	
+	public void deleteData(String name){
+		for(int i = 0 ; i< this.datas.size() ; i++){
+			if(this.datas.get(i).getName().equals(name)){
+				this.datas.remove(i);
 				return;
 			}
 		}
+		
 	}
 
-	public String dataNameToDataID(String dataName) {
+	public List<Data> getDatas() {
+		return datas;
+	}
 
-		for (int i = 0; i < dataNames.size(); i++) {
-			if (dataNames.get(i).equals(dataName)) {
-				return dataIDs.get(i);
-			}
-		}
-		return "";
+	public void setDatas(List<Data> datas) {
+		this.datas = datas;
 	}
 
 	public int getKind() {
@@ -218,5 +183,10 @@ public class RePost implements Serializable {
 		this.kind = kind;
 	}
 	
-
+	public Data getData(String dataName){
+		for(Data data:this.datas)
+			if(data.getName().equals(dataName))
+				return data;
+		return null;
+	}
 }

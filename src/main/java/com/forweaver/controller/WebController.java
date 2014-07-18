@@ -25,15 +25,9 @@ public class WebController {
 	public void forweaver(Model model) {
 	}
 
-	@RequestMapping("/weavernest")
-	public void weavernest(Model model) {
-
+	@RequestMapping("/error400")
+	public void error400() {
 	}
-	
-	@RequestMapping("/chat")
-	public void chat() {
-		
-	}	
 	
 	@RequestMapping("/error404")
 	public void error404() {

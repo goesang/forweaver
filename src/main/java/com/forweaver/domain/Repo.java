@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 public class Repo implements Serializable {
 
 	static final long serialVersionUID = 77777773L;
@@ -14,14 +16,15 @@ public class Repo implements Serializable {
 	private String description;
 	private Date openingDate;
 	private Date deadLine;
-	private String lectureName;
-	private String creatorName;
+	private String LectureName;
+	@DBRef
+	private Weaver creator;
 	
 	public Repo() {
 		
 	}
 	
-	public Repo(String name, int category, String description,int deadLine,Lecture lecture) {
+	public Repo(String name, int category, String description,int deadLine,Lecture lecture,Weaver creator) {
 		this.name = name;
 		this.category = category;
 		this.description = description;
@@ -35,7 +38,8 @@ public class Repo implements Serializable {
 			this.deadLine = new Date(this.openingDate.getTime()+day*30*3);
 		else if(deadLine == 3)
 			this.deadLine = null;
-		this.lectureName = lecture.getName();
+		this.creator = creator;
+		this.LectureName = lecture.getName();
 	}
 
 	public int getRepoID() {
@@ -86,12 +90,22 @@ public class Repo implements Serializable {
 		this.deadLine = deadLine;
 	}
 
+	
+
 	public String getLectureName() {
-		return lectureName;
+		return LectureName;
 	}
 
 	public void setLectureName(String lectureName) {
-		this.lectureName = lectureName;
+		LectureName = lectureName;
+	}
+
+	public Weaver getCreator() {
+		return creator;
+	}
+
+	public void setCreator(Weaver creator) {
+		this.creator = creator;
 	}
 
 	public String getOpeningDateFormat() {
@@ -117,15 +131,5 @@ public class Repo implements Serializable {
 		 
 		 return leftDay;
 	}
-
-	public String getCreatorName() {
-		return creatorName;
-	}
-
-	public void setCreatorName(String creatorName) {
-		this.creatorName = creatorName;
-	}
-	
-	
 		
 }

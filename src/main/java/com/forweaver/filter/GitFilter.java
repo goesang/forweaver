@@ -1,4 +1,4 @@
-package com.forweaver.permission;
+package com.forweaver.filter;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +26,8 @@ import com.forweaver.util.GitUtil;
 /**
  * Servlet Filter implementation class MyFilterExample
  */
-@Component("gitPermission")
-public class GitPermission implements Filter {
+@Component("GitFilter")
+public class GitFilter implements Filter {
 	@Autowired
 	WeaverService weaverService;
 	@Autowired

@@ -245,23 +245,23 @@
 										<p class="p-button">댓글</p>
 								</span></td>
 							</tr>
-							<c:if test="${rePost.dataNames.size() > 0}">
+							<c:if test="${rePost.datas.size() > 0}">
 								<tr>
 									<td colspan="5"><c:forEach var="index" begin="0"
-											end="${rePost.dataNames.size()-1}">
+											end="${rePost.datas.size()-1}">
 											<a href='/data/${rePost.dataIDs.get(index)}'><span
 												class="function-button function-file"><i
 													class='icon-file icon-white'></i>
-													${rePost.dataNames.get(index)}</span></a>
+													${rePost.datas.get(index).name}</span></a>
 										</c:forEach></td>
 								</tr>
 								<c:forEach var="index" begin="0"
-									end="${rePost.dataNames.size()-1}">
+									end="${rePost.datas.size()-1}">
 									<c:if
-										test="${rePost.dataNames.get(index).endsWith('jpg')||
-									rePost.dataNames.get(index).endsWith('png') ||
-										rePost.dataNames.get(index).endsWith('bmp') ||
-										rePost.dataNames.get(index).endsWith('jpeg')}">
+										test="${rePost.datas.get(index).getName().endsWith('jpg')||
+									rePost.datas.get(index).getName().endsWith('png') ||
+										rePost.datas.get(index).getName().endsWith('bmp') ||
+										rePost.datas.get(index).getName().endsWith('jpeg')}">
 
 										<tr>
 											<td colspan="5"><img class="post-img"

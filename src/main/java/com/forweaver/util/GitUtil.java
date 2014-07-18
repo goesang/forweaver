@@ -202,7 +202,7 @@ public class GitUtil {
 				df.flush();
 				df.release();
 			} catch (Exception e) {
-
+				
 			}
 
 			gitCommitLog = new GitCommitLog(commit.getId().getName(),
@@ -210,8 +210,11 @@ public class GitUtil {
 					.getCommitterIdent().getName(), commit
 					.getCommitterIdent().getEmailAddress(),
 					out.toString(), commit.getCommitTime());
-
-		} finally {
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+				System.out.println("aaaaaaaaa");
+			}
+		 finally {
 			return gitCommitLog;
 		}
 	}
@@ -514,8 +517,9 @@ public class GitUtil {
 			git.commit().setAuthor(name, email).setMessage(message).call();
 			git.push().setRemote("origin").call();
 		} catch (Exception e) {
-			System.out.println("7777777777");
 			System.err.println(e.getMessage());
 		}
 	}
+	
+	
 }

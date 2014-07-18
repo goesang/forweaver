@@ -21,8 +21,8 @@ public class Project implements Serializable {
 	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트.
 	private String description; // 프로젝트 소개
 	private Date openingDate; // 프로젝트 시작일
-	private String creatorName; // 프로젝트 개설자 이름
-	private String creatorEmail; // 프로젝트 개설자 이메일
+	@DBRef
+	private Weaver creator;
 	private int push; // 프로젝트 추천수
 	
 	@Transient
@@ -46,8 +46,7 @@ public class Project implements Serializable {
 		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();
-		this.creatorName = weaver.getId();
-		this.creatorEmail = weaver.getEmail();
+		this.creator = weaver;
 		this.adminWeavers.add(weaver);
 		this.tags = tagList;
 	}
@@ -85,26 +84,28 @@ public class Project implements Serializable {
 	}
 
 	public String getCreatorName() {
-		return creatorName;
+		return this.creator.getId();
 	}
 
-	public void setCreatorName(String creatorName) {
-		this.creatorName = creatorName;
+	public String getCreatorEmail() {
+		return this.creator.getEmail();
 	}
-
 	
+	public Weaver getCreator() {
+		return creator;
+	}
+
+	public void setCreator(Weaver creator) {
+		this.creator = creator;
+	}
+
 	public String getOpeningDateFormat() {
 		SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd");
 		return df.format(this.openingDate); 
 	}
 
-	public String getCreatorEmail() {
-		return creatorEmail;
-	}
 
-	public void setCreatorEmail(String creatorEmail) {
-		this.creatorEmail = creatorEmail;
-	}
+
 	public void addAdminWeaver(Weaver weaver){
 		this.adminWeavers.add(weaver);
 	}
@@ -157,7 +158,7 @@ public class Project implements Serializable {
 		this.isJoin = isJoin;
 	}
 	public String getImgSrc(){
-		return "/img/"+this.creatorName;
+		return this.creator.getImgSrc();
 	}
 	
 	public void removeJoinWeaver(Weaver weaver){

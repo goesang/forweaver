@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Code;
+import com.forweaver.domain.Weaver;
 
 @Repository
 public class CodeDao {
@@ -42,7 +43,7 @@ public class CodeDao {
 		mongoTemplate.remove(code);
 	}
 
-	public void update(Code code) { // 글 수정하기
+	public void update(Code code) { // 코드 수정하기
 		Query query = new Query(Criteria.where("_id").is(code.getCodeID()));
 		Update update = new Update();
 		update.set("content", code.getContent());
@@ -59,7 +60,7 @@ public class CodeDao {
 	public long countCodes( // 로그인하지 않은 회원이 글을 셈.
 			List<String> tags,
 			String search,
-			String writerName,
+			Weaver writer,
 			String sort) {
 		Criteria criteria = new Criteria();
 		
@@ -70,8 +71,8 @@ public class CodeDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(writerName != null)
-			criteria.and("writerName").is(writerName);
+		if(writer != null)
+			criteria.and("creator").is(writer);
 			
 		this.filter(criteria, sort);
 
@@ -81,7 +82,7 @@ public class CodeDao {
 	public List<Code> getCodes( // 로그인하지 않은 회원이 글을 검색
 			List<String> tags,
 			String search,
-			String writerName,
+			Weaver writer,
 			String sort,
 			int page, 
 			int size) {
@@ -94,8 +95,8 @@ public class CodeDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(writerName != null)
-			criteria.and("writerName").is(writerName);
+		if(writer != null)
+			criteria.and("writer").is(writer);
 		
 		this.filter(criteria, sort);
 		

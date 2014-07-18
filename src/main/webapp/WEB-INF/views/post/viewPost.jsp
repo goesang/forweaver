@@ -14,7 +14,7 @@
 	function fileUploadChange(fileUploader){
 		$(function (){
 		if($(fileUploader).val()!=""){ // 파일을 업로드하거나 수정함
-			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
+			if(fileUploader.getId() == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 		fileCount++;
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
@@ -27,7 +27,7 @@
 				"</div>");
 			}
 		}else{
-			if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
+			if(fileUploader.getId() == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
 				
 			$("#file"+fileCount).parent().parent().remove();
 
@@ -141,29 +141,29 @@
 								</div></td>
 
 						</tr>
-						<c:if test="${post.dataNames.size() > 0}">
+						<c:if test="${post.datas.size() > 0}">
 							<tr>
 								<td colspan="5"><c:forEach var="index" begin="0"
-										end="${post.dataNames.size()-1}">
-										<a href='/data/${post.dataIDs.get(index)}'><span
+										end="${post.datas.size()-1}">
+										<a href='/data/${post.datas.get(index).getId()}'><span
 											class="function-button function-file"><i
 												class='icon-file icon-white'></i>
-												${post.dataNames.get(index)}</span></a>
+												${post.datas.get(index).getName()}</span></a>
 									</c:forEach></td>
 							</tr>
 						</c:if>
 						<!-- 글내용 시작 -->
 						<c:if test="${post.isLong()}">
-							<c:forEach var="index" begin="0" end="${post.dataNames.size()-1}">
+							<c:forEach var="index" begin="0" end="${post.datas.size()-1}">
 								<c:if
-									test="${post.dataNames.get(index).endsWith('jpg')||
-									post.dataNames.get(index).endsWith('png') ||
-										post.dataNames.get(index).endsWith('bmp') ||
-										post.dataNames.get(index).endsWith('jpeg')}">
+									test="${post.datas.get(index).getName().endsWith('jpg')||
+									post.datas.get(index).getName().endsWith('png') ||
+										post.datas.get(index).getName().endsWith('bmp') ||
+										post.datas.get(index).getName().endsWith('jpeg')}">
 
 									<tr>
 										<td colspan="5"><img class="post-img"
-											src="/data/${post.dataIDs.get(index)}"></td>
+											src="/data/${post.datas.get(index).getId()}"></td>
 									</tr>
 								</c:if>
 							</c:forEach>
@@ -244,27 +244,27 @@
 										<p class="p-button">댓글</p>
 								</span></td>
 							</tr>
-							<c:if test="${rePost.dataNames.size() > 0}">
+							<c:if test="${rePost.datas.size() > 0}">
 								<tr>
 									<td colspan="5"><c:forEach var="index" begin="0"
-											end="${rePost.dataNames.size()-1}">
-											<a href='/data/${rePost.dataIDs.get(index)}'><span
+											end="${rePost.datas.size()-1}">
+											<a href='/data/${rePost.datas.get(index).getId()}'><span
 												class="function-button function-file"><i
 													class='icon-file icon-white'></i>
-													${rePost.dataNames.get(index)}</span></a>
+													${rePost.datas.get(index).getName()}</span></a>
 										</c:forEach></td>
 								</tr>
 								<c:forEach var="index" begin="0"
-									end="${rePost.dataNames.size()-1}">
+									end="${rePost.datas.size()-1}">
 									<c:if
-										test="${rePost.dataNames.get(index).endsWith('jpg')||
-									rePost.dataNames.get(index).endsWith('png') ||
-										rePost.dataNames.get(index).endsWith('bmp') ||
-										rePost.dataNames.get(index).endsWith('jpeg')}">
+										test="${rePost.datas.get(index).getName().endsWith('jpg')||
+									rePost.datas.get(index).getName().endsWith('png') ||
+										rePost.datas.get(index).getName().endsWith('bmp') ||
+										rePost.datas.get(index).getName().endsWith('jpeg')}">
 
 										<tr>
 											<td colspan="5"><img class="post-img"
-												src="/data/${rePost.dataIDs.get(index)}"></td>
+												src="/data/${rePost.datas.get(index).getId()}"></td>
 										</tr>
 									</c:if>
 								</c:forEach>

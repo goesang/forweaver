@@ -1,7 +1,6 @@
 package com.forweaver.service;
 
 import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Code;
 import com.forweaver.domain.SimpleCode;
+import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.CodeDao;
 
 @Service
@@ -28,9 +28,9 @@ public class CodeService {
 		try {
 			System.out.println(file.getOriginalFilename());
 			
-			if (file.getContentType().equals("application/x-zip-compressed") && file.getOriginalFilename().endsWith(".zip")) { 
+			if (file.getContentType().equals("application/x-zip-compressed") && 
+					file.getOriginalFilename().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
-				
 				ZipInputStream in = new ZipInputStream(file.getInputStream());
 				ZipEntry entry = in.getNextEntry();
 				while (entry != null) {
@@ -125,33 +125,33 @@ public class CodeService {
 		return codeDao.getCodes(tags, serach, null, sort, page, size);
 	}
 
-	public long countCodesWhenWeaverHome(String weaverID, String sort) {
-		return codeDao.countCodes(null, null, weaverID, sort);
+	public long countCodesWhenWeaverHome(Weaver weaver, String sort) {
+		return codeDao.countCodes(null, null, weaver, sort);
 	}
 
-	public List<Code> getCodesWhenWeaverHome(String weaverID, String sort,
+	public List<Code> getCodesWhenWeaverHome(Weaver weaver, String sort,
 			int page, int size) {
-		return codeDao.getCodes(null, null, weaverID, sort, page, size);
+		return codeDao.getCodes(null, null, weaver, sort, page, size);
 	}
 
 	public long countCodesWhenWeaverHomeWithTags(List<String> tags,
-			String weaverID, String sort) {
-		return codeDao.countCodes(tags, null, weaverID, sort);
+			Weaver weaver, String sort) {
+		return codeDao.countCodes(tags, null, weaver, sort);
 	}
 
 	public List<Code> getCodesWhenWeaverHomeWithTags(List<String> tags,
-			String weaverID, String sort, int page, int size) {
-		return codeDao.getCodes(tags, sort, weaverID, sort, page, size);
+			Weaver weaver, String sort, int page, int size) {
+		return codeDao.getCodes(tags, sort, weaver, sort, page, size);
 	}
 
 	public long countCodesWhenWeaverHomeWithTagsAndSeach(List<String> tags,
-			String weaverID, String serach, String sort) {
-		return codeDao.countCodes(tags, serach, weaverID, sort);
+			Weaver weaver, String serach, String sort) {
+		return codeDao.countCodes(tags, serach, weaver, sort);
 	}
 
 	public List<Code> getCodesWhenWeaverHomeWithTagsAndSeach(List<String> tags,
-			String weaverID, String serach, String sort, int page, int size) {
-		return codeDao.getCodes(tags, serach, weaverID, sort, page, size);
+			Weaver weaver, String serach, String sort, int page, int size) {
+		return codeDao.getCodes(tags, serach, weaver, sort, page, size);
 	}
 
 	public void delete(Code code) {

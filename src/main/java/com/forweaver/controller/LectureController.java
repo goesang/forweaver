@@ -1,7 +1,5 @@
 ﻿package com.forweaver.controller;
 
-import java.io.File;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
-import com.forweaver.domain.Repo;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitFileInfo;
@@ -36,7 +33,6 @@ import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WaitJoinService;
 import com.forweaver.service.WeaverService;
-import com.forweaver.util.GitUtil;
 import com.forweaver.util.WebUtil;
 
 @Controller
@@ -338,7 +334,7 @@ public class LectureController {
 	}
 
 
-	@RequestMapping( "/{lectureName}/weaver:{weaverName}/delete") // 회원 삭제용
+	@RequestMapping( "/{lectureName}/weaver/{weaverName}/delete") // 회원 삭제용
 	public String deleteWeaver(@PathVariable("lectureName") String lectureName,
 			@PathVariable("weaverName") String weaverName) {
 		Lecture lecture = lectureService.get(lectureName);
@@ -367,7 +363,7 @@ public class LectureController {
 		return "redirect:/lecture/" + lectureName;
 	}
 	
-	@RequestMapping("/{lectureName}/weaver:{weaver}/add-weaver")
+	@RequestMapping("/{lectureName}/weaver/{weaver}/add-weaver")
 	public String addWeaver(	@PathVariable("lectureName") String lectureName,
 			@PathVariable("weaver") String weaver) {
 		Lecture lecture = lectureService.get(lectureName);
@@ -376,8 +372,8 @@ public class LectureController {
 
 		if(waitJoinService.isCreateLectureWaitJoin(lecture, waitingWeaver, proposer)){
 			Weaver lectureCreator = weaverService.get(lecture.getCreatorName());
-			String title ="강의명:"+lectureName+"에 가입 초대를 <a href='/lecture/"+lectureName+"/weaver:"+weaver+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/lecture/"+lectureName+"/weaver:"+weaver+"/join-cancel'>거절하시겠습니까?</a>";
+			String title ="강의명:"+lectureName+"에 가입 초대를 <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-cancel'>거절하시겠습니까?</a>";
 			
 			Post post = new Post(lectureCreator,
 					title, 
@@ -400,8 +396,8 @@ public class LectureController {
 		Weaver waitingWeaver = weaverService.getCurrentWeaver();
 
 		if(waitJoinService.isCreateLectureWaitJoin(lecture, waitingWeaver, waitingWeaver)){
-			String title = waitingWeaver.getId()+"님이 강의명:"+lectureName+"에 가입 신청을 <a href='/"+lectureName+"/weaver:"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/lecture/"+lectureName+"/weaver:"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a>";
+			String title = waitingWeaver.getId()+"님이 강의명:"+lectureName+"에 가입 신청을 <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a>";
 			Post post = new Post(waitingWeaver,
 					title, 
 					"", 
@@ -418,7 +414,7 @@ public class LectureController {
 	}
 	
 	
-	@RequestMapping("/{lectureName}/weaver:{weaver}/join-ok") // 강의 가입 승인
+	@RequestMapping("/{lectureName}/weaver/{weaver}/join-ok") // 강의 가입 승인
 	public String joinOK(@PathVariable("lectureName") String lectureName,@PathVariable("weaver") String weaver) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -426,13 +422,15 @@ public class LectureController {
 		WaitJoin waitJoin = waitJoinService.get(lectureName, weaver);
 		Pass pass = new Pass(lectureName, 0);
 
-		if(lecture != null //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
-				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
+		if(waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& lecture.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, waitingWeaver)){
 						
-			
-			Post post = new Post(currentWeaver, 
+			lecture.addJoinWeaver(waitingWeaver); //강의 목록에 추가
+			waitingWeaver.addPass(pass);
+			weaverService.update(waitingWeaver);
+			lectureService.update(lecture);
+			Post post = new Post(waitingWeaver, 
 					"관리자 "+lecture.getCreatorName()+"님의 승인으로 강의명:"+
 					"<a href='/lecture/"+lectureName+"/'>"+
 					lectureName+
@@ -470,7 +468,7 @@ public class LectureController {
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
 	
-	@RequestMapping("/{lectureName}/weaver:{weaver}/join-cancel") //강의에 가입 승인 취소
+	@RequestMapping("/{lectureName}/weaver/{weaver}/join-cancel") //강의에 가입 승인 취소
 	public String joinCancel(@PathVariable("lectureName") String lectureName,@PathVariable("weaver") String weaver) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();

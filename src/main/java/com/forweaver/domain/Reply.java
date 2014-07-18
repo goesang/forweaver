@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 public class Reply implements Serializable {
 
 	static final long serialVersionUID = 121134L;
 
-	private String writerName;
-	private String writerEmail;
+	@DBRef
+	private Weaver writer;
 	private Date created;
 	private String content;
 	private int number;
@@ -17,24 +19,26 @@ public class Reply implements Serializable {
 	public Reply() {
 	}
 	
-	public Reply(String writerName, String writerEmail, String content) {
+	public Reply(Weaver writer, String content) {
 		super();
-		this.writerName = writerName;
-		this.writerEmail = writerEmail;
+		this.writer = writer;
 		this.created = new Date();
 		this.content = content;
 	}
-	public String getWriterName() {
-		return writerName;
+	
+	public Weaver getWriter() {
+		return writer;
 	}
-	public void setWriterName(String writerName) {
-		this.writerName = writerName;
+
+	public void setWriter(Weaver writer) {
+		this.writer = writer;
+	}
+
+	public String getWriterName() {
+		return this.writer.getId();
 	}
 	public String getWriterEmail() {
-		return writerEmail;
-	}
-	public void setWriterEmail(String writerEmail) {
-		this.writerEmail = writerEmail;
+		return this.writer.getEmail();
 	}
 
 	public Date getCreated() {

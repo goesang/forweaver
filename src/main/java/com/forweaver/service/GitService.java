@@ -197,7 +197,7 @@ public class GitService {
 		for(GitSimpleCommitLog gitSimpleCommitLog : gitSimpleCommitLogList){
 			Weaver loadWeaver =  weaverDao.get(gitSimpleCommitLog.getCommiterName());
 			if (loadWeaver != null)
-				gitSimpleCommitLog.setImgSrc("/img/"+loadWeaver.getId());
+				gitSimpleCommitLog.setImgSrc("/"+loadWeaver.getId()+"/img");
 		}
 		
 		return gitSimpleCommitLogList;

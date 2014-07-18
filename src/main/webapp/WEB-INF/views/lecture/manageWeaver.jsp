@@ -24,7 +24,7 @@ weaverList.push({
 	"id": " ${joinWeaver.id}",
 	"email": "${joinWeaver.email}",
 	"img": "${joinWeaver.getImgSrc()}",
-	"removeLink": "/lecture/${lecture.name}/weaver:${joinWeaver.id}/delete"
+	"removeLink": "/lecture/${lecture.name}/weaver/${joinWeaver.id}/delete"
 });
 </c:forEach>
 $(document).ready(function() {
@@ -33,7 +33,7 @@ $(document).ready(function() {
 		var weaverName = $('#weaverName').val();
 		
 		if(weaverName.length != 0)
-			window.location = "/lecture/${lecture.name}/weaver:"+weaverName+"/add-weaver";
+			window.location = "/lecture/${lecture.name}/weaver/"+weaverName+"/add-weaver";
 	});
 	
 	

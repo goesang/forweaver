@@ -155,7 +155,7 @@ public class Weaver implements UserDetails,Serializable {
 	}
 	
 	public String getImgSrc() {
-		return "/img/"+this.id;
+		return "/"+this.id+"/img/";
 	}
 
 

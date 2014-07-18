@@ -1,9 +1,12 @@
 package com.forweaver.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+
+import com.maxmind.geoip.LookupService;
 
 //각종 웹 유틸 클래스
 public class WebUtil {
@@ -76,6 +79,23 @@ public class WebUtil {
 	public static OutputStream pptToImg(InputStream is){
 		// ppt 파일을 이미지로 출력해주는 메서드
 		// 때에 따라서 매개변수 타입과 반환값의 타입이 다를 수 있음.
+		return null;
+	}
+	
+	//hackDay - [Docking] 문서에 접속한 사용자 간 작업 위치 표시 
+	public static String ipToAddress(String ip){
+		LookupService lookup = null;
+		  
+		try {
+		   lookup = new LookupService("/home/go/GeoLiteCity.dat", LookupService.GEOIP_MEMORY_CACHE);
+		} catch(IOException e) {
+		   e.printStackTrace(System.out);
+		}
+		
+		System.out.println(lookup.getLocation("218.209.82.120").latitude);
+		System.out.println(lookup.getLocation("218.209.82.120").longitude);
+		System.out.println(lookup.getLocation("218.209.82.120").city);
+		System.out.println(lookup.getLocation("218.209.82.120").city);
 		return null;
 	}
 

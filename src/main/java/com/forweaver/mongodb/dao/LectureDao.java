@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Lecture;
+import com.forweaver.domain.Weaver;
 
 @Repository
 public class LectureDao {
@@ -48,7 +49,7 @@ public class LectureDao {
 	public long countLectures( // 강의 검색하고 숫자를 셈
 			List<String> tags,
 			String search,
-			String creatorName) {
+			Weaver creator) {
 		Criteria criteria = new Criteria();
 
 		if(search != null)
@@ -58,8 +59,8 @@ public class LectureDao {
 		if(tags != null)
 			criteria.and("tags").all(tags);
 
-		if(creatorName != null)
-			criteria.and("writerName").is(creatorName);
+		if(creator != null)
+			criteria.and("creator").is(creator);
 
 		return mongoTemplate.count(new Query(criteria), Lecture.class);
 	}
@@ -67,7 +68,7 @@ public class LectureDao {
 	public List<Lecture> getLectures( // 강의를 검색
 			List<String> tags,
 			String search,
-			String creatorName,
+			Weaver creator,
 			int page, 
 			int size) {
 		Criteria criteria = new Criteria();
@@ -78,8 +79,8 @@ public class LectureDao {
 
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(creatorName != null)
-			criteria.and("creatorName").is(creatorName);
+		if(creator != null)
+			criteria.and("creator").is(creator);
 
 		Query query = new Query(criteria);
 		query.with(new PageRequest(page-1, size));

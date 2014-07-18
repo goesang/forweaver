@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -16,8 +17,8 @@ public class Code implements Serializable  {
 	
 	@Id
 	private int codeID;
-	private String writerName;
-	private String writerEmail;
+	@DBRef
+	private Weaver writer;
 	private int downCount;
 	private Date openingDate;
 	private String readme;
@@ -34,8 +35,7 @@ public class Code implements Serializable  {
 	public Code(Weaver weaver, String name,
 			String content, List<String> tags) {
 		super();
-		this.writerName = weaver.getId();
-		this.writerEmail = weaver.getEmail();
+		this.writer = weaver;
 		this.name = name;
 		this.content = content;
 		this.tags = tags;
@@ -50,21 +50,24 @@ public class Code implements Serializable  {
 		this.codeID = codeID;
 	}
 
-	public String getWriterName() {
-		return writerName;
+	
+	public Weaver getWriter() {
+		return writer;
 	}
 
-	public void setWriterName(String writerName) {
-		this.writerName = writerName;
+	public void setWriter(Weaver writer) {
+		this.writer = writer;
 	}
+
+	public String getWriterName() {
+		return this.writer.getId();
+	}
+
 
 	public String getWriterEmail() {
-		return writerEmail;
+		return this.writer.getEmail();
 	}
 
-	public void setWriterEmail(String writerEmail) {
-		this.writerEmail = writerEmail;
-	}
 
 	public int getDownCount() {
 		return downCount;
@@ -147,7 +150,7 @@ public class Code implements Serializable  {
 	}
 	
 	public String getImgSrc(){
-		return "/img/"+this.writerName;
+		return this.writer.getImgSrc();
 	}
 	
 	public void download(){

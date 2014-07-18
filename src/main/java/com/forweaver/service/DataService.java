@@ -18,16 +18,10 @@ public class DataService {
 		return dataDao.get(dataID);
 	}
 	
-	public List<Data> get(List<String> dataIDs) {
-		return dataDao.get(dataIDs);
+	
+	public void delete(Data data) {
+		dataDao.delete(data);
 	}
 	
-	public void delete(String dataID) {
-		dataDao.delete(dataID);
-	}
-	
-	public void delete(List<String> dataIDs) {
-		dataDao.delete(dataIDs);
-	}
 
 }

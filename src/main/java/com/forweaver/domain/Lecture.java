@@ -19,8 +19,8 @@ public class Lecture implements Serializable {
 	private String name; //강의 이름 이게 기본 키
 	private String description; // 강의 소개
 	private Date openingDate; // 강의 시작일
-	private String creatorName; // 강의 개설자 이름
-	private String creatorEmail; // 강의 개설자 이메일
+	@DBRef
+	private Weaver creator;
 	
 	@Transient
 	private boolean isJoin;
@@ -44,8 +44,7 @@ public class Lecture implements Serializable {
 		this.name = name;
 		this.description = description;
 		this.openingDate = new Date();
-		this.creatorName = weaver.getId();
-		this.creatorEmail = weaver.getEmail();
+		this.creator = weaver;
 		this.adminWeavers.add(weaver);
 		this.tags = tagList;
 	}
@@ -75,12 +74,9 @@ public class Lecture implements Serializable {
 	}
 
 	public String getCreatorName() {
-		return creatorName;
+		return this.creator.getId();
 	}
 
-	public void setCreatorName(String creatorName) {
-		this.creatorName = creatorName;
-	}
 
 	
 	public String getOpeningDateFormat() {
@@ -89,12 +85,17 @@ public class Lecture implements Serializable {
 	}
 
 	public String getCreatorEmail() {
-		return creatorEmail;
+		return this.creator.getEmail();
 	}
 
-	public void setCreatorEmail(String creatorEmail) {
-		this.creatorEmail = creatorEmail;
+	public Weaver getCreator() {
+		return creator;
 	}
+
+	public void setCreator(Weaver creator) {
+		this.creator = creator;
+	}
+
 	public void addAdminWeaver(Weaver weaver){
 		this.adminWeavers.add(weaver);
 	}
@@ -161,7 +162,7 @@ public class Lecture implements Serializable {
 		this.isJoin = isJoin;
 	}
 	public String getImgSrc(){
-		return "/img/"+this.creatorName;
+		return creator.getImgSrc();
 	}
 	
 	

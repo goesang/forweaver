@@ -227,7 +227,8 @@ public class CodeController {
 				datas.add(new Data(file,weaver.getId()));
 		}
 
-		RePost rePost = new RePost(codeID,
+		RePost rePost = new RePost(code.getCodeID(),
+				code.getWriter(),
 				weaver,
 				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))),
 				4);
@@ -245,13 +246,13 @@ public class CodeController {
 		Code code = codeService.get(codeID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( weaver == null || rePost == null || code == null || content == null) 
+		if( rePost == null || code == null || content == null) 
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
 			return "redirect:/code/"+codeID;
 
-		rePost.addReply(new Reply(weaver.getId(), weaver.getEmail(), 
+		rePost.addReply(new Reply(weaver, 
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
-		rePostService.update(rePost);	
+		rePostService.update(rePost,null);	
 
 		return "redirect:/code/"+codeID;
 	}
@@ -266,11 +267,11 @@ public class CodeController {
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( weaver == null || rePost == null || code == null || !rePost.removeReply(weaver, number)) 
+		if( rePost == null || code == null || !rePost.removeReply(weaver, number)) 
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
 			return "redirect:/code/"+codeID;
 
-		rePostService.update(rePost);	
+		rePostService.update(rePost,null);	
 
 		return "redirect:/code/"+codeID;
 	}

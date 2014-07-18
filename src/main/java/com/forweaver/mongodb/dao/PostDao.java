@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Post;
+import com.forweaver.domain.Weaver;
 
 @Repository
 public class PostDao {
@@ -40,7 +41,7 @@ public class PostDao {
 	}
 
 	public long countPostsWhenNotLogin( // 로그인하지 않은 회원이 글을 셈.
-			List<String> tags, String search, String writerName, String sort) {
+			List<String> tags, String search, Weaver writer, String sort) {
 		Criteria criteria = new Criteria();
 
 		if (search != null)
@@ -51,8 +52,8 @@ public class PostDao {
 
 		if (tags != null)
 			criteria.and("tags").all(tags);
-		if (writerName != null)
-			criteria.and("writerName").is(writerName);
+		if (writer != null)
+			criteria.and("writer").is(writer);
 
 		this.filter(criteria, sort);
 
@@ -61,7 +62,7 @@ public class PostDao {
 
 	public List<Post> getPostsWhenNotLogin(
 			// 로그인하지 않은 회원이 글을 검색
-			List<String> tags, String search, String writerName, String sort,
+			List<String> tags, String search, Weaver writer, String sort,
 			int page, int size) {
 		Criteria criteria = new Criteria();
 
@@ -73,8 +74,8 @@ public class PostDao {
 
 		if (tags != null)
 			criteria.and("tags").all(tags);
-		if (writerName != null)
-			criteria.and("writerName").is(writerName);
+		if (writer != null)
+			criteria.and("writer").is(writer);
 
 		this.filter(criteria, sort);
 
@@ -87,13 +88,13 @@ public class PostDao {
 
 	public long countPostsWithPrivateTags(
 			// 프로젝트 태그를 이용하여 글을 파악하고 셈
-			List<String> privateTags, String search, String writerName,
+			List<String> privateTags, String search, Weaver writer,
 			String sort) {
 		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
 				.all(privateTags); // 비밀 글 가져오기
 
-		if (writerName != null)
-			criteria.and("writerName").is(writerName);
+		if (writer != null)
+			criteria.and("writer").is(writer);
 
 		if (search != null)
 			criteria.and("search").is(search);
@@ -105,14 +106,14 @@ public class PostDao {
 
 	public List<Post> getPostsWithPrivateTags(
 			// 프로젝트 태그를 이용하여 글을 검색함
-			List<String> privateTags, String search, String writerName,
+			List<String> privateTags, String search, Weaver writer,
 			String sort, int page, int size) {
 
 		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
 				.all(privateTags); // 일반 공개글을 불러옴;
 
-		if (writerName != null)
-			criteria.and("writerName").is(writerName);
+		if (writer != null)
+			criteria.and("writer").is(writer);
 
 		if (search != null)
 			criteria.and("search").is(search);
@@ -128,18 +129,18 @@ public class PostDao {
 
 	public long countPostsWithMassageTag(
 			// 메세지 태그를 이용하여 글을 검색하고 셈
-			List<String> massageTags, String search, String writerName,
+			List<String> massageTags, String search, Weaver writer,
 			boolean my, String sort) {
 		Criteria criteria;
 		if (my)
 			criteria = new Criteria().orOperator(
 					Criteria.where("kind").is(3).andOperator(
 					Criteria.where("tags").in(massageTags)),
-					Criteria.where("kind").is(3).and("writerName")
-							.is(writerName));
+					Criteria.where("kind").is(3).and("writer")
+							.is(writer));
 		else
-			criteria = Criteria.where("kind").is(3).and("writerName")
-					.is(writerName).and("tags").in(massageTags);
+			criteria = Criteria.where("kind").is(3).and("writer")
+					.is(writer).and("tags").in(massageTags);
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -151,7 +152,7 @@ public class PostDao {
 	}
 	public List<Post> getPostsWithMassageTag(
 			// 메세지 태그를 이용하여 글을 검색
-			List<String> massageTags, String search,String writerName, 
+			List<String> massageTags, String search,Weaver writer, 
 			boolean my, String sort, int page, int size) {
 		Criteria criteria;
 
@@ -159,11 +160,11 @@ public class PostDao {
 			criteria = new Criteria().orOperator(
 					Criteria.where("kind").is(3).andOperator(
 					Criteria.where("tags").in(massageTags)),
-					Criteria.where("kind").is(3).and("writerName")
-							.is(writerName));
+					Criteria.where("kind").is(3).and("writer")
+							.is(writer));
 		else
-			criteria = Criteria.where("kind").is(3).and("writerName")
-					.is(writerName).and("tags").in(massageTags);
+			criteria = Criteria.where("kind").is(3).and("writer")
+					.is(writer).and("tags").in(massageTags);
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -182,11 +183,11 @@ public class PostDao {
 	public long countPostsWhenLogin(
 			// 로그인한 회원이 글을 검색할때 숫자를 셈.
 			List<String> publicTags, List<String> privateTags,
-			String writerName, String search, String sort) {
+			Weaver writer, String search, String sort) {
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(Criteria.where("kind").is(1),
-				Criteria.where("writerName").is(writerName),
+				Criteria.where("writer").is(writer),
 				Criteria.where("tags").in(privateTags));
 
 		if (search != null)
@@ -205,12 +206,12 @@ public class PostDao {
 	public List<Post> getPostsWhenLogin(
 			// 로그인한 회원이 글을 검색함.
 			List<String> publicTags, List<String> privateTags,
-			String writerName, String search, String sort, int page, int size) {
+			Weaver writer, String search, String sort, int page, int size) {
 
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(Criteria.where("kind").is(1),
-				Criteria.where("writerName").is(writerName),
+				Criteria.where("writer").is(writer),
 				Criteria.where("tags").in(privateTags));
 
 		if (search != null)
@@ -234,14 +235,14 @@ public class PostDao {
 	public long countPostsWithWriterName(
 			// 로그인한 회원이 다른 사용자의 글을 검색할때 숫자를 셈.
 			List<String> publicTags, List<String> loginWeaverprivateTags,
-			String writerName, String loginName, String search, String sort) {
+			Weaver writer, Weaver loginWeaver, String search, String sort) {
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(
-				Criteria.where("kind").is(1).and("writerName").is(writerName),
+				Criteria.where("kind").is(1).and("writer").is(writer),
 				Criteria.where("tags").in(loginWeaverprivateTags)
-						.and("writerName").is(writerName),
-				Criteria.where("writerName").is(loginName));
+						.and("writer").is(writer),
+				Criteria.where("writer").is(loginWeaver));
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -259,16 +260,16 @@ public class PostDao {
 	public List<Post> getPostsWithWriterName(
 			// 로그인한 회원이 다른 사용자의 글을 검색함.
 			List<String> publicTags, List<String> loginWeaverprivateTags,
-			String writerName, String loginName, String search, String sort,
+			Weaver writer, Weaver loginWeaver, String search, String sort,
 			int page, int size) {
 
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(
-				Criteria.where("kind").is(1).and("writerName").is(writerName),
+				Criteria.where("kind").is(1).and("writer").is(writer),
 				Criteria.where("tags").in(loginWeaverprivateTags)
-						.and("writerName").is(writerName),
-				Criteria.where("writerName").is(loginName));
+						.and("writer").is(writer),
+				Criteria.where("writer").is(loginWeaver));
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -289,11 +290,11 @@ public class PostDao {
 
 	public long countMyPosts(
 			// 자신의 글 숫자를 셈.
-			List<String> publicTags,List<String> privateTags, String writerName, String search,
+			List<String> publicTags,List<String> privateTags, Weaver writer, String search,
 			String sort) {
 		Criteria criteria = new Criteria();
 
-		criteria.orOperator(Criteria.where("writerName").is(writerName),
+		criteria.orOperator(Criteria.where("writer").is(writer),
 				Criteria.where("tags").in(privateTags));
 
 		if (search != null)
@@ -311,11 +312,11 @@ public class PostDao {
 
 	public List<Post> getMyPosts(
 			// 자기글과 자기한테 온 메세지를 검색함.
-			List<String> publicTags,List<String> privateTags,  String writerName, String search,
+			List<String> publicTags,List<String> privateTags,  Weaver writer, String search,
 			String sort, int page, int size) {
 		Criteria criteria = new Criteria();
 
-		criteria.orOperator(Criteria.where("writerName").is(writerName),
+		criteria.orOperator(Criteria.where("writer").is(writer),
 				Criteria.where("tags").in(privateTags));
 
 		if (search != null)

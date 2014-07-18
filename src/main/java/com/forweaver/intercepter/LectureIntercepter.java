@@ -39,9 +39,12 @@ public class LectureIntercepter extends HandlerInterceptorAdapter {
 
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Lecture lecture = lectureService.get(lectureName);
-
-		if(lecture == null || weaver.getPass(lectureName) == null){
-			response.sendError(404);
+		if(lecture == null){
+			response.sendError(500);
+			return false;
+		}
+		else if(weaver.getPass(lectureName) == null){
+			response.sendError(400);
 			return false;
 		}
 

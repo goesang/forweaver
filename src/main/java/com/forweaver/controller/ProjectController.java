@@ -353,7 +353,7 @@ public class ProjectController {
 		return "/project/commitLog";
 	}
 	
-	@RequestMapping("/{creatorName}/{projectName}/commitlog") //  Hack 데이 이슈 : 게시물 RSS 출력
+/*	@RequestMapping("/{creatorName}/{projectName}/rss") //  Hack 데이 이슈 : 게시물 RSS 출력
 	@ResponseBody
 	public String rss(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model) {
@@ -370,7 +370,7 @@ public class ProjectController {
 		}
 			
 		return ""; // 여기에 최종 rss화된 문자열을 반환하면 됩니다!
-	}
+	}*/
 	
 
 	

@@ -10,12 +10,12 @@
 	<div class="container">
 	                        
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-				<div style="text-align:center;  background-color: #fff;" class="hero-unit center">
-					<h1><i class="fa fa-exclamation-triangle"></i> 일반 에러.
+				<div style="text-align:center; background-color: #fff;" class="hero-unit center">
+					<h1><i class="fa fa-lock"></i> 권한 없음.
 					</h1>
 					<br />
 					<p>
-						<b>원인 모를 에러가 발생하였습니다. 이전화면으로 돌아가주세요.</b>
+						<b>게시글을 읽을 수 없거나, 프로젝트 및 강의에 가입하지 않으셨습니다!</b>
 					</p><br />
 					<a onclick="javascript:history.back(-1);" class="btn btn-large btn-info"><i
 						class="icon-home icon-white"></i> 이전 화면으로 돌아가기</a>

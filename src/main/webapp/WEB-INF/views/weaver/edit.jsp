@@ -31,7 +31,7 @@ $(document).ready(function() {
 						
 						
 						<div class ="control-group" style="text-align:center;">
-						<img id="preview" style="height:150px;width:150px;" class="img-polaroid" src="/img/${weaver.id}">
+						<img id="preview" style="height:150px;width:150px;" class="img-polaroid" src="/${weaver.id}/img">
 						</div>
 						
 						

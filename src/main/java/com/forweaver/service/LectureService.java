@@ -33,7 +33,7 @@ public class LectureService {
 		if(weaverDao.get(lecture.getName()) != null || lectureDao.get(lecture.getName()) != null)
 			return; // 중복 검사
 		
-		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0,lecture);
+		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0,lecture,currentWeaver);
 		lecture.addRepo(repo);
 		lectureDao.add(lecture);
 		

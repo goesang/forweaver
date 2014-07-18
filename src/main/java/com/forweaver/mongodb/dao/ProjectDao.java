@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Project;
+import com.forweaver.domain.Weaver;
 
 @Repository
 public class ProjectDao {
@@ -47,7 +48,7 @@ public class ProjectDao {
 	public long countProjects( // 로그인하지 않은 회원이 프로젝트를 셈.
 			List<String> tags,
 			String search,
-			String writerName,
+			Weaver creator,
 			String sort) {
 		Criteria criteria = new Criteria();
 		
@@ -57,8 +58,8 @@ public class ProjectDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(writerName != null)
-			criteria.and("writerName").is(writerName);
+		if(creator != null)
+			criteria.and("creator").is(creator);
 			
 		this.filter(criteria, sort);
 
@@ -68,7 +69,7 @@ public class ProjectDao {
 	public List<Project> getProjects( // 로그인하지 않은 회원이 프로젝트를 검색
 			List<String> tags,
 			String search,
-			String creatorName,
+			Weaver creator,
 			String sort,
 			int page, 
 			int size) {
@@ -80,8 +81,8 @@ public class ProjectDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(creatorName != null)
-			criteria.and("creatorName").is(creatorName);
+		if(creator != null)
+			criteria.and("creator").is(creator);
 		
 		this.filter(criteria, sort);
 		

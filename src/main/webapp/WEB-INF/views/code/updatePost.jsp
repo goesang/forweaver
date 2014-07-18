@@ -10,8 +10,8 @@
 	editorMode = true;
 	var fileCount = 1;
 	var fileArray = [];
-	<c:forEach items="${post.dataNames}" var="dataName">
-		fileArray.push('${dataName}');
+	<c:forEach items="${post.datas}" var="data">
+		fileArray.push('${data.name}');
 	</c:forEach>
 	function checkRePost(){
 
@@ -73,10 +73,10 @@
 		
 		$(document).ready(function() {
 					
-			<c:forEach items="${post.dataNames}" var="dataName" varStatus="status">
+			<c:forEach items="${post.datas}" var="data" varStatus="status">
 			$(".file-div").append("<div id = 'fileInputDiv${status.count}' class='fileinput fileinput-exists' data-provides='fileinput'>"+
 					"<div class='input-group'><div class='form-control'><i class='icon-file '></i> "+
-					"<span class='fileinput-filename'>${dataName}</span></div>"+
+					"<span class='fileinput-filename'>${data.name}</span></div>"+
 					"<a href='javascript:removeFile(${status.count},\"${dataName}\")' class='input-group-addon btn btn-primary fileinput-exists' ><i class='icon-remove icon-white'></i></a></div></div>");
 			</c:forEach>
 			

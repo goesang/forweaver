@@ -40,12 +40,13 @@ public class RepoController {
 	public String add(@PathVariable("lectureName") String lectureName,
 			@RequestParam Map<String, String> params) {
 		Lecture lecture = lectureService.get(lectureName);
+		Weaver weaver = weaverService.getCurrentWeaver();
 		String repoName = params.get("name");		
 		Repo repo = new Repo(repoName, 
 				1, 
 				WebUtil.removeHtml(params.get("description")), 
 				Integer.parseInt(params.get("period")), 
-				lecture);	
+				lecture,weaver);	
 		
 		lectureService.addRepo(lecture, repo);
 		

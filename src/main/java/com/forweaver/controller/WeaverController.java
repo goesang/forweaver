@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
@@ -73,6 +72,7 @@ public class WeaverController {
 
 		if (weaverService.idCheck(id) || weaverService.idCheck(email))
 			return "/weaver/join";
+		
 		Weaver weaver = new Weaver(id, password, email,say, new Data(image,id));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
@@ -135,7 +135,7 @@ public class WeaverController {
 		}
 		
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodesWhenWeaverHome(id, "", 1, 10000));
+		model.addAttribute("codes", codeService.getCodesWhenWeaverHome(weaver, "", 1, 100));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
@@ -163,9 +163,9 @@ public class WeaverController {
 		model.addAttribute("weaver", weaver);
 
 		model.addAttribute("posts", postService.getPostsWhenWeaverHome(
-				currentWeaver, id, sort, pageNum, number));
+				currentWeaver, weaver, sort, pageNum, number));
 		model.addAttribute("postCount",
-				postService.countPostsWhenWeaverHome(currentWeaver, id, sort));
+				postService.countPostsWhenWeaverHome(currentWeaver, weaver, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", number);
@@ -208,9 +208,9 @@ public class WeaverController {
 		model.addAttribute("weaver", weaver);
 
 		model.addAttribute("posts", postService.getPostsWhenWeaverHomeWithTags(
-				currentWeaver, tagList, id, sort, pageNum, number));
+				currentWeaver, tagList, weaver, sort, pageNum, number));
 		model.addAttribute("postCount", postService
-				.countPostsWhenWeaverHomeWithTags(currentWeaver, tagList, id,
+				.countPostsWhenWeaverHomeWithTags(currentWeaver, tagList, weaver,
 						sort));
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -258,10 +258,10 @@ public class WeaverController {
 
 		model.addAttribute("posts", postService
 				.getPostsWhenWeaverHomeWithTagsAndSearch(currentWeaver,
-						tagList, id, search, sort, pageNum, number));
+						tagList, weaver, search, sort, pageNum, number));
 		model.addAttribute("postCount", postService
 				.countPostsWhenWeaverHomeWithTagsAndSearch(currentWeaver,
-						tagList, id, search, sort));
+						tagList, weaver, search, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("search", search);
@@ -304,7 +304,7 @@ public class WeaverController {
 		return "redirect:/manage";
 	}
 
-	@RequestMapping(value = "/img/{id}")
+	@RequestMapping(value = "/{id}/img")
 	public void img(@PathVariable("id") String id, HttpServletResponse res)
 			throws IOException {
 		Weaver weaver = weaverService.get(id);

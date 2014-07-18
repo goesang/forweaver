@@ -52,10 +52,11 @@ public class PostService {
 			}
 				
 		}
-		if(datas != null && datas.size() > 0){
-			Map<String,String> fileMap = dataDao.insert(datas);
-			post.insertDataList(fileMap);
-		}
+		if(datas != null)
+			for(Data data:datas){
+				dataDao.insert(data);
+				post.addData(dataDao.getLast());
+			}
 		
 
 		return postDao.insert(post);
@@ -77,7 +78,7 @@ public class PostService {
 	}
 
 	public boolean push(Post post, Weaver weaver) {
-		if (weaver == null || weaver.getId().equals(post.getWriterName()))
+		if (weaver == null || weaver.equals(post.getWriter()))
 			return false;
 		cacheManager.getCache("post").remove(post.getPostID());
 		Cache cache = cacheManager.getCache("push");
@@ -114,7 +115,7 @@ public class PostService {
 		}
 		if(removeDataList != null)
 			for(String dataName: removeDataList){
-				dataDao.delete(post.dataNameToDataID(dataName));
+				dataDao.delete(post.getData(dataName));
 				post.deleteData(dataName);
 			}
 		postDao.update(post);
@@ -123,7 +124,7 @@ public class PostService {
 
 	public boolean delete(Post post, Weaver weaver) {
 
-		if (post.getWriterName().equals(weaver.getId())) { // 글쓴이의 경우
+		if (post.getWriter().equals(weaver)) { // 글쓴이의 경우
 			postDao.delete(post);
 			rePostDao.deleteAll(post.getPostID());
 			cacheManager.getCache("post").remove(post.getPostID());
@@ -195,7 +196,7 @@ public class PostService {
 			else if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 				return postDao.countPostsWithPrivateTags(tags, null, null, sort);
 			else if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
-				return postDao.countPostsWithMassageTag(tags, null, weaver.getId(), this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort);
+				return postDao.countPostsWithMassageTag(tags, null, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort);
 			else 
 				return 0;
 		}
@@ -213,7 +214,7 @@ public class PostService {
 			else if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 				return postDao.getPostsWithPrivateTags(tags, null, null, sort, page, size);
 			else if(this.isMassageTags(tags)) {// 태그가 메세지 태그의 경우.
-				return postDao.getPostsWithMassageTag(tags, null, weaver.getId(), this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
+				return postDao.getPostsWithMassageTag(tags, null, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
 				
 			}else 
 				return null;
@@ -233,7 +234,7 @@ public class PostService {
 			else if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 				return postDao.countPostsWithPrivateTags(tags, search, null, sort);
 			else if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
-				return postDao.countPostsWithMassageTag(tags, search, weaver.getId(), this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort);
+				return postDao.countPostsWithMassageTag(tags, search, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort);
 			else 
 				return 0;
 		}
@@ -252,7 +253,7 @@ public class PostService {
 			else if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 				return postDao.getPostsWithPrivateTags(tags, search, null, sort, page, size);
 			else if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
-				return postDao.getPostsWithMassageTag(tags, search, weaver.getId(), this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
+				return postDao.getPostsWithMassageTag(tags, search, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
 			else 
 				return null;
 		}
@@ -260,88 +261,88 @@ public class PostService {
 			
 	}
 	
-	public long countPostsWhenWeaverHome(Weaver loginWeaver,String weaverID,String sort) {
+	public long countPostsWhenWeaverHome(Weaver loginWeaver,Weaver writer,String sort) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
-			return postDao.countPostsWhenNotLogin(null, null, weaverID, sort);
+			return postDao.countPostsWhenNotLogin(null, null, writer, sort);
 		else 
-			if(loginWeaver.getId().equals(weaverID))
-				return postDao.countMyPosts(null,loginWeaver.getPrivateTags(), weaverID, null, sort);
+			if(loginWeaver.getId().equals(writer))
+				return postDao.countMyPosts(null,loginWeaver.getPrivateTags(), writer, null, sort);
 			else
 				return postDao.countPostsWithWriterName(null, 
 						loginWeaver.getPrivateTags(),
-						weaverID, loginWeaver.getId(), null, sort);
+						writer, loginWeaver, null, sort);
 	}
 	
 	public List<Post> getPostsWhenWeaverHome(Weaver loginWeaver,
-			String weaverID,String sort, int page, int size) {
+			Weaver writer,String sort, int page, int size) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
-			return postDao.getPostsWhenNotLogin(null, null, weaverID, sort,page,size);
+			return postDao.getPostsWhenNotLogin(null, null, writer, sort,page,size);
 		else 
-			if(loginWeaver.getId().equals(weaverID))
-				return postDao.getMyPosts(null,loginWeaver.getPrivateTags(), weaverID, null, sort,page,size);
+			if(loginWeaver.getId().equals(writer))
+				return postDao.getMyPosts(null,loginWeaver.getPrivateTags(), writer, null, sort,page,size);
 			else
 				return postDao.getPostsWithWriterName(null, 
 						loginWeaver.getPrivateTags(), 
-						weaverID, loginWeaver.getId(), null, sort, page, size);
+						writer, loginWeaver, null, sort, page, size);
 	}
 
 	
-	public long countPostsWhenWeaverHomeWithTags(Weaver loginWeaver,List<String> tags,String weaverID,String sort) {
+	public long countPostsWhenWeaverHomeWithTags(Weaver loginWeaver,List<String> tags,Weaver writer,String sort) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
-			return postDao.countPostsWhenNotLogin(tags, null, weaverID, sort);
+			return postDao.countPostsWhenNotLogin(tags, null, writer, sort);
 		else 
-			if(loginWeaver.getId().equals(weaverID))
-				return postDao.countMyPosts(tags,loginWeaver.getPrivateTags(), weaverID, null, sort);
+			if(loginWeaver.getId().equals(writer))
+				return postDao.countMyPosts(tags,loginWeaver.getPrivateTags(), writer, null, sort);
 			else
 				return postDao.countPostsWithWriterName(tags, 
 						loginWeaver.getPrivateTags(),
-						weaverID, loginWeaver.getId(), null, sort);
+						writer, loginWeaver, null, sort);
 	}
 	
 	
 	public List<Post> getPostsWhenWeaverHomeWithTags(Weaver loginWeaver,List<String> tags,
-			String weaverID,String sort, int page, int size) {
+			Weaver writer,String sort, int page, int size) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
-			return postDao.getPostsWhenNotLogin(tags, null, weaverID, sort,page,size);
+			return postDao.getPostsWhenNotLogin(tags, null, writer, sort,page,size);
 		else 
-			if(loginWeaver.getId().equals(weaverID))
-				return postDao.getMyPosts(tags,loginWeaver.getPrivateTags(), weaverID, null, sort,page,size);
+			if(loginWeaver.getId().equals(writer))
+				return postDao.getMyPosts(tags,loginWeaver.getPrivateTags(), writer, null, sort,page,size);
 			else
 				return postDao.getPostsWithWriterName(tags, 
 						loginWeaver.getPrivateTags(), 
-						weaverID, loginWeaver.getId(), null, sort, page, size);
+						writer, loginWeaver, null, sort, page, size);
 	}
 	
-	public long countPostsWhenWeaverHomeWithTagsAndSearch(Weaver loginWeaver,List<String> tags,String weaverID,String search,String sort) {
+	public long countPostsWhenWeaverHomeWithTagsAndSearch(Weaver loginWeaver,List<String> tags,Weaver writer,String search,String sort) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
-			return postDao.countPostsWhenNotLogin(tags, search, weaverID, sort);
+			return postDao.countPostsWhenNotLogin(tags, search, writer, sort);
 		else 
-			if(loginWeaver.getId().equals(weaverID))
-				return postDao.countMyPosts(tags,loginWeaver.getPrivateTags(), weaverID, search, sort);
+			if(loginWeaver.getId().equals(writer))
+				return postDao.countMyPosts(tags,loginWeaver.getPrivateTags(), writer, search, sort);
 			else
 				return postDao.countPostsWithWriterName(tags, 
 						loginWeaver.getPrivateTags(),
-						weaverID, loginWeaver.getId(), search, sort);
+						writer, loginWeaver, search, sort);
 	}
 	
 	
 	public List<Post> getPostsWhenWeaverHomeWithTagsAndSearch(Weaver loginWeaver,List<String> tags,
-			String weaverID,String search,String sort, int page, int size) {
+			Weaver writer,String search,String sort, int page, int size) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
-			return postDao.getPostsWhenNotLogin(tags, search, weaverID, sort,page,size);
+			return postDao.getPostsWhenNotLogin(tags, search, writer, sort,page,size);
 		else 
-			if(loginWeaver.getId().equals(weaverID))
-				return postDao.getMyPosts(tags,loginWeaver.getPrivateTags(), weaverID, search, sort,page,size);
+			if(loginWeaver.getId().equals(writer))
+				return postDao.getMyPosts(tags,loginWeaver.getPrivateTags(), writer, search, sort,page,size);
 			else
 				return postDao.getPostsWithWriterName(tags, 
 						loginWeaver.getPrivateTags(), 
-						weaverID, loginWeaver.getId(), search, sort, page, size);
+						writer, loginWeaver, search, sort, page, size);
 	}
 
 

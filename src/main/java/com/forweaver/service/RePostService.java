@@ -38,12 +38,12 @@ public class RePostService {
 	private CacheManager cacheManager;
 	
 	public void add(RePost rePost,List<Data> datas) {
-		if(datas.size() > 0){
-			Map<String,String> fileMap = dataDao.insert(datas);
-			rePost.insertDataList(fileMap);
-		}
+		if(datas != null)
+			for(Data data:datas){
+				dataDao.insert(data);
+				rePost.addData(dataDao.getLast());
+			}
 		rePostDao.insert(rePost);
-		cacheManager.getCache("post").remove(rePost.getOriginalPostID());
 	}
 	
 	public List<RePost> get(int ID,int kind,String sort) {
@@ -57,7 +57,6 @@ public class RePostService {
 	public boolean push(RePost rePost, Weaver weaver) {
 		if(weaver == null)
 			return false;
-		cacheManager.getCache("post").remove(rePost.getOriginalPostID());
 		rePost.push();
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get("re"+rePost.getRePostID());
@@ -70,9 +69,13 @@ public class RePostService {
 		return false;
 	}
 	
-	public void update(RePost rePost){
+	public void update(RePost rePost,String[] removeDataList){
+		if(removeDataList != null)
+			for(String dataName: removeDataList){
+				dataDao.delete(rePost.getData(dataName));
+				rePost.deleteData(dataName);
+			}
 		rePostDao.update(rePost);
-		cacheManager.getCache("post").remove(rePost.getOriginalPostID());
 	}
 	
 	public boolean delete(Post post,RePost rePost,Weaver weaver){

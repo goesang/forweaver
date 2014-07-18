@@ -24,7 +24,7 @@ weaverList.push({
 	"id": " ${joinWeaver.id}",
 	"email": "${joinWeaver.email}",
 	"img": "${joinWeaver.getImgSrc()}",
-	"removeLink": "/project/${project.name}/weaver:${joinWeaver.id}/delete"
+	"removeLink": "/project/${project.name}/weaver/${joinWeaver.id}/delete"
 });
 </c:forEach>
 $(document).ready(function() {
@@ -33,7 +33,7 @@ $(document).ready(function() {
 		var weaverName = $('#weaverName').val();
 		
 		if(weaverName.length != 0)
-			window.location = "http//forweaver.com//project/${project.name}/weaver:${joinWeaver.nickName}/add-weaver";
+			window.location = "http//forweaver.com//project/${project.name}/weaver/${joinWeaver.nickName}/add-weaver";
 	});
 	
 	$('#tags-input').textext()[0].tags().addTags(

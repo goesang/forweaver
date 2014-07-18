@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -23,22 +24,19 @@ public class Post implements Serializable {
 	private int kind;
 	private Date created;
 	private Date recentRePostDate;
-	private String writerName;
-	private String writerEmail;
-	private String imgSrc;
+	@DBRef
+	private Weaver writer;
 	private int push;
 	private int rePostCount;
 	private List<String> tags = new ArrayList<String>();
-	private List<String> dataIDs = new ArrayList<String>();
-	private List<String> dataNames = new ArrayList<String>();
+	@DBRef
+	private List<Data> datas = new ArrayList<Data>();
 	
 	public Post(){}
 		
 	public Post(Weaver weaver,
 			String title, String content,List<String> tags) {
-		this.writerName = weaver.getId();
-		this.writerEmail = weaver.getEmail();
-		this.imgSrc = weaver.getImgSrc();
+		this.writer = weaver;
 		this.title = title;
 		this.content = content;
 		this.created = new Date();
@@ -75,12 +73,23 @@ public class Post implements Serializable {
 		return df.format(created); 
 	}
 	
+
+	public Weaver getWriter() {
+		return writer;
+	}
+
+	public void setWriter(Weaver writer) {
+		this.writer = writer;
+	}
+	
 	public String getWriterName() {
-		return writerName;
+		return writer.getId();
 	}
-	public void setWriterName(String writerName) {
-		this.writerName = writerName;
+	
+	public String getWriterEmail() {
+		return writer.getEmail();
 	}
+
 	public int getPush() {
 		return push;
 	}
@@ -101,12 +110,7 @@ public class Post implements Serializable {
 	public void setLong(boolean isLong) {
 		this.isLong = isLong;
 	}
-	public String getWriterEmail() {
-		return writerEmail;
-	}
-	public void setWriterEmail(String writerEmail) {
-		this.writerEmail = writerEmail;
-	}
+
 	
 	public void addTag(String tag){
 		this.tags.add(tag);
@@ -134,11 +138,7 @@ public class Post implements Serializable {
 	}
 
 	public String getImgSrc(){
-		return imgSrc;		
-	}
-
-	public void setImgSrc(String imgSrc) {
-		this.imgSrc = imgSrc;
+		return this.writer.getImgSrc();	
 	}
 
 	public void push(){
@@ -165,57 +165,33 @@ public class Post implements Serializable {
 		}
 	}
 
-	public List<String> getDataIDs() {
-		return dataIDs;
-	}
-	
-	public String dataNameToDataID(String dataName) {
-		
-		for(int i = 0 ; i< dataNames.size() ; i++){
-			if(dataNames.get(i).equals(dataName)){
-				return dataIDs.get(i);
-			}
-		}
-		return "";
-	}
-
-	public void setDataIDs(List<String> dataIDs) {
-		this.dataIDs = dataIDs;
-	}
-
-	public List<String> getDataNames() {
-		return dataNames;
-	}
-
-	public void setDataNames(List<String> dataNames) {
-		this.dataNames = dataNames;
-	}
-
-	public void insertDataList(Map<String,String> fileMap){
-		this.dataNames.clear(); 
-		this.dataIDs.clear(); 
-		
-		for(Object dataID: fileMap.values())
-			this.dataIDs.add((String) dataID);
-		
-		for(Object dataName: fileMap.keySet())
-			this.dataNames.add((String) dataName);
-		
+	public void addData(Data data){
+		this.datas.add(data);
 	}
 	
 	public void deleteData(String name){
-		for(int i = 0 ; i< dataNames.size() ; i++){
-			if(dataNames.get(i).equals(name)){
-				dataNames.remove(i);
-				dataIDs.remove(i);
+		for(int i = 0 ; i< this.datas.size() ; i++){
+			if(this.datas.get(i).getName().equals(name)){
+				this.datas.remove(i);
 				return;
 			}
 		}
 		
 	}
-
-
 	
-	
+	public Data getData(String dataName){
+		for(Data data:this.datas)
+			if(data.getName().equals(dataName))
+				return data;
+		return null;
+	}
+
+	public List<Data> getDatas() {
+		return datas;
+	}
+
+	public void setDatas(List<Data> datas) {
+		this.datas = datas;
+	}
 	
 }
