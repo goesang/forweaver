@@ -62,12 +62,16 @@ public class WebUtil {
 		return str;
 	}
 	
-	public static String markDownEncoder(String str) throws IOException {
+	public static String markDownEncoder(String str) {
 		//마크 다운 코드가 들어가면 html 코드로 바뀜
 		/*# This is an H1						<h1>This is an H1</h1>
 		## This is an H2			-> 			<h2>This is an H2</h2>
 		### This is an H3						<h3>This is an H3</h3>*/
-		str = new Markdown4jProcessor().process(str);
+		try {
+			str = new Markdown4jProcessor().process(str);
+		} catch (IOException e) {
+			return str;
+		}
 		return str;
 	}
 	public static OutputStream pptToImg(InputStream is){
