@@ -235,11 +235,6 @@
 			<artifactId>org.eclipse.jgit.archive</artifactId>
 			<version>3.3.2.201404171909-r</version>
 		</dependency>
-		 <dependency>
-        <groupId>com.maxmind.geoip</groupId>
-        <artifactId>geoip-api</artifactId>
-        <version>1.2.13</version>
-    </dependency>
     <!-- markdown -->
     <dependency>
 		<groupId>org.commonjava.googlecode.markdown4j</groupId>

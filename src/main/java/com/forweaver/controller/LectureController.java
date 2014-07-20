@@ -262,7 +262,7 @@ public class LectureController {
         
 		Post post = new Post(weaver,
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
-				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))), 
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
 				tagList);
 		
 		postService.add(post,datas);

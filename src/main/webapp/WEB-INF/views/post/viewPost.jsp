@@ -154,6 +154,7 @@
 						</c:if>
 						<!-- 글내용 시작 -->
 						<c:if test="${post.isLong()}">
+						<c:if test="${post.datas.size() > 0}">
 							<c:forEach var="index" begin="0" end="${post.datas.size()-1}">
 								<c:if
 									test="${post.datas.get(index).getName().endsWith('jpg')||
@@ -167,8 +168,10 @@
 									</tr>
 								</c:if>
 							</c:forEach>
+							</c:if>
 							<tr>
-								<td colspan="5">${post.content}</td>
+								<td colspan="5">
+								<s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(post.getContent())" /></td>
 							</tr>
 						</c:if>
 						<!-- 글내용 끝 -->

@@ -230,7 +230,7 @@ public class CodeController {
 		RePost rePost = new RePost(code.getCodeID(),
 				code.getWriter(),
 				weaver,
-				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))),
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
 				4);
 		rePostService.add(rePost,datas);
 		code.setRePostCount(code.getRePostCount()+1);

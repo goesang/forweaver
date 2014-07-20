@@ -327,7 +327,7 @@ public class ProjectController {
 
 		Post post = new Post(weaver,
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
-				WebUtil.convertHtml(WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))), 
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
 				tagList);
 		
 		postService.add(post,null);
@@ -353,24 +353,32 @@ public class ProjectController {
 		return "/project/commitLog";
 	}
 	
-/*	@RequestMapping("/{creatorName}/{projectName}/rss") //  Hack 데이 이슈 : 게시물 RSS 출력
+	@RequestMapping("/{creatorName}/{projectName}/rss") //  Hack 데이 이슈 : 게시물 RSS 출력
 	@ResponseBody
 	public String rss(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model) {
 		// 다음 코드는 예시 코드이며 return에 rss화된 문자열을 반환하면 됩니다!
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		
+		String rss = "<?xml version='1.0' encoding='UTF-8'?><rss version='2.0'><channel>";
+		
+		rss +="<title>project:"+creatorName+"/"+projectName+"</title>";
+		rss +="<link>http://forweaver.com/project/"+creatorName+"/"+projectName+"</link>";
+		rss +="<description>project:"+creatorName+"/"+projectName+"</description>";
+		
 		for(GitSimpleCommitLog commitLog:gitService.getGitCommitLogList(creatorName, projectName,gitBranchList.get(0),1,10)){
-			//아래는 GitSimpleCommitLog에서 정보를 보는 방법
-			System.out.println(commitLog.getShortMassage()); // 커밋 로그
-			System.out.println(commitLog.getCommitDate()); // 커밋 날자
-			System.out.println(commitLog.getCommiterName()); // 커밋한 사람 이름
-			System.out.println(commitLog.getCommiterEmail()); // 커밋한 사람 이메일
-			System.out.println(commitLog.getImgSrc()); // 커밋한 사람 사진
+			rss +="<item>";
+			rss +="<author>"+commitLog.getCommiterName()+" ("+commitLog.getCommiterEmail()+")</author>";
+			rss +="<title>"+commitLog.getShortMassage()+"</title>";
+			rss +="<link>http://forweaver.com/project/"+creatorName+"/"+projectName+"</link>";
+			rss +="<link>http://forweaver.com/project/"+creatorName+"/"+projectName+"</link>";
+			rss +="<description>"+commitLog.getShortMassage()+"</description>";
+			rss +="<pubDate>"+commitLog.getCommitDate()+"</pubDate>";
+			rss +="<image>http://forweaver.com/"+commitLog.getImgSrc()+"</image>";
+			rss +="</item>";
 		}
-			
-		return ""; // 여기에 최종 rss화된 문자열을 반환하면 됩니다!
-	}*/
+		return rss+"</channel></rss>";
+	}
 	
 
 	

@@ -13,7 +13,17 @@
 
 	<!-- Define static resource location -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-
+<mvc:annotation-driven>
+    <mvc:message-converters>
+        <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+            <property name="supportedMediaTypes">
+                <list>
+                    <value>text/html;charset=UTF-8</value>
+                </list>
+            </property>
+        </bean>
+    </mvc:message-converters>
+</mvc:annotation-driven>
 	<!-- Interceptor -->
 <mvc:annotation-driven/>
 	<mvc:interceptors>

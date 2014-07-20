@@ -52,7 +52,7 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 					return false;
 				}
 			}
-			if(project == null || (project.getCategory() == 1 && weaver.getPass(projectName) == null)){
+			if(project == null || (project.getCategory() == 1 && (weaver == null || weaver.getPass(projectName) == null))){
 				response.sendError(404);
 				return false;
 			}
