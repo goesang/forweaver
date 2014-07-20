@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 import com.maxmind.geoip.LookupService;
+import org.markdown4j.Markdown4jProcessor;
 
 //각종 웹 유틸 클래스
 public class WebUtil {
@@ -61,21 +62,14 @@ public class WebUtil {
 		return str;
 	}
 	
-	public static String markDownEncoder(String str){
+	public static String markDownEncoder(String str) throws IOException {
 		//마크 다운 코드가 들어가면 html 코드로 바뀜
 		/*# This is an H1						<h1>This is an H1</h1>
 		## This is an H2			-> 			<h2>This is an H2</h2>
 		### This is an H3						<h3>This is an H3</h3>*/
+		str = new Markdown4jProcessor().process(str);
 		return str;
 	}
-	public static String markDownDecoder(String str){
-		// html 코드가 들어가면 마크다운 코드로 바뀜
-		/*<h1>This is an H1</h1>						# This is an H1	
-		<h2>This is an H2</h2>			-> 			## This is an H2
-		<h3>This is an H3</h3>						### This is an H3*/
-		return str;
-	}
-	
 	public static OutputStream pptToImg(InputStream is){
 		// ppt 파일을 이미지로 출력해주는 메서드
 		// 때에 따라서 매개변수 타입과 반환값의 타입이 다를 수 있음.
