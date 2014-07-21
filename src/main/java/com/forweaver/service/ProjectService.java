@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.Weaver;
@@ -171,5 +172,9 @@ public class ProjectService{
 		}catch(Exception e){
 			System.err.println(e.getLocalizedMessage());
 		}
+	}
+	
+	public void update(Project project) {
+		projectDao.update(project);
 	}
 }
