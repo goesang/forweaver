@@ -179,8 +179,9 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
+			<version>3.1.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
@@ -235,12 +236,12 @@
 			<artifactId>org.eclipse.jgit.archive</artifactId>
 			<version>3.3.2.201404171909-r</version>
 		</dependency>
-    <!-- markdown -->
-    <dependency>
-		<groupId>org.commonjava.googlecode.markdown4j</groupId>
-		<artifactId>markdown4j</artifactId>
-		<version>2.2-cj-1.0</version>
-	</dependency> 
+		<!-- markdown -->
+		<dependency>
+			<groupId>org.commonjava.googlecode.markdown4j</groupId>
+			<artifactId>markdown4j</artifactId>
+			<version>2.2-cj-1.0</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
