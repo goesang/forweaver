@@ -123,6 +123,7 @@ var editorMode = false;
 					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
 					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li><a href="/project/${project.name}/chart">통계</a>
 				</ul>
 				
 				<ul style="display:none;" class="nav nav-tabs" id="communityTab">

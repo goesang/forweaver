@@ -4,6 +4,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.domain.git.GitSimpleStatistics;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
@@ -652,4 +654,18 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 
+	@RequestMapping("/{creatorName}/{projectName}/chart")
+	public String chart(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName, Model model){
+		Project project = projectService.get(creatorName+"/"+projectName);
+
+		List<GitSimpleStatistics> list = new ArrayList<GitSimpleStatistics>();
+		list.add(new GitSimpleStatistics("민수", 30, 5, 5));
+		list.add(new GitSimpleStatistics("아침", 20, 15, 30));
+		list.add(new GitSimpleStatistics("헐", 10, 10, 2));
+		
+		model.addAttribute("project", project);
+		model.addAttribute("list", list);
+		return "/project/chart";
+	}
 }
