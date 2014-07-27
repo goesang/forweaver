@@ -24,8 +24,10 @@ import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
+import com.forweaver.domain.chat.ChatRoom;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.service.ChatService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
@@ -53,7 +55,8 @@ public class LectureController {
 	PostService postService;
 	@Autowired
 	RePostService rePostService;
-
+	@Autowired 
+	private ChatService chatService;
 	
 	@RequestMapping("/")
 	public String lectures() {
@@ -511,5 +514,16 @@ public class LectureController {
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
 	
+	@RequestMapping("/{lectureName}/chat") //채팅
+	public String chat(@PathVariable("lectureName") String lectureName,Model model){
+		Lecture lecture = lectureService.get(lectureName);	
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		ChatRoom chatRoom = chatService.get(lectureName);
+		model.addAttribute("lecture", lecture);
+		model.addAttribute("chatRoom", chatRoom);
+		model.addAttribute("weaver", currentWeaver);
+		
+		return "/lecture/chat";
+	}
 
 }

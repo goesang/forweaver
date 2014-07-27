@@ -45,6 +45,7 @@ $(document).ready(function() {
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="/lecture/${lecture.name}/">예제소스</a></li>
 					<li><a href="/lecture/${lecture.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="window.open('/lecture/${lecture.name}/chat','','width=400,height=500,top='+((screen.height-500)/2)+',left='+((screen.width-400)/2)+',location =no,scrollbars=no, status=no;');">채팅</a></li>
 					<li><a href="/lecture/${lecture.name}/repo">숙제 저장소</a></li>
 					<li><a href="/lecture/${lecture.name}/weaver">수강생</a></li>
 				</ul>

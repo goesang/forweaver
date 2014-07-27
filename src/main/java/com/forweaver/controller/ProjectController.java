@@ -18,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forweaver.domain.Project;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
+import com.forweaver.domain.chat.ChatRoom;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.service.ChatService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
@@ -53,6 +54,8 @@ public class ProjectController {
 	GitService gitService;
 	@Autowired
 	TagService tagService;
+	@Autowired
+	ChatService chatService;
 
 	@RequestMapping("/")
 	public String projects() {
@@ -224,8 +227,6 @@ public class ProjectController {
 			@PathVariable("commitID") String commitID,
 			@PathVariable("filePath") String filePath,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
-
 		
 		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
@@ -652,4 +653,16 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 
+	@RequestMapping("/{creatorName}/{projectName}/chat") //채팅
+	public String chat(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,Model model){
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		ChatRoom chatRoom = chatService.get(project.getChatRoomName());
+		model.addAttribute("project", project);
+		model.addAttribute("chatRoom", chatRoom);
+		model.addAttribute("weaver", currentWeaver);
+		
+		return "/project/chat";
+	}
 }

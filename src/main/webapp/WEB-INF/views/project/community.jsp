@@ -122,6 +122,7 @@ var editorMode = false;
 							브라우져</a></li>
 					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
 					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="window.open('/project/${project.name}/chat','','width=400,height=500,top='+((screen.height-500)/2)+',left='+((screen.width-400)/2)+',location =no,scrollbars=no, status=no;');">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 				</ul>
 				
