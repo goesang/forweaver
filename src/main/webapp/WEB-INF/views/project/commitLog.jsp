@@ -32,7 +32,7 @@
 		            totalPages: pageCount,
 		            pageUrl: function(type, page, current){
 
-		                return "/project/${project.name}/commitlog/commit:${selectBranch}/page:"+page;
+		                return "/project/${project.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}/page:"+page;
 
 		            }
 		        }
@@ -76,9 +76,9 @@
 					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i>  커밋 내역 목록</h4>
 				</div>
 				<select id="selectBranch" class="span3">
-					<option value="/project/${project.name}/commitlog/commit:${selectBranch}">${fn:substring(selectBranch,0,20)}</option>
+					<option value="/project/${project.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}">${ selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/project/${project.name}/commitlog/commit:${gitBranchName}">${fn:substring(gitBranchName,0,20)}</option>
+						<option value="/project/${project.name}/commitlog/commit:${fn:replace(gitBranchName,'.', ',')}">${ gitBranchName}</option>
 					</c:forEach>
 				</select>
 				
@@ -103,7 +103,7 @@
 											<p class="p-button">소스</p></span>
 									</a>
 									
-								<a	href="/project:${project.name}-${fn:substring(gitCommit.commitLogID,0,8)}.zip"">
+								<a	href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${fn:substring(gitCommit.commitLogID,0,8)}.zip">
 										<span class="span-button"> <i
 											style="zoom: 1.5; -moz-transform: scale(1.5);"
 											class="icon-circle-arrow-down icon-white"></i>

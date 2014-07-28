@@ -185,22 +185,22 @@
 								<td class="td-button" rowspan="2"><sec:authorize
 										ifNotGranted="ROLE_USER">
 										<a href="/lecture/${lecture.name}/join"> <span
-											class="span-button"><i class="fa fa-times-circle"></i>
-												<p class="p-button">가입</p></span>
+											class="span-button"><i class="fa fa-times"></i>
+												<p class="p-button">미가입</p></span>
 										</a>
 									</sec:authorize> <sec:authorize ifAnyGranted="ROLE_USER">
 										<c:if
 											test="${!lecture.isJoin() && lecture.creatorName != currentUser.username}">
 											<a href="/lecture/${lecture.name}/join"> <span
-												class="span-button"><i class="fa fa-times-circle"></i>
-													<p class="p-button">가입</p></span>
+												class="span-button"><i class="fa fa-times"></i>
+													<p class="p-button">미가입</p></span>
 											</a>
 										</c:if>
 										<c:if
 											test="${lecture.isJoin() && lecture.creatorName != currentUser.username}">
 											<a href="/lecture/${lecture.name}"> <span
-												class="span-button"><i class="fa fa-circle-o"></i>
-													<p class="p-button">가입</p></span>
+												class="span-button"><i class="fa fa-graduation-cap"></i>
+													<p class="p-button">학생</p></span>
 											</a>
 										</c:if>
 										<c:if test="${lecture.creatorName == currentUser.username}">

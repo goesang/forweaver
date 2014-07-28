@@ -20,6 +20,7 @@ public class CodeDao {
 	private MongoTemplate mongoTemplate;
 	
 	public void insert(Code code) { // 코드 추가하기
+
 		if (!mongoTemplate.collectionExists(Code.class)) {
 			mongoTemplate.createCollection(Code.class);
 			code.setCodeID(1);

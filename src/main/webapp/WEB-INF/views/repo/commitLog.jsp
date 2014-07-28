@@ -27,7 +27,7 @@
 		            currentPage: ${pageIndex},
 		            totalPages: pageCount,
 		            pageUrl: function(type, page, current){
-		                return "/lecture/${repo.lectureName}/repo/${repo.name}/commitlog/commit:${selectBranch}/page:"+page;
+		                return "/lecture/${repo.lectureName}/repo/${repo.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}/page:"+page;
 		            }
 		        }
 
@@ -66,9 +66,9 @@
 					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i> 커밋 내역 목록</h4>
 				</div>
 				<select id="selectBranch" class="span3">
-					<option value="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog/commit:${selectBranch}">${selectBranch}</option>
+					<option value="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog/commit:${gitBranchName}">${gitBranchName}</option>
+						<option value="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
 				<table class="table table-hover">
@@ -89,8 +89,7 @@
 											class="icon-eye-open icon-white"></i>
 											<p class="p-button">소스</p></span>
 									</a>
-									
-								<a	href="/lecture/${repo.lectureName}/repo/${repo.name}-${fn:substring(gitCommit.commitLogID,0,8)}.zip">
+								<a	href="/lecture/${repo.lectureName}/repo/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
 										<span class="span-button"> <i
 											style="zoom: 1.5; -moz-transform: scale(1.5);"
 											class="icon-circle-arrow-down icon-white"></i>

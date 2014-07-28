@@ -81,8 +81,12 @@ public class WeaverController {
 
 	@RequestMapping("/{id}")
 	public String home(@PathVariable("id") String id, Model model) {
-
-		return "redirect:/" + id + "/sort:age-desc/page:1";
+		Weaver weaver = weaverService.get(id.replace(",", "."));
+		if(weaver == null)
+			return "/error404";
+		else
+			return "redirect:/" + weaver.getId() + "/sort:age-desc/page:1";
+		
 	}
 
 	@RequestMapping("/{id}/project")
@@ -307,9 +311,13 @@ public class WeaverController {
 	@RequestMapping(value = "/{id}/img")
 	public void img(@PathVariable("id") String id, HttpServletResponse res)
 			throws IOException {
-		Weaver weaver = weaverService.get(id);
+		Weaver weaver = weaverService.get(id.replace(",", "."));
 		if (weaver == null) {
-			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
+			if(id.contains("@") && id.contains("."))
+				res.sendRedirect("http://www.gravatar.com/avatar/"
+						+ WebUtil.convertMD5(id) + ".jpg");
+			else
+				res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
 			return;
 		}else if (weaver.getImage().getName().length() ==0) {
 			res.sendRedirect("http://www.gravatar.com/avatar/"

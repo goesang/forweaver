@@ -268,7 +268,7 @@
 								<td class="td-button" rowspan="2"><c:if
 										test="${post.kind >= 2}">
 										<a href="/community/${post.postID}/delete"> <span
-											class="span-button"> X
+											class="span-button"> <i class="fa fa-trash-o"></i>
 												<p class="p-button">삭제</p>
 										</span>
 										</a>

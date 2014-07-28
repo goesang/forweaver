@@ -44,6 +44,13 @@ function showFileBrowser(directoryPath) {
 	var parentDirectoryPath = makeParentDirectoryPath(directoryPath);
 	
 	$(document).ready(function() {
+		if(directoryPath == "/"){
+			$(".readme").show();
+			$(".readme-header").show();
+		}else{
+			$(".readme").hide();
+			$(".readme-header").hide();
+		}
 		$('#labelPath').empty();
 		$('#labelPath').append(directoryPath);
 		$("#fileBrowserTable").empty();
@@ -80,9 +87,13 @@ function showFileBrowser(directoryPath) {
 				"/filepath:"+
 				filePathTransform(value["path"].substring(1,value["path"].length))+"'>" + 
 				value["name"] + 
-				"</a></td>" + 
-				"<td class = 'td-commitlog'>";
+				"</a></td><td class = 'td-commitlog'>";
 			}
+			
+			//이미지를 추가함
+			appendHTML+="<a href='/"+value["commiterEmail"].replace('.',',')+"'><img class='td-commitlog-img' src='/"
+				+value["commiterEmail"].replace('.',',')+"/img' title='"+value["commiterName"]+"<"+value["commiterEmail"]+">'></a>&nbsp;&nbsp;";
+				
 			if(commitlogHref.length == 0){
 				appendHTML = appendHTML + value["commitLog"] + "</td>" + 
 				"<td class = 'td-time'>" + value["date"] + "</td></tr>"; 
@@ -95,67 +106,6 @@ function showFileBrowser(directoryPath) {
 				value["date"] + 
 				"</a></td></tr>"; 
 			}
-				
-			$("#fileBrowserTable").append(appendHTML);
-			//화면 크기에 따라 다르게 출력
-			 if ($(window).width() > 500) {
-			     	$( ".td-commitlog" ).show();
-			    }else{
-			    	$( ".td-commitlog" ).hide();
-			    }
-		});
-	});
-}
-
-function chatShowFileBrowser(directoryPath) {
-	
-	var parentDirectoryPath = makeParentDirectoryPath(directoryPath);
-	
-	$(document).ready(function() {
-		$('#labelPath').empty();
-		$('#labelPath').append(directoryPath);
-		$("#fileBrowserTable").empty();
-		if(directoryPath!="/")
-			$("#fileBrowserTable").append("<tr><td style='border-top:0px;'>"+
-					"<img src ='/resources/forweaver/img/directory.png'>"+
-					"</td><td colspan = '3' style='border-top:0px;' class= 'td-filename'>" +
-					"<a href='javascript:chatShowFileBrowser(\"" + parentDirectoryPath + "\")'>상위 디렉토리</a>" + 
-				"</td></tr>");
-		
-		$.each(fileBrowserTree[directoryPath], function(index, value) {
-			var appendHTML = "";
-			if (value["directory"]) {
-				appendHTML = "<tr>" +
-						"<td class='td-icon'><a href='javascript:chatShowFileBrowser(\"" + value["path"] + "\")'><img src ='/resources/forweaver/img/directory.png'></a></td>" + 
-				"<td class = 'td-filename'><a href='javascript:chatShowFileBrowser(\"" + value["path"] + "\")'>" + 
-				value["name"] + 
-				"</a></td>" + 
-				"<td class = 'td-commitlog'>";
-
-			} else {
-				appendHTML = "<tr>" +
-				"<td class='td-icon'>" +
-				"<a href='#' onclick='javascript:window.open(\""+
-				fileBrowserURL+
-				"/filepath:"+
-				filePathTransform(value["path"].substring(1,value["path"].length))+"\",\"popup\", \"width=670, height=600, scrollbars=yes, toolbar=nomenubar=no, location=no\")'>" + 
-				"<img src ='/resources/forweaver/img/file.png'></a></td>" + 
-				"<td class = 'td-filename'>" +
-				"<a <a href='#' onclick='javascript:window.open(\""+
-				fileBrowserURL+
-				"/filepath:"+
-				filePathTransform(value["path"].substring(1,value["path"].length))+"\",\"popup\", \"width=670, height=600, scrollbars=yes, toolbar=nomenubar=no, location=no\")'>" + 
-				value["name"] + 
-				"</a></td>" + 
-				"<td class = 'td-commitlog'>";
-			}
-			appendHTML = appendHTML +
-				value["commitLog"] + 
-				"</td>" + 
-				"<td class = 'td-time'>" + 
-				value["date"] + 
-				"</td></tr>"; 
-			
 				
 			$("#fileBrowserTable").append(appendHTML);
 			//화면 크기에 따라 다르게 출력
@@ -188,6 +138,8 @@ function modifyDirectory(fileList, directoryPath,file) {
 				value["dateInt"] = file["dateInt"];
 				value["date"] = file["date"];
 				value["commitID"] = file["commitID"];
+				value["commiterName"] = file["commiterName"];
+				value["commiterEmail"] = file["commiterEmail"];
 			}
 		}
 	});
@@ -210,6 +162,8 @@ function makeDirectory(path, value) {
 	directory["date"] = value["date"];
 	directory["dateInt"] = value["dateInt"];
 	directory["commitID"] = value["commitID"];
+	directory["commiterName"] = value["commiterName"];
+	directory["commiterEmail"] = value["commiterEmail"];
 	return directory;
 }
 

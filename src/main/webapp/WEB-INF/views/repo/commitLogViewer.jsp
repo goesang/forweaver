@@ -52,7 +52,7 @@
 										style="zoom: 1.5; -moz-transform: scale(1.5);"
 										class="icon-eye-open icon-white"></i>
 										<p class="p-button">소스</p></span>
-							</a> <a href="/lecture/${repo.lectureName}/repo/${repo.name}-${fn:substring(gitCommitLog.commitLogID,0,8)}.zip"">
+							</a> <a href="/lecture/${repo.lectureName}/repo/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
 									<span class="span-button"> <i
 										style="zoom: 1.5; -moz-transform: scale(1.5);"
 										class="icon-circle-arrow-down icon-white"></i>

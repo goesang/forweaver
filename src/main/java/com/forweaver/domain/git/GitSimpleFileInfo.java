@@ -15,10 +15,13 @@ public class GitSimpleFileInfo implements Serializable {
 	private String simpleCommitLog;
 	private Date commitDate;
 	private int commitDateInt;
+	private String commiterName;
+	private String commiterEmail;
 		
 	public GitSimpleFileInfo(String name, String path, int depth,
 			boolean isDirectory, String commitID, String simpleCommitLog,
-			int commitDateInt) {
+			int commitDateInt,String commiterName,
+			String commiterEmail) {
 		this.name = name;
 		this.path = "/"+path;
 		this.depth = depth;
@@ -27,6 +30,8 @@ public class GitSimpleFileInfo implements Serializable {
 		this.simpleCommitLog = simpleCommitLog;
 		this.commitDateInt = commitDateInt;
 		this.commitDate = new Date(commitDateInt*1000L);
+		this.commiterName =commiterName;
+		this.commiterEmail = commiterEmail;
 	}
 	public String getName() {
 		return name;
@@ -77,6 +82,19 @@ public class GitSimpleFileInfo implements Serializable {
 	public void setCommitDateInt(int commitDateInt) {
 		this.commitDateInt = commitDateInt;
 	}
+	public String getCommiterName() {
+		return commiterName;
+	}
+	public void setCommiterName(String commiterName) {
+		this.commiterName = commiterName;
+	}
+	public String getCommiterEmail() {
+		return commiterEmail;
+	}
+	public void setCommiterEmail(String commiterEmail) {
+		this.commiterEmail = commiterEmail;
+	}
+	
 	
 	
 }

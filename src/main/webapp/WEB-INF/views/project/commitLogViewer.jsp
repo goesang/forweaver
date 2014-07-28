@@ -61,7 +61,7 @@
 											<p class="p-button">소스</p></span>
 									</a>
 									
-								<a	href="/project:${project.name}-${fn:substring(gitCommitLog.commitLogID,0,8)}.zip"">
+								<a	href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
 										<span class="span-button"> <i
 											style="zoom: 1.5; -moz-transform: scale(1.5);"
 											class="icon-circle-arrow-down icon-white"></i>

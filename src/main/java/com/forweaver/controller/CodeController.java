@@ -154,14 +154,12 @@ public class CodeController {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
 		MultipartFile file = multiRequest.getFile("file");
-
 		String tags = request.getParameter("tags");
 		String name = request.getParameter("name");
 		String content = request.getParameter("content");
 
 		if(tags == null || name == null || content == null || file == null) // 태그가 없을 때
 			return "redirect:/code/";
-
 		List<String> tagList = tagService.stringToTagList(
 				WebUtil.removeHtml(URLDecoder.decode(tags)));
 		Weaver weaver = weaverService.getCurrentWeaver();

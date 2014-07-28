@@ -52,7 +52,7 @@ public class PostService {
 			}
 				
 		}
-		if(datas != null)
+		if(datas != null && datas.size() >0)
 			for(Data data:datas){
 				dataDao.insert(data);
 				post.addData(dataDao.getLast());

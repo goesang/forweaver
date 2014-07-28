@@ -26,6 +26,7 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.domain.chat.ChatRoom;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.service.ChatService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
@@ -62,6 +63,19 @@ public class ProjectController {
 		return "redirect:/project/sort:age-desc/page:1";
 	}
 		
+	@RequestMapping(value = "/{creatorName}/{projectName}/{commitName}/{download}.zip")
+	public void getProjectZip(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commitName") String commitName,
+			HttpServletResponse response) {
+		if(!gitService.existCommit(creatorName, projectName, commitName))
+			return;
+
+		gitService.getProjectZip(creatorName, projectName, commitName, response);
+
+		return;
+	}
+	
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String projectsWithPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
@@ -171,20 +185,6 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 	
-	@RequestMapping(value = "/{creatorName}/{projectName}-{commitName}.zip")
-	public void getProjectZip(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitName") String commitName,
-			HttpServletResponse response) {
-		if(!gitService.existCommit(creatorName, projectName, commitName))
-			return;
-
-		gitService.getProjectZip(creatorName, projectName, commitName, response);
-
-		return;
-	}
-	
-	
 	@RequestMapping(value=
 	{	"/{creatorName}/{projectName}", 
 		"/{creatorName}/{projectName}/browser"}
@@ -194,12 +194,26 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+		String readme = "";
+		
+		List<GitSimpleFileInfo> gitFileInfoList = 
+				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD");
+		
+		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
+				readme = WebUtil.markDownEncoder(
+						gitService.getFileInfo(
+								creatorName, 
+								projectName, 
+								"HEAD", 
+								gitSimpleFileInfo.getName()).getContent());
 		
 		model.addAttribute("project", project);
 		model.addAttribute("gitFileInfoList", 
 				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD"));
 		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
 		model.addAttribute("selectBranch",gitBranchList.get(0));
+		model.addAttribute("readme",readme);
 		return "/project/browser";
 	}
 	
@@ -208,16 +222,29 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
+		String readme = "";
 		
-
+		commit = commit.replace(",", ".");
+		List<GitSimpleFileInfo> gitFileInfoList = 
+				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit);
+		
+		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList) // 파일들을 검색해서 리드미 파일을 찾아냄
+			if(gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
+				readme = WebUtil.markDownEncoder(
+						gitService.getFileInfo(
+								creatorName, 
+								projectName, 
+								commit, 
+								gitSimpleFileInfo.getName()).getContent());
+		
+		
 		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList", 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit));
+		model.addAttribute("gitFileInfoList", gitFileInfoList);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
-		
+		model.addAttribute("readme",readme);
 		return "/project/browser";
 	}
 	
@@ -227,7 +254,7 @@ public class ProjectController {
 			@PathVariable("commitID") String commitID,
 			@PathVariable("filePath") String filePath,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
+		commitID = commitID.replace(",", ".");
 		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
 		model.addAttribute("fileName", gitFileInfo.getName());
@@ -394,7 +421,7 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-
+		commit = commit.replace(",", ".");
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);

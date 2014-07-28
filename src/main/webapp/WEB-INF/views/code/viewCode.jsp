@@ -160,8 +160,7 @@
 								</div></td>
 
 						</tr>
-						<c:forEach items="${code.codes}" var="simpleCode"
-							varStatus="status">
+						<c:forEach items="${code.codes}" var="simpleCode" varStatus="status">
 							<tr>
 								<td colspan="5"><span
 									onclick="javascript:hideAndShowSourceCode(${status.count})"
@@ -169,13 +168,25 @@
 										class='icon-file icon-white'></i> ${simpleCode.fileName}
 								</span></td>
 							</tr>
-
+							
 							<tr>
-								<td
+								<td id="td-code-${status.count}" style="max-width: 500px;"
+									colspan="5">
+									
 									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
-									id="td-code-${status.count}" style="max-width: 500px;"
-									colspan="5"><pre id="code-${status.count}">${simpleCode.getContent()}</pre></td>
+									
+									<c:if test="${!simpleCode.fileName.endsWith('.md')}">
+										<pre id="code-${status.count}">${simpleCode.getContent()}</pre>
+									</c:if>
+									
+									<c:if test="${simpleCode.fileName.endsWith('.md')}">
+										<div id="code-${status.count}"><s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(simpleCode.getContent())" /></div>
+									</c:if>
+									</td>
 							</tr>
+							
+							
+							
 						</c:forEach>
 					</tbody>
 				</table>

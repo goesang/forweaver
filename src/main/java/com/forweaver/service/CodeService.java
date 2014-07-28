@@ -26,9 +26,8 @@ public class CodeService {
 
 	public void add(Code code, MultipartFile file) {
 		try {
-			System.out.println(file.getOriginalFilename());
-			
-			if (file.getContentType().equals("application/x-zip-compressed") && 
+			if ((file.getContentType().equals("application/zip") ||
+					file.getContentType().equals("application/x-zip-compressed")) && 
 					file.getOriginalFilename().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
 				ZipInputStream in = new ZipInputStream(file.getInputStream());
@@ -38,16 +37,16 @@ public class CodeService {
 						byte[] buf = new byte[1024];
 						int len;
 						String content = "";
-		                while ((len = in.read(buf)) != -1)
-		                {
-		                	content += new String(buf, 0, len);
-		                }
+						while ((len = in.read(buf)) != -1)
+						{
+							content += new String(buf, 0, len);
+						}
 
 						if (entry.getName().toUpperCase().endsWith("README.MD")){ // 리드미파일의 경우
 							code.setReadme(content);
 							code.addFirstSimpleCode(new SimpleCode(entry.getName(),content)); // 일반 파일의 경우
 						}else{
-						code.addSimpleCode(new SimpleCode(entry.getName(),content)); // 일반 파일의 경우
+							code.addSimpleCode(new SimpleCode(entry.getName(),content)); // 일반 파일의 경우
 						}
 					}
 					entry = in.getNextEntry();
@@ -58,44 +57,43 @@ public class CodeService {
 					|| file.getOriginalFilename().endsWith(".java")|| file.getOriginalFilename().endsWith(".py")|| file.getOriginalFilename().endsWith(".cpp")
 					|| file.getOriginalFilename().endsWith(".html")|| file.getOriginalFilename().endsWith(".css")|| file.getOriginalFilename().endsWith(".pl")
 					|| file.getOriginalFilename().endsWith(".sql")|| file.getOriginalFilename().endsWith(".php")|| file.getOriginalFilename().endsWith(".cs")
-					|| file.getOriginalFilename().endsWith(".rb")|| file.getOriginalFilename().endsWith(".txt")|| file.getOriginalFilename().endsWith(".js")){ // 압축파일이 아닌 일반 파일의 경우
-				
+					|| file.getOriginalFilename().endsWith(".rb")|| file.getOriginalFilename().endsWith(".txt")|| file.getOriginalFilename().endsWith(".js")
+					|| file.getOriginalFilename().endsWith(".xml")|| file.getOriginalFilename().endsWith(".md")){ // 압축파일이 아닌 일반 파일의 경우
 				byte[] buf = new byte[1024];
 				int len;
 				String content = "";
 				InputStream is = file.getInputStream();
-                while ((len = is.read(buf)) != -1)
-                {
-                	content += new String(buf, 0, len);
-                }
-                
+				while ((len = is.read(buf)) != -1)
+				{
+					content += new String(buf, 0, len);
+				}
 				code.addSimpleCode(new SimpleCode(file.getOriginalFilename(), content)); // 일반 파일의 경우
 				codeDao.insert(code);
 			}
-			
-		} catch (IOException e) {
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return;
-		}
-		
+		} 
 	}
 
 	public Code get(int codeID) {
 		return codeDao.get(codeID);
 	}
-	
+
 	public void dowloadCode(Code code, OutputStream os){
 		try {
-    		ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os));
-    		for(SimpleCode simpleCode :code.getCodes()){
-	    		zip.putNextEntry(new ZipEntry(simpleCode.getFileName()));
-	    		zip.write(simpleCode.getContent().getBytes());
-    		}	
-    		code.download();
-    		codeDao.update(code);
-    		zip.close();
-    	} catch(Exception e) {
-    		System.out.println(e.getMessage());
-    	}
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os));
+			for(SimpleCode simpleCode :code.getCodes()){
+				zip.putNextEntry(new ZipEntry(simpleCode.getFileName()));
+				zip.write(simpleCode.getContent().getBytes());
+			}	
+			code.download();
+			codeDao.update(code);
+			zip.close();
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public long countCodes(String sort) {
