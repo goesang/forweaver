@@ -1,3 +1,23 @@
+.readme {
+	border-color: #AAA;
+	border-width: 1px;
+	padding: 15px;
+	border-style: solid !important;
+	box-shadow: 1px 1px 1px #AAA;
+	width:910px;
+}
+.readme-header {
+	border-color: #AAA;
+	border-width: 1px;
+	padding: 15px;
+	border-style: solid !important;
+	box-shadow: 1px 1px 3px #AAA;
+	background-color: #34495E;
+	color:#ffffff;
+	font-weight: bold;
+	width:910px;
+}
+
 .radio-period{
 	display: inline;
 	margin: 0px 10px;
@@ -332,7 +352,9 @@ a.post-button {
 	padding: 0px !important;
 	vertical-align: middle !important;
 }
-
+.td-commitlog-img {
+	width: 32px;
+}
 .p-button {
 	font-size: 13px;
 }

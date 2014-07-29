@@ -51,6 +51,8 @@ fileBrowser.push({
 	"depth" : ${gitFileInfo.depth},
 	"commitLog" :  "${fn:substring(gitFileInfo.simpleCommitLog,0,35)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
+	"commiterName" :  "${gitFileInfo.commiterName}",
+	"commiterEmail" :  "${gitFileInfo.commiterEmail}",
 	"commitID" :  "${fn:substring(gitFileInfo.commitID,0,8)}",
 	"date": "${gitFileInfo.getCommitDate()}"
 });
@@ -76,6 +78,7 @@ showFileBrowser("/");
 							브라우져</a></li>
 					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/chart">통계</a>
 				</ul>
@@ -102,7 +105,7 @@ showFileBrowser("/");
 						style="zoom: 1.3; -moz-transform: scale(1.3);"
 						class="icon-white icon-circle-arrow-up"> </i></a> <a
 						class="btn btn-primary"
-						href="/project/down/${project.name}-${fn:substring(selectBranch,0,20)}.zip">
+						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
 						<i style="zoom: 1.3; -moz-transform: scale(1.3);"
 						class="icon-white icon-circle-arrow-down"> </i>
 					</a>
@@ -111,10 +114,10 @@ showFileBrowser("/");
 
 				<select id="selectBranch" class="span3">
 					<option
-						value="/project/${project.name}/browser/commit:${selectBranch}">${fn:substring(selectBranch,0,20)}</option>
+						value="/project/${project.name}/browser/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
 						<option
-							value="/project/${project.name}/browser/commit:${gitBranchName}">${fn:substring(gitBranchName,0,20)}</option>
+							value="/project/${project.name}/browser/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
 				<form id="upload-form" enctype="multipart/form-data" action="/project/${project.name}/upload"
@@ -148,8 +151,10 @@ showFileBrowser("/");
 				<table id="fileBrowserTable" class="table table-hover">
 				</table>
 			</div>
-
-			<!-- .span9 -->
+			<c:if test="${readme.length() > 0}">
+				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
+				<div class="span12 readme">${readme}</div>
+			</c:if>
 		</div>
 		<!-- .row-fluid -->
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

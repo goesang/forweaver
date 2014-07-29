@@ -65,7 +65,7 @@ public class GitUtil {
 			this.config = localRepo.getConfig();
 			this.isRepo = true;
 		} catch (Exception e) {
-
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -77,7 +77,7 @@ public class GitUtil {
 			this.config = localRepo.getConfig();
 			this.isRepo = false;
 		} catch (Exception e) {
-
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -89,7 +89,7 @@ public class GitUtil {
 					.lenient(new File(this.path), FS.DETECTED), true);
 			this.git = new Git(localRepo);
 		} catch (Exception e) {
-
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -181,7 +181,9 @@ public class GitUtil {
 					treeWalk.getDepth(),
 					loader.getType() == Constants.OBJ_TREE,
 					revCommit.getName(), revCommit.getShortMessage(),
-					revCommit.getCommitTime());
+					revCommit.getCommitTime(),
+					revCommit.getCommitterIdent().getName(),
+					revCommit.getCommitterIdent().getEmailAddress());
 			gitFileInfoList.add(gitFileInfo);
 		}
 		return gitFileInfoList;
@@ -212,7 +214,6 @@ public class GitUtil {
 					out.toString(), commit.getCommitTime());
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
-				System.out.println("aaaaaaaaa");
 			}
 		 finally {
 			return gitCommitLog;
@@ -247,20 +248,24 @@ public class GitUtil {
 
 	public List<String> getBranchList() {
 		ArrayList<String> branchList = new ArrayList<String>();
+		
 		try {
 			for (Ref ref : this.git.branchList().call()) {
 				branchList.add(ref.getName());
 			}
-		} finally {
-			return branchList;
+		} catch(Exception e){
+			System.err.println(e.getMessage());
+			return null;
 		}
+		return branchList;
+		
 	}
 
 	public List<String> readBranchList(String weaverName) {
 		List<String> brnachList = new ArrayList<String>();
 		try {
 			for (String str : RepositoryUtils.getBranches(this.localRepo)) {
-				if (!str.contains("-") || str.contains('-' + weaverName)) {
+				if (!str.contains("@") || str.contains('-' + weaverName)) {
 					brnachList.add(str);
 				}
 			}
@@ -324,18 +329,23 @@ public class GitUtil {
 		}
 	}
 
-	public List<String> getSimpleBranchNameList() {
+	public List<String> getSimpleBranchAndTagNameList() {
 		String branchName = "";
 		List<String> branchList = new ArrayList<String>();
+		List<String> tagList = new ArrayList<String>();
 		try {
 			for (Ref ref : this.git.branchList().call()) {
 				branchList.add(ref.getName().substring(11));
 			}
 			branchName = this.localRepo.getBranch();
+			
+			for (Ref ref : this.git.tagList().call()) {
+				branchList.add(ref.getName().substring(10));
+			}
 		} catch (IOException e) {
 			branchName = "체크아웃한 브랜치 없음";
 		} catch (GitAPIException e) {
-			// 그냥 넘어감
+			System.err.println(e.getMessage());
 		} finally {
 			if (branchList.size() == 0)
 				branchList.add("브랜치가 없습니다!");
@@ -343,6 +353,7 @@ public class GitUtil {
 				branchList.remove(branchName);
 				branchList.add(0, branchName);
 			}
+			branchList.addAll(tagList);
 			return branchList;
 		}
 	}
@@ -370,7 +381,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(file.getName().contains("-") && !file.getName().endsWith("-"+userName))
+			if(file.getName().contains("@") && !file.getName().endsWith("@"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -383,7 +394,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(!file.getName().endsWith("-"+userName))
+			if(!file.getName().endsWith("@"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -421,7 +432,7 @@ public class GitUtil {
 
 		try{
 			for(String branchName : this.getBranchList()){
-				if(branchName.endsWith("-"+weaverName)){
+				if(branchName.endsWith("@"+weaverName)){
 					FileWriter reader = new FileWriter(this.localRepo.getDirectory().getAbsolutePath()+"/HEAD");
 					reader.write("ref: "+branchName);
 					reader.close();
@@ -458,7 +469,7 @@ public class GitUtil {
 						git.branchCreate()
 						.setStartPoint(branchName)
 						.setName(
-								branchName + "-" + weaver.getId())
+								branchName + "@" + weaver.getId())
 								.call();
 					}
 				}
@@ -470,6 +481,7 @@ public class GitUtil {
 	
 	public void uploadZip(String name,String email,String message,InputStream zip){
 		try {
+			
 			File localPath = File.createTempFile("git", "");
 			localPath.delete();
 			Git.cloneRepository()

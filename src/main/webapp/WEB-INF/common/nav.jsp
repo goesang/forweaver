@@ -29,7 +29,7 @@
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><a href="/manage"><i class="icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
-								<li><a href="/${currentUser.id}/edit"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
+								<li><a href="javascript:void(0);" onclick="openWindow('/${currentUser.id}/edit', 350, 460);"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>

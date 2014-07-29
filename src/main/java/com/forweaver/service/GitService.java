@@ -49,7 +49,7 @@ public class GitService {
 	public List<String> getBranchList(String parentDirctoryName,
 			String repositoryName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		List<String> branchList = gitUtil.getSimpleBranchNameList();
+		List<String> branchList = gitUtil.getSimpleBranchAndTagNameList();
 		return branchList;
 	}
 	
@@ -58,8 +58,8 @@ public class GitService {
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 		List<String> branchList = new ArrayList<String>();
 		
-		for(String branchName : gitUtil.getSimpleBranchNameList()){
-			if(!branchName.contains("-") || branchName.endsWith("-"+weaverName))
+		for(String branchName : gitUtil.getSimpleBranchAndTagNameList()){
+			if(!branchName.contains("@") || branchName.endsWith("@"+weaverName))
 				branchList.add(branchName);
 		}
 		
@@ -146,7 +146,7 @@ public class GitService {
 				
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 
-		if(commitName.endsWith("-"+weaver.getId()))
+		if(commitName.endsWith("@"+weaver.getId()))
 			return true;
 		
 		try{

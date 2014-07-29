@@ -47,6 +47,8 @@ fileBrowser.push({
 	"depth" : ${gitFileInfo.depth},
 	"commitLog" :  "${fn:substring(gitFileInfo.simpleCommitLog,0,40)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
+	"commiterName" :  "${gitFileInfo.commiterName}",
+	"commiterEmail" :  "${gitFileInfo.commiterEmail}",
 	"commitID" :  "${fn:substring(gitFileInfo.commitID,0,8)}",
 	"date": "${gitFileInfo.getCommitDate()}"
 });
@@ -69,6 +71,7 @@ showFileBrowser("/");
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="/lecture/${lecture.name}/">예제소스</a></li>
 					<li><a href="/lecture/${lecture.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="openWindow('/lecture/${lecture.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/lecture/${lecture.name}/repo">숙제 저장소</a></li>
 					<li><a href="/lecture/${lecture.name}/weaver">수강생</a></li>
 				</ul>
@@ -92,15 +95,15 @@ showFileBrowser("/");
 						id="hide-content-button" class="btn btn-primary"
 						href="javascript:hideUploadContent();"> <i
 						style="zoom: 1.3; -moz-transform: scale(1.3);"
-						class="icon-white icon-circle-arrow-up"> </i></a> <a class="btn btn-primary" href="/lecture/${lecture.name}/repo/example-${selectBranch}.zip">
+						class="icon-white icon-circle-arrow-up"> </i></a> <a class="btn btn-primary" href="/lecture/${lecture.name}/repo/example/${selectBranch}/${lecture.name}-ex-${selectBranch}.zip">
 					<i style="zoom: 1.3; -moz-transform: scale(1.3);" class="icon-white icon-circle-arrow-down">
 					</i></a>
 				</div>
 				
 				<select id="selectBranch" class="span3">
-					<option value="/lecture/${lecture.name}/example/commit:${selectBranch}">${selectBranch}</option>
+					<option value="/lecture/${lecture.name}/example/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/lecture/${lecture.name}/example/commit:${gitBranchName}">${gitBranchName}</option>
+						<option value="/lecture/${lecture.name}/example/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
 					</c:forEach>
 
 				</select>
@@ -136,8 +139,10 @@ showFileBrowser("/");
 				<table id="fileBrowserTable" class="table table-hover">
 				</table>
 			</div>
-
-			<!-- .span9 -->
+			<c:if test="${readme.length() > 0}">
+				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
+				<div class="span12 readme">${readme}</div>
+			</c:if>
 		</div>
 		<!-- .row-fluid -->
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

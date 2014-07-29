@@ -32,7 +32,7 @@
 		            totalPages: pageCount,
 		            pageUrl: function(type, page, current){
 
-		                return "/project/${project.name}/commitlog/commit:${selectBranch}/page:"+page;
+		                return "/project/${project.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}/page:"+page;
 
 		            }
 		        }
@@ -58,6 +58,7 @@
 					<li><a href="/project/${project.name}/">프로젝트 브라우져</a></li>
 					<li class="active" ><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/chart">통계</a>
 				</ul>
@@ -76,9 +77,9 @@
 					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i>  커밋 내역 목록</h4>
 				</div>
 				<select id="selectBranch" class="span3">
-					<option value="/project/${project.name}/commitlog/commit:${selectBranch}">${fn:substring(selectBranch,0,20)}</option>
+					<option value="/project/${project.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}">${ selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/project/${project.name}/commitlog/commit:${gitBranchName}">${fn:substring(gitBranchName,0,20)}</option>
+						<option value="/project/${project.name}/commitlog/commit:${fn:replace(gitBranchName,'.', ',')}">${ gitBranchName}</option>
 					</c:forEach>
 				</select>
 				
@@ -103,7 +104,7 @@
 											<p class="p-button">소스</p></span>
 									</a>
 									
-								<a	href="/project:${project.name}-${fn:substring(gitCommit.commitLogID,0,8)}.zip"">
+								<a	href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${fn:substring(gitCommit.commitLogID,0,8)}.zip">
 										<span class="span-button"> <i
 											style="zoom: 1.5; -moz-transform: scale(1.5);"
 											class="icon-circle-arrow-down icon-white"></i>

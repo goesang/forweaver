@@ -24,8 +24,11 @@ import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
+import com.forweaver.domain.chat.ChatRoom;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.domain.git.GitSimpleFileInfo;
+import com.forweaver.service.ChatService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
@@ -53,7 +56,8 @@ public class LectureController {
 	PostService postService;
 	@Autowired
 	RePostService rePostService;
-
+	@Autowired 
+	private ChatService chatService;
 	
 	@RequestMapping("/")
 	public String lectures() {
@@ -275,11 +279,26 @@ public class LectureController {
 		Lecture lecture = lectureService.get(lectureName);		
 		List<String> gitBranchList = gitService.getBranchList(lectureName, "example");
 		
+		String readme = "";
+		
+		List<GitSimpleFileInfo> gitFileInfoList = 
+				gitService.getGitSimpleFileInfoList(lectureName, "example","HEAD");
+		
+		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
+				readme = WebUtil.markDownEncoder(
+						gitService.getFileInfo(
+								lectureName, 
+								"example", 
+								"HEAD", 
+								gitSimpleFileInfo.getName()).getContent());
+		
+		
 		model.addAttribute("lecture", lecture);
-		model.addAttribute("gitFileInfoList",gitService.
-				getGitSimpleFileInfoList(lectureName, "example","HEAD"));
+		model.addAttribute("gitFileInfoList",gitFileInfoList);
 		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
 		model.addAttribute("selectBranch",gitBranchList.get(0));
+		model.addAttribute("readme",readme);
 		return "/lecture/example";
 	}
 	
@@ -288,6 +307,20 @@ public class LectureController {
 			@PathVariable("commit") String commit,Model model) {
 		
 		Lecture lecture = lectureService.get(lectureName);
+		commit = commit.replace(",", ".");
+		String readme = "";
+		List<GitSimpleFileInfo> gitFileInfoList = 
+				gitService.getGitSimpleFileInfoList(lectureName, "example",commit);
+		
+		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
+				readme = WebUtil.markDownEncoder(
+						gitService.getFileInfo(
+								lectureName, 
+								"example", 
+								commit, 
+								gitSimpleFileInfo.getName()).getContent());
+		
 		model.addAttribute("lecture", lecture);
 		model.addAttribute("gitFileInfoList",gitService.
 				getGitSimpleFileInfoList(lectureName, "example",commit));
@@ -295,7 +328,7 @@ public class LectureController {
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
-		
+		model.addAttribute("readme",readme);
 		return "/lecture/example";
 	}
 	
@@ -305,6 +338,7 @@ public class LectureController {
 			@PathVariable("filePath") String filePath,Model model) {
 		
 		Lecture lecture = lectureService.get(lectureName);		
+		commit = commit.replace(",", ".");
 		model.addAttribute("lecture", lecture);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(lectureName, "example", commit, filePath);
 		model.addAttribute("fileName", gitFileInfo.getName());
@@ -511,5 +545,16 @@ public class LectureController {
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
 	
+	@RequestMapping("/{lectureName}/chat") //채팅
+	public String chat(@PathVariable("lectureName") String lectureName,Model model){
+		Lecture lecture = lectureService.get(lectureName);	
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		ChatRoom chatRoom = chatService.get(lectureName);
+		model.addAttribute("lecture", lecture);
+		model.addAttribute("chatRoom", chatRoom);
+		model.addAttribute("weaver", currentWeaver);
+		
+		return "/lecture/chat";
+	}
 
 }

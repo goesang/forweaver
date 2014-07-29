@@ -48,12 +48,16 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 				tags = URLDecoder.decode(tags, "UTF-8");
 				List<String> tagList = tagService.stringToTagList(tags);
 				if(!tagService.validateTag(tagList, weaver)){
-					response.sendError(404);
+					response.sendError(400);
 					return false;
 				}
 			}
-			if(project == null || (project.getCategory() == 1 && (weaver == null || weaver.getPass(projectName) == null))){
+			if(project == null){
 				response.sendError(404);
+				return false;
+			}
+			else if((project.getCategory() == 1 && (weaver == null || weaver.getPass(projectName) == null))){
+				response.sendError(400);
 				return false;
 			}
 			

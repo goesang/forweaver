@@ -28,6 +28,8 @@ fileBrowser.push({
 	"depth" : ${gitFileInfo.depth},
 	"commitLog" :  "${fn:substring(gitFileInfo.simpleCommitLog,0,40)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
+	"commiterName" :  "${gitFileInfo.commiterName}",
+	"commiterEmail" :  "${gitFileInfo.commiterEmail}",
 	"commitID" :  "${fn:substring(gitFileInfo.commitID,0,8)}",
 	"date": "${gitFileInfo.getCommitDate()}"
 });
@@ -66,22 +68,24 @@ showFileBrowser("/");
 			<div class="span12 row">	
 				<div class="span8"><label id ="labelPath"></label></div>
 				<div style = "margin-right:-10px;" class="span1">
-					<a class="btn btn-primary" href="/project/down/${repo.lectureName}/${repo.name}-${fn:substring(selectBranch,0,20)}.zip">
+					<a	href="/lecture/${repo.lectureName}/repo/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
 					<i style="zoom: 1.3; -moz-transform: scale(1.3);" class="icon-white icon-circle-arrow-down">
 					</i></a>
 				</div>				
 							
 				<select id="selectBranch" class="span3">
-					<option value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${selectBranch}">${fn:substring(selectBranch,0,20)}</option>
+					<option value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${gitBranchName}">${fn:substring(gitBranchName,0,20)}</option>
+						<option value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
 				<table id="fileBrowserTable" class="table table-hover">
 				</table>
 			</div>
-
-			<!-- .span9 -->
+			<c:if test="${readme.length() > 0}">
+				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
+				<div class="span12 readme">${readme}</div>
+			</c:if>
 		</div>
 		<!-- .row-fluid -->
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

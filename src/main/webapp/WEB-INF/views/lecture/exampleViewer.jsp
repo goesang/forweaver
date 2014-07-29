@@ -45,6 +45,7 @@ $(document).ready(function() {
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="/lecture/${lecture.name}/">예제소스</a></li>
 					<li><a href="/lecture/${lecture.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="openWindow('/lecture/${lecture.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/lecture/${lecture.name}/repo">숙제 저장소</a></li>
 					<li><a href="/lecture/${lecture.name}/weaver">수강생</a></li>
 				</ul>

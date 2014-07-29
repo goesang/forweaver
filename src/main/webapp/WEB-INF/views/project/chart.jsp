@@ -8,7 +8,7 @@
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script type="text/javascript">
 					window.onload = function() {
-						var paper = Raphael("holder");
+						var paper = Raphael(200, 300, 1000, 800);
 						var pie1, pie2, pie3, pie4;
 						var array1 = [], array2=[], array3=[], array4=[];
 						var names = [];
@@ -19,9 +19,9 @@
 							array4.push(${git.addLine}+${git.deleteLine});
 							names.push("${git.username}");
 						</c:forEach>
-						paper.text(110, 10, "커밋수").attr({ "font-size": 20 });
+						paper.text(130, 10, "커밋수").attr({ "font-size": 20 });
 						pie1 = paper.piechart(
-								110, // pie center x coordinate
+								130, // pie center x coordinate
 								120, // pie center y coordinate
 								90, // pie radius
 								array1, // values
@@ -31,9 +31,9 @@
 								}
 						).lighter(1.27);
 						
-						paper.text(400, 10, "추가라인").attr({ "font-size": 20 });
+						paper.text(600, 10, "추가라인").attr({ "font-size": 20 });
 						pie2 = paper.piechart(
-								400, // pie center x coordinate
+								600, // pie center x coordinate
 								120, // pie center y coordinate
 								90, // pie radius
 								array2,
@@ -42,9 +42,9 @@
 									legend : names
 								}
 						).lighter(1.27);
-						paper.text(110, 270, "삭제라인").attr({ "font-size": 20 });
+						paper.text(130, 270, "삭제라인").attr({ "font-size": 20 });
 						pie3 = paper.piechart(
-								110, // pie center x coordinate
+								130, // pie center x coordinate
 								380, // pie center y coordinate
 								90, // pie radius
 								array3, // values
@@ -53,9 +53,9 @@
 									legend : names
 								}
 						).lighter(1.27);
-						paper.text(400, 270, "추가삭제라인").attr({ "font-size": 20 });
+						paper.text(600, 270, "추가삭제라인").attr({ "font-size": 20 });
 						pie4 = paper.piechart(
-								400, // pie center x coordinate
+								700, // pie center x coordinate
 								380, // pie center y coordinate
 								90, // pie radius
 								array4, // values
@@ -75,7 +75,7 @@
 						        pie1.each(function() {
 						           if(this.sector.id === that.id) {
 						            console.log(pie1)
-						            tooltip = paper.text(110, 120, this.sector.value.value).attr({"font-size": 35, "fill":"#000"});
+						            tooltip = paper.text(130, 120, this.sector.value.value).attr({"font-size": 35, "fill":"#000", "cursor" : "default"});
 						           }
 						        });
 
@@ -106,7 +106,7 @@
 						        pie2.each(function() {
 						           if(this.sector.id === that.id) {
 						            console.log(pie2)
-						               tooltip = paper.text(400, 120, this.sector.value.value).attr({"font-size": 35, "fill":"#000"});
+						               tooltip = paper.text(700, 120, this.sector.value.value).attr({"font-size": 35, "fill":"#000", "cursor" : "default"});
 						           }
 						        });
 
@@ -137,7 +137,7 @@
 						        pie3.each(function() {
 						           if(this.sector.id === that.id) {
 						            console.log(pie3)
-						               tooltip = paper.text(110, 380, this.sector.value.value).attr({"font-size": 35, "fill":"#000"});
+						               tooltip = paper.text(130, 380, this.sector.value.value).attr({"font-size": 35, "fill":"#000", "cursor" : "default"});
 						           }
 						        });
 
@@ -165,10 +165,10 @@
 						        this.sector.stop();
 						        this.sector.scale(1.1, 1.1, this.cx, this.cy);
 
-						        pie3.each(function() {
+						        pie4.each(function() {
 						           if(this.sector.id === that.id) {
 						            console.log(pie4)
-						               tooltip = paper.text(110, 380, this.sector.value.value).attr({"font-size": 35, "fill":"#000"});
+						               tooltip = paper.text(700, 380, this.sector.value.value).attr({"font-size": 35, "fill":"#000", "cursor" : "default"});
 						           }
 						        });
 
@@ -219,10 +219,9 @@
 						class="input-block-level">
 				</div>
 			</div>
-			
-			<div class="span12">
-			<div id="holder"></div>
+			<div style="height:530px;">
 			</div>
+			<!--
 			<div class="span4">
 					<table class="table table-hover">
 						<c:forEach items="${list}" var="git">
@@ -235,6 +234,7 @@
 						</c:forEach>
 					</table>
 				</div>
+			-->
 		</div>
 		<!-- .span9 -->
 

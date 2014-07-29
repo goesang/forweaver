@@ -108,6 +108,7 @@ $(document).ready(function() {
 							브라우져</a></li>
 					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li  class="active"><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/chart">통계</a>
 				</ul>

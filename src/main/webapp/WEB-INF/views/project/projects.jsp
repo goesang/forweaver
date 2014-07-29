@@ -212,11 +212,11 @@
 								<td class="td-button" rowspan="2"><c:if
 										test="${project.category != 0}">
 										<a href="/project/${project.name}/join"> <span
-											class="span-button"><i class="fa fa-key"></i>
+											class="span-button"><i class="fa fa-lock"></i>
 												<p class="p-button">비공개</p> </span>
 										</a>
 									</c:if> <c:if test="${project.category == 0}">
-										<a href="/project/${project.name}/"> <span
+										<a href="/project/${project.name}/push"> <span
 											class="span-button">${project.push}<p class="p-button">추천</p>
 										</span>
 										</a>
@@ -224,22 +224,22 @@
 								<td class="td-button" rowspan="2"><sec:authorize
 										ifNotGranted="ROLE_USER">
 										<a href="/project/${project.name}/join"> <span
-											class="span-button"><i class="fa fa-times-circle"></i>
+											class="span-button"><i class="fa fa-times"></i>
 												<p class="p-button">가입</p></span>
 										</a>
 									</sec:authorize> <sec:authorize ifAnyGranted="ROLE_USER">
 										<c:if
 											test="${!project.isJoin() && project.creatorName != currentUser.username}">
 											<a href="/project/${project.name}/join"> <span
-												class="span-button"><i class="fa fa-times-circle"></i>
-													<p class="p-button">가입</p></span>
+												class="span-button"><i class="fa fa-times"></i>
+													<p class="p-button">미가입</p></span>
 											</a>
 										</c:if>
 										<c:if
 											test="${project.isJoin() && project.creatorName != currentUser.username}">
 											<a href="/project/${project.name}"> <span
-												class="span-button"><i class="fa fa-circle-o"></i>
-													<p class="p-button">가입</p></span>
+												class="span-button"><i class="fa fa-user"></i>
+													<p class="p-button">회원</p></span>
 											</a>
 										</c:if>
 										<c:if test="${project.creatorName == currentUser.username}">

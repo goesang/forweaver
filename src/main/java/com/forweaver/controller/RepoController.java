@@ -19,6 +19,7 @@ import com.forweaver.domain.Repo;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
+import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.service.GitService;
 import com.forweaver.service.LectureService;
 import com.forweaver.service.WeaverService;
@@ -70,7 +71,18 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
+		String readme = "";
+		List<GitSimpleFileInfo> gitFileInfoList = 
+				gitService.getGitSimpleFileInfoList(lectureName, repoName,"HEAD");
 		
+		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
+				readme = WebUtil.markDownEncoder(
+						gitService.getFileInfo(
+								lectureName, 
+								repoName, 
+								"HEAD", 
+								gitSimpleFileInfo.getName()).getContent());
 		
 		List<String> gitBranchList;
 		if(lecture.getCreatorName().equals(weaver.getId()))
@@ -79,12 +91,12 @@ public class RepoController {
 			gitBranchList = gitService.getBranchList(lectureName, repoName,weaver.getId());
 		
 		model.addAttribute("repo", repo);
-		model.addAttribute("gitFileInfoList", 
-				gitService.getGitSimpleFileInfoList(lectureName, repoName,"master"));
+		model.addAttribute("gitFileInfoList",gitFileInfoList);
 		if(gitBranchList.size() > 1){
 			model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
 			model.addAttribute("selectBranch",gitBranchList.get(0));
 		}
+		model.addAttribute("readme",readme);
 		return "/repo/browser";
 	}
 	
@@ -95,8 +107,21 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
+		commit = commit.replace(",", ".");
+		String readme = "";
+		List<GitSimpleFileInfo> gitFileInfoList = 
+				gitService.getGitSimpleFileInfoList(lectureName, repoName,commit);
 		
-
+		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
+				readme = WebUtil.markDownEncoder(
+						gitService.getFileInfo(
+								lectureName, 
+								repoName, 
+								commit, 
+								gitSimpleFileInfo.getName()).getContent());
+		
+		
 		List<String> gitBranchList;
 		
 		if(!lecture.getCreatorName().equals(weaver.getId())) // 만약 강사인 경우
@@ -106,13 +131,11 @@ public class RepoController {
 		
 		
 		model.addAttribute("repo", repo);
-		model.addAttribute("gitFileInfoList", 
-				gitService.getGitSimpleFileInfoList(lectureName,repoName,commit));
-		
+		model.addAttribute("gitFileInfoList",gitFileInfoList);
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
-		
+		model.addAttribute("readme",readme);
 		return "/repo/browser";
 	}
 	
@@ -124,7 +147,7 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+		commitID = commitID.replace(",", ".");
 		
 		GitFileInfo gitFileInfo;
 	
@@ -185,7 +208,7 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+		commit = commit.replace(",", ".");
 		List<String> gitBranchList;
 		
 		if(lecture.getCreatorName().equals(weaver.getId()))// 만약 강사인 경우
@@ -213,7 +236,7 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+		commit = commit.replace(",", ".");
 		List<String> gitBranchList;
 		
 		if(lecture.getCreatorName().equals(weaver.getId()))// 만약 강사인 경우
@@ -239,14 +262,14 @@ public class RepoController {
 			@PathVariable("commit") String commit,Model model) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
-				
+		commit = commit.replace(",", ".");		
 		model.addAttribute("repo", repo);
 		model.addAttribute("gitCommitLog", 
 				gitService.getGitCommitLog(lectureName,repoName, commit));
 		return "/repo/commitLogViewer";
 	}
 	
-	@RequestMapping(value = "/{repoName}-{commitName}.zip")
+	@RequestMapping(value = "/{repoName}/{commitName}/{download}.zip")
 	public void getRepoZip(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
 			@PathVariable("commitName") String commitName,

@@ -165,4 +165,8 @@ public class Project implements Serializable {
 		this.joinWeavers.remove(weaver);
 	}
 	
+	public String getChatRoomName(){
+		return this.name.replace("/", "@");
+	}
+	
 }

@@ -50,7 +50,6 @@ public class WeaverDao {
     public void update(Weaver weaver) {
     	Query query = new Query(Criteria.where("_id").is(weaver.getId()));
 		Update update = new Update();
-		update.set("email", weaver.getEmail());
 		update.set("password", weaver.getPassword());
 		update.set("passes", weaver.getPasses());
 		update.set("image", weaver.getImage());

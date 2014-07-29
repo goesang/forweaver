@@ -52,8 +52,7 @@ public class PostController {
 	
 	@RequestMapping("/sort:{sort}/rss")
 	@ResponseBody
-	public String rss(@PathVariable("sort") String sort){ //  Hack 데이 이슈 : 게시물 RSS 출력
-		// 다음 코드는 예시 코드이며 return에 rss화된 문자열을 반환하면 됩니다!
+	public String rss(@PathVariable("sort") String sort){ 
 		String rss = "<?xml version='1.0' encoding='UTF-8'?><rss version='2.0'><channel>";
 		
 		rss +="<title>commutnity:"+sort+"</title>";
@@ -85,6 +84,7 @@ public class PostController {
 		if(page.contains(",")){
 			pageNum = Integer.parseInt(page.split(",")[0]);
 			number = Integer.parseInt(page.split(",")[1]);
+
 		}else{
 			pageNum =Integer.parseInt(page);
 		}
