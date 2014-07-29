@@ -22,10 +22,9 @@ public class TagService {
 			return false;
 		for (String tag : tagList) {
 			if (tag.startsWith("@")){
-				if (tag.contains("/"))
 					privateTags.add(tag);
-				else
-					massageTags.add(tag);
+			}else if(tag.startsWith("$")){
+				massageTags.add(tag);
 			}
 			else
 				publicTags.add(tag);

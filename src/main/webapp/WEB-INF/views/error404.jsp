@@ -10,8 +10,9 @@
 	<div class="container">
 	                        
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-				<div style="text-align:center; background-color: #fff;" class="hero-unit center">
-					<h1><i class="fa fa-frown-o"></i> 페이지 없음.
+				<div style="padding-top:60px;padding-bottom:60px;
+				text-align:center; background-color: #fff;" class="well-white hero-unit center">
+					<h1><i class="fa fa-file-o"></i> 페이지 없음.
 					</h1>
 					<br />
 					<p>

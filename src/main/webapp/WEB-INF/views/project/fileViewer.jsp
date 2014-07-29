@@ -101,7 +101,9 @@ $(document).ready(function() {
 						</tr>
 					</tbody>
 				</table>
-				<pre id="source-code" class="span9">${fileContent}</pre>
+				<div style="padding-top:30px;" class="well-white">
+					<pre id="source-code" >${fileContent}</pre>
+				</div>
 			</div>
 
 			<!-- .span9 -->

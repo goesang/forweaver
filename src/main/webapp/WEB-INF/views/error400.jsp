@@ -10,7 +10,8 @@
 	<div class="container">
 	                        
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-				<div style="text-align:center; background-color: #fff;" class="hero-unit center">
+				<div style="padding-top:60px;padding-bottom:60px;text-align:center; background-color: #fff;" 
+				class="well-white hero-unit center">
 					<h1><i class="fa fa-lock"></i> 권한 없음.
 					</h1>
 					<br />

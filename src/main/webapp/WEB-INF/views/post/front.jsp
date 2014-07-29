@@ -266,13 +266,13 @@
 										</c:if> &nbsp;${post.title}
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind >= 2}">
+										test="${post.kind == 3}">
 										<a href="/community/${post.postID}/delete"> <span
 											class="span-button"> <i class="fa fa-trash-o"></i>
 												<p class="p-button">삭제</p>
 										</span>
 										</a>
-									</c:if> <c:if test="${post.kind < 2}">
+									</c:if> <c:if test="${post.kind <= 2}">
 										<a href="/community/${post.postID}/push"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>
