@@ -9,12 +9,13 @@
 		<div class="container-fluid">
 			<div class="nav-collapse collapse">
 				<ul class="nav">
-					<li><a href="/">처음화면</a></li>
-					<li><a href="/forweaver">소개</a></li>
+					<li><a href="/community/"><i class="fa fa-twitter icon-white"></i>&nbsp;위버</a></li>
 					<li><a href="/lecture/"><i class="fa fa-book icon-white"></i>&nbsp;&nbsp;강의</a></li>
 					<li><a href="/project/"><i class="fa fa-bookmark icon-white"></i>&nbsp;프로젝트</a></li>
-					<li><a href="/code/"><i class="fa fa-rocket  icon-white"></i>&nbsp;코드</a></li>
-					<li><a href="/community/"><i class="fa fa-comments  icon-white"></i>&nbsp;커뮤니티</a></li>
+					<li><a href="/code/"><i class="fa fa-rocket icon-white"></i>&nbsp;코드</a></li>
+					<li><a href="/community/"><i class="fa fa-comments icon-white"></i>&nbsp;커뮤니티</a></li>
+					<li><a href="/forweaver"><i class="fa fa-flickr icon-white"></i>&nbsp;도움말</a></li>
+					
 				</ul>
 
 				<ul class="nav pull-right">
@@ -28,8 +29,8 @@
 							<img style="height:28px;width:28px;" src='<c:out value="${currentUser.getImgSrc()}" escapeXml="false"></c:out>' />&nbsp;&nbsp;${currentUser.username}
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="/manage"><i class="icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
-								<li><a href="javascript:void(0);" onclick="openWindow('/${currentUser.id}/edit', 350, 460);"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
+								<li><a href="/"><i class="icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
+								<li><a href="/${currentUser.id}/edit"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>

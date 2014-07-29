@@ -12,42 +12,39 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Project implements Serializable {
+public class ReProject implements Serializable {
 
-	static final long serialVersionUID = 4231232323123124234L;
+	static final long serialVersionUID = 4233234L;
 	@Id
-	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트.
-	private String description; // 프로젝트 소개
-	private Date openingDate; // 프로젝트 시작일
+	private String name; //파생 프로젝트 이름 이게 기본 키
+	private String description; // 파생 프로젝트 소개
+	private Date openingDate; // 파생 프로젝트 시작일
 	@DBRef
 	private Weaver creator;
-	private int push; // 프로젝트 추천수
 	
 	@Transient
 	private boolean isJoin;
 	
-	private List<String> tags = new ArrayList<String>(); // 프로젝트의 태그 모음
+	@DBRef
+	private Project origianlProject;
 	
 	@DBRef
 	private List<Weaver> adminWeavers = new ArrayList<Weaver>(); // 관리자들
 	@DBRef
 	private List<Weaver> joinWeavers = new ArrayList<Weaver>(); // 비 관리자 회원들
 	
-	public Project() {
+	public ReProject() {
 		
 	}
 	
-	public Project(String name, int category, String description,
-			Weaver weaver,List<String> tagList) {
+	public ReProject(String name, String description,
+			Weaver weaver,Project origianlProject) {
 		super();
 		this.name = weaver.getId()+"/"+name;
-		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
-		this.tags = tagList;
 	}
 
 	public String getName() {
@@ -58,13 +55,6 @@ public class Project implements Serializable {
 		this.name = name;
 	}
 
-	public int getCategory() {
-		return category;
-	}
-
-	public void setCategory(int category) {
-		this.category = category;
-	}
 
 	public String getDescription() {
 		return description;
@@ -112,26 +102,6 @@ public class Project implements Serializable {
 	public void addJoinWeaver(Weaver weaver){
 		this.joinWeavers.add(weaver);
 	}
-	public List<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
-	}
-
-
-	public int getPush() {
-		return push;
-	}
-
-	public void setPush(int push) {
-		this.push = push;
-	}
-	
-	public void push(){
-		this.push +=1;
-	}
 
 	public List<Weaver> getAdminWeavers() {
 		return adminWeavers;
@@ -167,5 +137,15 @@ public class Project implements Serializable {
 	public String getChatRoomName(){
 		return this.name.replace("/", "@");
 	}
+
+	public Project getOrigianlProject() {
+		return origianlProject;
+	}
+
+	public void setOrigianlProject(Project origianlProject) {
+		this.origianlProject = origianlProject;
+	}
+	
+	
 	
 }

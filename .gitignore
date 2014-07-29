@@ -1,2 +1,4 @@
-target/
-bin/
+./target
+./bin
+.settings
+*.class
