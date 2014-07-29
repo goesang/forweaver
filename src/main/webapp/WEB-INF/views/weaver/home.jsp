@@ -143,7 +143,7 @@
 										<td class="td-button" rowspan="2"><c:if
 												test="${post.kind == 2}">
 												<a href="/community/${post.postID}/delete"> <span
-													class="span-button"> X
+													class="span-button"> <i class="fa fa-trash-o"></i>
 														<p class="p-button">삭제</p>
 												</span>
 												</a>
@@ -217,7 +217,7 @@
 												<c:if test="${lecture.creatorName == currentUser.username}">
 													<a onclick="return confirm('정말로 삭제하시겠습니다?')"
 														href="/lecture/${lecture.name}/delete"> <span
-														class="span-button"> X
+														class="span-button"> <i class="fa fa-trash-o"></i>
 															<p class="p-button">삭제</p>
 													</span>
 													</a>
@@ -297,7 +297,7 @@
 										<td class="td-button" rowspan="2"><c:if
 												test="${project.category != 0}">
 												<a href="/project/${project.name}/join"> <span
-													class="span-button"><i class="fa fa-key"></i>
+													class="span-button"><i class="fa fa-lock"></i>
 														<p class="p-button">비공개</p> </span>
 												</a>
 											</c:if> <c:if test="${project.category == 0}">
@@ -331,7 +331,7 @@
 												<c:if test="${project.creatorName == currentUser.username}">
 													<a onclick="return confirm('정말로 삭제하시겠습니다?')"
 														href="/project/${project.name}/delete"> <span
-														class="span-button"> X
+														class="span-button"> <i class="fa fa-trash-o"></i>
 															<p class="p-button">삭제</p>
 													</span></a>
 												</c:if>

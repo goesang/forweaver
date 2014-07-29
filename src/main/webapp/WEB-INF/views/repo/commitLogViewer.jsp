@@ -75,7 +75,9 @@
 					</tbody>
 				</table>
 				<c:if test="${fn:length(gitCommitLog.diff)>0}">
+					<div style="padding-top:30px;" class="well-white">
 					<pre id="source-code" class="span9 brush: diff"><c:out value="${gitCommitLog.diff}"></c:out></pre>
+				</div>
 				</c:if>
 			</div>
 			<!-- .span9 -->

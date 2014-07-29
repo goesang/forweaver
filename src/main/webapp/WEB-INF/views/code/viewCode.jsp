@@ -170,7 +170,7 @@
 							</tr>
 							
 							<tr>
-								<td id="td-code-${status.count}" style="max-width: 500px;"
+								<td id="td-code-${status.count}" class="well-white " style="padding-top: 20px; max-width: 480px;"
 									colspan="5">
 									
 									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
