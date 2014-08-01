@@ -63,7 +63,7 @@ public class Project implements Serializable {
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
 		this.tags = originalProject.getTags();
-		originalProject.getChildProjects().add(this);
+		
 		this.originalProject = originalProject.getName();
 	}
 

@@ -191,6 +191,8 @@ public class ProjectService{
 					cnt++;
 				}
 			}
+			originProject.getChildProjects().add(newProject);
+			
 			GitUtil gitUtil = new GitUtil(newProject);
 			gitUtil.forkRepository(originProject.getName(), newProject.getName());
 
