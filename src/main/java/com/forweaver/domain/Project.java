@@ -20,9 +20,13 @@ public class Project implements Serializable {
 	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트.
 	private String description; // 프로젝트 소개
 	private Date openingDate; // 프로젝트 시작일
+	private String originalProject;// 원본 프로젝트 이름
 	@DBRef
 	private Weaver creator;
 	private int push; // 프로젝트 추천수
+	
+	@DBRef
+	private List<Project> childProjects = new ArrayList<Project>(); // 파생 프로젝트 모음
 	
 	@Transient
 	private boolean isJoin;
@@ -49,6 +53,20 @@ public class Project implements Serializable {
 		this.adminWeavers.add(weaver);
 		this.tags = tagList;
 	}
+	
+	public Project(String name, String description,Weaver weaver,Project originalProject) {
+		super();
+		this.name = weaver.getId()+"/"+name;
+		this.category = 0;
+		this.description = description;
+		this.openingDate = new Date();
+		this.creator = weaver;
+		this.adminWeavers.add(weaver);
+		this.tags = originalProject.getTags();
+		originalProject.getChildProjects().add(this);
+		this.originalProject = originalProject.getName();
+	}
+
 
 	public String getName() {
 		return name;
@@ -167,5 +185,25 @@ public class Project implements Serializable {
 	public String getChatRoomName(){
 		return this.name.replace("/", "@");
 	}
+
+	public String getOriginalProject() {
+		return originalProject;
+	}
+
+	public void setOriginalProject(String originalProject) {
+		this.originalProject = originalProject;
+	}
+
+	public List<Project> getChildProjects() {
+		return childProjects;
+	}
+
+	public void setChildProjects(List<Project> childProjects) {
+		this.childProjects = childProjects;
+	}
+
+
+	
+	
 	
 }

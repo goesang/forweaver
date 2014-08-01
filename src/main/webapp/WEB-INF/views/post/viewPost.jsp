@@ -10,11 +10,27 @@
 	<script type="text/javascript">
 	var fileCount = 1;
 	var comment = 0;
-	var fileArray = [];
+	var fileHash = {};
 	function fileUploadChange(fileUploader){
+		var fileName = $(fileUploader).val();			
 		$(function (){
 		if($(fileUploader).val()!=""){ // 파일을 업로드하거나 수정함
 			if(fileUploader.getId() == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
+				if(fileName.indexOf("C:\\fakepath\\") != -1)
+					fileName = fileName.substring(12);
+				fileHash[fileName] = mongoObjectId();
+				$.ajax({
+				    url: '/data/tmp',
+	                type: "POST",
+	                contentType: false,
+	                processData: false,
+	                data: function() {
+	                    var data = new FormData();
+	                    data.append("objectID", fileHash[fileName]);
+	                    data.append("file", fileUploader.files[0]);
+	                    return data;
+	                }()
+				});	
 		fileCount++;
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
@@ -154,23 +170,8 @@
 						</c:if>
 						<!-- 글내용 시작 -->
 						<c:if test="${post.isLong()}">
-						<c:if test="${post.datas.size() > 0}">
-							<c:forEach var="index" begin="0" end="${post.datas.size()-1}">
-								<c:if
-									test="${post.datas.get(index).getName().endsWith('jpg')||
-									post.datas.get(index).getName().endsWith('png') ||
-										post.datas.get(index).getName().endsWith('bmp') ||
-										post.datas.get(index).getName().endsWith('jpeg')}">
-
-									<tr>
-										<td colspan="5"><img class="post-img"
-											src="/data/${post.datas.get(index).getId()}"></td>
-									</tr>
-								</c:if>
-							</c:forEach>
-							</c:if>
 							<tr>
-								<td colspan="5">
+								<td class="post-content post-content-max"colspan="5">
 								<s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(post.getContent())" /></td>
 							</tr>
 						</c:if>
@@ -257,20 +258,6 @@
 													${rePost.datas.get(index).getName()}</span></a>
 										</c:forEach></td>
 								</tr>
-								<c:forEach var="index" begin="0"
-									end="${rePost.datas.size()-1}">
-									<c:if
-										test="${rePost.datas.get(index).getName().endsWith('jpg')||
-									rePost.datas.get(index).getName().endsWith('png') ||
-										rePost.datas.get(index).getName().endsWith('bmp') ||
-										rePost.datas.get(index).getName().endsWith('jpeg')}">
-
-										<tr>
-											<td colspan="5"><img class="post-img"
-												src="/data/${rePost.datas.get(index).getId()}"></td>
-										</tr>
-									</c:if>
-								</c:forEach>
 							</c:if>
 							<tr>
 								<td class="none-top-border repost-top-title" colspan="5">${rePost.content}</td>

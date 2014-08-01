@@ -533,9 +533,6 @@ public class GitUtil {
 		}
 	}
 	
-	public void forkRepository(){
-		
-	}
 	
 	
 }

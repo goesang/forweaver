@@ -1,29 +1,37 @@
 var editorMode = false; 
 
-function containsObject(list,obj ) { // 배열에 객체가 있는지 조사.
-    var i;
-    for (i = 0; i < list.length; i++) {
-        if (list[i] === obj) {
-            return true;
-        }
-    }
+function mongoObjectId () {
+	var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+	return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+		return (Math.random() * 16 | 0).toString(16);
+	}).toLowerCase();
+} //https://gist.github.com/solenoid/1372386
 
-    return false;
+
+function containsObject(list,obj ) { // 배열에 객체가 있는지 조사.
+	var i;
+	for (i = 0; i < list.length; i++) {
+		if (list[i] === obj) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 
 function imgCheck(fileName) {
-    if(!/(\.bmp|\.png|\.gif|\.jpg|\.jpeg)$/i.test(fileName)) {    
-        return false;   
-    }   
-    return true; 
- }
+	if(!/(\.bmp|\.png|\.gif|\.jpg|\.jpeg)$/i.test(fileName)) {    
+		return false;   
+	}   
+	return true; 
+}
 
 function deleteReply(postID,rePostID,number){
 	if (confirm("정말 댓글을 삭제하시겠습니까?")){
 		window.location =	"/community/"+postID+"/"+rePostID+"/"+number+"/delete";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -31,7 +39,7 @@ function deleteCodeReply(postID,rePostID,number){
 	if (confirm("정말 댓글을 삭제하시겠습니까?")){
 		window.location =	"/code/"+postID+"/"+rePostID+"/"+number+"/delete";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -39,7 +47,7 @@ function pushPost(postID){
 	if (confirm("정말 추천하시겠습니까?")){
 		window.location =	"/community/"+postID+"/push";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -47,7 +55,7 @@ function deletePost(postID){
 	if (confirm("정말 삭제하시겠습니까?")){
 		window.location =	"/community/"+postID+"/delete";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -55,7 +63,7 @@ function deleteCode(codeID){
 	if (confirm("정말로 코드를 삭제하시겠습니까?")){
 		window.location =	"/code/"+codeID+"/delete";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -63,7 +71,7 @@ function pushRePost(postID,rePostID){
 	if (confirm("정말 추천하시겠습니까?")){
 		window.location =	"/community/"+postID+"/"+rePostID+"/push";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -71,7 +79,7 @@ function deleteRePost(postID,rePostID){
 	if (confirm("답글을 삭제하시겠습니까?")){
 		window.location =	"/community/"+postID+"/"+rePostID+"/delete";
 	}else{
-	    return;
+		return;
 	}
 }
 
@@ -122,7 +130,7 @@ function getSort(url){
 	if(url.indexOf("/sort:")==-1)
 		return "age-desc";
 	var sort = url.substring(url.indexOf("sort:")+5);
-	
+
 	if(sort.indexOf("/")==-1)
 		return sort;
 	return sort.substring(0,sort.indexOf("/"));
@@ -130,7 +138,7 @@ function getSort(url){
 
 
 function endsWith(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 function filePathTransform(path) {
@@ -172,7 +180,7 @@ function movePage(tagArrayString,searchWord){
 		return;
 	var tagArray = eval(tagArrayString);
 	var url = document.location.href;
-	
+
 	if(url.indexOf("/tags:") != -1)
 		url = url.substring(0,url.indexOf("/tags:"))+'/';
 	else if(url.indexOf("/community") != -1)
@@ -193,7 +201,7 @@ function movePage(tagArrayString,searchWord){
 	}
 	url = url + "tags:"+	tagInputValueConverter(tagArray);
 	url = url.substring(0,url.length-1);
-	
+
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
 	window.location = url;
@@ -204,14 +212,14 @@ function moveUserPage(userName,tagArrayString,searchWord){
 		return;
 	var tagArray = eval(tagArrayString);
 	var url = document.location.href;
-	
+
 	if(tagArray.length == 0){
 		window.location = url;
 		return;
 	}
 	url = "/"+userName +"/"+ "tags:"+	tagInputValueConverter(tagArray);
 	url = url.substring(0,url.length-1);
-	
+
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
 	window.location = url;
@@ -227,20 +235,20 @@ function tagInputValueConverter(tagArray){
 }
 
 function textAreaResize(obj) {
-	  obj.style.height = "1px";
-	  obj.style.height = (20+obj.scrollHeight)+"px";
+	obj.style.height = "1px";
+	obj.style.height = (20+obj.scrollHeight)+"px";
 }
 
 function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
+	if (input.files && input.files[0]) {
+		var reader = new FileReader();
 
-        reader.onload = function (e) {
-            $('#preview').attr('src', e.target.result);
-         }
+		reader.onload = function (e) {
+			$('#preview').attr('src', e.target.result);
+		}
 
-        reader.readAsDataURL(input.files[0]);
-    }
+		reader.readAsDataURL(input.files[0]);
+	}
 
 }
 function openWindow(url, width, height){

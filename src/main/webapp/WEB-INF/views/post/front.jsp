@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 	var fileCount = 1;
 	var fileArray = [];
-	
+	var fileHash = {};
 	function checkPost(){
 
 		for(var i=0;i<fileCount;i++){
@@ -144,13 +144,27 @@
 		});
 
 		function fileUploadChange(fileUploader){
-			var fileName = $(fileUploader).val();
+			var fileName = $(fileUploader).val();			
 			
 			$(function (){
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
 					fileName = fileName.substring(12);
-								
+				fileHash[fileName] = mongoObjectId();
+				$.ajax({
+				    url: '/data/tmp',
+	                type: "POST",
+	                contentType: false,
+	                processData: false,
+	                data: function() {
+	                    var data = new FormData();
+	                    data.append("objectID", fileHash[fileName]);
+	                    data.append("file", fileUploader.files[0]);
+	                    return data;
+	                }()
+				});	
+				$("#post-content-textarea").val($("#post-content-textarea").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+			
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 			fileCount++;
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+

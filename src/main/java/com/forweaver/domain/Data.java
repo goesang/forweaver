@@ -26,6 +26,20 @@ public class Data implements Serializable {
 		
 	}
 	
+	public Data(String id ,MultipartFile data,String weaverID){
+		this.date = new Date();
+		this.id = id;
+		this.weaverID = weaverID;
+		this.name= "";
+		try{
+			this.content= data.getBytes();
+			this.name = data.getOriginalFilename();
+			this.type = data.getContentType();
+		}catch(Exception e){
+			
+		}
+	}
+	
 	public Data(MultipartFile data,String weaverID){
 		this.date = new Date();
 		this.id = new ObjectId(this.date).toString();

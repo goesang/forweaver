@@ -9,15 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Data;
+import com.forweaver.domain.Weaver;
 import com.forweaver.service.DataService;
+import com.forweaver.service.WeaverService;
 
 @Controller
 @RequestMapping("/data")
 public class DataController {
 	@Autowired DataService dataService;
-	
+	@Autowired WeaverService weaverService;
+
+
 	@RequestMapping(value = "/{dataID}")
 	public void data(@PathVariable("dataID") String dataID, HttpServletResponse res)
 			throws IOException {
@@ -35,5 +42,13 @@ public class DataController {
 			return;
 		} 
 
+	}
+
+	@RequestMapping(value = "/tmp",method = RequestMethod.POST) // 임시로 파일을 저장함
+	public void tmp(@RequestParam("objectID") String objectID,
+			@RequestParam("file") MultipartFile file){
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		Data data = new Data(objectID, file, currentWeaver.getId());
+		dataService.addTemp(data);
 	}
 }

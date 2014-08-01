@@ -284,6 +284,10 @@ a.post-button {
 	font-size: 13px;
 }
 
+.post-content-max{
+	max-width: 700px;
+}
+
 .post-top-title {
 	padding-bottom: 1px !important;
 	width: 700px;

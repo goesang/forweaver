@@ -25,6 +25,7 @@ import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
+import com.forweaver.service.DataService;
 import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
@@ -45,6 +46,9 @@ public class CodeController {
 	@Autowired
 	RePostService rePostService;
 
+	@Autowired
+	DataService dataService;
+	
 	@RequestMapping("/")
 	public String front(){
 		return "redirect:/code/sort:age-desc/page:1";
@@ -222,7 +226,7 @@ public class CodeController {
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (MultipartFile file : files.values()) {
 			if(!file.isEmpty())
-				datas.add(new Data(file,weaver.getId()));
+				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
 		RePost rePost = new RePost(code.getCodeID(),
