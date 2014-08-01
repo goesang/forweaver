@@ -707,4 +707,19 @@ public class ProjectController {
 		
 		return "/project/chat";
 	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/fork") // 포크
+	public String fork(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName){
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		
+		String newProjectName=projectService.fork(project, new Project(projectName, currentWeaver, project), currentWeaver);
+		
+		if(newProjectName==null){
+			return "redirect:/project/"+project.getName();
+		}else{
+			return "redirect:/project/"+newProjectName;
+		}
+	}
 }

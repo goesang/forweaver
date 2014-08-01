@@ -32,7 +32,7 @@ public class ProjectService{
 
 	public void add(Project project,Weaver currentWeaver){
 		// TODO Auto-generated method stub
-		
+
 		try{
 			GitUtil gitUtil = new GitUtil(project);
 			gitUtil.createRepository();
@@ -147,7 +147,7 @@ public class ProjectService{
 			}
 		return projects;
 	}
-	
+
 	public long countProjectsWithTagsAndSearch(List<String> tags,String search,String sort){
 		return projectDao.countProjects(tags, search, null, sort);
 	}
@@ -173,10 +173,37 @@ public class ProjectService{
 			System.err.println(e.getLocalizedMessage());
 		}
 	}
-	
+
 	public void update(Project project) {
 		projectDao.update(project);
 	}
-	
-	
+
+	public String fork(Project originProject, Project newProject, Weaver weaver){
+
+		if(!originProject.getCreator().getId().equals(weaver.getId())){
+			if(this.get(newProject.getName())==null){
+				while(true){
+					int cnt=1;
+					if(this.get(newProject.getName()+'-'+cnt)==null){
+						newProject.setName(newProject.getName()+'-'+cnt);
+						break;
+					}
+					cnt++;
+				}
+			}
+			GitUtil gitUtil = new GitUtil(newProject);
+			gitUtil.forkRepository(originProject.getName(), newProject.getName());
+
+			projectDao.update(originProject);
+			projectDao.insert(newProject);
+
+			Pass pass = new Pass(newProject.getName(), 1);
+			weaver.addPass(pass);
+
+			weaverDao.update(weaver);
+
+			return newProject.getName();
+		}
+		return null;
+	}
 }

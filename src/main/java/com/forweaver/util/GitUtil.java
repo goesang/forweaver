@@ -533,6 +533,12 @@ public class GitUtil {
 		}
 	}
 	
-	
+	public void forkRepository(String originRepo, String newRepo){
+		try{
+			FileUtils.copyFileToDirectory(new File(GitPath+originRepo+".git"), new File(GitPath+newRepo+".git"));
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
 	
 }

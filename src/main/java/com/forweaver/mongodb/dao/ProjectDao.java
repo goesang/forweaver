@@ -43,6 +43,7 @@ public class ProjectDao {
 		update.set("description", project.getDescription());
 		update.set("tags", project.getTags());
 		update.set("push", project.getPush());
+		update.set("childProjects", project.getChildProjects());
 		mongoTemplate.updateFirst(query, update, Project.class);
 	}
 	public long countProjects( // 로그인하지 않은 회원이 프로젝트를 셈.

@@ -54,11 +54,11 @@ public class Project implements Serializable {
 		this.tags = tagList;
 	}
 	
-	public Project(String name, String description,Weaver weaver,Project originalProject) {
+	public Project(String name,Weaver weaver,Project originalProject) {
 		super();
 		this.name = weaver.getId()+"/"+name;
 		this.category = 0;
-		this.description = description;
+		this.description = originalProject.getDescription();
 		this.openingDate = new Date();
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
