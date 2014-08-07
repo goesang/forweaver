@@ -102,7 +102,7 @@ var editorMode = false;
 
 		<div class="page-header">
 			<h5>
-			<big><big><i class="fa fa-book"></i> ${lecture.name}</big></big> 
+			<big><big><i class="fa fa-university"></i> ${lecture.name}</big></big> 
 			<small>${lecture.description}</small>
 			<div style="margin-top:-10px" class="pull-right">
 
@@ -136,12 +136,12 @@ var editorMode = false;
 			</div>
 			<div class="span1">	
 				<a id='showCommunity'
-						class="post-button btn btn-inverse"> <i class="icon-refresh icon-white"></i>
+						class="post-button btn btn-inverse"> <i class="fa fa-refresh"></i>
 					</a>
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
-					<span class="add-on"><i class="fa fa-link"></i></span> <input
+					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://forweaver.com/${lecture.name}/example.git" type="text"
 						class="input-block-level">
 				</div>
@@ -153,18 +153,15 @@ var editorMode = false;
 				</div>
 				<div class="span3">
 					<span> <a id='search-button'
-						class="post-button btn btn-primary"> <i
-							class="icon-search icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
-							<i class="icon-ok icon-white"></i>
+							<i class="fa fa-check"></i>
 						</button>
 
 					</span>

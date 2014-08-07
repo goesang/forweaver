@@ -21,6 +21,7 @@ import com.forweaver.domain.Pass;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
+import com.mongodb.DBObject;
 
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
@@ -49,7 +50,7 @@ public class WeaverService implements UserDetailsService {
 		else
 			return false;
 	}
-	
+
 	public Weaver getCurrentWeaver() {
 		// TODO Auto-generated method stub
 		Authentication auth = SecurityContextHolder.getContext()
@@ -61,7 +62,7 @@ public class WeaverService implements UserDetailsService {
 	}
 
 	public void add(Weaver weaver) { // 회원 추가 서비스
-		
+
 		Pass pass = new Pass("ROLE_USER"); // 최초 회원 가입시 권한 부여
 		weaver.addPass(pass);
 		weaverDao.insert(weaver);
@@ -80,8 +81,8 @@ public class WeaverService implements UserDetailsService {
 			weaver = weaverDao.get(id);
 		return weaver;
 	}
-	
-	
+
+
 
 	public Weaver getLoginWeaver(String id) {
 
@@ -92,22 +93,22 @@ public class WeaverService implements UserDetailsService {
 		}
 		return null;
 	}
-	
+
 
 	// 프로젝트 삭제시 로그인 된 위버의 pass 삭제
 	public void deletePass(String passName) {
 		for (Weaver weaver : weaverDao.searchPassName(passName)) {
 			weaver.deletePass(passName);
 			weaverDao.update(weaver);
-			
+
 			Weaver currentWeaver = getLoginWeaver(weaver.getId()); //만약 로그인한 회원이라면
 			if (currentWeaver != null)
 				currentWeaver.deletePass(passName);
 		}
-		
+
 	}
-	
-	
+
+
 	public List<Weaver> weavers() {
 		// TODO Auto-generated method stub
 		return weaverDao.list();
@@ -136,6 +137,10 @@ public class WeaverService implements UserDetailsService {
 		}
 
 		return result;
+	}
+
+	public List<DBObject> getWeaverInfos(List<String> tags){
+		return weaverDao.getWeaverInfos(tags);
 	}
 
 }

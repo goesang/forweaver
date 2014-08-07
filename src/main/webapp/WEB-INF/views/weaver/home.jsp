@@ -97,7 +97,7 @@
 					<ul style="border-bottom: 0px;" class="nav nav-tabs  pull-right">
 						<li><a
 								href="/${weaver.getId()}/lecture"><i
-								class=" fa fa-book"></i> 강의</a></li>
+								class=" fa fa-university"></i> 강의</a></li>
 
 						<li><a
 							href="/${weaver.getId()}/project"><i
@@ -190,7 +190,7 @@
 											src="${lecture.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/lecture/${lecture.name}"> <i
-												class='icon-book'></i> &nbsp;${lecture.name} ~
+												class='fa fa-university'></i> &nbsp;${lecture.name} ~
 												&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
 										</a></td>
 										<td class="td-button" rowspan="2"><sec:authorize

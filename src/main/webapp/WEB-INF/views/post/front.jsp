@@ -235,17 +235,14 @@
 				</div>
 				<div class="span3">
 					<span> <a id='search-button'
-						class="post-button btn btn-primary"> <i
-							class="icon-search icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
 					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
-							<i class="icon-ok icon-white"></i>
+							<i class="fa fa-check"></i>
 						</button>
 
 					</span>

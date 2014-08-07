@@ -60,7 +60,7 @@ public class RePostService {
 		rePost.push();
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get("re"+rePost.getRePostID());
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			rePostDao.update(rePost);
 			Element newElement = new Element("re"+rePost.getRePostID(), weaver.getId());
 			cache.put(newElement);

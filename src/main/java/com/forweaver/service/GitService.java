@@ -84,7 +84,7 @@ public class GitService {
 			String repositoryName,String commit){
 		Cache cache = cacheManager.getCache("gitCommitCount");
 		Element element = cache.get(parentDirctoryName+"/"+repositoryName+"/"+commit);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				int count = gitUtil.getCommitListCount(commit);
 				Element newElement = 
@@ -99,7 +99,7 @@ public class GitService {
 			String repositoryName,String commitID) {
 		Cache cache = cacheManager.getCache("gitSimpleFileInfoList");
 		Element element = cache.get(parentDirctoryName+"/"+repositoryName+"-"+commitID);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 			try {
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				List<GitSimpleFileInfo> gitFileInfoList = gitUtil.getGitFileInfoList(commitID);
@@ -120,7 +120,7 @@ public class GitService {
 		Cache cache = cacheManager.getCache("gitCommitLogList");
 		Element element = 
 				cache.get(parentDirctoryName+"/"+repositoryName+"-"+branchName+"/"+page+"/"+number);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 			try {
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				List<GitSimpleCommitLog> gitCommitLogList = 
@@ -169,7 +169,7 @@ public class GitService {
 			String repositoryName,String branchName) {
 		Cache cache = cacheManager.getCache("gitCommitLog");
 		Element element = cache.get(parentDirctoryName+"/"+repositoryName+"-"+branchName);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 			try {
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				GitCommitLog gitCommitLog = gitUtil.getCommitLog(branchName);

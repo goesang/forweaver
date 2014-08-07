@@ -31,7 +31,7 @@ $(document).ready(function() {
 
 		<div class="page-header">
 			<h5>
-				<big><big><i class="fa fa-briefcase"></i> ${repo.name}</big></big> 
+				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
 				<small>${repo.description}</small>
 			</h5>
 		</div>
@@ -39,14 +39,14 @@ $(document).ready(function() {
 			<div class="span8">
 				<ul class="nav nav-tabs">
 					<li><a href="/lecture/${repo.lectureName}/repo">돌아가기</a></li>
-					<li class="active"><a href="/lecture/${repo.lectureName}/repo/${repo.name}/browser">소스목록</a></li>
-					<li><a href="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog">커밋내역</a></li>
+					<li class="active"><a href="/lecture/${repo.lectureName}/${repo.name}/browser">소스목록</a></li>
+					<li><a href="/lecture/${repo.lectureName}/${repo.name}/commitlog">커밋내역</a></li>
 					
 				</ul>
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
-					<span class="add-on"><i class="fa fa-link"></i></span> <input
+					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://forweaver.com/${repo.lectureName}/${repo.name}.git" type="text"
 						class="input-block-level">
 				</div>
@@ -62,7 +62,7 @@ $(document).ready(function() {
 						<c:if test='${status.count == selectCommitIndex + 1}'>
 						selected="selected"
 						</c:if >
-							value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
+							value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
 							<jsp:setProperty name="dateValue" property="time"
 								value="${gitLog.getCommitTime()*1000}" />
 							<fmt:formatDate value="${dateValue}" pattern="yy년MM월dd일 HH시mm분" />
@@ -77,14 +77,14 @@ $(document).ready(function() {
 								src="${gitCommitLog.getImgSrc()}">
 							</td>
 							<td style="width: 800px;"
-								class="none-top-border post-top-title-short"><a class="none-color" href="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog-viewer/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
+								class="none-top-border post-top-title-short"><a class="none-color" href="/lecture/${repo.lectureName}/${repo.name}/commitlog-viewer/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 								${fn:substring(gitCommitLog.shortMassage,0,50)}</a></td>
 							<td class="none-top-border td-button" rowspan="2"><a
-								href="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
+								href="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 									<span class="span-button"> <i
 										style="zoom: 1.5; -moz-transform: scale(1.5);"
 										class="icon-eye-open icon-white"></i>
-										<p class="p-button">소스</p>
+										<p class="p-button">전체</p>
 									</span>
 							</a></td>
 						</tr>

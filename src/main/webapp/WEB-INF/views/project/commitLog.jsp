@@ -23,9 +23,7 @@
 					window.location = $("#selectBranch option:selected").val();
 			});
 
-			var pageCount = ${gitCommitListCount}/10;
-			if(pageCount < 1 ) 
-				pageCount = 1;
+			var pageCount = ${gitCommitListCount+1}/10;
 			
 			var options = {
 		            currentPage: ${pageIndex},
@@ -65,7 +63,7 @@
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
-					<span class="add-on"><i class="fa fa-link"></i></span> <input
+					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://forweaver.com/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
@@ -98,16 +96,12 @@
 								
 								<td class="td-commitlog-button" rowspan="2">
 								<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommit.commitLogID,0,8)}">
-										<span class="span-button"> <i
-											style="zoom: 1.5; -moz-transform: scale(1.5);"
-											class="icon-eye-open icon-white"></i>
-											<p class="p-button">소스</p></span>
+										<span class="span-button"> <i class="fa fa-eye"></i>
+											<p class="p-button">전체</p></span>
 									</a>
 									
 								<a	href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${fn:substring(gitCommit.commitLogID,0,8)}.zip">
-										<span class="span-button"> <i
-											style="zoom: 1.5; -moz-transform: scale(1.5);"
-											class="icon-circle-arrow-down icon-white"></i>
+										<span class="span-button"> <i class="fa fa-arrow-circle-o-down"></i>
 											<p class="p-button">다운</p></span>
 									</a>									
 								</td>

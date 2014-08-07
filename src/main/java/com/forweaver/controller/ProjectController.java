@@ -24,6 +24,7 @@ import com.forweaver.domain.Project;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.chat.ChatRoom;
+import com.forweaver.domain.git.GitBlame;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
@@ -200,7 +201,7 @@ public class ProjectController {
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD");
 
-		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
 				readme = WebUtil.markDownEncoder(
 						gitService.getFileInfo(
@@ -265,6 +266,35 @@ public class ProjectController {
 		model.addAttribute("gitCommitLog", 
 				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 		return "/project/fileViewer";
+	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/filepath:{filePath}/blame")
+	public String blame(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commitID") String commitID,
+			@PathVariable("filePath") String filePath,Model model) {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		List<GitBlame> gitBlameList = new ArrayList<GitBlame>();
+		for(int i = 0 ;i<10;i++){
+			gitBlameList.add(new GitBlame("asdsss", "Minsoo go", "rootroot2@gmail.com", "2014-05-12"));
+		}
+		for(int i = 0 ;i<10;i++){
+			gitBlameList.add(new GitBlame("wewqss", "Morning Lee","goesanghan@gmail.com", "2014-03-11"));
+		}
+		for(int i = 0 ;i<10;i++){
+			gitBlameList.add(new GitBlame("a444ss", "Morning go","rootroot2@gmail.com", "2014-04-12"));
+		}
+		commitID = commitID.replace(",", ".");
+		model.addAttribute("project", project);
+		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
+		model.addAttribute("fileName", gitFileInfo.getName());
+		model.addAttribute("fileContent", gitFileInfo.getContent());
+		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
+		model.addAttribute("gitBlameList", gitBlameList);
+		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
+		model.addAttribute("gitCommitLog", 
+				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+		return "/project/blame";
 	}
 
 	@RequestMapping("/{creatorName}/{projectName}/community")
@@ -405,7 +435,6 @@ public class ProjectController {
 			rss +="<item>";
 			rss +="<author>"+commitLog.getCommiterName()+" ("+commitLog.getCommiterEmail()+")</author>";
 			rss +="<title>"+commitLog.getShortMassage()+"</title>";
-			rss +="<link>http://forweaver.com/project/"+creatorName+"/"+projectName+"</link>";
 			rss +="<link>http://forweaver.com/project/"+creatorName+"/"+projectName+"</link>";
 			rss +="<description>"+commitLog.getShortMassage()+"</description>";
 			rss +="<pubDate>"+commitLog.getCommitDate()+"</pubDate>";

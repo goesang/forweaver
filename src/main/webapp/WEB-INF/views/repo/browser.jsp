@@ -18,7 +18,7 @@ $(document).ready(function() {
 	});
 });
 
-var commitlogHref= "/lecture/${repo.lectureName}/repo/${repo.name}/commitlog-viewer/commit:";
+var commitlogHref= "/lecture/${repo.lectureName}/${repo.name}/commitlog-viewer/commit:";
 var fileBrowser = Array();
 <c:forEach items="${gitFileInfoList}" var="gitFileInfo">
 fileBrowser.push({
@@ -35,7 +35,7 @@ fileBrowser.push({
 });
 </c:forEach>
 var fileBrowserTree = fileListTransform(fileBrowser);
-var fileBrowserURL = "/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:";
+var fileBrowserURL = "/lecture/${repo.lectureName}/${repo.name}/browser/commit:";
 showFileBrowser("/");
 </script>
 	<div class="container">
@@ -43,7 +43,7 @@ showFileBrowser("/");
 
 		<div class="page-header">
 			<h5>
-				<big><big><i class="fa fa-briefcase"></i> ${repo.name}</big></big> 
+				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
 				<small>${repo.description}</small>
 			</h5>
 		</div>
@@ -51,14 +51,14 @@ showFileBrowser("/");
 			<div class="span8">
 				<ul class="nav nav-tabs">
 					<li><a href="/lecture/${repo.lectureName}/repo">돌아가기</a></li>
-					<li class="active"><a href="/lecture/${repo.lectureName}/repo/${repo.name}/browser">소스목록</a></li>
-					<li><a href="/lecture/${repo.lectureName}/repo/${repo.name}/commitlog">커밋내역</a></li>
+					<li class="active"><a href="/lecture/${repo.lectureName}/${repo.name}/browser">소스목록</a></li>
+					<li><a href="/lecture/${repo.lectureName}/${repo.name}/commitlog">커밋내역</a></li>
 					
 				</ul>
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
-					<span class="add-on"><i class="fa fa-link"></i></span> <input
+					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://forweaver.com/${repo.lectureName}/${repo.name}.git" type="text"
 						class="input-block-level">
 				</div>
@@ -68,15 +68,15 @@ showFileBrowser("/");
 			<div class="span12 row">	
 				<div class="span8"><label id ="labelPath"></label></div>
 				<div style = "margin-right:-10px;" class="span1">
-					<a	href="/lecture/${repo.lectureName}/repo/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
+					<a	href="/lecture/${repo.lectureName}/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
 					<i style="zoom: 1.3; -moz-transform: scale(1.3);" class="icon-white icon-circle-arrow-down">
 					</i></a>
 				</div>				
 							
 				<select id="selectBranch" class="span3">
-					<option value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
+					<option value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/lecture/${repo.lectureName}/repo/${repo.name}/browser/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
+						<option value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
 				<table id="fileBrowserTable" class="table table-hover">

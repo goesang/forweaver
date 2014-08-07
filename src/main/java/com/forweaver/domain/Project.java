@@ -17,9 +17,10 @@ public class Project implements Serializable {
 	static final long serialVersionUID = 4231232323123124234L;
 	@Id
 	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트.
+	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트 2이면 팀프로젝트 포크.
 	private String description; // 프로젝트 소개
 	private Date openingDate; // 프로젝트 시작일
+	private Date endDate; // 프로젝트 종료일
 	private String originalProject;// 원본 프로젝트 이름
 	@DBRef
 	private Weaver creator;
@@ -31,6 +32,14 @@ public class Project implements Serializable {
 	@Transient
 	private boolean isJoin;
 	
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	private List<String> tags = new ArrayList<String>(); // 프로젝트의 태그 모음
 	
 	@DBRef
@@ -42,7 +51,7 @@ public class Project implements Serializable {
 		
 	}
 	
-	public Project(String name, int category, String description,
+	public Project(String name, int category, String description, // 기본 생성자
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
@@ -54,7 +63,7 @@ public class Project implements Serializable {
 		this.tags = tagList;
 	}
 	
-	public Project(String name,Weaver weaver,Project originalProject) {
+	public Project(String name,Weaver weaver,Project originalProject) { //포크할 때 생성자
 		super();
 		this.name = weaver.getId()+"/"+name;
 		this.category = 0;
@@ -62,9 +71,25 @@ public class Project implements Serializable {
 		this.openingDate = new Date();
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
-		this.tags = originalProject.getTags();
-		
+		this.tags.add("@"+originalProject.getName());
+		this.tags.addAll(originalProject.getTags());
+		originalProject.getChildProjects().add(this);
 		this.originalProject = originalProject.getName();
+	}
+	
+	public Project(String name,Weaver weaver,Repo repo,List<String> tags) { //팀프로젝트 포크할 때 생성자
+		super();
+		this.name = weaver.getId()+"/"+name;
+		this.category = 2;
+		this.description = repo.getDescription();
+		this.openingDate = new Date();
+		this.endDate = repo.getDeadLine();
+		this.creator = weaver;
+		this.adminWeavers.add(weaver);
+		this.tags.add("@"+repo.getLectureName()+"/"+repo.getName());
+		this.tags.addAll(tags);
+		repo.getChildProjects().add(this);
+		this.originalProject = repo.getLectureName()+"/"+repo.getName();
 	}
 
 
@@ -203,7 +228,16 @@ public class Project implements Serializable {
 	}
 
 
-	
+	public int getDDay() {
+		if(this.endDate == null)
+			return -2;
+		 long left =  this.endDate.getTime() - System.currentTimeMillis();
+		 int leftDay = (int)Math.floor(left/(1000*60*60*24)+1);
+		 if(leftDay < 0)
+			 return -1;
+		 
+		 return leftDay;
+	}
 	
 	
 }

@@ -13,9 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
+import com.forweaver.domain.Project;
 import com.forweaver.domain.Repo;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.LectureDao;
+import com.forweaver.mongodb.dao.ProjectDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 
@@ -23,6 +25,8 @@ import com.forweaver.util.GitUtil;
 public class LectureService {
 	@Autowired
 	private LectureDao lectureDao;
+	@Autowired
+	private ProjectDao projectDao;
 	@Autowired
 	private WeaverDao weaverDao;
 	@Autowired
@@ -84,7 +88,7 @@ public class LectureService {
 		// TODO Auto-generated method stub
 		Cache cache = cacheManager.getCache("lecture");
 		Element element = cache.get(name);
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			Lecture lecture = lectureDao.get(name);
 			Element newElement = new Element(name, lecture);
 			cache.put(newElement);
@@ -246,4 +250,37 @@ public class LectureService {
 		}
 	}
 
+	public Repo getRepo(String repoName){
+		return this.get(repoName.split("/")[0]).getRepo(repoName.split("/")[1]);
+	}
+	
+	public String fork(Lecture lecture,Repo repo, Project newProject, Weaver weaver){
+		
+		if(!repo.getCreator().getId().equals(weaver.getId()) &&repo.getCategory() ==2 && !repo.isJoinWeaver(weaver)){
+			if(this.get(newProject.getName())!=null){
+				while(true){
+					int cnt=1;
+					if(projectDao.get(newProject.getName()+'-'+cnt)==null){
+						newProject.setName(newProject.getName()+'-'+cnt);
+						break;
+					}
+					cnt++;
+				}
+			}
+			
+			GitUtil gitUtil = new GitUtil(newProject);
+			gitUtil.forkRepository(repo.getLectureName()+"/"+repo.getName(), newProject.getName());
+			projectDao.insert(newProject);
+			lectureDao.update(lecture);
+			
+
+			Pass pass = new Pass(newProject.getName(), 1);
+			weaver.addPass(pass);
+
+			weaverDao.update(weaver);
+
+			return newProject.getName();
+		}
+		return null;
+	}
 }

@@ -284,7 +284,7 @@ public class LectureController {
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, "example","HEAD");
 		
-		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
 				readme = WebUtil.markDownEncoder(
 						gitService.getFileInfo(
@@ -312,7 +312,7 @@ public class LectureController {
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, "example",commit);
 		
-		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
 				readme = WebUtil.markDownEncoder(
 						gitService.getFileInfo(

@@ -168,7 +168,7 @@
 				<div id="project-div" class="span10">
 					<input id ="project-name" class="title span5"
 						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" /> 
-						<label style="display:inline" class="checkbox" for="checkbox"> 
+						<label style="display:inline; top: -5px;" class="checkbox" for="checkbox"> 
 						
 						<input id="project-category-select" name=category type="checkbox" data-toggle="checkbox"> 공개 프로젝트
 						</label>
@@ -181,16 +181,13 @@
 
 					<span> <a id="show-content-button"
 						href="javascript:showProjectContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
-					</a> <a id='search-button' class="post-button btn btn-primary"> <i
-							class="icon-search icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hideProjectContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
 					</a>
 						<button id='project-ok' class="post-button btn btn-primary">
-							<i class="icon-ok icon-white"></i>
+							<i class="fa fa-check"></i>
 						</button>
 
 					</span>

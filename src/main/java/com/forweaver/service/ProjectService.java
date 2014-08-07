@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.Weaver;
@@ -53,7 +52,7 @@ public class ProjectService{
 		// TODO Auto-generated method stub
 		Cache cache = cacheManager.getCache("project");
 		Element element = cache.get(projectName);
-		if(element == null){
+		if(element == null || (element != null && element.getValue() == null)){
 			Project project = projectDao.get(projectName);
 			Element newElement = new Element(projectName, project);
 			cache.put(newElement);
@@ -108,7 +107,7 @@ public class ProjectService{
 		cacheManager.getCache("project").remove(project.getName());
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get(project.getName());
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			project.push();
 			projectDao.update(project);
 			Element newElement = new Element(project.getName(), weaver.getId());
@@ -181,7 +180,7 @@ public class ProjectService{
 	public String fork(Project originProject, Project newProject, Weaver weaver){
 
 		if(!originProject.getCreator().getId().equals(weaver.getId())){
-			if(this.get(newProject.getName())==null){
+			if(this.get(newProject.getName())!=null){
 				while(true){
 					int cnt=1;
 					if(this.get(newProject.getName()+'-'+cnt)==null){
@@ -191,13 +190,12 @@ public class ProjectService{
 					cnt++;
 				}
 			}
-			originProject.getChildProjects().add(newProject);
 			
 			GitUtil gitUtil = new GitUtil(newProject);
 			gitUtil.forkRepository(originProject.getName(), newProject.getName());
-
-			projectDao.update(originProject);
 			projectDao.insert(newProject);
+			projectDao.update(originProject);
+			
 
 			Pass pass = new Pass(newProject.getName(), 1);
 			weaver.addPass(pass);
@@ -208,4 +206,5 @@ public class ProjectService{
 		}
 		return null;
 	}
+	
 }
