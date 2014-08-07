@@ -47,6 +47,7 @@ public class GitFilter implements Filter {
 		String lectureName = requstUrlArray[2];
 		String repoName = requstUrlArray[3].substring(0,
 				requstUrlArray[3].indexOf(".git"));
+
 		if (!new File(GitUtil.GitPath + lectureName + "/" + repoName + ".git")
 		.exists()) // 저장소가 없는 경우
 			return;
@@ -65,14 +66,14 @@ public class GitFilter implements Filter {
 				return;
 			filterchain.doFilter(req, res);
 			return;
-		}else if(project.getCategory() ==2 ){
+		}else if(project != null && project.getCategory() ==2 ){ // 팀 프로젝트이고 강사가 방문하는 경우.
 			pass = weaver.getPass(project.getOriginalProject().split("/")[0]);
 			if(pass != null && pass.getPermission() == 1 )
 				filterchain.doFilter(req, res);
 			return;
 		}
 
-		Repo repo = lectureService.getRepo(repoName);
+		Repo repo = lectureService.getRepo(lectureName + "/" + repoName);
 
 		GitUtil gitUtil = new GitUtil(repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
@@ -86,7 +87,7 @@ public class GitFilter implements Filter {
 		} else if (pass.getPermission() == 0) { 
 			// 강의 수강자의 경우
 
-			if (repo.getCategory() == 0 || repo.getCategory() == 1) { // 예제 저장소 및 팀 예제 저장소의 경우
+			if (repo.getCategory() == 0 || repo.getCategory() == 2) { // 예제 저장소 및 팀 예제 저장소의 경우
 
 				gitUtil.notWriteBranches();
 				filterchain.doFilter(req, res);

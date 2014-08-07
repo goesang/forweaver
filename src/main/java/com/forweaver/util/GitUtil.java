@@ -286,74 +286,6 @@ public class GitUtil {
 
 	}
 
-	public List<String> readBranchList(String weaverName) {
-		List<String> brnachList = new ArrayList<String>();
-		try {
-			for (String str : RepositoryUtils.getBranches(this.localRepo)) {
-				if (!str.contains("@") || str.contains('-' + weaverName)) {
-					brnachList.add(str);
-				}
-			}
-
-		} finally {
-			return brnachList;
-		}
-	}
-
-	public boolean isReadCommit(String branchName, String commitID) {
-
-		try {
-			String orginalID = CommitUtils.getCommit(this.localRepo, commitID)
-					.getName();
-
-			for (int i = 0;; i++) {
-				RevCommit commit = CommitUtils.getCommit(this.localRepo,
-						branchName + "~" + i);
-				if (commit.getName().equals(orginalID))
-					return true;
-			}
-
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	public GitFileInfo getFileInfor(String commitID, String filePath,
-			String WeaverName) {
-		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
-		RevCommit selectCommit = this.getCommit(commitID);
-
-		int selectCommitIndex = 0;
-
-		if (selectCommit == null)
-			return null;
-
-		try {
-			Iterable<RevCommit> gitLogIterable = git.log().all()
-					.addPath(filePath).call();
-			int index = 0;
-			for (RevCommit revCommit : gitLogIterable) {
-				if (selectCommit.getName().equals(revCommit.getName()))
-					selectCommitIndex = index;
-				for (String branchName : readBranchList(WeaverName)) {
-					if (!gitLogList.contains(revCommit)
-							&& isReadCommit(branchName, revCommit.getName())) {
-						gitLogList.add(revCommit);
-					}
-				}
-
-				index++;
-			}
-
-		} finally {
-
-			return new GitFileInfo(filePath, BlobUtils.getContent(
-					this.localRepo, selectCommit.getId(), filePath),
-					gitLogList, selectCommitIndex);
-
-		}
-	}
-
 	public List<String> getSimpleBranchAndTagNameList() {
 		String branchName = "";
 		List<String> branchList = new ArrayList<String>();
@@ -406,7 +338,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(file.getName().contains("@") && !file.getName().endsWith("@"+userName))
+			if(file.getName().contains("$") && !file.getName().endsWith("$"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -419,7 +351,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(!file.getName().endsWith("@"+userName))
+			if(!file.getName().endsWith("$"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -457,7 +389,7 @@ public class GitUtil {
 
 		try{
 			for(String branchName : this.getBranchList()){
-				if(branchName.endsWith("@"+weaverName)){
+				if(branchName.endsWith("$"+weaverName)){
 					FileWriter reader = new FileWriter(this.localRepo.getDirectory().getAbsolutePath()+"/HEAD");
 					reader.write("ref: "+branchName);
 					reader.close();
@@ -494,7 +426,7 @@ public class GitUtil {
 						git.branchCreate()
 						.setStartPoint(branchName)
 						.setName(
-								branchName + "@" + weaver.getId())
+								branchName + "$" + weaver.getId())
 								.call();
 					}
 				}

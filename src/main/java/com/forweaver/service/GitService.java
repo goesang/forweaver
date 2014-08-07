@@ -38,31 +38,22 @@ public class GitService {
 		return gitUtil.getFileInfor(commitID, filePath);
 	}
 	
-	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
-			String commitID,String filePath,String WeaverName){
+	public void hideBranch(String parentDirctoryName,String repositoryName,String weaverName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		filePath = filePath.replace('>', '/');
-		filePath = filePath.replace(',', '.');
-		return gitUtil.getFileInfor(commitID, filePath,WeaverName);
+		gitUtil.hideNotUserBranches(weaverName);
+		gitUtil.checkOutBranch(weaverName);
+	}
+	
+	public void showBranch(String parentDirctoryName,String repositoryName){
+		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
+		gitUtil.showBranches();
+		gitUtil.checkOutMasterBranch();
 	}
 	
 	public List<String> getBranchList(String parentDirctoryName,
 			String repositoryName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 		List<String> branchList = gitUtil.getSimpleBranchAndTagNameList();
-		return branchList;
-	}
-	
-	public List<String> getBranchList(String parentDirctoryName,
-			String repositoryName,String weaverName){
-		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		List<String> branchList = new ArrayList<String>();
-		
-		for(String branchName : gitUtil.getSimpleBranchAndTagNameList()){
-			if(!branchName.contains("@") || branchName.endsWith("@"+weaverName))
-				branchList.add(branchName);
-		}
-		
 		return branchList;
 	}
 	
@@ -141,29 +132,6 @@ public class GitService {
 		return (List<GitSimpleCommitLog>) element.getValue();
 	}
 	
-	public boolean isReadCommit(String parentDirctoryName,
-			String repositoryName,Weaver weaver,String commitName){
-				
-		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-
-		if(commitName.endsWith("@"+weaver.getId()))
-			return true;
-		
-		try{
-		RevCommit revCommit = gitUtil.getCommit(commitName);
-		if(revCommit == null)
-			return false;
-		}catch(Exception e){
-			return false;
-		}
-		
-		for(String branchName : gitUtil.readBranchList(weaver.getId())){
-			if(gitUtil.isReadCommit(branchName,commitName))
-				return true;
-		}
-				
-		return false;
-	}
 	
 	public GitCommitLog getGitCommitLog(String parentDirctoryName,
 			String repositoryName,String branchName) {

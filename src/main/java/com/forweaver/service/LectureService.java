@@ -250,8 +250,8 @@ public class LectureService {
 		}
 	}
 
-	public Repo getRepo(String repoName){
-		return this.get(repoName.split("/")[0]).getRepo(repoName.split("/")[1]);
+	public Repo getRepo(String lectureAndRepoName){
+		return this.get(lectureAndRepoName.split("/")[0]).getRepo(lectureAndRepoName.split("/")[1]);
 	}
 	
 	public String fork(Lecture lecture,Repo repo, Project newProject, Weaver weaver){
