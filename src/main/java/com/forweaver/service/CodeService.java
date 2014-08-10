@@ -72,7 +72,7 @@ public class CodeService {
 			}
 
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 			return;
 		} 
 	}
@@ -92,7 +92,7 @@ public class CodeService {
 			codeDao.update(code);
 			zip.close();
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 		}
 	}
 

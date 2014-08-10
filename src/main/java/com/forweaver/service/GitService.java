@@ -18,6 +18,7 @@ import com.forweaver.domain.git.GitCommitLog;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
+import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 
@@ -171,5 +172,10 @@ public class GitService {
 		return gitSimpleCommitLogList;
 	}
 	
+	public GitParentStatistics loadStatistics(String parentDirctoryName,
+			String repositoryName){
+		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
+		return gitUtil.getCommitStatistics();
+	}
 
 }

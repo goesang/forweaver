@@ -85,7 +85,7 @@ public class WeaverController {
 	public String weavers(Model model) {
 		
 		for(DBObject db:weaverService.getWeaverInfos(null))
-			System.out.println(db);
+			System.err.println(db);
 				
 		return "/weaver/weavers";
 	}

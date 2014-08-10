@@ -28,7 +28,8 @@ import com.forweaver.domain.git.GitBlame;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
-import com.forweaver.domain.git.GitSimpleStatistics;
+import com.forweaver.domain.git.statistics.GitChildStatistics;
+import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.service.ChatService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
@@ -210,6 +211,22 @@ public class ProjectController {
 								"HEAD", 
 								gitSimpleFileInfo.getName()).getContent());
 
+		GitParentStatistics gps = gitService.loadStatistics(creatorName, projectName);
+		System.out.println("ssssssssssssssssssss");
+		for(GitChildStatistics gcs:gps.getGitChildStatistics()){
+			System.out.println(gcs.getAddLine());
+			System.out.println(gcs.getDeleteLine());
+			System.out.println(gcs.getDate());
+			System.out.println(gcs.getUserName());
+		}
+		
+		System.out.println("ssssssssssssssssssss");
+		
+		for(String userEmail:gps.getUserHashMap().keySet()){
+			System.out.println(userEmail);
+			System.out.println(gps.getUserHashMap().get(userEmail).getTotalCommit());
+		}
+		
 		model.addAttribute("project", project);
 		model.addAttribute("gitFileInfoList", 
 				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD"));
@@ -715,10 +732,7 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName, Model model){
 		Project project = projectService.get(creatorName+"/"+projectName);
 
-		List<GitSimpleStatistics> list = new ArrayList<GitSimpleStatistics>();
-		list.add(new GitSimpleStatistics("민수", 30, 5, 5));
-		list.add(new GitSimpleStatistics("아침", 20, 15, 30));
-		list.add(new GitSimpleStatistics("헐", 10, 10, 2));
+		List<GitChildStatistics> list = new ArrayList<GitChildStatistics>();
 
 		model.addAttribute("project", project);
 		model.addAttribute("list", list);
