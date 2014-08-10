@@ -8,10 +8,28 @@
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
 </head>
+
 <body>
 	<script>
-
-$(document).ready(function() {
+	var blameArray = [];
+	blameArray.push([
+	         	    '1111',
+	         		'@@@@',
+	         		'3333',
+	         		'4444'
+	         		]);//쓰레기 값
+	<c:forEach items="${gitBlameList}" var="gitBlame">
+	blameArray.push([
+	    '${gitBlame.getUserName()}',
+		'${gitBlame.getCommitID()}',
+		'${gitBlame.getCommitTime()}',
+		'${gitBlame.getUserEmail()}'
+		]);
+	</c:forEach>
+	$(function() {
+	
+	
+	
 	$('#tags-input').textext()[0].tags().addTags(
 			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
 
@@ -21,12 +39,20 @@ $(document).ready(function() {
 	
 	$("#selectCommit").change(function(){
 		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
-			window.location = $("#selectCommit option:selected").val()+filePathTransform("${fileName}");
+			window.location = $("#selectCommit option:selected").val()+filePathTransform("${fileName}")+"/blame";
 	});
 	
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
 	SyntaxHighlighter.all();
-		
+	
+	 setTimeout(function(){ // 0.5초 뒤에 실행
+		 for(var i=1;i<=blameArray.length;i++)
+			 if(blameArray[i-1][1] != blameArray[i][1])
+		 	$('td.gutter > div.line.number'+i).html(
+		 			"<span><a>"+blameArray[i][0]+"</a>  <a>"+
+		 			blameArray[i][1]+"</a>  "+blameArray[i][2]+"</span>  "+i
+		 	);
+	}, 500);
 });
 
 </script>
@@ -91,15 +117,15 @@ $(document).ready(function() {
 									<span class="span-button"> <i class="fa fa-eye"></i>
 										<p class="p-button">전체</p>
 									</span>
+									
 							</a></td>
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="${requestScope['javax.servlet.forward.servlet_path']}/blame">
-									<span class="span-button"> <i class="fa fa-search"></i>
-										<p class="p-button">추적</p>
+							<a	href="${fn:substring(requestScope['javax.servlet.forward.servlet_path'],0,(requestScope['javax.servlet.forward.servlet_path']).length()-6)}">
+									<span class="span-button"> <i class="fa fa-file-code-o"></i>
+										<p class="p-button">소스</p>
 									</span>
 									
 							</a></td>
-						
 						</tr>
 						<tr>
 							<td class="post-bottom"><b>${gitCommitLog.commiterName}</b>

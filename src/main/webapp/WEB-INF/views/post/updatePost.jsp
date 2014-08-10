@@ -160,7 +160,7 @@
 								class="icon-edit icon-white"></i>
 						</a>
 							<button id='post-ok' class="post-button btn btn-primary">
-								<i class="icon-ok icon-white"></i>
+								<i class="fa fa-check"></i>
 							</button>
 							
 						</span>

@@ -66,7 +66,7 @@ public class PostService {
 	public Post get(int postID) {
 		Cache cache = cacheManager.getCache("post");
 		Element element = cache.get(postID);
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			Post post = postDao.get(postID);
 			if (post == null)
 				return null;
@@ -83,7 +83,7 @@ public class PostService {
 		cacheManager.getCache("post").remove(post.getPostID());
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get(post.getPostID());
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			post.push();
 			postDao.update(post);
 			Element newElement = new Element(post.getPostID(), weaver.getId());

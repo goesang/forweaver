@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.forweaver.domain.Pass;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.ProjectService;
@@ -29,6 +30,7 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 		    throws Exception {
 			
 			String uri = request.getRequestURI();
+
 			String projectName = new String();
 			if (uri.split("/").length>3){
 				projectName= uri.split("/")[2]+"/"+uri.split("/")[3];
@@ -40,7 +42,6 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 			
 			Weaver weaver = weaverService.getCurrentWeaver();
 			Project project = projectService.get(projectName);
-			
 			if(uri.contains("/tags:")){
 				String tags = uri.substring(uri.indexOf("/tags:")+6);
 				if(tags.contains("/"))
@@ -55,6 +56,10 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 			if(project == null){
 				response.sendError(404);
 				return false;
+			}else if(project.getCategory() ==2 ){
+				Pass pass = weaver.getPass(project.getOriginalProject().split("/")[0]);
+				if(pass != null && pass.getPermission() == 1 )
+					return true;
 			}
 			else if((project.getCategory() == 1 && (weaver == null || weaver.getPass(projectName) == null))){
 				response.sendError(400);

@@ -30,6 +30,7 @@ import com.forweaver.service.ProjectService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
+import com.mongodb.DBObject;
 
 @Controller
 public class WeaverController {
@@ -79,6 +80,16 @@ public class WeaverController {
 		return "redirect:/";
 	}
 
+	
+	@RequestMapping("/weaver")
+	public String weavers(Model model) {
+		
+		for(DBObject db:weaverService.getWeaverInfos(null))
+			System.out.println(db);
+				
+		return "/weaver/weavers";
+	}
+	
 	@RequestMapping("/{id}")
 	public String home(@PathVariable("id") String id, Model model) {
 		Weaver weaver = weaverService.get(id.replace(",", "."));
@@ -343,6 +354,7 @@ public class WeaverController {
 		return weaverService.idCheck(req.getParameter("id"));
 	}
 	
+
 	
 
 }

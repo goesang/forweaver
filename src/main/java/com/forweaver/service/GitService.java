@@ -38,31 +38,22 @@ public class GitService {
 		return gitUtil.getFileInfor(commitID, filePath);
 	}
 	
-	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
-			String commitID,String filePath,String WeaverName){
+	public void hideBranch(String parentDirctoryName,String repositoryName,String weaverName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		filePath = filePath.replace('>', '/');
-		filePath = filePath.replace(',', '.');
-		return gitUtil.getFileInfor(commitID, filePath,WeaverName);
+		gitUtil.hideNotUserBranches(weaverName);
+		gitUtil.checkOutBranch(weaverName);
+	}
+	
+	public void showBranch(String parentDirctoryName,String repositoryName){
+		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
+		gitUtil.showBranches();
+		gitUtil.checkOutMasterBranch();
 	}
 	
 	public List<String> getBranchList(String parentDirctoryName,
 			String repositoryName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 		List<String> branchList = gitUtil.getSimpleBranchAndTagNameList();
-		return branchList;
-	}
-	
-	public List<String> getBranchList(String parentDirctoryName,
-			String repositoryName,String weaverName){
-		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		List<String> branchList = new ArrayList<String>();
-		
-		for(String branchName : gitUtil.getSimpleBranchAndTagNameList()){
-			if(!branchName.contains("@") || branchName.endsWith("@"+weaverName))
-				branchList.add(branchName);
-		}
-		
 		return branchList;
 	}
 	
@@ -84,7 +75,7 @@ public class GitService {
 			String repositoryName,String commit){
 		Cache cache = cacheManager.getCache("gitCommitCount");
 		Element element = cache.get(parentDirctoryName+"/"+repositoryName+"/"+commit);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				int count = gitUtil.getCommitListCount(commit);
 				Element newElement = 
@@ -99,7 +90,7 @@ public class GitService {
 			String repositoryName,String commitID) {
 		Cache cache = cacheManager.getCache("gitSimpleFileInfoList");
 		Element element = cache.get(parentDirctoryName+"/"+repositoryName+"-"+commitID);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 			try {
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				List<GitSimpleFileInfo> gitFileInfoList = gitUtil.getGitFileInfoList(commitID);
@@ -120,7 +111,7 @@ public class GitService {
 		Cache cache = cacheManager.getCache("gitCommitLogList");
 		Element element = 
 				cache.get(parentDirctoryName+"/"+repositoryName+"-"+branchName+"/"+page+"/"+number);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 			try {
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				List<GitSimpleCommitLog> gitCommitLogList = 
@@ -141,35 +132,12 @@ public class GitService {
 		return (List<GitSimpleCommitLog>) element.getValue();
 	}
 	
-	public boolean isReadCommit(String parentDirctoryName,
-			String repositoryName,Weaver weaver,String commitName){
-				
-		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-
-		if(commitName.endsWith("@"+weaver.getId()))
-			return true;
-		
-		try{
-		RevCommit revCommit = gitUtil.getCommit(commitName);
-		if(revCommit == null)
-			return false;
-		}catch(Exception e){
-			return false;
-		}
-		
-		for(String branchName : gitUtil.readBranchList(weaver.getId())){
-			if(gitUtil.isReadCommit(branchName,commitName))
-				return true;
-		}
-				
-		return false;
-	}
 	
 	public GitCommitLog getGitCommitLog(String parentDirctoryName,
 			String repositoryName,String branchName) {
 		Cache cache = cacheManager.getCache("gitCommitLog");
 		Element element = cache.get(parentDirctoryName+"/"+repositoryName+"-"+branchName);
-		if (element == null) {		
+		if (element == null || (element != null && element.getValue() == null)) {		
 			try {
 				GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 				GitCommitLog gitCommitLog = gitUtil.getCommitLog(branchName);

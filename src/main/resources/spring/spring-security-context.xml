@@ -39,6 +39,7 @@
 <security:intercept-url pattern="/project/*/*/add" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/project/*/*/delete" access="hasRole('ROLE_USER')" />
 <security:intercept-url pattern="/project/*/*/push" access="hasRole('ROLE_USER')" />
+<security:intercept-url pattern="/project/*/*/rss" access="hasRole('ROLE_USER')" />
 
 <security:intercept-url pattern="/lecture/" access="isAnonymous() or isAuthenticated()" />
 <security:intercept-url pattern="/lecture/page**" access="isAnonymous() or isAuthenticated()" />

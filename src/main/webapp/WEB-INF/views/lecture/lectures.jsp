@@ -123,7 +123,7 @@
 		<div class="page-header">
 			<alert></alert>
 			<h5>
-				<big><big><i class=" fa fa-book"></i> 수강해보세요!</big></big> <small>강의를
+				<big><big><i class=" fa fa-university"></i> 수강해보세요!</big></big> <small>강의를
 					찾아 수강 신청을 해보거나 수업에 필요한 저장소를 만들어보세요!</small>
 				<div style="margin-top: -10px" class="pull-right">
 					<button class="btn btn-warning">
@@ -154,16 +154,13 @@
 
 					<span> <a id="show-content-button"
 						href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
-					</a> <a id='search-button' class="post-button btn btn-primary"> <i
-							class="icon-search icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i
-							class="icon-edit icon-white"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
 					</a>
 						<button type="submit" id='post-ok' class="post-button btn btn-primary">
-							<i class="icon-ok icon-white"></i>
+							<i class="fa fa-check"></i>
 						</button>
 
 					</span>
@@ -179,7 +176,7 @@
 									src="${lecture.getImgSrc()}"></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/lecture/${lecture.name}"> <i
-										class='icon-book'></i> &nbsp;${lecture.name} ~
+										class='fa fa-university'></i> &nbsp;${lecture.name} ~
 										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
 								</a></td>
 								<td class="td-button" rowspan="2"><sec:authorize

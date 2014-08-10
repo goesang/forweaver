@@ -62,7 +62,7 @@ showFileBrowser("/");
 
 		<div class="page-header">
 			<h5>
-				<big><big><i class="fa fa-book"></i> ${lecture.name}</big></big> 
+				<big><big><i class="fa fa-university"></i> ${lecture.name}</big></big> 
 			<small>${lecture.description}</small>
 			</h5>
 		</div>
@@ -78,7 +78,7 @@ showFileBrowser("/");
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
-					<span class="add-on"><i class="fa fa-link"></i></span> <input
+					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://forweaver.com/${lecture.name}/example.git" type="text"
 						class="input-block-level">
 				</div>
@@ -115,7 +115,7 @@ showFileBrowser("/");
 							placeholder="커밋 내역을 입력해주세요!"></input>
 						<button type="submit" class="post-button btn btn-primary"
 							style="margin-top: -10px; display: inline-block;">
-							<i class="icon-ok icon-white"></i>
+							<i class="fa fa-check"></i>
 
 						</button>
 					</div>

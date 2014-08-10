@@ -306,6 +306,7 @@ a.post-button {
 .post-top-title-short {
 	padding-bottom: 2px !important;
 	width: 760px;
+	font-size:13px;
 }
 
 .td-post-writer-img{
@@ -361,6 +362,10 @@ a.post-button {
 }
 .p-button {
 	font-size: 13px;
+}
+
+.p-button-mini {
+	font-size: 11px;
 }
 .function-button {
 	cursor: pointer;

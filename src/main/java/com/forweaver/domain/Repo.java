@@ -2,7 +2,9 @@ package com.forweaver.domain;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
@@ -19,7 +21,12 @@ public class Repo implements Serializable {
 	private String LectureName;
 	@DBRef
 	private Weaver creator;
+	@DBRef
+	private List<Project> childProjects = new ArrayList<Project>(); // 파생 프로젝트 모음
+	@DBRef
+	private List<Weaver> isNotJoinWeaver = new ArrayList<Weaver>(); // 팀프로젝트에 아직 가입하지 않은 회원들을 기록함.
 	
+
 	public Repo() {
 		
 	}
@@ -40,6 +47,10 @@ public class Repo implements Serializable {
 			this.deadLine = null;
 		this.creator = creator;
 		this.LectureName = lecture.getName();
+		
+		if(category == 2) //팀프로젝트용 숙제 저장소의 경우
+			for(Weaver weaver : lecture.getJoinWeavers())
+				this.isNotJoinWeaver.add(weaver);
 	}
 
 	public int getRepoID() {
@@ -90,8 +101,6 @@ public class Repo implements Serializable {
 		this.deadLine = deadLine;
 	}
 
-	
-
 	public String getLectureName() {
 		return LectureName;
 	}
@@ -131,5 +140,35 @@ public class Repo implements Serializable {
 		 
 		 return leftDay;
 	}
-		
+	
+	public List<Project> getChildProjects() {
+		return childProjects;
+	}
+
+	public void setChildProjects(List<Project> childProjects) {
+		this.childProjects = childProjects;
+	}
+
+	public List<Weaver> getIsNotJoinWeaver() {
+		return isNotJoinWeaver;
+	}
+
+	public void setIsNotJoinWeaver(List<Weaver> isNotJoinWeaver) {
+		this.isNotJoinWeaver = isNotJoinWeaver;
+	}	
+	
+	public void deleteIsNotJoinWeaver(Weaver joinWeaver){
+		for(int i=0;i<this.isNotJoinWeaver.size();i++)
+			if(this.isNotJoinWeaver.get(i).getId().equals(joinWeaver.getId()))
+				this.isNotJoinWeaver.remove(i);
+	}
+	
+	public boolean isJoinWeaver(Weaver joinWeaver){
+		for(int i=0;i<this.isNotJoinWeaver.size();i++)
+			if(this.isNotJoinWeaver.get(i).getId().equals(joinWeaver.getId()))
+				return false;
+		return true;
+	}
+	
+	
 }

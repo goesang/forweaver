@@ -18,7 +18,7 @@ public class ChatService {
 	public ChatRoom get(String chatName){
 		Cache cache = cacheManager.getCache("chat");
 		Element element = cache.get(chatName);
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			ChatRoom chatRoom = new ChatRoom();
 			Element newElement = new Element(chatName,chatRoom);
 			cache.put(newElement);
@@ -30,7 +30,7 @@ public class ChatService {
 	public void addChat(String chatName,ChatMessage chatMessage){
 		Cache cache = cacheManager.getCache("chat");
 		Element element = cache.get(chatName);
-		if (element == null) {
+		if (element == null || (element != null && element.getValue() == null)) {
 			ChatRoom chatRoom = new ChatRoom();
 			chatRoom.addChatMessage(chatMessage);
 			Element newElement = new Element(chatName,chatRoom);

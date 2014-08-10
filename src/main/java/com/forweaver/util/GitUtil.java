@@ -22,16 +22,22 @@ import org.eclipse.jgit.archive.ZipFormat;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.dircache.DirCacheIterator;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryCache;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.gitective.core.BlobUtils;
@@ -151,6 +157,7 @@ public class GitUtil {
 					.add(CommitUtils.getCommit(this.localRepo, refName).getId())
 					.call();
 			int length = 0;
+			
 			for (RevCommit revCommit : gitLogIterable) {
 				length++;
 			}
@@ -191,6 +198,7 @@ public class GitUtil {
 
 	public GitCommitLog getCommitLog(String commitID) {
 		GitCommitLog gitCommitLog = null;
+		String diffs = new String();
 		try {
 			RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -203,25 +211,42 @@ public class GitUtil {
 				df.format(preCommit, commit);
 				df.flush();
 				df.release();
+				diffs+=out.toString();
 			} catch (Exception e) {
-				
+				diffs += SimpleFileBrowser(commit);
 			}
 
 			gitCommitLog = new GitCommitLog(commit.getId().getName(),
 					commit.getShortMessage(), commit.getFullMessage(), commit
 					.getCommitterIdent().getName(), commit
 					.getCommitterIdent().getEmailAddress(),
-					out.toString(), commit.getCommitTime());
+					diffs, commit.getCommitTime());
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
-			}
-		 finally {
+		}
+		finally {
 			return gitCommitLog;
 		}
 	}
 
-
-
+	public String SimpleFileBrowser(RevCommit commit){
+		String out = new String();
+		try
+		{
+			TreeWalk treeWalk = new TreeWalk(this.localRepo);
+			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(	commit));
+			
+			while (treeWalk.next())
+			{
+				out+=treeWalk.getPathString()+"\n";
+				out+= "+"+BlobUtils.getContent(this.localRepo, commit,treeWalk.getPathString().replace("\n", "\n+"));
+				out+="\n";
+			}
+		}finally{
+			return out;
+		}
+	}
+	
 	public List<GitSimpleCommitLog> getCommitLogList(String branchName,
 			int page, int number) {
 		List<GitSimpleCommitLog> gitCommitLogList = new ArrayList<GitSimpleCommitLog>();
@@ -248,7 +273,7 @@ public class GitUtil {
 
 	public List<String> getBranchList() {
 		ArrayList<String> branchList = new ArrayList<String>();
-		
+
 		try {
 			for (Ref ref : this.git.branchList().call()) {
 				branchList.add(ref.getName());
@@ -258,75 +283,7 @@ public class GitUtil {
 			return null;
 		}
 		return branchList;
-		
-	}
 
-	public List<String> readBranchList(String weaverName) {
-		List<String> brnachList = new ArrayList<String>();
-		try {
-			for (String str : RepositoryUtils.getBranches(this.localRepo)) {
-				if (!str.contains("@") || str.contains('-' + weaverName)) {
-					brnachList.add(str);
-				}
-			}
-
-		} finally {
-			return brnachList;
-		}
-	}
-
-	public boolean isReadCommit(String branchName, String commitID) {
-
-		try {
-			String orginalID = CommitUtils.getCommit(this.localRepo, commitID)
-					.getName();
-
-			for (int i = 0;; i++) {
-				RevCommit commit = CommitUtils.getCommit(this.localRepo,
-						branchName + "~" + i);
-				if (commit.getName().equals(orginalID))
-					return true;
-			}
-
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	public GitFileInfo getFileInfor(String commitID, String filePath,
-			String WeaverName) {
-		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
-		RevCommit selectCommit = this.getCommit(commitID);
-
-		int selectCommitIndex = 0;
-
-		if (selectCommit == null)
-			return null;
-
-		try {
-			Iterable<RevCommit> gitLogIterable = git.log().all()
-					.addPath(filePath).call();
-			int index = 0;
-			for (RevCommit revCommit : gitLogIterable) {
-				if (selectCommit.getName().equals(revCommit.getName()))
-					selectCommitIndex = index;
-				for (String branchName : readBranchList(WeaverName)) {
-					if (!gitLogList.contains(revCommit)
-							&& isReadCommit(branchName, revCommit.getName())) {
-						gitLogList.add(revCommit);
-					}
-				}
-
-				index++;
-			}
-
-		} finally {
-
-			return new GitFileInfo(filePath, BlobUtils.getContent(
-					this.localRepo, selectCommit.getId(), filePath),
-					gitLogList, selectCommitIndex);
-
-		}
 	}
 
 	public List<String> getSimpleBranchAndTagNameList() {
@@ -338,7 +295,7 @@ public class GitUtil {
 				branchList.add(ref.getName().substring(11));
 			}
 			branchName = this.localRepo.getBranch();
-			
+
 			for (Ref ref : this.git.tagList().call()) {
 				branchList.add(ref.getName().substring(10));
 			}
@@ -381,7 +338,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(file.getName().contains("@") && !file.getName().endsWith("@"+userName))
+			if(file.getName().contains("$") && !file.getName().endsWith("$"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -394,7 +351,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(!file.getName().endsWith("@"+userName))
+			if(!file.getName().endsWith("$"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -432,7 +389,7 @@ public class GitUtil {
 
 		try{
 			for(String branchName : this.getBranchList()){
-				if(branchName.endsWith("@"+weaverName)){
+				if(branchName.endsWith("$"+weaverName)){
 					FileWriter reader = new FileWriter(this.localRepo.getDirectory().getAbsolutePath()+"/HEAD");
 					reader.write("ref: "+branchName);
 					reader.close();
@@ -469,7 +426,7 @@ public class GitUtil {
 						git.branchCreate()
 						.setStartPoint(branchName)
 						.setName(
-								branchName + "@" + weaver.getId())
+								branchName + "$" + weaver.getId())
 								.call();
 					}
 				}
@@ -478,10 +435,10 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-	
+
 	public void uploadZip(String name,String email,String message,InputStream zip){
 		try {
-			
+
 			File localPath = File.createTempFile("git", "");
 			localPath.delete();
 			Git.cloneRepository()
@@ -502,7 +459,7 @@ public class GitUtil {
 			ZipInputStream zis = 
 					new ZipInputStream(zip);	    	
 			ZipEntry ze = zis.getNextEntry();
-			
+
 			while(ze!=null){
 
 				String fileName = ze.getName();
@@ -532,13 +489,13 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-	
+
 	public void forkRepository(String originRepo, String newRepo){
 		try{
-			FileUtils.copyFileToDirectory(new File(GitPath+originRepo+".git"), new File(GitPath+newRepo+".git"));
+			FileUtils.copyDirectory(new File(GitPath+originRepo+".git"),  new File(GitPath+newRepo+".git"));
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
 	}
-	
+
 }

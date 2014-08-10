@@ -133,7 +133,7 @@
 					<div class="span1">
 						<span>
 							<button type="submit" class="post-button btn btn-primary">
-								<i class="icon-ok icon-white"></i>
+								<i class="fa fa-check"></i>
 							</button>
 						</span>
 					</div>

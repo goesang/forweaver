@@ -116,8 +116,11 @@ function getTagList(url){
 		return [];
 	url =  decodeURI(url);
 	var tagList = new Array();
+	var realURL = true;
+	if(url.indexOf("/tags:") == 0)
+		realURL = false;
 	url = url.substring(url.indexOf("tags:")+5);
-	if(url.indexOf("/")!=-1)
+	if(realURL && url.indexOf("/")!=-1)
 		url = url.substring(0,url.indexOf("/"));
 	$.each(url.split(","), function(index, value) {
 		value = value.replace('>', '/');
@@ -148,6 +151,9 @@ function filePathTransform(path) {
 }
 
 function extensionSeach(url){
+	if(endsWith(url,"/blame"))
+		url = url.substring(0, url.length-6); 
+			
 	if(endsWith(url,"java") || endsWith(url,"pde"))
 		return "java";
 	else if(endsWith(url,"css"))

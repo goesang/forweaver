@@ -115,7 +115,7 @@ $(document).ready(function() {
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
-					<span class="add-on"><i class="fa fa-link"></i></span> <input
+					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://forweaver.com/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
