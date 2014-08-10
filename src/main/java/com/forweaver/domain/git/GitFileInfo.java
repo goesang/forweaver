@@ -14,6 +14,9 @@ public class GitFileInfo implements Serializable {
 	private List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 	private int selectCommitIndex;
 	
+	private List<GitBlame> gitBlames = new ArrayList<GitBlame>();
+
+	
 	public GitFileInfo(){
 	}
 	
@@ -62,5 +65,14 @@ public class GitFileInfo implements Serializable {
 		}
 	}
 
+	public List<GitBlame> getGitBlames() {
+		return gitBlames;
+	}
+
+	public void setGitBlames(List<GitBlame> gitBlames) {
+		this.gitBlames = gitBlames;
+	}
+
+	
 	
 }

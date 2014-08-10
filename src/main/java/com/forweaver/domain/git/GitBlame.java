@@ -1,5 +1,9 @@
 package com.forweaver.domain.git;
 
+import java.text.SimpleDateFormat;
+
+import org.eclipse.jgit.revwalk.RevCommit;
+
 public class GitBlame {
 
 	private String commitID;
@@ -7,13 +11,12 @@ public class GitBlame {
 	private String userEmail;
 	private String commitTime;
 	
-	public GitBlame(String commitID, String userName, String userEmail,
-			String commitTime) {
+	public GitBlame(RevCommit rc) {
 		super();
-		this.commitID = commitID;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.commitTime = commitTime;
+		this.commitID = rc.getName();
+		this.userName = rc.getAuthorIdent().getName();
+		this.userEmail = rc.getAuthorIdent().getEmailAddress();
+		this.commitTime = new SimpleDateFormat("yy-MM-dd").format(rc.getAuthorIdent().getWhen());
 	}
 	public String getCommitID() {
 		return commitID;

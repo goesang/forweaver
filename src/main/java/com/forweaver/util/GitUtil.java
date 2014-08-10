@@ -18,9 +18,8 @@ import org.eclipse.jgit.api.ArchiveCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.archive.ZipFormat;
+import org.eclipse.jgit.blame.BlameResult;
 import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.dircache.DirCache;
-import org.eclipse.jgit.dircache.DirCacheIterator;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -41,6 +40,7 @@ import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.Repo;
 import com.forweaver.domain.Weaver;
+import com.forweaver.domain.git.GitBlame;
 import com.forweaver.domain.git.GitCommitLog;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
@@ -152,7 +152,7 @@ public class GitUtil {
 					.add(CommitUtils.getCommit(this.localRepo, refName).getId())
 					.call();
 			int length = 0;
-			
+
 			for (RevCommit revCommit : gitLogIterable) {
 				length++;
 			}
@@ -228,7 +228,7 @@ public class GitUtil {
 		{
 			TreeWalk treeWalk = new TreeWalk(this.localRepo);
 			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(	commit));
-			
+
 			while (treeWalk.next())
 			{
 				out+=treeWalk.getPathString()+"\n";
@@ -239,7 +239,7 @@ public class GitUtil {
 			return out;
 		}
 	}
-	
+
 	public List<GitSimpleCommitLog> getCommitLogList(String branchName,
 			int page, int number) {
 		List<GitSimpleCommitLog> gitCommitLogList = new ArrayList<GitSimpleCommitLog>();
@@ -490,21 +490,21 @@ public class GitUtil {
 	}
 
 	public int[][] getDayAndHour(){
-		
+
 		int[][] array = new int[7][24];
-		
+
 		try{
 			for(RevCommit rc:git.log().all().call())
 				array[rc.getCommitterIdent().getWhen().getDay()]
 						[rc.getCommitterIdent().getWhen().getHours()]++;
-			
+
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}finally{
 			return array;
 		}
 	}
-	
+
 	public GitParentStatistics getCommitStatistics(){
 		GitParentStatistics gitParentStatistics = new GitParentStatistics();
 		try{
@@ -512,12 +512,12 @@ public class GitUtil {
 				String diffs = new String();
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				if(rc.getParentCount()>0){
-						DiffFormatter df = new DiffFormatter(out);
-						df.setRepository(this.localRepo);
-						df.format(rc.getParent(0), rc);
-						df.flush();
-						df.release();
-						diffs = out.toString();
+					DiffFormatter df = new DiffFormatter(out);
+					df.setRepository(this.localRepo);
+					df.format(rc.getParent(0), rc);
+					df.flush();
+					df.release();
+					diffs = out.toString();
 				} else {
 					diffs = SimpleFileBrowser(rc);
 				}
@@ -530,12 +530,29 @@ public class GitUtil {
 								StringUtils.countOccurrencesOf(diffs, "\n-"), 
 								rc.getAuthorIdent().getWhen()));
 			}
-			
+
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}finally{
 			return gitParentStatistics;
 		}
 	}
-	
+
+	public List<GitBlame> getBlame(String filePath, String commitID){
+		List<GitBlame> gitBlames = new ArrayList<GitBlame>();
+		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
+		
+		try{
+			BlameResult result = git.blame().setStartCommit(commit).setFilePath(filePath).call();
+
+			for(int i=0; i<result.getResultContents().size(); i++)
+				gitBlames.add(new GitBlame(result.getSourceCommit(i)));
+			
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}finally{
+			return gitBlames;
+		}
+	}
+
 }

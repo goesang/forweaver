@@ -291,23 +291,13 @@ public class ProjectController {
 			@PathVariable("commitID") String commitID,
 			@PathVariable("filePath") String filePath,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		List<GitBlame> gitBlameList = new ArrayList<GitBlame>();
-		for(int i = 0 ;i<10;i++){
-			gitBlameList.add(new GitBlame("asdsss", "Minsoo go", "rootroot2@gmail.com", "2014-05-12"));
-		}
-		for(int i = 0 ;i<10;i++){
-			gitBlameList.add(new GitBlame("wewqss", "Morning Lee","goesanghan@gmail.com", "2014-03-11"));
-		}
-		for(int i = 0 ;i<10;i++){
-			gitBlameList.add(new GitBlame("a444ss", "Morning go","rootroot2@gmail.com", "2014-04-12"));
-		}
 		commitID = commitID.replace(",", ".");
 		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
 		model.addAttribute("fileName", gitFileInfo.getName());
 		model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
-		model.addAttribute("gitBlameList", gitBlameList);
+		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
 		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
 		model.addAttribute("gitCommitLog", 
 				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));

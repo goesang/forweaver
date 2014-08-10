@@ -36,7 +36,9 @@ public class GitService {
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 		filePath = filePath.replace('>', '/');
 		filePath = filePath.replace(',', '.');
-		return gitUtil.getFileInfor(commitID, filePath);
+		GitFileInfo gitFileInfo = gitUtil.getFileInfor(commitID, filePath);
+		gitFileInfo.setGitBlames(gitUtil.getBlame(filePath, commitID));
+		return gitFileInfo;
 	}
 	
 	public void hideBranch(String parentDirctoryName,String repositoryName,String weaverName){
@@ -153,6 +155,7 @@ public class GitService {
 		}
 		return (GitCommitLog) element.getValue();
 	}
+	
 	
 	public void getProjectZip(String parentDirctoryName,
 			String repositoryName,String commitName,HttpServletResponse response){
