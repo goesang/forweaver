@@ -160,8 +160,6 @@ public class GitService {
 		gitUtil.getProjectZip(commitName, response);
 	}
 	
-
-	
 	public List<GitSimpleCommitLog> loadImgSrc(List<GitSimpleCommitLog> gitSimpleCommitLogList) {
 		for(GitSimpleCommitLog gitSimpleCommitLog : gitSimpleCommitLogList){
 			Weaver loadWeaver =  weaverDao.get(gitSimpleCommitLog.getCommiterName());
@@ -176,6 +174,12 @@ public class GitService {
 			String repositoryName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
 		return gitUtil.getCommitStatistics();
+	}
+	
+	public int[][] loadDayAndHour(String parentDirctoryName,
+			String repositoryName){
+		GitUtil gitUtil = new GitUtil(parentDirctoryName, repositoryName);	
+		return gitUtil.getDayAndHour();
 	}
 
 }
