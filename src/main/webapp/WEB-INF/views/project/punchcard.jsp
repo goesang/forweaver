@@ -157,7 +157,10 @@ svg.selectAll("circle")
     .attr("class", "circle")
     .attr("cx", function (d) { return x(d[1]); })
     .attr("cy", function (d) { return y(d[0]); })
-    .attr("r", function (d) { return d[2]; }) // 원크기 맞게 조정해 보았음
+    .attr("r", function (d) {
+    	if(d[2]!=0) return 3+d[2]/3.3;
+    	else return d[2];
+    	}) // 원크기 맞게 조정해 보았음
     .on("mouseover", tooltip.show)
     .on("mouseout", tooltip.hide);
 
