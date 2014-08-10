@@ -680,7 +680,22 @@ public class ProjectController {
 
 		return "redirect:/project/";
 	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/punchcard")
+	public String punchcard(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName, Model model){
+		Project project = projectService.get(creatorName+"/"+projectName);
 
+		//List<GitSimpleStatistics> list = new ArrayList<GitSimpleStatistics>();
+	//	list.add(new GitSimpleStatistics("민수", 30, 5, 5));
+	//	list.add(new GitSimpleStatistics("아침", 20, 15, 30));
+	//	list.add(new GitSimpleStatistics("헐", 10, 10, 2));
+
+		model.addAttribute("project", project);
+	//	model.addAttribute("list", list);
+		return "/project/punchcard";
+	}
+	
 	@RequestMapping("/{creatorName}/{projectName}/chart")
 	public String chart(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
