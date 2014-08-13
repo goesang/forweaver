@@ -211,22 +211,6 @@ public class ProjectController {
 								"HEAD", 
 								gitSimpleFileInfo.getName()).getContent());
 
-		GitParentStatistics gps = gitService.loadStatistics(creatorName, projectName);
-		System.out.println("ssssssssssssssssssss");
-		for(GitChildStatistics gcs:gps.getGitChildStatistics()){
-			System.out.println(gcs.getAddLine());
-			System.out.println(gcs.getDeleteLine());
-			System.out.println(gcs.getDate());
-			System.out.println(gcs.getUserName());
-		}
-		
-		System.out.println("ssssssssssssssssssss");
-		
-		for(String userEmail:gps.getUserHashMap().keySet()){
-			System.out.println(userEmail);
-			System.out.println(gps.getUserHashMap().get(userEmail).getTotalCommit());
-		}
-		
 		model.addAttribute("project", project);
 		model.addAttribute("gitFileInfoList", 
 				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD"));
@@ -727,6 +711,16 @@ public class ProjectController {
 		return "/project/punchcard";
 	}
 	
+	@RequestMapping("/{creatorName}/{projectName}/stream")
+	public String stream(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName, Model model){
+		Project project = projectService.get(creatorName+"/"+projectName);
+
+		model.addAttribute("project", project);
+		model.addAttribute("gps", gitService.loadStatistics(creatorName, projectName));
+		return "/project/stream";
+	}
+	
 	@RequestMapping("/{creatorName}/{projectName}/chart")
 	public String chart(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
@@ -770,4 +764,5 @@ public class ProjectController {
 			return "redirect:/project/"+newProjectName;
 		}
 	}
+	
 }

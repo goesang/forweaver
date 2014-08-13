@@ -13,7 +13,7 @@ public class GitBlame {
 	
 	public GitBlame(RevCommit rc) {
 		super();
-		this.commitID = rc.getName();
+		this.commitID = rc.getName().substring(0,9);
 		this.userName = rc.getAuthorIdent().getName();
 		this.userEmail = rc.getAuthorIdent().getEmailAddress();
 		this.commitTime = new SimpleDateFormat("yy-MM-dd").format(rc.getAuthorIdent().getWhen());

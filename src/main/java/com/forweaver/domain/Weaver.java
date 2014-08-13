@@ -7,9 +7,13 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
+
+import com.mongodb.DBObject;
 
 @Document
 public class Weaver implements UserDetails,Serializable {
@@ -23,6 +27,9 @@ public class Weaver implements UserDetails,Serializable {
 	private String imgSrc;
 	private Data image;
 	private List<Pass> passes = new ArrayList<Pass>();
+	
+	@Transient
+	private DBObject weaverInfo;
 	
 	public Weaver(){}
 	
@@ -186,7 +193,29 @@ public class Weaver implements UserDetails,Serializable {
 		passNames.add("$"+this.id);
 		return passNames;
 	}
+
+
+	public DBObject getWeaverInfo() {
+		return weaverInfo;
+	}
 	
+	public String getInfo(String field) {
+		Object value = weaverInfo.get(field);
+		if(value == null)
+			value = "0";
+		return value.toString();
+	}
+
+	public String getInfo(String field,String search) {
+		Object value = weaverInfo.get(field);
+		if(value == null)
+			value = "0";
+		return ""+StringUtils.countOccurrencesOf(value.toString(),search);
+	}
+
+	public void setWeaverInfo(DBObject weaverInfo) {
+		this.weaverInfo = weaverInfo;
+	}
 	
 	
 }

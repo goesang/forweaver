@@ -67,9 +67,9 @@
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><big><b>${weaver.getId()}</b></big></big> <small><i
-					class="fa fa-quote-left icon-white"></i> ${weaver.getSay()} <i
-					class="fa fa-quote-right icon-white"></i></small>
+				<big><i
+					class="fa fa-quote-left"></i> ${weaver.getSay()} <i
+					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 			<div class="row">
 				<div class="span12">

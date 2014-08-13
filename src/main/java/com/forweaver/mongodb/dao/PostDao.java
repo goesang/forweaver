@@ -97,7 +97,8 @@ public class PostDao {
 			criteria.and("writer").is(writer);
 
 		if (search != null)
-			criteria.and("search").is(search);
+			criteria.andOperator(criteria.orOperator(new Criteria("title").regex(search),
+					new Criteria("content").regex(search)));
 
 		this.filter(criteria, sort);
 
@@ -116,7 +117,8 @@ public class PostDao {
 			criteria.and("writer").is(writer);
 
 		if (search != null)
-			criteria.and("search").is(search);
+			criteria.andOperator(criteria.orOperator(new Criteria("title").regex(search),
+					new Criteria("content").regex(search)));
 
 		this.filter(criteria, sort);
 

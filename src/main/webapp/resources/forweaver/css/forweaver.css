@@ -232,6 +232,7 @@ a {
 .page-header {
 	padding-bottom: 0px;
 	margin: 20px 0px 20px;
+	border-bottom:0px;
 }
 
 ul.unstyled a {

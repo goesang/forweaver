@@ -29,19 +29,20 @@ public class RePost implements Serializable {
 	
 	@DBRef
 	private List<Data> datas = new ArrayList<Data>();
-	
+	private List<String> tags = new ArrayList<String>();
 	private List<Reply> replys = new ArrayList<Reply>();
 
 	public RePost() {
 	}
 
-	public RePost(int originalPostID,Weaver origianlWriter, Weaver writer, String content,int kind) {
+	public RePost(int originalPostID,Weaver origianlWriter, Weaver writer, String content,List<String> tags,int kind) {
 		this.writer = writer;
 		this.origianlWriter = origianlWriter;
 		this.content = content;
 		this.kind = kind;
 		this.created = new Date();
 		this.originalPostID = originalPostID;
+		this.tags = tags;
 	}
 
 	public int getRePostID() {
@@ -186,4 +187,30 @@ public class RePost implements Serializable {
 				return data;
 		return null;
 	}
+
+	public Weaver getWriter() {
+		return writer;
+	}
+
+	public void setWriter(Weaver writer) {
+		this.writer = writer;
+	}
+
+	public Weaver getOrigianlWriter() {
+		return origianlWriter;
+	}
+
+	public void setOrigianlWriter(Weaver origianlWriter) {
+		this.origianlWriter = origianlWriter;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+	
+	
 }

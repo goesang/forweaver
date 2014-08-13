@@ -25,34 +25,34 @@
 <security:intercept-url pattern="/join" access="isAnonymous()" />
 
 <security:intercept-url pattern="/check" access="isAnonymous()" />
-<security:intercept-url pattern="/" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/manage" access="hasRole('ROLE_USER')" />
+<security:intercept-url pattern="/" access="isAuthenticated()" />
+<security:intercept-url pattern="/manage" access="isAuthenticated()" />
 
-<security:intercept-url pattern="/community/add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/community/*/delete" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/community/*/update" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/community/*/repost-add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/community/*/edit" access="hasRole('ROLE_USER')" />
+<security:intercept-url pattern="/community/add" access="isAuthenticated()" />
+<security:intercept-url pattern="/community/*/delete" access="isAuthenticated()" />
+<security:intercept-url pattern="/community/*/update" access="isAuthenticated()" />
+<security:intercept-url pattern="/community/*/repost-add" access="isAuthenticated()" />
+<security:intercept-url pattern="/community/*/edit" access="isAuthenticated()" />
 <security:intercept-url pattern="/community/**" access="isAnonymous() or isAuthenticated()" />
 
 
-<security:intercept-url pattern="/project/*/*/add" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/project/*/*/delete" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/project/*/*/push" access="hasRole('ROLE_USER')" />
-<security:intercept-url pattern="/project/*/*/rss" access="hasRole('ROLE_USER')" />
+<security:intercept-url pattern="/project/*/*/add" access="isAuthenticated()" />
+<security:intercept-url pattern="/project/*/*/delete" access="isAuthenticated()" />
+<security:intercept-url pattern="/project/*/*/push" access="isAuthenticated()" />
+<security:intercept-url pattern="/project/*/*/rss" access="isAuthenticated()" />
 
 <security:intercept-url pattern="/lecture/" access="isAnonymous() or isAuthenticated()" />
 <security:intercept-url pattern="/lecture/page**" access="isAnonymous() or isAuthenticated()" />
 <security:intercept-url pattern="/lecture/tags**" access="isAnonymous() or isAuthenticated()" />
 
-<security:intercept-url pattern='/lecture/*' access="hasRole('ROLE_USER')"/>
-<security:intercept-url pattern='/lecture/*/delete' access="hasRole('ROLE_USER')"/>
-<security:intercept-url pattern='/lecture/*/coummunity**' access="hasRole('ROLE_USER')"/>
-<security:intercept-url pattern='/lecture/*/example**' access="hasRole('ROLE_USER')"/>
-<security:intercept-url pattern='/lecture/*/weaver**' access="hasRole('ROLE_USER')"/>
-<security:intercept-url pattern='/lecture/*/join' access="hasRole('ROLE_USER')"/>
+<security:intercept-url pattern='/lecture/*' access="isAuthenticated()"/>
+<security:intercept-url pattern='/lecture/*/delete' access="isAuthenticated()"/>
+<security:intercept-url pattern='/lecture/*/coummunity**' access="isAuthenticated()"/>
+<security:intercept-url pattern='/lecture/*/example**' access="isAuthenticated()"/>
+<security:intercept-url pattern='/lecture/*/weaver**' access="isAuthenticated()"/>
+<security:intercept-url pattern='/lecture/*/join' access="isAuthenticated()"/>
 
-<security:intercept-url pattern='/chat/**' access="hasRole('ROLE_USER')"/>
+<security:intercept-url pattern='/chat/**' access="isAuthenticated()"/>
 
 <security:form-login login-page='/login'  default-target-url='/' />
 <security:session-management session-authentication-strategy-ref="sas"/>

@@ -63,15 +63,75 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 
-	public List<DBObject> getWeaverInfos(List<String> tags){
-		AggregationOperation match = Aggregation.match(Criteria.where("tags").all(tags));
-		AggregationOperation group = Aggregation. group("writer").count().as("postCount").sum("push").as("pushTotal").sum("rePostCount").as("rePostCountTotal");
-		Aggregation agg;
+	public List<DBObject> getWeaverInfosInPost(List<String> tags){
+		Criteria criteria = new Criteria();
+		
 		if(tags!=null && tags.size()>0)
-			agg = newAggregation(match, group);
-		else
-			agg = newAggregation(group);
+			criteria.and("tags").all(tags);
+		
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("writer").count().as("postCount").sum("push").as("push").sum("rePostCount").as("rePostCount");
+		Aggregation agg = newAggregation(match, group);
 
 		return mongoTemplate.aggregate(agg, "post", DBObject.class).getMappedResults();
 	}
+	
+	public List<DBObject> getWeaverInfosInRePost(List<String> tags){
+		Criteria criteria = new Criteria();
+		
+		if(tags!=null && tags.size()>0)
+			criteria.and("tags").all(tags);
+		
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("writer").count().as("myRePostCount").sum("push").as("rePostPush");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "rePost", DBObject.class).getMappedResults();
+	}
+	
+	public List<DBObject> getWeaverInfosInProject(List<String> tags){
+		Criteria criteria = new Criteria();
+		
+		if(tags!=null && tags.size()>0)
+			criteria.and("tags").all(tags);
+		
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("creator").count().as("projectCount").push("childProjects").as("childProjects");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "project", DBObject.class).getMappedResults();
+	}
+	
+	public List<DBObject> getWeaverInfosInLecture(List<String> tags){
+		Criteria criteria = new Criteria();
+		
+		if(tags!=null && tags.size()>0)
+			criteria.and("tags").all(tags);
+		
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("creator").count().as("lectureCount").push("joinWeavers").as("joinWeavers");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "lecture", DBObject.class).getMappedResults();
+	}
+	
+	public List<DBObject> getWeaverInfosInCode(List<String> tags){
+		Criteria criteria = new Criteria();
+		
+		if(tags!=null && tags.size()>0)
+			criteria.and("tags").all(tags);
+	
+		
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("writer").count().as("codeCount").sum("downCount").as("downCount");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "code", DBObject.class).getMappedResults();
+	}
+	
 }

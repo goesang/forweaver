@@ -1,11 +1,15 @@
 package com.forweaver.service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.Tuple;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.diff.ContentSource.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
@@ -139,8 +145,83 @@ public class WeaverService implements UserDetailsService {
 		return result;
 	}
 
-	public List<DBObject> getWeaverInfos(List<String> tags){
-		return weaverDao.getWeaverInfos(tags);
+	//위버정보들과 수 파악함.
+	public Object[] getWeaverInfos(List<String> tags,int page, int size ){
+		List<Weaver> weavers = new ArrayList<Weaver>();
+		HashMap<String, DBObject> weaverHash = new HashMap<String, DBObject>();
+		Object[] returnObject = new Object[2];
+		int startNumber = size * (page - 1);
+		try{
+			for(DBObject db:weaverDao.getWeaverInfosInPost(tags)){
+				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
+				name = name.substring(1, name.length()-1);
+				weaverHash.put(name, db);
+			}
+			for(DBObject db:weaverDao.getWeaverInfosInRePost(tags)){
+				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
+				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
+				if(dbTmp != null){
+					dbTmp.put("myRePostCount", db.get("myRePostCount"));
+					dbTmp.put("rePostPush", db.get("rePostPush"));
+				}
+				else
+					weaverHash.put(name, db);
+			}
+			for(DBObject db:weaverDao.getWeaverInfosInProject(tags)){
+				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
+				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
+				if(dbTmp != null){
+					dbTmp.put("projectCount", db.get("projectCount"));
+					dbTmp.put("childProjects", db.get("childProjects"));
+				}
+				else
+					weaverHash.put(name, db);
+			}
+			for(DBObject db:weaverDao.getWeaverInfosInLecture(tags)){
+				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
+				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
+				if(dbTmp != null){
+					dbTmp.put("lectureCount", db.get("lectureCount"));
+					dbTmp.put("joinWeavers", db.get("joinWeavers"));
+				}
+				else
+					weaverHash.put(name, db);
+			}
+			for(DBObject db:weaverDao.getWeaverInfosInCode(tags)){
+				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
+				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
+				if(dbTmp != null){
+					dbTmp.put("codeCount", db.get("codeCount"));
+					dbTmp.put("downCount", db.get("downCount"));
+				}
+				else
+					weaverHash.put(name, db);
+			}
+			
+			int i = 0;
+			for(DBObject db:weaverHash.values()){
+				if(startNumber <= i){
+					String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
+					name = name.substring(1, name.length()-1);
+					Weaver weaver = weaverDao.get(name);
+					if(weaver != null){
+						weaver.setWeaverInfo(db);
+						weavers.add(weaver);
+					}
+				}
+				if(startNumber+size < i)
+					break;
+				i++;	
+			}
+			
+		}
+		finally{
+			returnObject[0] = weaverHash.values().size();
+			returnObject[1] = weavers;
+			return returnObject;
+		}
 	}
+	
+	
 
 }

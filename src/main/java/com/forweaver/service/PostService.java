@@ -244,18 +244,21 @@ public class PostService {
 	
 	public List<Post> getPostsWithTagsAndSearch(Weaver weaver,
 			List<String> tags,String search,String sort, int page, int size) {
-		
+
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.getPostsWhenNotLogin(tags, search, null, sort, page, size);
 		else{  // 로그인한 회원의 경우
 			if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 				return postDao.getPostsWhenLogin(tags,weaver.getPrivateTags(),null,search, sort, page, size);
 			else if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
-				return postDao.getPostsWithPrivateTags(tags, search, null, sort, page, size);
+				{
+				System.out.println("ssss");return postDao.getPostsWithPrivateTags(tags, search, null, sort, page, size);
+				}
 			else if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
 				return postDao.getPostsWithMassageTag(tags, search, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
-			else 
+			else {
 				return null;
+			}
 		}
 			
 			

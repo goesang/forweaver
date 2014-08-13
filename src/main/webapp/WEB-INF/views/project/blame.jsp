@@ -49,7 +49,8 @@
 		 for(var i=1;i<=blameArray.length;i++)
 			 if(blameArray[i-1][1] != blameArray[i][1])
 		 	$('td.gutter > div.line.number'+i).html(
-		 			"<span><a>"+blameArray[i][0]+"</a>  <a>"+
+		 			"<span><a href='/"+blameArray[i][3].replace('.',',')+"'>"+blameArray[i][0]+
+		 			"</a>  <a href='/project/${project.name}/commitlog-viewer/commit:"+blameArray[i][1]+"'>"+
 		 			blameArray[i][1]+"</a>  "+blameArray[i][2]+"</span>  "+i
 		 	);
 	}, 500);

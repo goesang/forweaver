@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
@@ -80,13 +82,65 @@ public class WeaverController {
 		return "redirect:/";
 	}
 
-	
 	@RequestMapping("/weaver")
-	public String weavers(Model model) {
+	public String weavers(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI() +"/page:1";
+	}
+	
+	@RequestMapping("/weaver/page:{page}")
+	public String weavers(@PathVariable("page") String page,Model model) {
+		int pageNum;
+		int number = 15;
+
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}
 		
-		for(DBObject db:weaverService.getWeaverInfos(null))
-			System.err.println(db);
+		Object[] returnObjejct = weaverService.getWeaverInfos(null,pageNum-1,number);
+		int weaverCount = (int)returnObjejct[0];
+		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
 				
+		model.addAttribute("weavers", weavers);	
+		model.addAttribute("weaverCount", weaverCount);
+		
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", number);
+		model.addAttribute("pageUrl", "/weaver/page:");
+		return "/weaver/weavers";
+	}
+	
+	@RequestMapping("/weaver/tags:{tagNames}")
+	public String weaversTags(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI() +"/page:1";
+	}
+	
+	@RequestMapping("/weaver/tags:{tagNames}/page:{page}")
+	public String weaversTags(Model model,@PathVariable("tagNames") String tagNames,
+			@PathVariable("page") String page) {
+		List<String> tagList = tagService.stringToTagList(tagNames);
+		int pageNum;
+		int number = 15;
+
+		if(page.contains(",")){
+			pageNum = Integer.parseInt(page.split(",")[0]);
+			number = Integer.parseInt(page.split(",")[1]);
+		}else{
+			pageNum =Integer.parseInt(page);
+		}
+		
+		Object[] returnObjejct = weaverService.getWeaverInfos(tagList,pageNum-1,number);
+		int weaverCount = (int)returnObjejct[0];
+		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
+				
+		model.addAttribute("weavers", weavers);	
+		model.addAttribute("weaverCount", weaverCount);
+		
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", number);
+		model.addAttribute("pageUrl", "/weaver/tags:"+tagNames+"/page:");
 		return "/weaver/weavers";
 	}
 	

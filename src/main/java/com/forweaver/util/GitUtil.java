@@ -524,7 +524,7 @@ public class GitUtil {
 				diffs = StringUtils.delete(diffs, "\n--- ");
 				diffs = StringUtils.delete(diffs, "\n+++ ");
 				gitParentStatistics.addGitChildStatistics(
-						new GitChildStatistics(rc.getAuthorIdent().getName(), 
+						new GitChildStatistics(
 								rc.getAuthorIdent().getEmailAddress(), 
 								StringUtils.countOccurrencesOf(diffs, "\n+"), 
 								StringUtils.countOccurrencesOf(diffs, "\n-"), 

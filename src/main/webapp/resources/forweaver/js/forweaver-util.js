@@ -189,10 +189,8 @@ function movePage(tagArrayString,searchWord){
 
 	if(url.indexOf("/tags:") != -1)
 		url = url.substring(0,url.indexOf("/tags:"))+'/';
-	else if(url.indexOf("/community") != -1)
-		url = url.substring(0,url.indexOf("/community")+10)+'/';
-	else if(url.indexOf("/chat") != -1)
-		url = url.substring(0,url.indexOf("/chat")+5)+'/';
+	else if(url.indexOf("/weaver") != -1)
+		url = url.substring(0,url.indexOf("/weaver")+7)+'/';
 	else if(url.indexOf("/project") != -1)
 		url = url.substring(0,url.indexOf("/project")+8)+'/';
 	else if(url.indexOf("/code") != -1)
@@ -228,6 +226,7 @@ function moveUserPage(userName,tagArrayString,searchWord){
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
+
 	window.location = url;
 }
 

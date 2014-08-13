@@ -233,6 +233,7 @@ public class CodeController {
 				code.getWriter(),
 				weaver,
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
+				code.getTags(),
 				4);
 		rePostService.add(rePost,datas);
 		code.setRePostCount(code.getRePostCount()+1);

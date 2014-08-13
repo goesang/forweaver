@@ -1,8 +1,12 @@
 package com.forweaver.domain.git.statistics;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GitParentStatistics {
 	private List<GitChildStatistics> gitChildStatistics; 
@@ -16,13 +20,17 @@ public class GitParentStatistics {
 
 	public void addGitChildStatistics(GitChildStatistics gcs){
 		if(gitChildStatistics.size() > 0){
-			GitChildStatistics lastGCS = gitChildStatistics.get(gitChildStatistics.size()-1);
-			
-			if(lastGCS.getDate().equals(gcs.getDate()) 
-					&& lastGCS.getUserEmail().equals(gcs.getUserEmail())){
-				gcs.setAddLine(gcs.getAddLine()+lastGCS.getAddLine());
-				gcs.setDeleteLine(gcs.getDeleteLine()+lastGCS.getDeleteLine());
-				gitChildStatistics.remove(gitChildStatistics.size()-1);
+			for(int i = 1 ; i <= gitChildStatistics.size() ; i++){
+				GitChildStatistics lastGCS = gitChildStatistics.get(gitChildStatistics.size()-i);
+
+				if(lastGCS.getUserEmail().equals(gcs.getUserEmail()) && 
+						lastGCS.getDate().equals(gcs.getDate())){
+					gcs.setAddLine(gcs.getAddLine()+lastGCS.getAddLine());
+					gcs.setDeleteLine(gcs.getDeleteLine()+lastGCS.getDeleteLine());
+					gitChildStatistics.remove(gitChildStatistics.size()-i);
+				}else if(!lastGCS.getDate().equals(gcs.getDate())){
+					break;
+				}
 			}
 		}
 		gitChildStatistics.add(gcs);
@@ -54,7 +62,15 @@ public class GitParentStatistics {
 		this.userHashMap = userHashMap;
 	}
 
-
-
+	public List<String> getDates(){
+		List<String> dates = new ArrayList<String>();
+		dates.add(gitChildStatistics.get(0).getDate());
+		
+		for(GitChildStatistics gcs:gitChildStatistics){
+			if(!dates.get(dates.size()-1).equals(gcs.getDate()))
+				dates.add(gcs.getDate());
+		}
+		return dates;
+	}
 
 }
