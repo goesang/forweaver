@@ -8,14 +8,18 @@ public class GitChildStatistics {
 	private String userEmail;
 	private int addLine;
 	private int deleteLine;
+	private int addFile;
+	private int deleteFile;
 	private Date commitDate;
 	
-	public GitChildStatistics(String userEmail, int addLine,
-			int deleteLine, Date commitDate) {
+	public GitChildStatistics(String userEmail, int addLine, int deleteLine,
+			int addFile, int deleteFile, Date commitDate) {
 		super();
 		this.userEmail = userEmail;
 		this.addLine = addLine;
 		this.deleteLine = deleteLine;
+		this.addFile = addFile;
+		this.deleteFile = deleteFile;
 		this.commitDate = commitDate;
 	}
 
@@ -55,6 +59,32 @@ public class GitChildStatistics {
 		SimpleDateFormat formatter = new SimpleDateFormat ( "yyyy/MM/dd");
 		return formatter.format ( this.commitDate );
 	}
+	
+	public int getTotal(){
+		return this.addLine+this.deleteLine;
+	}
+	
+	public int getTotalFile(){
+		return this.addFile+this.deleteFile;
+	}
+
+	public int getAddFile() {
+		return addFile;
+	}
+
+	public void setAddFile(int addFile) {
+		this.addFile = addFile;
+	}
+
+	public int getDeleteFile() {
+		return deleteFile;
+	}
+
+	public void setDeleteFile(int deleteFile) {
+		this.deleteFile = deleteFile;
+	}
+	
+	
 	
 	
 }

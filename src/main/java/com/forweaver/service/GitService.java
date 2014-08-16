@@ -1,6 +1,5 @@
 package com.forweaver.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.mongodb.dao.WeaverDao;
+import com.forweaver.util.GitInfo;
 import com.forweaver.util.GitUtil;
 
 @Service
@@ -183,6 +183,12 @@ public class GitService {
 			String repositoryName){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName, repositoryName);	
 		return gitUtil.getDayAndHour();
+	}
+	
+	public GitInfo getGitInfo(String parentDirctoryName,
+			String repositoryName,String branchName){
+		GitUtil gitUtil = new GitUtil(parentDirctoryName, repositoryName);	
+		return gitUtil.getGitInfo(branchName);
 	}
 
 }

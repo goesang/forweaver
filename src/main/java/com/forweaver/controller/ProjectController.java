@@ -701,17 +701,19 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 	
-	@RequestMapping("/{creatorName}/{projectName}/punchcard")
-	public String punchcard(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/info")
+	public String info(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
 		Project project = projectService.get(creatorName+"/"+projectName);
 
+		List<GitChildStatistics> list = new ArrayList<GitChildStatistics>();
+
 		model.addAttribute("project", project);
-		model.addAttribute("dayAndHour", gitService.loadDayAndHour(creatorName, projectName));
-		return "/project/punchcard";
+		model.addAttribute("list", list);
+		return "/project/info";
 	}
 	
-	@RequestMapping("/{creatorName}/{projectName}/stream")
+	@RequestMapping("/{creatorName}/{projectName}/info:stream")
 	public String stream(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
 		Project project = projectService.get(creatorName+"/"+projectName);
@@ -721,17 +723,16 @@ public class ProjectController {
 		return "/project/stream";
 	}
 	
-	@RequestMapping("/{creatorName}/{projectName}/chart")
-	public String chart(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/info:frequency")
+	public String punchcard(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
 		Project project = projectService.get(creatorName+"/"+projectName);
 
-		List<GitChildStatistics> list = new ArrayList<GitChildStatistics>();
-
 		model.addAttribute("project", project);
-		model.addAttribute("list", list);
-		return "/project/chart";
+		model.addAttribute("dayAndHour", gitService.loadDayAndHour(creatorName, projectName));
+		return "/project/frequency";
 	}
+	
 	@RequestMapping("/{creatorName}/{projectName}/chat") //채팅
 	public String chat(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model){

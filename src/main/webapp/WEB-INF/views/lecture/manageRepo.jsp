@@ -85,7 +85,7 @@
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://forweaver.com/${lecture.name}/example.git"
+						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}example.git"
 						type="text" class="input-block-level">
 				</div>
 			</div>

@@ -37,10 +37,12 @@ public class GitParentStatistics {
 		GitTotalStatistics gts = this.userHashMap.get(gcs.getUserEmail());
 		if(gts == null)
 			this.userHashMap.put(gcs.getUserEmail(), 
-					new GitTotalStatistics(gcs.getAddLine(), gcs.getDeleteLine(), 1));
+					new GitTotalStatistics(gcs.getAddLine(), gcs.getDeleteLine(),gcs.getAddFile(),gcs.getDeleteFile(), 1));
 		else{
 			gts.setTotalAdd(gts.getTotalAdd()+gcs.getAddLine());
+			gts.setTotalAddFile(gts.getTotalAddFile()+gcs.getAddFile());
 			gts.setTotalDelete(gts.getTotalDelete()+gcs.getDeleteLine());
+			gts.setTotalDeleteFile(gts.getTotalDeleteFile()+gcs.getDeleteFile());
 			gts.setTotalCommit(gts.getTotalCommit()+1);
 		}
 	}

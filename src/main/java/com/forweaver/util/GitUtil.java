@@ -231,7 +231,8 @@ public class GitUtil {
 
 			while (treeWalk.next())
 			{
-				out+=treeWalk.getPathString()+"\n";
+				out+="--- /dev/null\n";
+				out+="+++ b/"+treeWalk.getPathString()+"\n";
 				out+= "+"+BlobUtils.getContent(this.localRepo, commit,treeWalk.getPathString().replace("\n", "\n+"));
 				out+="\n";
 			}
@@ -500,9 +501,8 @@ public class GitUtil {
 
 		}catch(Exception e){
 			System.err.println(e.getMessage());
-		}finally{
-			return array;
 		}
+			return array;
 	}
 
 	public GitParentStatistics getCommitStatistics(){
@@ -521,6 +521,8 @@ public class GitUtil {
 				} else {
 					diffs = SimpleFileBrowser(rc);
 				}
+				int addFile = StringUtils.countOccurrencesOf(diffs, "--- /dev/null");
+				int deleteFile = StringUtils.countOccurrencesOf(diffs, "+++ /dev/null");
 				diffs = StringUtils.delete(diffs, "\n--- ");
 				diffs = StringUtils.delete(diffs, "\n+++ ");
 				gitParentStatistics.addGitChildStatistics(
@@ -528,14 +530,15 @@ public class GitUtil {
 								rc.getAuthorIdent().getEmailAddress(), 
 								StringUtils.countOccurrencesOf(diffs, "\n+"), 
 								StringUtils.countOccurrencesOf(diffs, "\n-"), 
+								addFile,
+								deleteFile,
 								rc.getAuthorIdent().getWhen()));
 			}
 
 		}catch(Exception e){
 			System.err.println(e.getMessage());
-		}finally{
-			return gitParentStatistics;
 		}
+			return gitParentStatistics;
 	}
 
 	public List<GitBlame> getBlame(String filePath, String commitID){
@@ -550,9 +553,18 @@ public class GitUtil {
 			
 		}catch(Exception e){
 			System.err.println(e.getMessage());
-		}finally{
-			return gitBlames;
 		}
+			return gitBlames;
+	}
+	
+	public GitInfo getGitInfo(String branchName){
+		GitInfo gitInfo = new GitInfo();
+		try{
+		gitInfo.run(this.localRepo, branchName);
+		}catch(IOException e){
+			System.err.println(e.getMessage());
+		}
+		return gitInfo;
 	}
 
 }

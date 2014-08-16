@@ -79,9 +79,8 @@
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
-		<url-pattern>/m/*</url-pattern>
 	</servlet-mapping>
-
+	<!-- Setup git servlet -->
    <servlet>
      <servlet-name>GitServlet</servlet-name>
      <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>

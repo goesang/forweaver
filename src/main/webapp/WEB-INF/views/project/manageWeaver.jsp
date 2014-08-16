@@ -110,13 +110,13 @@ $(document).ready(function() {
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li  class="active"><a href="/project/${project.name}/weaver">참가자</a></li>
-					<li><a href="/project/${project.name}/chart">통계</a>
+					<li><a href="/project/${project.name}/info">정보</a></li>
 				</ul>
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://forweaver.com/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
