@@ -163,10 +163,10 @@ public class GitUtil {
 
 	}
 
-	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID)
-			throws Exception {
+	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID) {
 		List<GitSimpleFileInfo> gitFileInfoList = new ArrayList<GitSimpleFileInfo>();
 
+		try{
 		ObjectId revId = this.localRepo.resolve(commitID);
 		TreeWalk treeWalk = new TreeWalk(this.localRepo);
 
@@ -185,6 +185,9 @@ public class GitUtil {
 					revCommit.getCommitterIdent().getName(),
 					revCommit.getCommitterIdent().getEmailAddress());
 			gitFileInfoList.add(gitFileInfo);
+		}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
 		}
 		return gitFileInfoList;
 	}

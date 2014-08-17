@@ -15,7 +15,6 @@ public class GitSimpleCommitLog implements Serializable {
 	private String shortMassage;
 	private String commiterName;
 	private String commiterEmail;
-	private String imgSrc;
 	private Date commitDate;
 	private int commitDateInt;
 	
@@ -70,16 +69,9 @@ public class GitSimpleCommitLog implements Serializable {
 	}
 
 	public String getImgSrc(){
-		
-		if(this.imgSrc != null)
-			return imgSrc;
-		else
-			return "http://www.gravatar.com/avatar/"+WebUtil.convertMD5(this.commiterEmail)+".jpg";
+		return "/"+this.commiterEmail.replace(".", ",")+"/img";
 	}
 
-	public void setImgSrc(String imgSrc) {
-		this.imgSrc = imgSrc;
-	}
 
 	public int getCommitDateInt() {
 		return commitDateInt;
