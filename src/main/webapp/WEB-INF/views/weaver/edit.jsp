@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
@@ -44,7 +44,7 @@ $(document).ready(function() {
 									</div>
 									<span class='input-group-addon btn btn-primary btn-file'>
 										<span class='fileinput-new'> <i
-											class='icon-upload icon-white'></i>
+											class='fa fa-arrow-circle-o-up icon-white'></i>
 									</span> <span class='fileinput-exists'> <i
 											class='icon-repeat icon-white'></i>
 									</span> <input onchange='fileUploadChange(this);' type='file'
@@ -74,7 +74,7 @@ $(document).ready(function() {
 					<div class="control-group" style="padding-left: 6px;">
 						<button style="width: 275px;" type="submit"
 							class="btn btn-block btn-inverse">
-							<i class="fa fa-pencil-square icon-white"></i>&nbsp;&nbsp;수정하기
+							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기
 						</button>
 					</div>
 				</div>
@@ -95,7 +95,7 @@ $(document).ready(function() {
 					</div>
 					<div align="center" style="padding-left: 6px;">
 						<button style="width: 225px;" type="submit" class="btn btn-block btn-inverse">
-							<i class="fa fa-pencil-square icon-white"></i>&nbsp;&nbsp;수정하기
+							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기
 						</button>
 					</div>
 			</div>

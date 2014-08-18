@@ -71,6 +71,14 @@ public class ProjectService{
 			} catch (Exception e) {
 				return false;
 			}
+			for(Weaver adminWeaver:project.getAdminWeavers()){
+				adminWeaver.deletePass(project.getName());
+				weaverDao.update(adminWeaver);
+			}
+			for(Weaver joinWeaver:project.getJoinWeavers()){
+				joinWeaver.deletePass(project.getName());
+				weaverDao.update(joinWeaver);
+			}
 			projectDao.delete(project);
 			cacheManager.getCache("project").remove(project.getName());
 			return true;
@@ -196,7 +204,6 @@ public class ProjectService{
 			projectDao.insert(newProject);
 			projectDao.update(originProject);
 			
-
 			Pass pass = new Pass(newProject.getName(), 1);
 			weaver.addPass(pass);
 

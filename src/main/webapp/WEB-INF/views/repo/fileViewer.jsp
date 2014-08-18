@@ -3,7 +3,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <jsp:useBean id="dateValue" class="java.util.Date" />
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${repo.name}~${repo.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
@@ -83,7 +83,7 @@ $(document).ready(function() {
 								href="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 									<span class="span-button"> <i
 										style="zoom: 1.5; -moz-transform: scale(1.5);"
-										class="icon-eye-open icon-white"></i>
+										class="icon-eye-open"></i>
 										<p class="p-button">전체</p>
 									</span>
 							</a></td>

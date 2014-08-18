@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${project.name}~${project.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
@@ -28,12 +28,13 @@
 			
 			<div class="span8">
 				<ul class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">프로젝트 브라우져</a></li>
-					<li class="active" ><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
+					<li><a href="/project/${project.name}/">브라우져</a></li>
+					<li class="active" ><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 				</ul>
 			</div>
 			<div class="span4">
@@ -54,13 +55,17 @@
 							<td style="width: 710px;"
 								class="none-top-border post-top-title-short">${fn:substring(gitCommitLog.shortMassage,0,50)}</td>
 								
-							<td class="none-top-border td-commitlog-button" rowspan="2">
-								<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
+							<td class="none-top-border" style="width:190px" rowspan="2">
+								<a	onclick="return confirm('정말 이 커밋을 체리 바구니하시겠습니까?')" 
+								href="/project/${project.name}/cherry-pick/commit:${gitCommitLog.commitLogID}/add">
+										<span class="span-button"> <i  class="icon-css-padding icon-cherry"></i>
+											<p style ="margin-top: -2px;" class="p-button">체리</p></span>
+									</a>
+									<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 										<span class="span-button"> <i class="fa fa-eye"></i>
 											<p class="p-button">전체</p></span>
 									</a>
-									
-								<a	href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
+								<a	href="/project/${project.name}/${fn:substring(gitCommitLog.commitLogID,0,8)}/${project.getChatRoomName()}-${fn:substring(gitCommitLog.commitLogID,0,8)}.zip">
 										<span class="span-button"> <i class="fa fa-arrow-circle-o-down"></i>
 											<p class="p-button">다운</p></span>
 									</a>									
@@ -76,8 +81,16 @@
 
 						<tr>
 							<td style="border-top: 0px"></td>
-							<td style="" colspan="3">${gitCommitLog.fullMassage}</td>
+							<td style="font-size:13px;" colspan="3">${gitCommitLog.fullMassage}</td>
 						</tr>
+						<c:if test="${gitCommitLog.getNote().length() > 0}">
+						<tr>
+							<td style="border-top: 0px"></td>
+							<td style="font-size:13px;" colspan="3">
+							 <span class="label label-warning"><i class="fa fa-book"></i> 노트:</span> 
+    						${gitCommitLog.getNote()}</td>
+						</tr>
+						</c:if>
 					</tbody>
 				</table>
 				<c:if test="${fn:length(gitCommitLog.diff)>0}">

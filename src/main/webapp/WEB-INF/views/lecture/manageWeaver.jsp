@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${lecture.name}~ ${lecture.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/weaverBrowser.js"></script>
@@ -30,6 +30,9 @@ weaverList.push({
 $(document).ready(function() {
 	
 	$('#weaverAdd').click(function(){
+		if(!confirm('정말로 "+$('#weaverName').val()+"님을 초대하시겠습니까?'))
+			return;
+		
 		var weaverName = $('#weaverName').val();
 		
 		if(weaverName.length != 0)

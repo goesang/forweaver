@@ -71,13 +71,19 @@ public class Project implements Serializable {
 		this.openingDate = new Date();
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
-		this.tags.add("@"+originalProject.getName());
-		this.tags.addAll(originalProject.getTags());
+		if(originalProject.getOriginalProject() != null 
+				&& originalProject.getOriginalProject().length() >0){
+			this.tags.addAll(originalProject.getTags());
+		}else{
+			this.tags.add("@"+originalProject.getName());
+			this.tags.addAll(originalProject.getTags());
+		}
 		originalProject.getChildProjects().add(this);
 		this.originalProject = originalProject.getName();
+		
 	}
 	
-	public Project(String name,Weaver weaver,Repo repo,List<String> tags) { //팀프로젝트 포크할 때 생성자
+	public Project(String name,Weaver weaver,Repo repo,List<String> tags) { //팀 프로젝트 포크할 때 생성자
 		super();
 		this.name = weaver.getId()+"/"+name;
 		this.category = 2;

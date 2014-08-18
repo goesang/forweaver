@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>Forweaver : 공유해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
@@ -185,10 +185,10 @@
 
 					<span> <a id="show-content-button"
 						href="javascript:showCodeContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hideCodeContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
@@ -203,7 +203,7 @@
 								<i class='icon-file '></i> <span class='fileinput-filename'></span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span
-								class='fileinput-new'> <i class='icon-upload icon-white'></i></span>
+								class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
 								<span class='fileinput-exists'><i
 									class='icon-repeat icon-white'></i></span> <input type='file'
 								id='file' multiple='true' name='file'></span> <a href='#'
@@ -213,7 +213,7 @@
 					</div>
 				</div>
 				<!--<div class="pull-right"><a class="btn btn-inverse">
-					<i class="fa fa-pencil icon-white"></i> 코드 직접 입력하기</a></div>
+					<i class="fa fa-pencil"></i> 코드 직접 입력하기</a></div>
 				</div>
 				  <div class="span12">
 					<textarea name="content" id="post-content-textarea"

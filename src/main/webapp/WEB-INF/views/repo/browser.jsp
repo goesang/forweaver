@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${repo.lectureName}/${repo.name}~${repo.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
@@ -69,7 +69,7 @@ showFileBrowser("/");
 				<div class="span8"><label id ="labelPath"></label></div>
 				<div style = "margin-right:-10px;" class="span1">
 					<a	href="/lecture/${repo.lectureName}/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
-					<i style="zoom: 1.3; -moz-transform: scale(1.3);" class="icon-white icon-circle-arrow-down">
+					<i  class="fa fa-arrow-circle-o-down">
 					</i></a>
 				</div>				
 							

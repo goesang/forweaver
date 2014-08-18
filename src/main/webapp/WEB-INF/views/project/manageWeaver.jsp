@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${project.name}~ ${project.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/weaverBrowser.js"></script>
@@ -30,10 +30,12 @@ weaverList.push({
 $(document).ready(function() {
 	
 	$('#weaverAdd').click(function(){
+		if(!confirm('정말로 "+$('#weaverName').val()+"님을 초대하시겠습니까?'))
+			return;
 		var weaverName = $('#weaverName').val();
 		
 		if(weaverName.length != 0)
-			window.location = "http//forweaver.com//project/${project.name}/weaver/${joinWeaver.nickName}/add-weaver";
+			window.location = "/project/${project.name}/weaver/"+weaverName+"/add-weaver";
 	});
 	
 	$('#tags-input').textext()[0].tags().addTags(
@@ -104,13 +106,13 @@ $(document).ready(function() {
 		<div class="row">
 			<div class="span8">
 				<ul class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">프로젝트
-							브라우져</a></li>
-					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
+					<li><a href="/project/${project.name}/">브라우져</a></li>
+					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li  class="active"><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 				</ul>
 			</div>
 			<div class="span4">

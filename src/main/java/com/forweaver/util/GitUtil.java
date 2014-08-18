@@ -28,6 +28,7 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryCache;
 import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.notes.Note;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
@@ -167,25 +168,25 @@ public class GitUtil {
 		List<GitSimpleFileInfo> gitFileInfoList = new ArrayList<GitSimpleFileInfo>();
 
 		try{
-		ObjectId revId = this.localRepo.resolve(commitID);
-		TreeWalk treeWalk = new TreeWalk(this.localRepo);
+			ObjectId revId = this.localRepo.resolve(commitID);
+			TreeWalk treeWalk = new TreeWalk(this.localRepo);
 
-		treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
-		treeWalk.setRecursive(true);
-		while (treeWalk.next()) {
-			RevCommit revCommit = CommitUtils.getLastCommit(this.localRepo,
-					commitID, treeWalk.getPathString());
-			ObjectLoader loader = this.localRepo.open(treeWalk.getObjectId(0));
-			GitSimpleFileInfo gitFileInfo = new GitSimpleFileInfo(
-					treeWalk.getNameString(), treeWalk.getPathString(),
-					treeWalk.getDepth(),
-					loader.getType() == Constants.OBJ_TREE,
-					revCommit.getName(), revCommit.getShortMessage(),
-					revCommit.getCommitTime(),
-					revCommit.getCommitterIdent().getName(),
-					revCommit.getCommitterIdent().getEmailAddress());
-			gitFileInfoList.add(gitFileInfo);
-		}
+			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+			treeWalk.setRecursive(true);
+			while (treeWalk.next()) {
+				RevCommit revCommit = CommitUtils.getLastCommit(this.localRepo,
+						commitID, treeWalk.getPathString());
+				ObjectLoader loader = this.localRepo.open(treeWalk.getObjectId(0));
+				GitSimpleFileInfo gitFileInfo = new GitSimpleFileInfo(
+						treeWalk.getNameString(), treeWalk.getPathString(),
+						treeWalk.getDepth(),
+						loader.getType() == Constants.OBJ_TREE,
+						revCommit.getName(), revCommit.getShortMessage(),
+						revCommit.getCommitTime(),
+						revCommit.getCommitterIdent().getName(),
+						revCommit.getCommitterIdent().getEmailAddress());
+				gitFileInfoList.add(gitFileInfo);
+			}
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
@@ -216,7 +217,7 @@ public class GitUtil {
 					commit.getShortMessage(), commit.getFullMessage(), commit
 					.getCommitterIdent().getName(), commit
 					.getCommitterIdent().getEmailAddress(),
-					diffs, commit.getCommitTime());
+					diffs, this.getNote(commitID),commit.getCommitTime());
 		}catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -247,7 +248,7 @@ public class GitUtil {
 	public List<GitSimpleCommitLog> getCommitLogList(String branchName,
 			int page, int number) {
 		List<GitSimpleCommitLog> gitCommitLogList = new ArrayList<GitSimpleCommitLog>();
-		int startNumber = 1+number * (page - 1);
+		int startNumber = number * (page - 1);
 		try {
 
 			for(RevCommit commit:git.log().setSkip(startNumber).setMaxCount(number).call()){
@@ -505,7 +506,7 @@ public class GitUtil {
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
-			return array;
+		return array;
 	}
 
 	public GitParentStatistics getCommitStatistics(){
@@ -541,33 +542,77 @@ public class GitUtil {
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
-			return gitParentStatistics;
+		return gitParentStatistics;
 	}
 
 	public List<GitBlame> getBlame(String filePath, String commitID){
 		List<GitBlame> gitBlames = new ArrayList<GitBlame>();
 		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
-		
+
 		try{
 			BlameResult result = git.blame().setStartCommit(commit).setFilePath(filePath).call();
 
 			for(int i=0; i<result.getResultContents().size(); i++)
 				gitBlames.add(new GitBlame(result.getSourceCommit(i)));
-			
+
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
-			return gitBlames;
+		return gitBlames;
 	}
-	
+
 	public GitInfo getGitInfo(String branchName){
 		GitInfo gitInfo = new GitInfo();
 		try{
-		gitInfo.run(this.localRepo, branchName);
+			gitInfo.run(this.localRepo, branchName);
 		}catch(IOException e){
 			System.err.println(e.getMessage());
 		}
 		return gitInfo;
+	}
+
+	public String getNote(String commit){
+		String str = new String();
+		try{
+			Note note = git.notesShow().setObjectId(CommitUtils.getCommit(git.getRepository(), commit)).call();
+			ObjectLoader loader = this.localRepo.open(note.getData());
+			str = new String(loader.getBytes());
+		}finally{
+			return str;
+		}
+	}
+
+	public String cherryPick(String cherryPickRepo,String cherryPickCommit,String originalRepoBranch){
+		String returnState = new String();
+		cherryPickRepo = GitPath+cherryPickRepo+".git";
+		System.out.println(cherryPickRepo);
+		try{
+			File localPath = File.createTempFile("cherry", "");
+			localPath.delete();
+			Git.cloneRepository()
+			.setURI(cherryPickRepo)
+			.setDirectory(localPath)
+			.call();
+
+			Repository repo = new FileRepository(localPath+"/.git");
+			Git git = new Git(repo);
+			StoredConfig config = git.getRepository().getConfig();
+			config.unset("remote", "origin", "url");
+			config.save();
+			config.setString("remote", "origin", "url", this.path);
+			config.save();
+			git.fetch().call();
+			git.checkout().setName("refs/remotes/origin/"+originalRepoBranch).call();
+			git.branchCreate().setName("org").call();
+			git.checkout().setName("org").call();
+			
+			returnState = git.cherryPick().include(CommitUtils.getCommit(repo, cherryPickCommit)).call().getStatus().toString();
+			git.push().setRemote("origin").add("org:"+originalRepoBranch).call();
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+			returnState = "Error";
+		}
+		return returnState;
 	}
 
 }

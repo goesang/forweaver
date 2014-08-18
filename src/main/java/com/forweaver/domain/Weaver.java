@@ -217,5 +217,20 @@ public class Weaver implements UserDetails,Serializable {
 		this.weaverInfo = weaverInfo;
 	}
 	
+	public boolean isAdminWeaver(String joinName){
+		for(Pass pass : this.passes){
+			if(pass.getJoinName().equals(joinName) && pass.getPermission() > 0)
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean isJoinWeaver(String joinName){
+		for(Pass pass : this.passes){
+			if(pass.getJoinName().equals(joinName) && pass.getPermission() == 0)
+				return true;
+		}
+		return false;
+	}
 	
 }

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${lecture.name}~${lecture.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
@@ -91,13 +91,13 @@ showFileBrowser("/");
 				<div style="width: 90px;" class="span2">
 					<a id="show-content-button" class="btn btn-primary"
 						href="javascript:showUploadContent();"> <i
-						style="zoom: 1.3; -moz-transform: scale(1.3);"
-						class="icon-white icon-circle-arrow-up"> </i></a> <a
+						
+						class="fa fa-arrow-circle-o-up"> </i></a> <a
 						id="hide-content-button" class="btn btn-primary"
 						href="javascript:hideUploadContent();"> <i
-						style="zoom: 1.3; -moz-transform: scale(1.3);"
-						class="icon-white icon-circle-arrow-up"> </i></a> <a class="btn btn-primary" href="/lecture/${lecture.name}/repo/example/${selectBranch}/${lecture.name}-ex-${selectBranch}.zip">
-					<i style="zoom: 1.3; -moz-transform: scale(1.3);" class="icon-white icon-circle-arrow-down">
+						
+						class="fa fa-arrow-circle-o-up"> </i></a> <a class="btn btn-primary" href="/lecture/${lecture.name}/repo/example/${selectBranch}/${lecture.name}-ex-${selectBranch}.zip">
+					<i  class="fa fa-arrow-circle-o-down">
 					</i></a>
 				</div>
 				
@@ -113,7 +113,7 @@ showFileBrowser("/");
 					method="post">
 					<div class="span12">
 						<input class="title span10" type="text" name="message"
-							placeholder="커밋 내역을 입력해주세요!"></input>
+							placeholder="커밋을 입력해주세요!"></input>
 						<button type="submit" class="post-button btn btn-primary"
 							style="margin-top: -10px; display: inline-block;">
 							<i class="fa fa-check"></i>
@@ -127,7 +127,7 @@ showFileBrowser("/");
 									<i class='icon-file '></i> <span class='fileinput-filename'></span>
 								</div>
 								<span class='input-group-addon btn btn-primary btn-file'><span
-									class='fileinput-new'> <i class='icon-upload icon-white'></i></span>
+									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
 									<span class='fileinput-exists'><i
 										class='icon-repeat icon-white'></i></span> <input type='file'
 									id='file' multiple='true' name='zip'></span> <a href='#'

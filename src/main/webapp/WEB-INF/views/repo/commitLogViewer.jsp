@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${repo.lectureName}/${repo.name}~${repo.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
@@ -26,7 +26,6 @@
 					<li><a href="/lecture/${repo.lectureName}/repo">돌아가기</a></li>
 					<li><a href="/lecture/${repo.lectureName}/${repo.name}/browser">소스목록</a></li>
 					<li class="active"><a href="/lecture/${repo.lectureName}/${repo.name}/commitlog">커밋내역</a></li>
-					
 				</ul>
 			</div>
 			<div class="span4">
@@ -50,12 +49,12 @@
 								href="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 									<span class="span-button"> <i
 										style="zoom: 1.5; -moz-transform: scale(1.5);"
-										class="icon-eye-open icon-white"></i>
+										class="icon-eye-open"></i>
 										<p class="p-button">전체</p></span>
 							</a> <a href="/lecture/${repo.lectureName}/${repo.name}/${gitCommit.commitLogID}/${repo.lectureName}-${repo.name}.zip">
 									<span class="span-button"> <i
 										style="zoom: 1.5; -moz-transform: scale(1.5);"
-										class="icon-circle-arrow-down icon-white"></i>
+										class="icon-circle-arrow-down"></i>
 										<p class="p-button">다운</p></span>
 							</a>
 							</td>
@@ -70,8 +69,16 @@
 
 						<tr>
 							<td style="border-top: 0px"></td>
-							<td style="" colspan="3">${gitCommitLog.fullMassage}</td>
+								<td style="font-size:13px;" colspan="3">${gitCommitLog.fullMassage}</td>
 						</tr>
+						<c:if test="${gitCommitLog.getNote().length() > 0}">
+						<tr>
+							<td style="border-top: 0px"></td>
+							<td style="font-size:13px;" colspan="3">
+							 <span class="label label-warning"><i class="fa fa-book"></i> 노트:</span> 
+    						${gitCommitLog.getNote()}</td>
+						</tr>
+						</c:if>
 					</tbody>
 				</table>
 				<c:if test="${fn:length(gitCommitLog.diff)>0}">

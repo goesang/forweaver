@@ -21,7 +21,7 @@ function showWeaverList(index) {
 						weaverList[i]["email"]+
 						"</td>"+
 						"<td style='width: 42px;' class='td-button'>"+
-						"<span class='span-button'><i class='icon-user icon-white'></i>"+
+						"<span class='span-button'><i class='fa fa-user'></i>"+
 						"<p class='p-button'>괸리자</p>"+
 						"</span></td></tr>");				
 			} else {

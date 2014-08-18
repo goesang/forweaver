@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${repo.lectureName}/${repo.name} ~ ${repo.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
@@ -63,7 +63,7 @@
 			</div>
 			<div class="span12">
 				<div class="span9">
-					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i> 커밋 내역 목록</h4>
+					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i> 커밋 목록</h4>
 				</div>
 				<select id="selectBranch" class="span3">
 					<option value="/lecture/${repo.lectureName}/${repo.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>

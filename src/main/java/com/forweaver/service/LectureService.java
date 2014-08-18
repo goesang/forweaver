@@ -141,6 +141,14 @@ public class LectureService {
 	public boolean delete(Weaver weaver,Lecture lecture) {
 		// TODO Auto-generated method stub
 		if(weaver.getId().equals(lecture.getCreatorName())){
+			for(Weaver adminWeaver:lecture.getAdminWeavers()){
+				adminWeaver.deletePass(lecture.getName());
+				weaverDao.update(adminWeaver);
+			}
+			for(Weaver joinWeaver:lecture.getJoinWeavers()){
+				joinWeaver.deletePass(lecture.getName());
+				weaverDao.update(joinWeaver);
+			}
 			lectureDao.delete(lecture);
 			cacheManager.getCache("lecture").remove(lecture.getName());
 			return true;
@@ -254,9 +262,9 @@ public class LectureService {
 		return this.get(lectureAndRepoName.split("/")[0]).getRepo(lectureAndRepoName.split("/")[1]);
 	}
 	
-	public String fork(Lecture lecture,Repo repo, Project newProject, Weaver weaver){
+	public String createTeamProject(Lecture lecture,Repo repo, Project newProject, Weaver weaver){
 		
-		if(!repo.getCreator().getId().equals(weaver.getId()) &&repo.getCategory() ==2 && !repo.isJoinWeaver(weaver)){
+		if(!repo.getCreator().getId().equals(weaver.getId()) && repo.getCategory() ==2 && !repo.isJoinWeaver(weaver)){
 			if(this.get(newProject.getName())!=null){
 				while(true){
 					int cnt=1;
@@ -273,7 +281,6 @@ public class LectureService {
 			projectDao.insert(newProject);
 			lectureDao.update(lecture);
 			
-
 			Pass pass = new Pass(newProject.getName(), 1);
 			weaver.addPass(pass);
 

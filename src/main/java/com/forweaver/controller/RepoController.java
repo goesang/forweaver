@@ -344,7 +344,7 @@ public class RepoController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
 		String newProjectName=
-				lectureService.fork(lecture,repo, 
+				lectureService.createTeamProject(lecture,repo, 
 						new Project(repo.getName(), currentWeaver, repo, lecture.getTags()),
 								currentWeaver);
 

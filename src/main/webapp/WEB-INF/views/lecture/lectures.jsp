@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>Forweaver : 강의페이지!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
@@ -154,10 +154,10 @@
 
 					<span> <a id="show-content-button"
 						href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
 						<button type="submit" id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>

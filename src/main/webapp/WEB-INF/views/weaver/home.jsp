@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
@@ -117,7 +117,7 @@
 					<div class="span1">
 						<span> <a id='search-button'
 							class="post-button btn btn-primary"> <i
-								class="icon-search icon-white"></i>
+								class="icon-search"></i>
 						</a>
 						</span>
 					</div>

@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <title>Forweaver : 포위버란 무엇인가?</title>
 </head>

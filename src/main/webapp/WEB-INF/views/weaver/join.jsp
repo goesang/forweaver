@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
@@ -137,7 +137,7 @@ $(document).ready(function() {
 					  <div class='input-group' style="width: 340px;">
 					    <div class='form-control' data-trigger='fileinput' style="width: 210px;" ><i class='icon-file '></i> <span class='fileinput-filename'></span></div>
 					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
-					    <i class='icon-upload icon-white'></i></span>
+					    <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
 					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
 						<input onchange ='fileUploadChange(this);' type='file' id='image' multiple='true' name='image'></span>
 					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
@@ -156,7 +156,7 @@ $(document).ready(function() {
 						</div>
 						<div class="join-form-actions-white">
 
-							<button type="submit" class="btn btn-block btn-inverse"><i class="fa fa-pencil-square icon-white"></i>&nbsp;&nbsp;가입하기</button>
+							<button type="submit" class="btn btn-block btn-inverse"><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;가입하기</button>
 						</div>
 						</div>
 					</fieldset>

@@ -16,18 +16,19 @@ public class GitCommitLog implements Serializable {
 	private String fullMassage;
 	private String commiterName;
 	private String commiterEmail;
-	private String imgSrc;
 	private String diff;
+	private String note;
 	private Date commitDate;
 	
 	public GitCommitLog(String commitLogID, String shortMassage,String fullMassage,
-			String commiterName, String commiterEmail,String diff,
+			String commiterName, String commiterEmail,String diff,String note,
 			int commitDate) {
 		this.commitLogID = commitLogID;
 		this.shortMassage = shortMassage;
 		this.fullMassage = fullMassage;
 		this.commiterName = commiterName;
 		this.commiterEmail = commiterEmail;
+		this.note = note;
 		this.diff = diff;
 		this.commitDate = new Date(commitDate*1000L);
 	}
@@ -66,15 +67,7 @@ public class GitCommitLog implements Serializable {
 	}
 	
 	public String getImgSrc(){
-		
-		if(this.imgSrc != null)
-			return imgSrc;
-		else
-			return "http://www.gravatar.com/avatar/"+WebUtil.convertMD5(this.commiterEmail)+".jpg";
-	}
-
-	public void setImgSrc(String imgSrc) {
-		this.imgSrc = imgSrc;
+		return "/"+this.commiterEmail.replace(".", ",")+"/img";
 	}
 
 	public String getFullMassage() {
@@ -88,6 +81,12 @@ public class GitCommitLog implements Serializable {
 	}
 	public void setDiff(String diff) {
 		this.diff = diff;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
 	}	
 	
 }

@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>${project.name} ~ ${project.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
@@ -118,13 +118,13 @@ var editorMode = false;
 		
 		<div class="span7">
 				<ul id="myTab" class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">프로젝트
-							브라우져</a></li>
-					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
+					<li><a href="/project/${project.name}/">브라우져</a></li>
+					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 				</ul>
 				
 				<ul style="display:none;" class="nav nav-tabs" id="communityTab">
@@ -159,10 +159,10 @@ var editorMode = false;
 					<span> <a id='search-button'
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>

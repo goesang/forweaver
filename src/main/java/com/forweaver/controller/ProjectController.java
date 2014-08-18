@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.domain.CherryPickRequest;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.chat.ChatRoom;
-import com.forweaver.domain.git.GitBlame;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
-import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.service.ChatService;
+import com.forweaver.service.CherryPickRequestService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
@@ -60,6 +60,8 @@ public class ProjectController {
 	TagService tagService;
 	@Autowired
 	ChatService chatService;
+	@Autowired
+	CherryPickRequestService cherryPickRequestService;
 
 	@RequestMapping("/")
 	public String projects() {
@@ -268,7 +270,7 @@ public class ProjectController {
 				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 		return "/project/fileViewer";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/filepath:{filePath}/blame")
 	public String blame(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -700,7 +702,7 @@ public class ProjectController {
 
 		return "redirect:/project/";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/info")
 	public String info(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
@@ -712,7 +714,7 @@ public class ProjectController {
 		model.addAttribute("list", list);
 		return "/project/info";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/info:stream")
 	public String stream(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
@@ -722,7 +724,7 @@ public class ProjectController {
 		model.addAttribute("gps", gitService.loadStatistics(creatorName, projectName));
 		return "/project/stream";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/info:frequency")
 	public String punchcard(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
@@ -732,7 +734,7 @@ public class ProjectController {
 		model.addAttribute("dayAndHour", gitService.loadDayAndHour(creatorName, projectName));
 		return "/project/frequency";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/chat") //채팅
 	public String chat(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model){
@@ -765,5 +767,53 @@ public class ProjectController {
 			return "redirect:/project/"+newProjectName;
 		}
 	}
+
+	@RequestMapping("/{creatorName}/{projectName}/cherry-pick") // 채리픽 요청 목록
+	public String cherryPickRequests(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,Model model){
+		Project project = projectService.get(creatorName+"/"+projectName);
+		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+
+		model.addAttribute("project", project);
+		model.addAttribute("cherryPicks", cherryPickRequestService.get(project));
+		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
+		model.addAttribute("selectBranch",gitBranchList.get(0));
+		return "/project/cherryPick";
+	}
+
+	@RequestMapping("/{creatorName}/{projectName}/cherry-pick/commit:{commit}/add") // 채리픽 요청 추가
+	public String addCherryPickRequest(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,@PathVariable("commit") String commit){
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+
+		if(project.getOriginalProject() == null || project.getOriginalProject().length() == 0)
+			return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
+
+		Project orginalProject = projectService.get(project.getOriginalProject());
+
+		if(cherryPickRequestService.add(orginalProject, project, currentWeaver, commit))
+			return "redirect:/project/"+project.getOriginalProject()+"/cherry-pick";
+
+		return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
+	}
 	
+	@RequestMapping("/{creatorName}/{projectName}/cherry-pick/branch:{branch}/id:{id}/accept") // 채리픽 요청 수락
+	public String acceptCherryPickRequest(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,@PathVariable("branch") String branch,@PathVariable("id") String id){
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		CherryPickRequest cherryPickRequest = cherryPickRequestService.get(id);
+		cherryPickRequestService.accept(cherryPickRequest, branch, currentWeaver);
+		return "redirect:/project/"+creatorName+"/"+projectName+"/cherry-pick";
+	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/cherry-pick/id:{id}/delete") // 채리픽 요청 삭제
+	public String deleteCherryPickRequest(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,@PathVariable("id") String id){
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		CherryPickRequest cherryPickRequest = cherryPickRequestService.get(id);
+		cherryPickRequestService.delete(cherryPickRequest, currentWeaver);
+		return "redirect:/project/"+creatorName+"/"+projectName+"/cherry-pick";
+	}
+
 }

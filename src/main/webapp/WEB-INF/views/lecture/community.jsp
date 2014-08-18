@@ -156,10 +156,10 @@ var editorMode = false;
 					<span> <a id='search-button'
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
@@ -185,7 +185,7 @@ var editorMode = false;
 											test="${post.isLong()}">
 											<i class=" icon-align-justify"></i>
 										</c:if> <c:if test="${!post.isLong()}">
-											<i class="icon-comment"></i>
+											<i class="fa fa-comment"></i>
 										</c:if> &nbsp;${post.title}
 								</a></td>
 								<td class="td-button" rowspan="2">

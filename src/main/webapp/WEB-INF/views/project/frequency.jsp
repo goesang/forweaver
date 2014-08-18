@@ -80,6 +80,12 @@ text.axis-worktime {
 <script src="/resources/forweaver/js/d3-tip.min.js"></script>
 </head>
 <body>
+<script>
+$(document).ready(function() {
+	$('#tags-input').textext()[0].tags().addTags(
+			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+});
+</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
@@ -92,8 +98,8 @@ text.axis-worktime {
 		<div class="row">
 			<div class="span8">
 				<ul class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">프로젝트 브라우져</a></li>
-					<li><a href="/project/${project.name}/commitlog">커밋 내역</a></li>
+					<li><a href="/project/${project.name}/">브라우져</a></li>
+					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);"
 						onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>

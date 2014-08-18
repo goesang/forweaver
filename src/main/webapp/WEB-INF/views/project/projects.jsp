@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<head>
+<html><head>
 <title>Forweaver : 프로젝트 페이지!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
@@ -181,10 +181,10 @@
 
 					<span> <a id="show-content-button"
 						href="javascript:showProjectContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hideProjectContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil-square-o"></i>
+						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
 						<button id='project-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
