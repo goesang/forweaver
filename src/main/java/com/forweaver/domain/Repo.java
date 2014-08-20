@@ -163,11 +163,11 @@ public class Repo implements Serializable {
 				this.isNotJoinWeaver.remove(i);
 	}
 	
-	public boolean isJoinWeaver(Weaver joinWeaver){
+	public boolean isNotJoinWeaver(Weaver joinWeaver){
 		for(int i=0;i<this.isNotJoinWeaver.size();i++)
 			if(this.isNotJoinWeaver.get(i).getId().equals(joinWeaver.getId()))
-				return false;
-		return true;
+				return true;
+		return false;
 	}
 	
 	

@@ -29,9 +29,13 @@ $(document).ready(function() {
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
-				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big>
+				<big><big>	<c:if test="${!project.isForkProject()}">
+							<i class="fa fa-bookmark"></i></c:if>
+							<c:if test="${project.isForkProject()}">
+							<i class="fa fa-code-fork"></i></c:if> 
+							${project.name}</big></big>
 				<small>${project.description}</small>
 			</h5>
 		</div>

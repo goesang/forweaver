@@ -36,7 +36,7 @@
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-twitter"></i> 찾아보세요!</big></big> <small>관심있는 주제를 가지고 다른 위버를 찾아보세요!</small>
@@ -76,7 +76,7 @@
 										<p class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-university"></i>
-										<p class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','$id')}</p> </span></td>	
+										<p class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','weaverID')}</p> </span></td>	
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
 										<p class="p-button-mini">${weaver.getInfo('projectCount')}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	

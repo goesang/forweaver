@@ -29,7 +29,7 @@ $(document).ready(function() {
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
 				<small>${repo.description}</small>
@@ -41,7 +41,10 @@ $(document).ready(function() {
 					<li><a href="/lecture/${repo.lectureName}/repo">돌아가기</a></li>
 					<li class="active"><a href="/lecture/${repo.lectureName}/${repo.name}/browser">소스목록</a></li>
 					<li><a href="/lecture/${repo.lectureName}/${repo.name}/commitlog">커밋내역</a></li>
-					
+					<c:if test="${repo.getCategory() == 2}">
+						<li><a onclick="return confirm('정말 팀프로젝트로 포크하시겠습니까?')"
+						href="/lecture/${repo.lectureName}/${repo.name}/fork">포크</a></li>
+					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
@@ -82,8 +85,8 @@ $(document).ready(function() {
 							<td class="none-top-border td-button" rowspan="2"><a
 								href="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 									<span class="span-button"> <i
-										style="zoom: 1.5; -moz-transform: scale(1.5);"
-										class="icon-eye-open"></i>
+										
+										class="fa fa-eye"></i>
 										<p class="p-button">전체</p>
 									</span>
 							</a></td>

@@ -77,7 +77,6 @@
 	
 	
 	$(function() {
-			
 			hidePostContent();
 			$('#search-button').click(
 					function() {
@@ -120,7 +119,7 @@
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-university"></i> 수강해보세요!</big></big> <small>강의를
@@ -133,8 +132,6 @@
 			</h5>
 		</div>
 		<div class="row">
-
-
 			<div id="search-div" class="span10">
 				<input id="post-search-input" class="title span10"
 					placeholder="검색어를 입력하여 강의를 찾아보세요!" type="text" />
@@ -148,10 +145,8 @@
 						name="description" id="lecture-description" class="title span7"
 						placeholder="강의에 대해 소개해주세요!" type="text" />
 				</div>
-
+				
 				<div class="span2">
-
-
 					<span> <a id="show-content-button"
 						href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
@@ -176,7 +171,7 @@
 									src="${lecture.getImgSrc()}"></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/lecture/${lecture.name}"> <i
-										class='fa fa-university'></i> &nbsp;${lecture.name} ~
+										class='fa fa-university'></i>&nbsp;${lecture.name} ~
 										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
 								</a></td>
 								<td class="td-button" rowspan="2"><sec:authorize

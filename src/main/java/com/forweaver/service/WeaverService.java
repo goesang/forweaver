@@ -32,11 +32,9 @@ import com.mongodb.DBObject;
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
 
-	@Autowired
-	private WeaverDao weaverDao;
+	@Autowired private WeaverDao weaverDao;
 
-	@Autowired
-	@Qualifier("sessionRegistry")
+	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
 
 	@Override
@@ -68,8 +66,11 @@ public class WeaverService implements UserDetailsService {
 	}
 
 	public void add(Weaver weaver) { // 회원 추가 서비스
-
-		Pass pass = new Pass("ROLE_USER"); // 최초 회원 가입시 권한 부여
+		Pass pass;
+		if(weaverDao.existsWeaver())
+			pass = new Pass("ROLE_USER"); 
+		 else
+			 pass = new Pass("ROLE_ADMIN"); // 최초 회원 가입시 운영자 지위
 		weaver.addPass(pass);
 		weaverDao.insert(weaver);
 		File file = new File(GitUtil.GitPath + weaver.getId());

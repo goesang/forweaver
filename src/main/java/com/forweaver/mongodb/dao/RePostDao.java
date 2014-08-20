@@ -14,8 +14,7 @@ import com.forweaver.domain.RePost;
 
 @Repository
 public class RePostDao {
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	@Autowired private MongoTemplate mongoTemplate;
 
 	public void insert(RePost rePost) { // 글 추가하기
 		if (!mongoTemplate.collectionExists(RePost.class)) {
@@ -32,7 +31,7 @@ public class RePostDao {
 		mongoTemplate.insert(rePost);
 	}
 
-	public List<RePost> get(int ID,int kind, String sort) { // 글 가져오기
+	public List<RePost> get(String ID,int kind, String sort) { // 글 가져오기
 
 		Criteria criteria = 
 				new Criteria().and("originalPostID").is(ID).and("kind").is(kind);
@@ -53,7 +52,7 @@ public class RePostDao {
 		mongoTemplate.remove(rePost);
 	}
 
-	public void deleteAll(int originalPostID) {
+	public void deleteAll(String originalPostID) {
 		Query query = new Query(Criteria.where("originalPostID").is(
 				originalPostID));
 		mongoTemplate.remove(query, RePost.class);

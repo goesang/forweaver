@@ -29,12 +29,9 @@ import com.forweaver.util.GitUtil;
  */
 @Component("GitFilter")
 public class GitFilter implements Filter {
-	@Autowired
-	WeaverService weaverService;
-	@Autowired
-	LectureService lectureService;
-	@Autowired
-	ProjectService projectService;
+	@Autowired WeaverService weaverService;
+	@Autowired LectureService lectureService;
+	@Autowired ProjectService projectService;
 
 	private FilterConfig config = null;
 

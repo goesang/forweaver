@@ -14,23 +14,25 @@
 	function fileUploadChange(fileUploader){
 		var fileName = $(fileUploader).val();			
 		$(function (){
-		if($(fileUploader).val()!=""){ // 파일을 업로드하거나 수정함
-			if(fileUploader.getId() == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-				if(fileName.indexOf("C:\\fakepath\\") != -1)
-					fileName = fileName.substring(12);
-				fileHash[fileName] = mongoObjectId();
-				$.ajax({
-				    url: '/data/tmp',
-	                type: "POST",
-	                contentType: false,
-	                processData: false,
-	                data: function() {
-	                    var data = new FormData();
-	                    data.append("objectID", fileHash[fileName]);
-	                    data.append("file", fileUploader.files[0]);
-	                    return data;
-	                }()
-				});	
+		if(fileName !=""){ // 파일을 업로드하거나 수정함
+			if(fileName.indexOf("C:\\fakepath\\") != -1)
+				fileName = fileName.substring(12);
+			fileHash[fileName] = mongoObjectId();
+			$.ajax({
+			    url: '/data/tmp',
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: function() {
+                    var data = new FormData();
+                    data.append("objectID", fileHash[fileName]);
+                    data.append("file", fileUploader.files[0]);
+                    return data;
+                }()
+			});	
+			$("#repost-content").val($("#repost-content").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+		
+			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 		fileCount++;
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
@@ -43,7 +45,7 @@
 				"</div>");
 			}
 		}else{
-			if(fileUploader.getId() == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
+			if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
 				
 			$("#file"+fileCount).parent().parent().remove();
 
@@ -260,7 +262,8 @@
 								</tr>
 							</c:if>
 							<tr>
-								<td class="none-top-border repost-top-title" colspan="5">${rePost.content}</td>
+								<td class="none-top-border post-content-max" colspan="5">
+								<s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(rePost.getContent())" /></td>
 							</tr>
 
 							<tr>

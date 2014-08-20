@@ -75,8 +75,7 @@ var editorMode = false;
 		               url: "/lecture/${lecture.name}/community/add",
 		               data: 'title='+title+'&content='+content+' &tags='+tags,
 		               success: function(msg){
-		            	   var tagNames = $("input[name='tags']").val();
-		            	   movePage(tagNames,"");
+		            	   window.location="/lecture/${lecture.name}/community/";
 		               }
 		         });
 			});
@@ -100,7 +99,7 @@ var editorMode = false;
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
 			<big><big><i class="fa fa-university"></i> ${lecture.name}</big></big> 
 			<small>${lecture.description}</small>
@@ -147,15 +146,13 @@ var editorMode = false;
 						class="input-block-level">
 				</div>
 			</div>
-						<div class="span9">
-					<input id="post-title-input" class="title span9"
+						<div class="span10">
+					<input id="post-title-input" class="title span10"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
 						value="" />
 				</div>
-				<div class="span3">
-					<span> <a id='search-button'
-						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="show-content-button" href="javascript:showPostContent();"
+				<div class="span2">
+					<span> <a id="show-content-button" href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"

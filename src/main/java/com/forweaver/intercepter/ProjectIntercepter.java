@@ -17,13 +17,16 @@ import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
 public class ProjectIntercepter extends HandlerInterceptorAdapter {
-	@Autowired 
+	@Autowired
+ 
 	WeaverService weaverService;
 
-	@Autowired 
+	@Autowired
+ 
 	TagService tagService;
 
-	@Autowired 
+	@Autowired
+ 
 	ProjectService projectService;
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)

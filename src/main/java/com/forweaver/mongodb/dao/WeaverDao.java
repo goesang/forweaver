@@ -1,7 +1,5 @@
 package com.forweaver.mongodb.dao;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 import java.util.List;
@@ -21,10 +19,12 @@ import com.mongodb.DBObject;
 @Repository
 public class WeaverDao {
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
-
-
+	@Autowired private MongoTemplate mongoTemplate;
+	
+	public boolean existsWeaver() { // 회원 존재 여부
+		return mongoTemplate.collectionExists(Weaver.class);
+	}
+	
 	public void insert(Weaver weaver) { // 회원 추가하기
 		if (!mongoTemplate.collectionExists(Weaver.class)) {
 			mongoTemplate.createCollection(Weaver.class);

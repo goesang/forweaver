@@ -89,9 +89,13 @@ $(document).ready(function() {
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
-				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big>
+				<big><big>	<c:if test="${!project.isForkProject()}">
+							<i class="fa fa-bookmark"></i></c:if>
+							<c:if test="${project.isForkProject()}">
+							<i class="fa fa-code-fork"></i></c:if> 
+							${project.name}</big></big>
 				<small>${project.description}</small>
 			</h5>
 		</div>
@@ -105,6 +109,9 @@ $(document).ready(function() {
 						onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li class="active"><a href="/project/${project.name}/info">정보</a></li>
+					<c:if test="${project.getChildProjects().size() > 0 && project.getCategory() != 2}">
+						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
@@ -116,7 +123,7 @@ $(document).ready(function() {
 			</div>
 
 			<div class="span8">
-				<h4>펀치 카드</h4>
+				
 			</div>
 			<div class="carousel span4">
 				<ol class="carousel-indicators">
@@ -131,13 +138,14 @@ $(document).ready(function() {
 					</a>
 				</ol>
 			</div>
-
-			<div id="punchcard"></div>
-			<br>
+			
 			<div class="span12">
+			<h4>펀치 카드</h4>
+			<div style="margin-left: -30px;" id="punchcard"></div>
+			<br>
 				<h4>힛 맵</h4>
 
-				<div style="margin-top: -30px; margin-left: 10px" id="chart"></div>
+				<div style="margin-top: -30px;" id="chart"></div>
 			</div>
 			<script type="text/javascript">
 var w = 950,

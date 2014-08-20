@@ -17,7 +17,7 @@ public class Project implements Serializable {
 	static final long serialVersionUID = 4231232323123124234L;
 	@Id
 	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트 1이면 비공개 프로젝트 2이면 팀프로젝트 포크.
+	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, 2이면 팀프로젝트 포크.
 	private String description; // 프로젝트 소개
 	private Date openingDate; // 프로젝트 시작일
 	private Date endDate; // 프로젝트 종료일
@@ -243,6 +243,12 @@ public class Project implements Serializable {
 			 return -1;
 		 
 		 return leftDay;
+	}
+	
+	public boolean isForkProject(){
+		if(this.originalProject != null && this.originalProject.length() > 0)
+			return true;
+		return false;
 	}
 	
 	

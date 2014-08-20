@@ -3,10 +3,6 @@ package com.forweaver.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import net.sf.ehcache.search.Attribute;
-import net.sf.ehcache.search.Query;
-import net.sf.ehcache.search.Result;
-import net.sf.ehcache.search.Results;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +14,9 @@ import com.forweaver.mongodb.dao.DataDao;
 @Service
 public class DataService {
 
-	@Autowired
-	DataDao dataDao;
+	@Autowired DataDao dataDao;
 
-	@Autowired
-	private CacheManager cacheManager;
+	@Autowired private CacheManager cacheManager;
 	
 	public Data get(String dataID) {
 		Cache tmpCache = cacheManager.getCache("tmp");

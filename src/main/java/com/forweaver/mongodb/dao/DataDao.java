@@ -18,8 +18,7 @@ import com.forweaver.domain.Weaver;
 
 @Repository
 public class DataDao {
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	@Autowired private MongoTemplate mongoTemplate;
 
 	public void insert(Data data) { // 글 추가하기
 		if (!mongoTemplate.collectionExists(Data.class)) {

@@ -15,8 +15,7 @@ import com.forweaver.domain.Project;
 @Repository
 public class CherryPickRequestDao {
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	@Autowired private MongoTemplate mongoTemplate;
 	public void add(CherryPickRequest cherryPickRequest) { // 체리픽 요청 추가
 		if (!mongoTemplate.collectionExists(CherryPickRequest.class)) {
 			mongoTemplate.createCollection(CherryPickRequest.class);

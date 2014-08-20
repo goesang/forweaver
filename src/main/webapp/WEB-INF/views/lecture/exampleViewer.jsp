@@ -34,7 +34,7 @@ $(document).ready(function() {
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-university"></i> ${lecture.name}</big></big> 
 			<small>${lecture.description}</small>
@@ -90,8 +90,8 @@ $(document).ready(function() {
 							<td class="none-top-border td-button" rowspan="2"><a
 								href="/lecture/${lecture.name}/example/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 									<span class="span-button"> <i
-										style="zoom: 1.5; -moz-transform: scale(1.5);"
-										class="icon-eye-open"></i>
+										
+										class="fa fa-eye"></i>
 										<p class="p-button">전체</p>
 									</span>
 							</a></td>

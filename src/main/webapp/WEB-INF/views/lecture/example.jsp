@@ -60,7 +60,7 @@ showFileBrowser("/");
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-university"></i> ${lecture.name}</big></big> 
 			<small>${lecture.description}</small>

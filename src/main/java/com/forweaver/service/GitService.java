@@ -23,8 +23,7 @@ import com.forweaver.util.GitUtil;
 @Service
 public class GitService {
 
-	@Autowired
-	private WeaverDao weaverDao;
+	@Autowired private WeaverDao weaverDao;
 
 
 	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,

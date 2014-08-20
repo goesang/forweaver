@@ -42,21 +42,15 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/lecture")
 public class LectureController {
 
+	@Autowired WaitJoinService waitJoinService;
+	@Autowired LectureService lectureService;
+	@Autowired WeaverService weaverService;
+	@Autowired GitService gitService;
+	@Autowired TagService tagService;
+	@Autowired PostService postService;
+	@Autowired RePostService rePostService;
 	@Autowired
-	WaitJoinService waitJoinService;
-	@Autowired
-	LectureService lectureService;
-	@Autowired
-	WeaverService weaverService;
-	@Autowired
-	GitService gitService;
-	@Autowired
-	TagService tagService;
-	@Autowired
-	PostService postService;
-	@Autowired
-	RePostService rePostService;
-	@Autowired 
+ 
 	private ChatService chatService;
 	
 	@RequestMapping("/")
@@ -238,11 +232,6 @@ public class LectureController {
 	public String addPost(@PathVariable("lectureName") String lectureName,
 			HttpServletRequest request) throws UnsupportedEncodingException {
 			
-		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-		final Map<String, MultipartFile> files = multiRequest.getFileMap();
-		
-		ArrayList<Data> datas = new ArrayList<Data>();
-			
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
@@ -259,17 +248,13 @@ public class LectureController {
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
 			return "redirect:/lecture/"+lectureName;
 			
-		for (MultipartFile file : files.values()) {
-			if(!file.isEmpty())
-				datas.add(new Data(file,weaver.getId()));
-        }
         
 		Post post = new Post(weaver,
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
 				tagList);
 		
-		postService.add(post,datas);
+		postService.add(post,null);
 		return "redirect:/lecture/"+lectureName+"/community";
 	}
 	

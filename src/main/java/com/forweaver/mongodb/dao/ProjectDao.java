@@ -16,8 +16,7 @@ import com.forweaver.domain.Weaver;
 
 @Repository
 public class ProjectDao {
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	@Autowired private MongoTemplate mongoTemplate;
 	
 	public void insert(Project project) { // 프로젝트를 생성함.
 		
@@ -51,7 +50,7 @@ public class ProjectDao {
 			String search,
 			Weaver creator,
 			String sort) {
-		Criteria criteria = new Criteria();
+		Criteria criteria = new Criteria().where("category").ne(2);
 		
 		if(search != null)
 			criteria.orOperator(new Criteria("name").regex(search),
@@ -74,7 +73,7 @@ public class ProjectDao {
 			String sort,
 			int page, 
 			int size) {
-		Criteria criteria = new Criteria();
+		Criteria criteria = new Criteria().where("category").ne(2);
 		
 		if(search != null)
 			criteria.orOperator(new Criteria("name").regex(search),
@@ -99,6 +98,8 @@ public class ProjectDao {
 			criteria.and("push").gt(0);
 		} else if (sort.equals("push-null")) {
 			criteria.and("push").is(0);
+		} else if (sort.equals("fork")) {
+			criteria.and("originalProject").exists(true);
 		} else if (sort.equals("solo")) {
 			criteria.where("adminWeavers").size(1).and("joinWeavers").size(0);
 		}

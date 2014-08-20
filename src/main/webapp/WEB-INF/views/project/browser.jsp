@@ -65,9 +65,13 @@ showFileBrowser("/");
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
-				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big>
+				<big><big>	<c:if test="${!project.isForkProject()}">
+							<i class="fa fa-bookmark"></i></c:if>
+							<c:if test="${project.isForkProject()}">
+							<i class="fa fa-code-fork"></i></c:if> 
+							${project.name}</big></big>
 				<small>${project.description}</small>
 			</h5>
 		</div>
@@ -80,7 +84,10 @@ showFileBrowser("/");
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
-					<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					
+					<c:if test="${project.getChildProjects().size() > 0 && project.getCategory() != 2}">
+						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					</c:if>
 				</ul>
 			</div>
 			<div class="span4">

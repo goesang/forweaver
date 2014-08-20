@@ -75,8 +75,7 @@ var editorMode = false;
 		               url: "/project/${project.name}/community/add",
 		               data: 'title='+title+'&content='+content+' &tags='+tags,
 		               success: function(msg){
-		            	   var tagNames = $("input[name='tags']").val();
-		            	   movePage(tagNames,"");
+		            	   window.location="/project/${project.name}/community/";
 		               }
 		         });
 			});
@@ -101,9 +100,13 @@ var editorMode = false;
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
-				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big> 
+								<big><big>	<c:if test="${!project.isForkProject()}">
+							<i class="fa fa-bookmark"></i></c:if>
+							<c:if test="${project.isForkProject()}">
+							<i class="fa fa-code-fork"></i></c:if> 
+							${project.name}</big></big>
 				<small>${project.description}</small>
 				<div style="margin-top:-10px" class="pull-right">
 
@@ -124,7 +127,10 @@ var editorMode = false;
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
-					<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					
+					<c:if test="${project.getChildProjects().size() > 0 && project.getCategory() != 2}">
+						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					</c:if>
 				</ul>
 				
 				<ul style="display:none;" class="nav nav-tabs" id="communityTab">
@@ -150,15 +156,13 @@ var editorMode = false;
 				</div>
 			</div>
 			
-				<div class="span9">
-					<input id="post-title-input" class="title span9"
+				<div class="span10">
+					<input id="post-title-input" class="title span10"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
 						value="" />
 				</div>
-				<div class="span3">
-					<span> <a id='search-button'
-						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="show-content-button" href="javascript:showPostContent();"
+				<div class="span2">
+					<span> <a id="show-content-button" href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"

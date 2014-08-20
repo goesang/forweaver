@@ -61,7 +61,7 @@
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
 				<big><big><i class="fa fa-university"></i>
@@ -129,8 +129,10 @@
 					<c:forEach items="${lecture.repos}" var="repo">
 						<c:if test="${repo.name !='example'}">
 							<tr>
-								<td class="td-post-writer-img" rowspan="2"><i
-									class="fa fa-bomb fa-3x"></i></td>
+								<td class="td-post-writer-img"  rowspan="2">
+									<c:if test="${repo.category == 1}"><i class="fa fa-bomb fa-3x"></i></c:if>
+									<c:if test="${repo.category == 2}"><i class="fa fa-bolt fa-3x"></i></c:if>
+								</td>
 								<td class="post-top-title"><b><a class="a-post-title"
 										href="/lecture/${lecture.name}/${repo.name}/">
 											${repo.name} </a></b><small>${repo.getOpeningDateFormat()}</small></td>
@@ -150,6 +152,32 @@
 							<tr>
 								<td class="post-bottom">${repo.description}</td>
 							</tr>
+							
+							<c:forEach items="${repo.childProjects}" var="project">
+							<tr>
+							<td class="td-post-writer-img"  rowspan="2"></td>
+								<td class="post-top-title">
+								<i class="fa fa-level-up fa-flip-horizontal"></i>
+								<b><a class="a-post-title"
+										href="/project/${project.name}/">
+											${project.name} </a></b><small>${project.getOpeningDateFormat()}</small></td>
+								<td class="td-button" rowspan="2"><c:if
+										test="${project.getDDay() == -2}">
+										<span class="span-button"><i class="fa fa-recycle"></i>
+											<p class="p-button">무제한</p> </span>
+									</c:if> <c:if test="${project.getDDay() == -1}">
+										<span class="span-button"><i class="fa fa-clock-o"></i>
+											<p class="p-button">종료</p> </span>
+									</c:if> <c:if test="${project.getDDay() >= 0}">
+										<span class="span-button">${repo.getDDay()}<p
+												class="p-button">마감</p>
+										</span>
+									</c:if></td>
+							</tr>
+							<tr>
+								<td class="post-bottom">${project.description}</td>
+							</tr>
+							</c:forEach>
 						</c:if>
 					</c:forEach>
 				</table>

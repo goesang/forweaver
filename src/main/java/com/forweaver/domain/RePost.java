@@ -16,7 +16,7 @@ public class RePost implements Serializable {
 	static final long serialVersionUID = 57346461551669134L;
 	@Id
 	private int rePostID;
-	private int originalPostID;
+	private String originalPostID;
 	private String content;
 	private Date created;
 	private int push;
@@ -35,7 +35,7 @@ public class RePost implements Serializable {
 	public RePost() {
 	}
 
-	public RePost(int originalPostID,Weaver origianlWriter, Weaver writer, String content,List<String> tags,int kind) {
+	public RePost(String originalPostID,Weaver origianlWriter, Weaver writer, String content,List<String> tags,int kind) {
 		this.writer = writer;
 		this.origianlWriter = origianlWriter;
 		this.content = content;
@@ -86,11 +86,11 @@ public class RePost implements Serializable {
 		this.push = push;
 	}
 
-	public int getOriginalPostID() {
+	public String getOriginalPostID() {
 		return originalPostID;
 	}
 
-	public void setOriginalPostID(int originalPostID) {
+	public void setOriginalPostID(String originalPostID) {
 		this.originalPostID = originalPostID;
 	}
 

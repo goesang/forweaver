@@ -38,21 +38,27 @@ import com.mongodb.DBObject;
 public class WeaverController {
 
 	@Autowired
+
 	WeaverService weaverService;
 
 	@Autowired
+
 	PostService postService;
 	
 	@Autowired
+
 	ProjectService projectService;
 	
 	@Autowired
+
 	LectureService lectureService;
 	
 	@Autowired
+
 	CodeService codeService;
 
 	@Autowired
+
 	TagService tagService;
 
 	@RequestMapping("/login")

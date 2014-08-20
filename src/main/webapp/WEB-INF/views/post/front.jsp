@@ -189,7 +189,7 @@
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> <small>프로젝트
@@ -230,15 +230,17 @@
 				action="/community/add" enctype="multipart/form-data" method="post">
 
 				<div class="span9">
-					<input name="title" id="post-title-input" class="title span9"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text" />
+					<input id="post-title-input" class="title span9"
+						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
+						value="" />
 				</div>
 				<div class="span3">
 					<span> <a id='search-button'
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-content-button" href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
-					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
+					</a> <a style="display: none;" id="hide-content-button"
+						href="javascript:hidePostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
@@ -248,16 +250,11 @@
 					</span>
 				</div>
 				<div class="span12">
-
-
-					<textarea name="content" id="post-content-textarea"
+					<textarea style="display: none;" id="post-content-textarea"
 						class="post-content span12" onkeyup="textAreaResize(this)"
 						placeholder="글 내용을 입력해주세요!"></textarea>
-					<div class="file-div"></div>
-
+						<div class="file-div"></div>
 				</div>
-
-
 			</form>
 
 			<div class="span12">

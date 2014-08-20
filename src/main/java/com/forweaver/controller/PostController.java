@@ -34,20 +34,15 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/community")
 
 public class PostController {
-	@Autowired
-	PostService postService;
+	@Autowired PostService postService;
 
-	@Autowired
-	RePostService rePostService;
+	@Autowired RePostService rePostService;
 
-	@Autowired
-	TagService tagService;
+	@Autowired TagService tagService;
 
-	@Autowired
-	WeaverService weaverService;
+	@Autowired WeaverService weaverService;
 
-	@Autowired
-	DataService dataService;
+	@Autowired DataService dataService;
 
 	@RequestMapping("/")
 	public String front(){
@@ -180,9 +175,7 @@ public class PostController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String add(final HttpServletRequest request) throws UnsupportedEncodingException {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-
 		final Map<String, MultipartFile> files = multiRequest.getFileMap();
-
 		ArrayList<Data> datas = new ArrayList<Data>();
 
 		String tags = request.getParameter("tags");
@@ -227,7 +220,7 @@ public class PostController {
 		if(!tagService.validateTag(post.getTags(), weaver))
 			return "redirect:/community/";
 		model.addAttribute("post", post);
-		model.addAttribute("rePosts", rePostService.get(postID,post.getKind(),sort));
+		model.addAttribute("rePosts", rePostService.get(postID+"",post.getKind(),sort));
 
 		return "/post/viewPost";
 	}
@@ -255,14 +248,15 @@ public class PostController {
 				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
-		RePost rePost = new RePost(post.getPostID(),
+		RePost rePost = new RePost(post.getPostID()+"",
 				post.getWriter(),
 				weaver,
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
 				post.getTags(),
 				post.getKind());
 		post.setRecentRePostDate(rePost.getCreated());
-		post.addRePostCount();		
+		post.addRePostCount();	
+		postService.update(post, null);
 		rePostService.add(rePost,datas);
 
 

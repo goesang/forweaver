@@ -30,7 +30,7 @@ weaverList.push({
 $(document).ready(function() {
 	
 	$('#weaverAdd').click(function(){
-		if(!confirm('정말로 "+$('#weaverName').val()+"님을 초대하시겠습니까?'))
+		if(!confirm('정말로 '+$('#weaverName').val()+'님을 초대하시겠습니까?'))
 			return;
 		
 		var weaverName = $('#weaverName').val();
@@ -102,7 +102,7 @@ $(document).ready(function() {
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-university"></i> ${lecture.name}</big></big> 
 			<small>${lecture.description}</small>

@@ -23,14 +23,10 @@ import com.forweaver.util.GitUtil;
 
 @Service
 public class LectureService {
-	@Autowired
-	private LectureDao lectureDao;
-	@Autowired
-	private ProjectDao projectDao;
-	@Autowired
-	private WeaverDao weaverDao;
-	@Autowired
-	private CacheManager cacheManager;
+	@Autowired private LectureDao lectureDao;
+	@Autowired private ProjectDao projectDao;
+	@Autowired private WeaverDao weaverDao;
+	@Autowired private CacheManager cacheManager;
 
 	public void add(Lecture lecture,Weaver currentWeaver) {
 		
@@ -264,7 +260,10 @@ public class LectureService {
 	
 	public String createTeamProject(Lecture lecture,Repo repo, Project newProject, Weaver weaver){
 		
-		if(!repo.getCreator().getId().equals(weaver.getId()) && repo.getCategory() ==2 && !repo.isJoinWeaver(weaver)){
+		if(!repo.getCreator().getId().equals(weaver.getId()) 
+				&& repo.getCategory() == 2 
+				&& repo.isNotJoinWeaver(weaver)){
+			repo.deleteIsNotJoinWeaver(weaver);
 			if(this.get(newProject.getName())!=null){
 				while(true){
 					int cnt=1;

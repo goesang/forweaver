@@ -22,14 +22,10 @@ import com.forweaver.util.WebUtil;
 @Service
 public class PostService {
 
-	@Autowired
-	private PostDao postDao;
-	@Autowired
-	private RePostDao rePostDao;
-	@Autowired
-	private DataDao dataDao;
-	@Autowired
-	private CacheManager cacheManager;
+	@Autowired private PostDao postDao;
+	@Autowired private RePostDao rePostDao;
+	@Autowired private DataDao dataDao;
+	@Autowired private CacheManager cacheManager;
 
 	public int add(Post post,List<Data> datas) {
 
@@ -124,9 +120,9 @@ public class PostService {
 
 	public boolean delete(Post post, Weaver weaver) {
 
-		if (post.getWriter().equals(weaver)) { // 글쓴이의 경우
+		if (post.getWriter().getId().equals(weaver.getId())) { // 글쓴이의 경우
 			postDao.delete(post);
-			rePostDao.deleteAll(post.getPostID());
+			rePostDao.deleteAll(post.getPostID()+"");
 			cacheManager.getCache("post").remove(post.getPostID());
 			return true;
 
@@ -141,7 +137,7 @@ public class PostService {
 				if (projectString.equals("@" + pass.getJoinName())
 						&& pass.getPermission() == 1) {
 					postDao.delete(post);
-					rePostDao.deleteAll(post.getPostID());
+					rePostDao.deleteAll(post.getPostID()+"");
 					cacheManager.getCache("post").remove(post.getPostID());
 					return true;
 				}
@@ -152,7 +148,7 @@ public class PostService {
 			if (post.getTags().size() == 1
 					&& post.getTags().get(0).equals("@" + weaver.getId())) {
 				postDao.delete(post);
-				rePostDao.deleteAll(post.getPostID());
+				rePostDao.deleteAll(post.getPostID()+"");
 				cacheManager.getCache("post").remove(post.getPostID());
 				return true;
 			} else {

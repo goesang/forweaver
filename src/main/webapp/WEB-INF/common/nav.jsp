@@ -10,7 +10,7 @@
 			<div class="nav-collapse collapse">
 				<ul class="nav">
 					<li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li>
-					<li><a href="/lecture/"><i class="fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+					<li><a href="/lecture/"><i class="fa fa-university"></i>&nbsp;강의</a></li>
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
@@ -29,8 +29,9 @@
 							<img style="height:28px;width:28px;" src='<c:out value="${currentUser.getImgSrc()}" escapeXml="false"></c:out>' />&nbsp;&nbsp;${currentUser.username}
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
+							
 								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
-								<li><a href="/${currentUser.id}/edit"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
+								<li><a href="javascript:void(0);" onclick="openWindow('/${currentUser.id}/edit', 360, 500);"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>

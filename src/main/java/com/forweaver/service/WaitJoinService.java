@@ -12,10 +12,8 @@ import com.forweaver.mongodb.dao.WaitJoinDao;
 
 @Service
 public class WaitJoinService {
-	@Autowired
-	private WaitJoinDao waitJoinDao;
-	@Autowired
-	private PostDao postDao;
+	@Autowired private WaitJoinDao waitJoinDao;
+	@Autowired private PostDao postDao;
 	
 	public boolean isCreateLectureWaitJoin(Lecture lecture,Weaver waitingWeaver,Weaver proposer) {
 

@@ -131,7 +131,7 @@
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 		<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> 

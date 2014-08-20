@@ -1,5 +1,6 @@
 package com.forweaver.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +18,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.CherryPickRequest;
+import com.forweaver.domain.Code;
+import com.forweaver.domain.Data;
+import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
+import com.forweaver.domain.RePost;
+import com.forweaver.domain.Reply;
+import com.forweaver.domain.Repo;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.chat.ChatRoom;
+import com.forweaver.domain.git.GitCommitLog;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
-import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.service.ChatService;
 import com.forweaver.service.CherryPickRequestService;
+import com.forweaver.service.DataService;
 import com.forweaver.service.GitService;
+import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
 import com.forweaver.service.RePostService;
@@ -44,24 +54,17 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/project")
 public class ProjectController {
 
-	@Autowired
-	WaitJoinService waitJoinService;
-	@Autowired
-	WeaverService weaverService;
-	@Autowired
-	ProjectService projectService;
-	@Autowired
-	PostService postService;
-	@Autowired
-	RePostService rePostService;
-	@Autowired
-	GitService gitService;
-	@Autowired
-	TagService tagService;
-	@Autowired
-	ChatService chatService;
-	@Autowired
-	CherryPickRequestService cherryPickRequestService;
+	@Autowired WaitJoinService waitJoinService;
+	@Autowired WeaverService weaverService;
+	@Autowired ProjectService projectService;
+	@Autowired PostService postService;
+	@Autowired RePostService rePostService;
+	@Autowired GitService gitService;
+	@Autowired TagService tagService;
+	@Autowired ChatService chatService;
+	@Autowired CherryPickRequestService cherryPickRequestService;
+	@Autowired LectureService lectureService;
+	@Autowired DataService dataService;
 
 	@RequestMapping("/")
 	public String projects() {
@@ -186,7 +189,14 @@ public class ProjectController {
 			@PathVariable("projectName") String projectName) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		projectService.delete(currentWeaver, project);
+		if(projectService.delete(currentWeaver, project)){
+			if(project.getCategory() == 2){
+				Lecture lecture = lectureService.get(project.getOriginalProject().split("/")[0]);
+				Repo repo = lecture.getRepo(project.getOriginalProject().split("/")[1]);
+				repo.getIsNotJoinWeaver().add(currentWeaver);
+				lectureService.update(lecture);
+			}
+		}
 		return "redirect:/project/";
 	}
 
@@ -483,9 +493,12 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
+		GitCommitLog gitCommitLog = gitService.getGitCommitLog(creatorName, projectName, commit);
+		if(gitCommitLog == null)
+			return "redirect:/project/"+ creatorName+"/"+projectName+"/commitlog";
 		model.addAttribute("project", project);
-		model.addAttribute("gitCommitLog", 
-				gitService.getGitCommitLog(creatorName, projectName, commit));
+		model.addAttribute("gitCommitLog",gitCommitLog);
+		model.addAttribute("rePosts", rePostService.get(project.getName()+"/"+gitCommitLog.getCommitLogID(),5,""));
 		return "/project/commitLogViewer";
 	}
 
@@ -494,6 +507,8 @@ public class ProjectController {
 	public String manageWeaver(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
+		if(project.getCategory() == 2)
+			model.addAttribute("weavers", lectureService.getRepo(project.getOriginalProject()).getIsNotJoinWeaver());
 		model.addAttribute("project", project);
 		return "/project/manageWeaver";
 	}
@@ -535,6 +550,11 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver waitingWeaver = weaverService.get(weaver);
 		Weaver proposer = weaverService.getCurrentWeaver();
+
+		if(project.getCategory() == 2  //팀 프로젝트의 경우 오로지 가입하지 않는 위버만 추가 가능.
+				&& !lectureService.getRepo(
+						project.getOriginalProject()).isNotJoinWeaver(waitingWeaver))
+			return "redirect:/project/"+ creatorName+"/"+projectName+"/weaver";
 
 		if(waitJoinService.isCreateProjectWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
@@ -707,11 +727,8 @@ public class ProjectController {
 	public String info(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
 		Project project = projectService.get(creatorName+"/"+projectName);
-
-		List<GitChildStatistics> list = new ArrayList<GitChildStatistics>();
-
 		model.addAttribute("project", project);
-		model.addAttribute("list", list);
+		model.addAttribute("gitInfo", gitService.getGitInfo(creatorName, projectName, "HEAD"));
 		return "/project/info";
 	}
 
@@ -787,17 +804,19 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
-		if(project.getOriginalProject() == null || project.getOriginalProject().length() == 0)
+		if(!project.isForkProject())
 			return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
 
 		Project orginalProject = projectService.get(project.getOriginalProject());
 
-		if(cherryPickRequestService.add(orginalProject, project, currentWeaver, commit))
+		if(!gitService.existCommit(orginalProject.getName().split("/")[0],
+				orginalProject.getName().split("/")[1], commit) 
+				&& cherryPickRequestService.add(orginalProject, project, currentWeaver, commit))
 			return "redirect:/project/"+project.getOriginalProject()+"/cherry-pick";
 
 		return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/cherry-pick/branch:{branch}/id:{id}/accept") // 채리픽 요청 수락
 	public String acceptCherryPickRequest(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,@PathVariable("branch") String branch,@PathVariable("id") String id){
@@ -806,7 +825,7 @@ public class ProjectController {
 		cherryPickRequestService.accept(cherryPickRequest, branch, currentWeaver);
 		return "redirect:/project/"+creatorName+"/"+projectName+"/cherry-pick";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/cherry-pick/id:{id}/delete") // 채리픽 요청 삭제
 	public String deleteCherryPickRequest(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,@PathVariable("id") String id){
@@ -816,4 +835,93 @@ public class ProjectController {
 		return "redirect:/project/"+creatorName+"/"+projectName+"/cherry-pick";
 	}
 
+	//코드에 답변달기
+	@RequestMapping(value = "/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/add-repost", method = RequestMethod.POST)
+	public String addRepost(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commit") String commit,HttpServletRequest request) throws UnsupportedEncodingException {
+		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();	
+
+		String content = request.getParameter("content");
+		Weaver weaver = weaverService.getCurrentWeaver();
+		Project project = projectService.get(creatorName+"/"+projectName);
+		GitCommitLog gitCommitLog =
+				gitService.getGitCommitLog(creatorName, projectName, commit);
+		if(project == null || weaver == null || gitCommitLog == null || content.equals("")) 
+			// 권한 검사,로그인 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
+			return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+		Weaver commiter = weaverService.get(gitCommitLog.getCommiterEmail());
+		
+		ArrayList<Data> datas = new ArrayList<Data>();
+		for (MultipartFile file : files.values()) {
+			if(!file.isEmpty())
+				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
+		}
+
+		RePost rePost = new RePost(project.getName()+"/"+gitCommitLog.getCommitLogID(),
+				commiter,
+				weaver,
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
+				project.getTags(),
+				5);
+		rePostService.add(rePost,datas);
+
+		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+	}
+
+	@RequestMapping(value = "/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/add-reply", method = RequestMethod.POST)
+	public String addReply(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commit") String commit,@PathVariable("rePostID") int rePostID,HttpServletRequest request) throws UnsupportedEncodingException {
+		String content = request.getParameter("content");
+		RePost rePost = rePostService.get(rePostID);
+		Project project = projectService.get(creatorName+"/"+projectName);
+		GitCommitLog gitCommitLog =
+				gitService.getGitCommitLog(creatorName, projectName, commit);
+		Weaver weaver = weaverService.getCurrentWeaver();
+
+		if(project == null || weaver == null || gitCommitLog == null || content.equals(""))  
+			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
+			return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+
+		rePost.addReply(new Reply(weaver, 
+				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
+		rePostService.update(rePost,null);	
+
+		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+	}
+
+	@RequestMapping(value="/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/{number}/delete")
+	public String deleteReply(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commit") String commit, 
+			@PathVariable("rePostID") int rePostID,
+			@PathVariable("number") int number,
+			HttpServletRequest request) {		
+		Project project = projectService.get(creatorName+"/"+projectName);
+		RePost rePost = rePostService.get(rePostID);
+		Weaver weaver = weaverService.getCurrentWeaver();
+		GitCommitLog gitCommitLog =
+				gitService.getGitCommitLog(creatorName, projectName, commit);
+		if( project == null || weaver == null || gitCommitLog == null ||  !rePost.removeReply(weaver, number)) 
+			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
+			return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+
+		rePostService.update(rePost,null);	
+
+		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+	}
+
+	@RequestMapping("/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/delete")
+	public String deleteRePost(Model model, @PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commit") String commit, @PathVariable("rePostID") int rePostID) {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		RePost rePost = rePostService.get(rePostID);
+		Weaver weaver = weaverService.getCurrentWeaver();
+		rePostService.delete(rePost,weaver);
+		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
+	}
 }

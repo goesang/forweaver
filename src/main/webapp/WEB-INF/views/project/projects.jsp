@@ -125,7 +125,7 @@
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-bookmark"></i> 참여해보세요!</big></big> <small>같이
@@ -144,10 +144,10 @@
 				<ul class="nav nav-tabs" id="myTab">
 					<li id="age-desc"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
-					<c:if test="${massage == null }">
-						<li id="solo"><a
+					<li id="solo"><a
 							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:solo/page:1">외톨이</a></li>
-					</c:if>
+					<li id="fork"><a
+							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:fork/page:1">포크</a></li>
 					<li id="push-many"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-many/page:1">추천순</a></li>
 					<li id="push-null"><a
@@ -177,8 +177,6 @@
 				</div>
 
 				<div class="span2">
-
-
 					<span> <a id="show-content-button"
 						href="javascript:showProjectContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
@@ -202,8 +200,14 @@
 								<td class="td-post-writer-img" rowspan="2"><img
 									src="${project.getImgSrc()}"></td>
 								<td colspan="2" class="post-top-title"><a
-									class="a-post-title" href="/project/${project.name}/"> <i
-										class="fa fa-bookmark"></i> &nbsp;${project.name} ~
+									class="a-post-title" href="/project/${project.name}/">
+									<c:if test="${!project.isForkProject()}">
+										 <i class="fa fa-bookmark"></i>
+									 </c:if>
+									 <c:if test="${project.isForkProject()}">
+										 <i class="fa fa-code-fork"></i>
+									 </c:if>
+									 &nbsp;${project.name} ~
 										&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
@@ -242,7 +246,7 @@
 										<c:if test="${project.creatorName == currentUser.username}">
 											<a href="/project/${project.name}"> <span
 												class='span-button'><i class="fa fa-user"></i>
-													<p class='p-button'>관리자</p>" </span></a>
+													<p class='p-button'>관리자</p></span></a>
 										</c:if>
 									</sec:authorize></td>
 							</tr>
@@ -255,9 +259,6 @@
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private
-										</c:if>
-										<c:if test="${tag.startsWith('$')}">
-										tag-massage
 										</c:if>
 										">${tag}</span>
 									</c:forEach></td>

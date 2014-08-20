@@ -11,6 +11,96 @@
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 <script>
+var fileCount = 1;
+var comment = 0;
+var fileHash = {};
+function fileUploadChange(fileUploader){
+	var fileName = $(fileUploader).val();			
+	$(function (){
+	if(fileName !=""){ // 파일을 업로드하거나 수정함
+		if(fileName.indexOf("C:\\fakepath\\") != -1)
+			fileName = fileName.substring(12);
+		fileHash[fileName] = mongoObjectId();
+		$.ajax({
+		    url: '/data/tmp',
+            type: "POST",
+            contentType: false,
+            processData: false,
+            data: function() {
+                var data = new FormData();
+                data.append("objectID", fileHash[fileName]);
+                data.append("file", fileUploader.files[0]);
+                return data;
+            }()
+		});	
+		$("#repost-content").val($("#repost-content").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+	
+		if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
+	fileCount++;
+	$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+			  "<div class='input-group'>"+
+			    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+			    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+				"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
+			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+			  "</div>"+
+			"</div>");
+		}
+	}else{
+		if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
+			
+		$("#file"+fileCount).parent().parent().remove();
+
+			--fileCount;
+	}}});
+}
+	function showCommentAdd(rePostID){
+		$("#repost-form").hide();
+		$(".comment-form").remove();
+		if(comment != rePostID){
+		$("#comment-form-td-"+rePostID).append("<form class='comment-form' action='/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/"+rePostID+"/add-reply' method='POST'>"+
+		"<div style='padding-left:20px;' class='span10'>"+
+		"<input id='reply-input'  type ='text' name='content' class='reply-input span10'  placeholder='답변할 내용을 입력해주세요!'></input></div>"+
+		"<div class='span1'><span><button type='submit' class='post-button btn btn-primary'>"+
+		"<i class='icon-ok icon-white'></i></button></span></div></form>");
+		comment = rePostID;
+		$("#reply-input").focus();
+		
+		}else{
+			$("#repost-form").show();
+			comment = 0;
+		}
+	}
+
+	
+	$(function() {
+		
+		$("#repost-content").focus(function(){				
+				$(".file-div").fadeIn();
+				$("#repost-table").hide();
+		});
+		
+		$("#repost-content").focusout(function(){	
+
+			if( !this.value ) {
+				$(".file-div").hide();
+				$("#repost-table").fadeIn();
+	      }
+	});
+		
+		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+				  "<div class='input-group'>"+
+				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+					"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+				  "</div>"+
+				"</div>");
+		
+		$(".file-div").hide();
+	});
 	
 		SyntaxHighlighter.all();
 		$('#tags-input').textext()[0].tags().addTags(
@@ -18,9 +108,13 @@
 
 		
 	</script>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
-				<big><big><i class="fa fa-bookmark"></i> ${project.name}</big></big> 
+				<big><big>	<c:if test="${!project.isForkProject()}">
+							<i class="fa fa-bookmark"></i></c:if>
+							<c:if test="${project.isForkProject()}">
+							<i class="fa fa-code-fork"></i></c:if> 
+							${project.name}</big></big>
 				<small>${project.description}</small>
 			</h5>
 		</div>
@@ -29,12 +123,15 @@
 			<div class="span8">
 				<ul class="nav nav-tabs">
 					<li><a href="/project/${project.name}/">브라우져</a></li>
-					<li class="active" ><a href="/project/${project.name}/commitlog">커밋</a></li>
+					<li class="active" ><a href="/project/${project.name}/commitlog-viewer">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
-					<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					
+					<c:if test="${project.getChildProjects().size() > 0 && project.getCategory() != 2}">
+						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
+					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
@@ -44,7 +141,7 @@
 						class="input-block-level">
 				</div>
 			</div>
-			
+			<!-- 커밋 테이블 -->
 			<div class="span12">
 				<table class="table table-hover">
 					<tbody>
@@ -98,10 +195,96 @@
 					<pre id="source-code" class="span9 brush: diff"><c:out value="${gitCommitLog.diff}"></c:out></pre>
 				</div>
 				</c:if>
-			</div>
-			<!-- .span9 -->
+				<!-- 답변 작성란 -->
+				<form enctype="multipart/form-data" id="repost-form"
+					action="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/add-repost" method="POST">
 
-			<!-- .tabbable -->
+					<div style="margin-left: 0px" class="span11">
+						<textarea name="content" id="repost-content"
+							class="post-content span10" onkeyup="textAreaResize(this)"
+							placeholder="답변할 내용을 입력해주세요!"></textarea>
+					</div>
+					<div class="span1">
+						<span>
+							<button type="submit" class="post-button btn btn-primary">
+								<i class="fa fa-check"></i>
+							</button>
+						</span>
+					</div>
+					<div class="file-div"></div>
+				</form>
+			</div>
+			<!-- 답변 테이블 -->
+			<table id="repost-table" class="table table-hover">
+					<tbody>
+						<c:forEach items="${rePosts}" var="rePost">
+							<tr>
+								<td class=" td-post-writer-img "><img
+									src="${rePost.getImgSrc()}"></td>
+
+								<td class="font-middle"><b>${rePost.writerName}</b>
+									${rePost.getFormatCreated()}</td>
+								<td class="function-div font-middle">
+									<div class="pull-right">
+										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
+											class="function-button function-comment">댓글달기</span></a>
+										<!--
+											<a
+											href="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/update">
+											<span class="function-button">수정</span>
+										</a>-->
+										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
+											href='/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/delete'>
+											<span class="function-button">삭제</span>
+										</a>
+									</div>
+								</td>
+								<td class="td-button"><span class="span-button">${rePost.push}
+										<p class="p-button">추천</p>
+								</span></td>
+								<td class="td-button"><span class="span-button">${rePost.replys.size()}
+										<p class="p-button">댓글</p>
+								</span></td>
+							</tr>
+							<c:if test="${rePost.datas.size() > 0}">
+								<tr>
+									<td colspan="5"><c:forEach var="index" begin="0"
+											end="${rePost.datas.size()-1}">
+											<a href='/data/${rePost.datas.get(index).getId()}'><span
+												class="function-button function-file"><i
+													class='icon-file icon-white'></i>
+													${rePost.datas.get(index).getName()}</span></a>
+										</c:forEach></td>
+								</tr>
+							</c:if>
+							<tr>
+								<td class="none-top-border post-content-max" colspan="5">
+								<s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(rePost.getContent())" /></td>
+							</tr>
+
+							<tr>
+								<td id="comment-form-td-${rePost.rePostID}"
+									class="none-top-border" colspan="5"></td>
+
+							</tr>
+							<c:forEach items="${rePost.replys}" var="reply">
+								<tr>
+									<td class="none-top-border"></td>
+									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
+										${reply.content} - <b>${reply.writerName}</b>
+										${reply.getFormatCreated()}
+										<div class="function-div pull-right">
+											<a onclick="return confirm('정말로 삭제하시겠습니까?');"
+											href="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/${reply.number}/delete">
+												<i class='icon-remove'></i>
+											</a>
+										</div></td>
+								</tr>
+							</c:forEach>
+						</c:forEach>
+
+					</tbody>
+				</table>
 		</div>
 		<!-- .row-fluid -->
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

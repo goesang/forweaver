@@ -21,12 +21,9 @@ import com.forweaver.util.GitUtil;
 @Service
 public class ProjectService{
 
-	@Autowired
-	private WeaverDao weaverDao;
-	@Autowired
-	private ProjectDao projectDao;
-	@Autowired
-	private CacheManager cacheManager;
+	@Autowired private WeaverDao weaverDao;
+	@Autowired private ProjectDao projectDao;
+	@Autowired private CacheManager cacheManager;
 
 
 	public void add(Project project,Weaver currentWeaver){

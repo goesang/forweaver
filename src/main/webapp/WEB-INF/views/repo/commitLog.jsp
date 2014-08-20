@@ -39,7 +39,7 @@
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
 				<small>${repo.description}</small>
@@ -51,7 +51,10 @@
 					<li><a href="/lecture/${repo.lectureName}/repo">돌아가기</a></li>
 					<li><a href="/lecture/${repo.lectureName}/${repo.name}/browser">소스목록</a></li>
 					<li class="active"><a href="/lecture/${repo.lectureName}/${repo.name}/commitlog">커밋내역</a></li>
-					
+					<c:if test="${repo.getCategory() == 2}">
+						<li><a onclick="return confirm('정말 팀프로젝트로 포크하시겠습니까?')"
+						href="/lecture/${repo.lectureName}/${repo.name}/fork">포크</a></li>
+					</c:if>
 				</ul>
 			</div>
 			<div class="span4">

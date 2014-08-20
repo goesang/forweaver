@@ -59,7 +59,7 @@
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="page-header">
+		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5 style="text-align: center">
 				<img style="height: 60px; width: 60px;" class="img-polaroid"
@@ -67,33 +67,30 @@
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i
-					class="fa fa-quote-left"></i> ${weaver.getSay()} <i
-					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
+				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()}
+				 <i class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 			<div class="row">
 				<div class="span12">
 					<ul class="nav nav-tabs pull-left" id="myTab">
 						<li id="age-desc"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-desc/page:1">최신순</a></li>
 						<c:if test="${massage == null }">
 							<li id="push-desc"><a
-								href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-desc/page:1">추천순</a></li>
+								href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:push-desc/page:1">추천순</a></li>
 						</c:if>
 						<li id="repost-desc"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신
+							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-desc/page:1">최신
 								답변순</a></li>
 						<li id="repost-many"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은
+							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-many/page:1">많은
 								답변순</a></li>
 						<li id="age-asc"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-asc/page:1">오래된순</a></li>
 						<li id="repost-null"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변
+							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
 								없는 글</a></li>
-
 					</ul>
-
 					<ul style="border-bottom: 0px;" class="nav nav-tabs  pull-right">
 						<li><a
 								href="/${weaver.getId()}/lecture"><i
@@ -105,8 +102,6 @@
 						<li><a
 								href="/${weaver.getId()}/code"><i
 								class=" fa fa-rocket"></i> 코드</a></li>
-
-
 					</ul>
 				</div>
 				<c:if test="${search == null}">
@@ -364,6 +359,7 @@
 			</div>
 			<%@ include file="/WEB-INF/common/footer.jsp"%>
 		</div>
+	</div>
 </body>
 
 

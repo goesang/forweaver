@@ -21,8 +21,7 @@ import com.forweaver.mongodb.dao.CodeDao;
 @Service
 public class CodeService {
 
-	@Autowired
-	CodeDao codeDao;
+	@Autowired CodeDao codeDao;
 
 	public void add(Code code, MultipartFile file) {
 		try {

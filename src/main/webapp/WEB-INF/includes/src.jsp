@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/jasny-bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/flat-ui.css"/>
@@ -23,7 +24,7 @@
 <script src="/resources/forweaver/js/textext.plugin.tags.js"></script>
 <script src="/resources/forweaver/js/bootstrap-paginator.js"></script>
 <script src="/resources/forweaver/js/jasny-bootstrap.min.js"></script>
-<script src="/resources/forweaver/js/jquery-ui-1.10.4.min.js"></script>
+<script src="/resources/forweaver/js/jquery-ui.min.js"></script>
 <script src="/resources/forweaver/js/jquery.placeholder.js"></script>
 <script src="/resources/forweaver/js/application.js"></script>
 <meta name="robots" content="noindex">

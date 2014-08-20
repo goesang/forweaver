@@ -14,10 +14,8 @@ import com.forweaver.util.GitUtil;
 
 @Service
 public class CherryPickRequestService {
-	@Autowired
-	private CherryPickRequestDao cherryPickRequestDao;
-	@Autowired
-	private PostDao postDao;
+	@Autowired private CherryPickRequestDao cherryPickRequestDao;
+	@Autowired private PostDao postDao;
 
 	public List<CherryPickRequest> get(Project orginalProject){
 		return cherryPickRequestDao.get(orginalProject);
@@ -38,7 +36,7 @@ public class CherryPickRequestService {
 				|| orginalProject.getCategory() != 0
 				|| orginalProject.getName().equals(cherryPickProject.getName()) 
 				|| weaver.getPass(cherryPickProject.getName()) == null 
-				|| gitUtil.getCommit(commitID) == null)
+				/*|| gitUtil.getCommit(commitID) == null*/)
 			return false;
 
 		cherryPickRequestDao.add(new CherryPickRequest(orginalProject, cherryPickProject, commitID, weaver));

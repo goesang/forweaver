@@ -22,20 +22,15 @@ import com.forweaver.mongodb.dao.RePostDao;
 
 @Service
 public class RePostService {
-	@Autowired
-	private RePostDao rePostDao;
+	@Autowired private RePostDao rePostDao;
 	
-	@Autowired
-	private PostDao postDao;
+	@Autowired private PostDao postDao;
 	
-	@Autowired
-	private DataDao dataDao;
+	@Autowired private DataDao dataDao;
 	
-	@Autowired
-	private CodeDao codeDao;
+	@Autowired private CodeDao codeDao;
 	
-	@Autowired
-	private CacheManager cacheManager;
+	@Autowired private CacheManager cacheManager;
 	
 	public void add(RePost rePost,List<Data> datas) {
 		if(datas != null)
@@ -46,7 +41,7 @@ public class RePostService {
 		rePostDao.insert(rePost);
 	}
 	
-	public List<RePost> get(int ID,int kind,String sort) {
+	public List<RePost> get(String ID,int kind,String sort) {
 		return rePostDao.get(ID,kind,sort);
 	}
 	
@@ -85,8 +80,6 @@ public class RePostService {
 		post.rePostCountDown();
 		postDao.update(post);
 		rePostDao.delete(rePost);
-		cacheManager.getCache("post").remove(rePost.getOriginalPostID());
-
 		return true;
 	}
 	
@@ -96,6 +89,14 @@ public class RePostService {
 			return false;
 		code.setRePostCount(code.getRePostCount()-1);
 		codeDao.update(code);
+		rePostDao.delete(rePost);
+		return true;
+	}
+	
+	public boolean delete(RePost rePost,Weaver weaver){
+
+		if(rePost == null || !rePost.getWriterName().equals(weaver.getId()))
+			return false;
 		rePostDao.delete(rePost);
 		return true;
 	}

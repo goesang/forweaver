@@ -210,7 +210,7 @@ public class GitUtil {
 				df.release();
 				diffs+=out.toString();
 			} catch (Exception e) {
-				diffs += SimpleFileBrowser(commit);
+				diffs += simpleFileBrowser(commit);
 			}
 
 			gitCommitLog = new GitCommitLog(commit.getId().getName(),
@@ -226,7 +226,7 @@ public class GitUtil {
 		}
 	}
 
-	public String SimpleFileBrowser(RevCommit commit){
+	public String simpleFileBrowser(RevCommit commit){
 		String out = new String();
 		try
 		{
@@ -523,7 +523,7 @@ public class GitUtil {
 					df.release();
 					diffs = out.toString();
 				} else {
-					diffs = SimpleFileBrowser(rc);
+					diffs = simpleFileBrowser(rc);
 				}
 				int addFile = StringUtils.countOccurrencesOf(diffs, "--- /dev/null");
 				int deleteFile = StringUtils.countOccurrencesOf(diffs, "+++ /dev/null");
@@ -565,7 +565,7 @@ public class GitUtil {
 		GitInfo gitInfo = new GitInfo();
 		try{
 			gitInfo.run(this.localRepo, branchName);
-		}catch(IOException e){
+		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
 		return gitInfo;

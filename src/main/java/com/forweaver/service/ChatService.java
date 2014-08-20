@@ -12,8 +12,7 @@ import com.forweaver.domain.chat.ChatRoom;
 
 @Service
 public class ChatService {
-	@Autowired
-	private CacheManager cacheManager;
+	@Autowired private CacheManager cacheManager;
 	
 	public ChatRoom get(String chatName){
 		Cache cache = cacheManager.getCache("chat");

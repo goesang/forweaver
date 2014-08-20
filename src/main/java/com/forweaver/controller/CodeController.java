@@ -34,20 +34,15 @@ import com.forweaver.util.WebUtil;
 @Controller
 @RequestMapping("/code")
 public class CodeController {
-	@Autowired
-	CodeService codeService;
+	@Autowired CodeService codeService;
 
-	@Autowired
-	TagService tagService;
+	@Autowired TagService tagService;
 
-	@Autowired
-	WeaverService weaverService;
+	@Autowired WeaverService weaverService;
 
-	@Autowired
-	RePostService rePostService;
+	@Autowired RePostService rePostService;
 
-	@Autowired
-	DataService dataService;
+	@Autowired DataService dataService;
 	
 	@RequestMapping("/")
 	public String front(){
@@ -192,7 +187,7 @@ public class CodeController {
 		Code code = codeService.get(codeID);
 
 		model.addAttribute("code", code);
-		model.addAttribute("rePosts", rePostService.get(codeID,4,sort));
+		model.addAttribute("rePosts", rePostService.get(codeID+"",4,sort));
 
 		return "/code/viewCode";
 	}
@@ -229,7 +224,7 @@ public class CodeController {
 				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
-		RePost rePost = new RePost(code.getCodeID(),
+		RePost rePost = new RePost(code.getCodeID()+"",
 				code.getWriter(),
 				weaver,
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),

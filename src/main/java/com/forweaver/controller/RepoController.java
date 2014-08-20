@@ -30,12 +30,9 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/lecture/{lectureName}")
 public class RepoController {
 
-	@Autowired
-	WeaverService weaverService;
-	@Autowired
-	LectureService lectureService;
-	@Autowired
-	GitService gitService;
+	@Autowired WeaverService weaverService;
+	@Autowired LectureService lectureService;
+	@Autowired GitService gitService;
 
 	@RequestMapping(value = "/add")
 	public String add(@PathVariable("lectureName") String lectureName,
@@ -306,8 +303,7 @@ public class RepoController {
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 		
-		if(repoName.equals("example") && 
-				gitService.existCommit(lectureName, repoName, commitName))
+		if(	gitService.existCommit(lectureName, repoName, commitName))
 			gitService.getProjectZip(lectureName, repoName, commitName, response);
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
@@ -348,7 +344,7 @@ public class RepoController {
 						new Project(repo.getName(), currentWeaver, repo, lecture.getTags()),
 								currentWeaver);
 
-		if(newProjectName==null){
+		if(newProjectName == null){
 			return "redirect:/lecture/"+lectureName+"/"+repoName;
 		}else{
 			return "redirect:/project/"+newProjectName;
