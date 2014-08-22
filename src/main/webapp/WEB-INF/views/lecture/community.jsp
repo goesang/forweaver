@@ -147,7 +147,7 @@ var editorMode = false;
 				</div>
 			</div>
 						<div class="span10">
-					<input id="post-title-input" class="title span10"
+					<input id="post-title-input" class="title span10" name="title"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
 						value="" />
 				</div>

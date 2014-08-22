@@ -116,9 +116,9 @@ public class WeaverService implements UserDetailsService {
 	}
 
 
-	public List<Weaver> weavers() {
+	public List<Weaver> weavers(int page,int size) {
 		// TODO Auto-generated method stub
-		return weaverDao.list();
+		return weaverDao.list(page,size);
 	}
 
 	public void delete(Weaver weaver) { //위버 삭제
@@ -152,6 +152,8 @@ public class WeaverService implements UserDetailsService {
 		HashMap<String, DBObject> weaverHash = new HashMap<String, DBObject>();
 		Object[] returnObject = new Object[2];
 		int startNumber = size * (page - 1);
+		System.out.println(startNumber);
+		System.out.println(size);
 		try{
 			for(DBObject db:weaverDao.getWeaverInfosInPost(tags)){
 				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
@@ -210,7 +212,7 @@ public class WeaverService implements UserDetailsService {
 						weavers.add(weaver);
 					}
 				}
-				if(startNumber+size < i)
+				if(startNumber+size <= i)
 					break;
 				i++;	
 			}

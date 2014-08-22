@@ -189,6 +189,8 @@ function movePage(tagArrayString,searchWord){
 
 	if(url.indexOf("/tags:") != -1)
 		url = url.substring(0,url.indexOf("/tags:"))+'/';
+	else if(url.indexOf("/community") != -1)
+		url = url.substring(0,url.indexOf("/community")+10)+'/';
 	else if(url.indexOf("/weaver") != -1)
 		url = url.substring(0,url.indexOf("/weaver")+7)+'/';
 	else if(url.indexOf("/project") != -1)

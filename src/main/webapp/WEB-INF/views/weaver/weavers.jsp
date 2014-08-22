@@ -67,19 +67,19 @@
 								
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-comments"></i>
-										<p class="p-button-mini">${weaver.getInfo('postCount')}/${weaver.getInfo('rePostCount')}</p> </span></td>
+										<p title="글 갯수/답변 달린 갯수" class="p-button-mini">${weaver.getInfo('postCount')}/${weaver.getInfo('rePostCount')}</p> </span></td>
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-comments-o"></i>
-											<p class="p-button-mini">${weaver.getInfo('myRePostCount')}/${weaver.getInfo('rePostPush')}</p> </span></td>	
+											<p title="답변 갯수/답변의 추천수" class="p-button-mini">${weaver.getInfo('myRePostCount')}/${weaver.getInfo('rePostPush')}</p> </span></td>	
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-rocket"></i>
-										<p class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
+										<p title="코드 업로드 갯수/다운로드 갯수" class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-university"></i>
-										<p class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','weaverID')}</p> </span></td>	
+										<p title="강의 갯수/수강중인 학생수" class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','weaverID')}</p> </span></td>	
 								<td class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
-										<p class="p-button-mini">${weaver.getInfo('projectCount')}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
+										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.getInfo('projectCount')}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
 							</tr>
 						</c:forEach>
 					</tbody>

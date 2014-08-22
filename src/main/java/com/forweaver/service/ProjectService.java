@@ -108,7 +108,6 @@ public class ProjectService{
 	public boolean push(Project project, Weaver weaver) {
 		if(project == null || weaver == null)
 			return false;
-		project.push();
 		cacheManager.getCache("project").remove(project.getName());
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get(project.getName());

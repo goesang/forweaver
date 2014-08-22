@@ -38,7 +38,6 @@ public class CommunityIntercepter extends HandlerInterceptorAdapter {
 			}
 
 		}
-
 		return true;
 	}
 

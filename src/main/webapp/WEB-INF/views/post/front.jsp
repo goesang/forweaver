@@ -25,7 +25,6 @@
 			}
 			else
 				fileArray[i] = fileName;
-			
 		}
 		
 		var tags = $("input[name='tags']").val();
@@ -227,10 +226,10 @@
 			</div>
 
 			<form id="postForm" onsubmit="return checkPost()"
-				action="/community/add" enctype="multipart/form-data" method="post">
+				action="/community/add" enctype="multipart/form-data" METHOD="POST">
 
 				<div class="span9">
-					<input id="post-title-input" class="title span9"
+					<input id="post-title-input" class="title span9" name="title"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
 						value="" />
 				</div>
@@ -250,7 +249,7 @@
 					</span>
 				</div>
 				<div class="span12">
-					<textarea style="display: none;" id="post-content-textarea"
+					<textarea style="display: none;" id="post-content-textarea" name="content"
 						class="post-content span12" onkeyup="textAreaResize(this)"
 						placeholder="글 내용을 입력해주세요!"></textarea>
 						<div class="file-div"></div>

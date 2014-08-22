@@ -5,6 +5,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.newA
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -39,8 +40,10 @@ public class WeaverDao {
 	}
 
 
-	public List<Weaver> list() {
-		return mongoTemplate.findAll(Weaver.class);
+	public List<Weaver> list(int page, int size) {
+		Query query = new Query();
+		query.with(new PageRequest(page - 1, size));
+		return mongoTemplate.find(query, Weaver.class);
 	}
 
 	public void delete(Weaver weaver) {
@@ -133,5 +136,6 @@ public class WeaverDao {
 
 		return mongoTemplate.aggregate(agg, "code", DBObject.class).getMappedResults();
 	}
+
 	
 }

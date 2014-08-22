@@ -90,7 +90,7 @@ public class WeaverController {
 
 	@RequestMapping("/weaver")
 	public String weavers(HttpServletRequest request){
-		return "redirect:"+request.getRequestURI() +"/page:1";
+		return "redirect:"+request.getRequestURI() +"page:1";
 	}
 	
 	@RequestMapping("/weaver/page:{page}")
@@ -105,7 +105,7 @@ public class WeaverController {
 			pageNum =Integer.parseInt(page);
 		}
 		
-		Object[] returnObjejct = weaverService.getWeaverInfos(null,pageNum-1,number);
+		Object[] returnObjejct = weaverService.getWeaverInfos(null,pageNum,number);
 		int weaverCount = (int)returnObjejct[0];
 		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
 				

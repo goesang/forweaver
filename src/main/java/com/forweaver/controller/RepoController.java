@@ -3,6 +3,7 @@ package com.forweaver.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,23 +37,24 @@ public class RepoController {
 
 	@RequestMapping(value = "/add")
 	public String add(@PathVariable("lectureName") String lectureName,
-			@RequestParam Map<String, String> params) {
+			HttpServletRequest request) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		String repoName = params.get("name");		
+		String repoName = request.getParameter("name");		
+		String category = request.getParameter("category");
 		Repo repo;
-		if(params.get("category").equals("on"))
-		repo = new Repo(repoName, 
-				1, 
-				WebUtil.removeHtml(params.get("description")), 
-				Integer.parseInt(params.get("period")), 
-				lecture,weaver);	
+		if(category == null)
+			repo = new Repo(repoName, 
+					1, 
+					WebUtil.removeHtml(request.getParameter("description")), 
+					Integer.parseInt(request.getParameter("period")), 
+					lecture,weaver);	
 		else
-		repo = new Repo(repoName, 
-				2, 
-				WebUtil.removeHtml(params.get("description")), 
-				Integer.parseInt(params.get("period")), 
-				lecture,weaver);	
+			repo = new Repo(repoName, 
+					2, 
+					WebUtil.removeHtml(request.getParameter("description")), 
+					Integer.parseInt(request.getParameter("period")), 
+					lecture,weaver);	
 
 		lectureService.addRepo(lecture, repo);
 
@@ -78,10 +80,10 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		String readme = "";
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, repoName,"HEAD");
 
@@ -104,10 +106,10 @@ public class RepoController {
 		}else
 			model.addAttribute("selectBranch",gitBranchList.get(0));
 		model.addAttribute("readme",readme);
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "/repo/browser";
 	}
 
@@ -119,10 +121,10 @@ public class RepoController {
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		String readme = "";
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, repoName,commit);
 
@@ -144,10 +146,10 @@ public class RepoController {
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
 		model.addAttribute("readme",readme);
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "/repo/browser";
 	}
 
@@ -162,7 +164,7 @@ public class RepoController {
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		GitFileInfo gitFileInfo = gitService.getFileInfo(lectureName,repoName, commitID, filePath);
 
 
@@ -173,10 +175,10 @@ public class RepoController {
 		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
 		model.addAttribute("gitCommitLog", 
 				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "/repo/fileViewer";
 	}
 
@@ -189,7 +191,7 @@ public class RepoController {
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		List<String> gitBranchList = gitService.getBranchList(lectureName, repoName);
 
 		if(gitBranchList.size() > 1)
@@ -220,12 +222,12 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		List<String> gitBranchList = gitService.getBranchList(lectureName, repoName);
-		
+
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
@@ -235,10 +237,10 @@ public class RepoController {
 				gitService.getCommitListCount(lectureName,repoName,commit));
 		model.addAttribute("gitCommitList", 
 				gitService.getGitCommitLogList(lectureName,repoName,commit,1,10));
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "/repo/commitLog";
 	}
 
@@ -250,10 +252,10 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		List<String> gitBranchList = gitService.getBranchList(lectureName, repoName);
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
@@ -264,10 +266,10 @@ public class RepoController {
 				gitService.getCommitListCount(lectureName,repoName,commit));
 		model.addAttribute("gitCommitList", 
 				gitService.getGitCommitLogList(lectureName,repoName,commit,page,10));
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "/repo/commitLog";
 	}
 
@@ -278,17 +280,17 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);	
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		model.addAttribute("repo", repo);
 		model.addAttribute("gitCommitLog", 
 				gitService.getGitCommitLog(lectureName,repoName, commit));
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "/repo/commitLogViewer";
 	}
 
@@ -302,7 +304,7 @@ public class RepoController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		if(	gitService.existCommit(lectureName, repoName, commitName))
 			gitService.getProjectZip(lectureName, repoName, commitName, response);
 
@@ -320,18 +322,18 @@ public class RepoController {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
-		
+
 		lectureService.uploadZip(lecture,repo, weaver, message, zip);
-		
+
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
-		
+
 		return "redirect:/lecture/"+lectureName+"/"+repoName+"/browser"; 
 	}
-	
+
 	@RequestMapping("/{repoName}/fork") // 포크
 	public String fork(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName){
@@ -342,7 +344,7 @@ public class RepoController {
 		String newProjectName=
 				lectureService.createTeamProject(lecture,repo, 
 						new Project(repo.getName(), currentWeaver, repo, lecture.getTags()),
-								currentWeaver);
+						currentWeaver);
 
 		if(newProjectName == null){
 			return "redirect:/lecture/"+lectureName+"/"+repoName;
