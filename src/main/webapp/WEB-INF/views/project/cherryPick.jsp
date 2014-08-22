@@ -86,7 +86,7 @@ $(document).ready(function() {
 									<i class="fa fa-code-fork"></i> ${cherryPick.getCherryPickProject().getName()}</a> 
 								</td>
 								<td>
-								<a class="none-color" href="/project/${cherryPick.getCherryPickProject().getName()}/commit-viewer/commit:${cherryPick.getCommitID()}">
+								<a class="none-color" href="/project/${cherryPick.getCherryPickProject().getName()}/commitlog-viewer/commit:${cherryPick.getCommitID()}">
 								<span class = "tag-commit tag-name">
 									<i class="icon-cherry"></i> &nbsp;${cherryPick.getCommitID()}</span>
 								</a>	

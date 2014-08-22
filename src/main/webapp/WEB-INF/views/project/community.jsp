@@ -127,7 +127,7 @@ var editorMode = false;
 					<li><a href="/project/${project.name}/weaver">참가자</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getChildProjects().size() > 0 && project.getCategory() != 2}">
+					<c:if test="${project.getCategory() != 2}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
