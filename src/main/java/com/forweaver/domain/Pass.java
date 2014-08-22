@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 
-
 public class Pass implements GrantedAuthority, Serializable {
 
 	static final long serialVersionUID = 11111161134L;

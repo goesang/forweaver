@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class Reply implements Serializable {
 
-	static final long serialVersionUID = 121134L;
+	static final long serialVersionUID = 1211334L;
 
 	@DBRef
 	private Weaver writer;

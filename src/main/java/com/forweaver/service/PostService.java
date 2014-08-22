@@ -1,7 +1,6 @@
 package com.forweaver.service;
 
 import java.util.List;
-import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -17,7 +16,6 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RePostDao;
-import com.forweaver.util.WebUtil;
 
 @Service
 public class PostService {

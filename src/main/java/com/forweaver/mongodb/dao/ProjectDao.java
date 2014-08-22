@@ -16,6 +16,7 @@ import com.forweaver.domain.Weaver;
 
 @Repository
 public class ProjectDao {
+	
 	@Autowired private MongoTemplate mongoTemplate;
 	
 	public void insert(Project project) { // 프로젝트를 생성함.

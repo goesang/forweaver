@@ -1,7 +1,6 @@
 package com.forweaver.service;
 
 import java.util.List;
-import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -23,13 +22,9 @@ import com.forweaver.mongodb.dao.RePostDao;
 @Service
 public class RePostService {
 	@Autowired private RePostDao rePostDao;
-	
 	@Autowired private PostDao postDao;
-	
 	@Autowired private DataDao dataDao;
-	
 	@Autowired private CodeDao codeDao;
-	
 	@Autowired private CacheManager cacheManager;
 	
 	public void add(RePost rePost,List<Data> datas) {

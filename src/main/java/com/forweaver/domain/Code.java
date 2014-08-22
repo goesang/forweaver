@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Code implements Serializable  {
 	
-	static final long serialVersionUID = 384564L;
+	static final long serialVersionUID = 3845364L;
 	
 	@Id
 	private int codeID;

@@ -6,7 +6,6 @@
 <title>Forweaver : 에러!</title>
 </head>
 <body>
-
 	<div class="container">
 	                        
 		<%@ include file="/WEB-INF/common/nav.jsp"%>

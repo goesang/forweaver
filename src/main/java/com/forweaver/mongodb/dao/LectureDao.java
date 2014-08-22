@@ -15,6 +15,7 @@ import com.forweaver.domain.Weaver;
 
 @Repository
 public class LectureDao {
+	
 	@Autowired private MongoTemplate mongoTemplate;
 
 	public void add(Lecture lecture) { // 강의 생성함.

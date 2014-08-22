@@ -16,6 +16,7 @@ import com.forweaver.domain.Weaver;
 
 @Repository
 public class PostDao {
+	
 	@Autowired private MongoTemplate mongoTemplate;
 
 	public int insert(Post post) { // 글 추가하기

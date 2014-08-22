@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.CherryPickRequest;
-import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;

@@ -15,7 +15,6 @@ import com.forweaver.mongodb.dao.DataDao;
 public class DataService {
 
 	@Autowired DataDao dataDao;
-
 	@Autowired private CacheManager cacheManager;
 	
 	public Data get(String dataID) {

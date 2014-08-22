@@ -14,12 +14,8 @@ import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
 public class CommunityIntercepter extends HandlerInterceptorAdapter {
-	@Autowired
- 
-	WeaverService weaverService;
-	@Autowired
- 
-	TagService tagService;
+	@Autowired WeaverService weaverService;
+	@Autowired TagService tagService;
 
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)

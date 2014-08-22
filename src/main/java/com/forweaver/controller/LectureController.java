@@ -49,9 +49,7 @@ public class LectureController {
 	@Autowired TagService tagService;
 	@Autowired PostService postService;
 	@Autowired RePostService rePostService;
-	@Autowired
- 
-	private ChatService chatService;
+	@Autowired ChatService chatService;
 	
 	@RequestMapping("/")
 	public String lectures() {

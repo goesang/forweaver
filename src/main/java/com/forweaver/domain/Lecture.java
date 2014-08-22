@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Lecture implements Serializable {
 
-	static final long serialVersionUID = 42313124234L;
+	static final long serialVersionUID = 423234L;
 	@Id
 	private String name; //강의 이름 이게 기본 키
 	private String description; // 강의 소개

@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class Repo implements Serializable {
 
-	static final long serialVersionUID = 77777773L;
+	static final long serialVersionUID = 7777773L;
 
 	private int repoID;
 	private String name;

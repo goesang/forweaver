@@ -5,7 +5,6 @@
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
-
 <script>
 var check = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";

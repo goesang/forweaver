@@ -6,6 +6,7 @@
 <title>ForWeaver : 학생들을 위한 소셜 코딩!</title>
 </head>
 <body>
+
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 		<div class="row">

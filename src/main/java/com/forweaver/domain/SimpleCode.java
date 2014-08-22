@@ -6,7 +6,7 @@ import com.forweaver.util.WebUtil;
 
 public class SimpleCode  implements Serializable {
 
-	static final long serialVersionUID = 529134L;
+	static final long serialVersionUID = 5229134L;
 	private String fileName;
 	private String content;
 	

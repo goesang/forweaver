@@ -14,6 +14,7 @@ import com.forweaver.domain.RePost;
 
 @Repository
 public class RePostDao {
+	
 	@Autowired private MongoTemplate mongoTemplate;
 
 	public void insert(RePost rePost) { // 글 추가하기

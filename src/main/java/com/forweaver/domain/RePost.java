@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class RePost implements Serializable {
 
-	static final long serialVersionUID = 57346461551669134L;
+	static final long serialVersionUID = 573464611669134L;
 	@Id
 	private int rePostID;
 	private String originalPostID;

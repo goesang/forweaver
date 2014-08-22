@@ -17,7 +17,9 @@ import com.mongodb.DBObject;
 
 @Document
 public class Weaver implements UserDetails,Serializable {
+	
 	static final long serialVersionUID = 19900317L;
+	
 	@Id
 	private String id;
 	@Length(min=4,max=20)

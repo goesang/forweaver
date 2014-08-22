@@ -23,6 +23,7 @@ import com.forweaver.util.GitUtil;
 
 @Service
 public class LectureService {
+	
 	@Autowired private LectureDao lectureDao;
 	@Autowired private ProjectDao projectDao;
 	@Autowired private WeaverDao weaverDao;

@@ -12,6 +12,7 @@ import com.forweaver.domain.WaitJoin;
 public class WaitJoinDao {
 
 	@Autowired private MongoTemplate mongoTemplate;
+	
 	public void add(WaitJoin waitJoin) { // 코드 추가하기
 		if (!mongoTemplate.collectionExists(WaitJoin.class)) {
 			mongoTemplate.createCollection(WaitJoin.class);

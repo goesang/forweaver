@@ -8,7 +8,6 @@
 </head>
 <body>
 <script>
-
 function showUploadContent() {
 	
 	$('#show-content-button').hide();

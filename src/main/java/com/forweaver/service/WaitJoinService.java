@@ -12,6 +12,7 @@ import com.forweaver.mongodb.dao.WaitJoinDao;
 
 @Service
 public class WaitJoinService {
+	
 	@Autowired private WaitJoinDao waitJoinDao;
 	@Autowired private PostDao postDao;
 	

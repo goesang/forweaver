@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Project implements Serializable {
 
-	static final long serialVersionUID = 4231232323123124234L;
+	static final long serialVersionUID = 423123232123124234L;
 	@Id
 	private String name; //프로젝트 이름 이게 기본 키
 	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, 2이면 팀프로젝트 포크.

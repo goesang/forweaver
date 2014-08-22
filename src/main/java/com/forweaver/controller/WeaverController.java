@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
@@ -32,7 +30,6 @@ import com.forweaver.service.ProjectService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
-import com.mongodb.DBObject;
 
 @Controller
 public class WeaverController {

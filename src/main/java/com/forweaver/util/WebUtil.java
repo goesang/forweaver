@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 import org.markdown4j.Markdown4jProcessor;
-
 //각종 웹 유틸 클래스
 public class WebUtil {
 	//MD5 변환을 위한 메서드

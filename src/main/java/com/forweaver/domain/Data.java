@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Document
 public class Data implements Serializable {
 	
-	static final long serialVersionUID = 342343L;
+	static final long serialVersionUID = 3423431L;
 	@Id
 	private String id;
 	private String weaverID;

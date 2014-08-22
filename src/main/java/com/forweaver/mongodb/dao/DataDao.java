@@ -1,11 +1,6 @@
 package com.forweaver.mongodb.dao;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,10 +9,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Data;
-import com.forweaver.domain.Weaver;
 
 @Repository
 public class DataDao {
+	
 	@Autowired private MongoTemplate mongoTemplate;
 
 	public void insert(Data data) { // 글 추가하기

@@ -17,15 +17,9 @@ import com.forweaver.service.WeaverService;
 
 
 public class LectureIntercepter extends HandlerInterceptorAdapter {
-	@Autowired
- 
-	WeaverService weaverService;
-	@Autowired
- 
-	LectureService lectureService;
-	@Autowired
- 
-	TagService tagService;
+	@Autowired WeaverService weaverService;
+	@Autowired LectureService lectureService;
+	@Autowired TagService tagService;
 
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)

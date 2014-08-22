@@ -31,17 +31,14 @@ import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
 
+
 @Controller
 @RequestMapping("/code")
 public class CodeController {
 	@Autowired CodeService codeService;
-
 	@Autowired TagService tagService;
-
 	@Autowired WeaverService weaverService;
-
 	@Autowired RePostService rePostService;
-
 	@Autowired DataService dataService;
 	
 	@RequestMapping("/")

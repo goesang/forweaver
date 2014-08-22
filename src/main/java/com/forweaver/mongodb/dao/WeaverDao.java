@@ -3,7 +3,6 @@ package com.forweaver.mongodb.dao;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,7 +18,7 @@ import com.mongodb.DBObject;
 
 @Repository
 public class WeaverDao {
-
+	
 	@Autowired private MongoTemplate mongoTemplate;
 	
 	public boolean existsWeaver() { // 회원 존재 여부

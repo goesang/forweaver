@@ -11,7 +11,6 @@ import com.forweaver.domain.Weaver;
 @Service
 public class TagService {
 
-
 	public boolean validateTag(List<String> tagList,Weaver weaver) {
 
 		List<String> publicTags = new ArrayList<String>();

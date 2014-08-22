@@ -16,6 +16,7 @@ import com.forweaver.domain.Weaver;
 
 @Repository
 public class CodeDao {
+	
 	@Autowired private MongoTemplate mongoTemplate;
 	
 	public void insert(Code code) { // 코드 추가하기

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/jasny-bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap.css"/>

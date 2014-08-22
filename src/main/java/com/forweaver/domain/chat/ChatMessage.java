@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ChatMessage  implements Serializable{
+	
 	static final long serialVersionUID = 19911217L;
+	
 	private String message;
 	private String weaver;
 	private String date;

@@ -35,13 +35,9 @@ import com.forweaver.util.WebUtil;
 
 public class PostController {
 	@Autowired PostService postService;
-
 	@Autowired RePostService rePostService;
-
 	@Autowired TagService tagService;
-
 	@Autowired WeaverService weaverService;
-
 	@Autowired DataService dataService;
 
 	@RequestMapping("/")

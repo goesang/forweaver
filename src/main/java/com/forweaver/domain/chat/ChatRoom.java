@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatRoom  implements Serializable{
+	
 	static final long serialVersionUID = 12233337L;
 	
 	private List<ChatMessage> chatMessages;

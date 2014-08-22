@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 	<div class="span12">&nbsp;</div>
 	<div class="row linkBox">
 		<div class="span4">
