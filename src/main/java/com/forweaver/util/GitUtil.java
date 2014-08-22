@@ -1,4 +1,7 @@
 package com.forweaver.util;
+//https://github.com/centic9/jgit-cookbook와 
+//https://github.com/kevinsawicki/gitective
+//참고하여 코딩
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,6 +52,7 @@ import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 
+//git과 관련된 모든 기능 구현.
 public class GitUtil {
 
 	public static String GitPath = "/home/git/";
@@ -107,10 +111,12 @@ public class GitUtil {
 		}
 	}
 
+	//git 디렉토리 삭제
 	public void deleteRepository() throws Exception {
 		FileUtils.deleteDirectory(new File(this.path));
 	}
 
+	//프로젝트의 파일 정보를 가져옴
 	public GitFileInfo getFileInfor(String commitID, String filePath) {
 		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 		RevCommit selectCommit = this.getCommit(commitID);
@@ -141,11 +147,11 @@ public class GitUtil {
 
 		}
 	}
-
+	// 저장소에서 커밋을 갖고 옴
 	public RevCommit getCommit(String refName) {
 		return CommitUtils.getCommit(this.localRepo, refName);
 	}
-
+	// 커밋 갯수를 가져옴
 	public int getCommitListCount(String refName) {
 		try {
 			Iterable<RevCommit> gitLogIterable = this.git
@@ -158,12 +164,12 @@ public class GitUtil {
 				length++;
 			}
 			return length;
-		} catch (Exception e) { // 추후 오류 잡아내기 바람
+		} catch (Exception e) {
 			return 0;
 		}
 
 	}
-
+	// 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
 	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID) {
 		List<GitSimpleFileInfo> gitFileInfoList = new ArrayList<GitSimpleFileInfo>();
 
@@ -192,7 +198,8 @@ public class GitUtil {
 		}
 		return gitFileInfoList;
 	}
-
+	
+	// 저장소에서 GIT 로그 정보를 가져옴
 	public GitCommitLog getCommitLog(String commitID) {
 		GitCommitLog gitCommitLog = null;
 		String diffs = new String();
@@ -226,6 +233,7 @@ public class GitUtil {
 		}
 	}
 
+	//단순하게 커밋을 트리워크를 이용하여 당시 파일 내역을 출력.
 	public String simpleFileBrowser(RevCommit commit){
 		String out = new String();
 		try
@@ -245,6 +253,7 @@ public class GitUtil {
 		}
 	}
 
+	// 커밋 로그 목록를 가져옴
 	public List<GitSimpleCommitLog> getCommitLogList(String branchName,
 			int page, int number) {
 		List<GitSimpleCommitLog> gitCommitLogList = new ArrayList<GitSimpleCommitLog>();
@@ -267,6 +276,7 @@ public class GitUtil {
 		}
 	}
 
+	// 저장소에서 브랜치 정보를 가져옴
 	public List<String> getBranchList() {
 		ArrayList<String> branchList = new ArrayList<String>();
 
@@ -282,6 +292,7 @@ public class GitUtil {
 
 	}
 
+	// 브랜치 목록과 태그 목록을 가져옴
 	public List<String> getSimpleBranchAndTagNameList() {
 		String branchName = "";
 		List<String> branchList = new ArrayList<String>();
@@ -311,6 +322,7 @@ public class GitUtil {
 		}
 	}
 
+	// 커밋을 입력받으면 당시 파일들을 압축하여 사용자에게 보내줌.
 	public void getProjectZip(String commitName, HttpServletResponse response) {
 		try {
 			ArchiveCommand.registerFormat("zip", new ZipFormat());
@@ -328,19 +340,7 @@ public class GitUtil {
 
 	}
 
-	public void hideBranches(String userName){
-
-		File currentDirectory = new File(path+"/refs/heads");
-		File hideDirectory = new File(path+"/refs/heads/edih");
-
-		for(File file:currentDirectory.listFiles()){
-			if(file.getName().contains("$") && !file.getName().endsWith("$"+userName))
-				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
-		}
-		hideDirectory.setWritable(false);
-		hideDirectory.setReadable(false);		
-	}
-
+	// 숙제 저장소의 경우 권한이 없는 브랜치에 접근하지 못하도록 숨김.
 	public void hideNotUserBranches(String userName){
 
 		File currentDirectory = new File(path+"/refs/heads");
@@ -354,7 +354,7 @@ public class GitUtil {
 		hideDirectory.setReadable(false);
 
 	}
-
+	// 예제 저장소의 경우 학생이 접근하면 원래 브랜치에 푸시 못하게 막음
 	public void notWriteBranches(){
 		File currentDirectory = new File(path+"/refs/heads");
 		for(File file:currentDirectory.listFiles()){
@@ -363,6 +363,7 @@ public class GitUtil {
 		new File(path+"/refs/heads").setWritable(false);		
 	}
 
+	//예제 저장소에서 학생이 접근하고 난 후 원래대로 복구함.
 	public void writeBranches(){
 		File currentDirectory = new File(path+"/refs/heads");
 		for(File file:currentDirectory.listFiles()){
@@ -371,6 +372,7 @@ public class GitUtil {
 		new File(path+"/refs/heads").setWritable(true);		
 	}
 
+	// 숙제 저장소에서 학생이 접근하고 원래대로 복구함.
 	public void showBranches(){
 		File hideDirectory = new File(path+"/refs/heads/edih");
 		hideDirectory.setWritable(true);
@@ -381,6 +383,7 @@ public class GitUtil {
 
 	}
 
+	// 학생의 경우 숙제 저장소에 접근하면 자신의 브랜치만 읽을 수 있도록 함.
 	public void checkOutBranch(String weaverName){
 
 		try{
@@ -395,7 +398,7 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	// 학생이 숙제 저장소에 접근하고 나서 원래대로 복구함.
 	public void checkOutMasterBranch(){
 		try{
 			for(String branchName : this.getBranchList()){
@@ -409,16 +412,19 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	// 강사가 숙제 저장소에 최초로 푸시하면 브랜치를 학생들 이름으로 복사함.
+	// 예를 들어 처음 그냥 푸시하면 master가 푸시되는데 이때 root라는 아이디의 학생이 있으면 
+	// master$root 브랜치가 파생되고 이 브랜치는 강사와 root라는 학생만 접근 가능.
 	public void createStudentBranch(List<String> beforeBranchList,
 			Lecture lecture) {
 		List<String> createBranch = getBranchList();
 		try {
+			
 			if (createBranch.removeAll(beforeBranchList)
 					|| beforeBranchList.size() == 0) {
 				for (String branchPath : createBranch) {
 					String branchName = branchPath.substring(11);
-					for (Weaver weaver : lecture.getJoinWeavers()) {
+					for (Weaver weaver : lecture.getJoinWeavers()) {// 학생들 이름별로 복사함.
 						git.branchCreate()
 						.setStartPoint(branchName)
 						.setName(
@@ -431,17 +437,17 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	//GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
 	public void uploadZip(String name,String email,String message,InputStream zip){
 		try {
-
+			// 임시 git 저장소 생성하고 클론.
 			File localPath = File.createTempFile("git", "");
 			localPath.delete();
 			Git.cloneRepository()
 			.setURI(this.path)
 			.setDirectory(localPath)
 			.call();
-
+			// .git을 제외한 파일 모두 삭제.
 			for(String fileName:localPath.list())
 				if(!fileName.equals(".git")){
 					File file = new File(localPath.getAbsoluteFile()+"/"+fileName);
@@ -450,6 +456,8 @@ public class GitUtil {
 					else
 						file.delete();
 				}
+			
+			//압축파일을 품.
 			byte[] buffer = new byte[1024];
 
 			ZipInputStream zis = 
@@ -476,7 +484,7 @@ public class GitUtil {
 
 			zis.closeEntry();
 			zis.close();
-
+			//이제 파일들을 모조리 추가시키고 커밋한 후에 푸시함.
 			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
 			git.add().addFilepattern(".").call();
 			git.commit().setAuthor(name, email).setMessage(message).call();
@@ -486,6 +494,7 @@ public class GitUtil {
 		}
 	}
 
+	// 프로젝트를 포크함.
 	public void forkRepository(String originRepo, String newRepo){
 		try{
 			FileUtils.copyDirectory(new File(GitPath+originRepo+".git"),  new File(GitPath+newRepo+".git"));
@@ -494,6 +503,7 @@ public class GitUtil {
 		}
 	}
 
+	// 일주일 24시간별로 커밋의 갯수를 측정하는 코드 빈도수 시각화에 쓰임
 	public int[][] getDayAndHour(){
 
 		int[][] array = new int[7][24];
@@ -508,7 +518,7 @@ public class GitUtil {
 		}
 		return array;
 	}
-
+	// 각 유저가 날짜별로 커밋을 한 정보를 취합함.
 	public GitParentStatistics getCommitStatistics(){
 		GitParentStatistics gitParentStatistics = new GitParentStatistics();
 		try{
@@ -525,18 +535,18 @@ public class GitUtil {
 				} else {
 					diffs = simpleFileBrowser(rc);
 				}
-				int addFile = StringUtils.countOccurrencesOf(diffs, "--- /dev/null");
-				int deleteFile = StringUtils.countOccurrencesOf(diffs, "+++ /dev/null");
+				int addFile = StringUtils.countOccurrencesOf(diffs, "--- /dev/null");// 추가한 파일 수
+				int deleteFile = StringUtils.countOccurrencesOf(diffs, "+++ /dev/null");// 삭제한 파일 수
 				diffs = StringUtils.delete(diffs, "\n--- ");
 				diffs = StringUtils.delete(diffs, "\n+++ ");
 				gitParentStatistics.addGitChildStatistics(
 						new GitChildStatistics(
-								rc.getAuthorIdent().getEmailAddress(), 
-								StringUtils.countOccurrencesOf(diffs, "\n+"), 
-								StringUtils.countOccurrencesOf(diffs, "\n-"), 
+								rc.getAuthorIdent().getEmailAddress(), // 유저 이메일
+								StringUtils.countOccurrencesOf(diffs, "\n+"), //추가한 라인 수
+								StringUtils.countOccurrencesOf(diffs, "\n-"), //삭제한 라인 수
 								addFile,
 								deleteFile,
-								rc.getAuthorIdent().getWhen()));
+								rc.getAuthorIdent().getWhen())); // 날짜
 			}
 
 		}catch(Exception e){
@@ -545,13 +555,14 @@ public class GitUtil {
 		return gitParentStatistics;
 	}
 
+	//git blame기능을 구현함.
 	public List<GitBlame> getBlame(String filePath, String commitID){
 		List<GitBlame> gitBlames = new ArrayList<GitBlame>();
 		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
 
 		try{
 			BlameResult result = git.blame().setStartCommit(commit).setFilePath(filePath).call();
-
+			// 입력 받은 커밋을 기점으로 파일의 라인 별로 코드를 분석함.
 			for(int i=0; i<result.getResultContents().size(); i++)
 				gitBlames.add(new GitBlame(result.getSourceCommit(i)));
 
@@ -561,6 +572,7 @@ public class GitUtil {
 		return gitBlames;
 	}
 
+	// 프로젝트 정보를 가져옴
 	public GitInfo getGitInfo(String branchName){
 		GitInfo gitInfo = new GitInfo();
 		try{
@@ -570,7 +582,7 @@ public class GitUtil {
 		}
 		return gitInfo;
 	}
-
+	// 커밋에 붙어있는 GIT 노트를 가져옴
 	public String getNote(String commit){
 		String str = new String();
 		try{
@@ -581,33 +593,35 @@ public class GitUtil {
 			return str;
 		}
 	}
-
+	// 브랜치 대 브랜치 병합이 아닌 커밋 대 브랜치 병합인 채리픽 방식으로 통합하는 기능
 	public String cherryPick(String cherryPickRepo,String cherryPickCommit,String originalRepoBranch){
 		String returnState = new String();
 		cherryPickRepo = GitPath+cherryPickRepo+".git";
-		System.out.println(cherryPickRepo);
+			
 		try{
+			//임시 git 저장소를 클론함.
 			File localPath = File.createTempFile("cherry", "");
 			localPath.delete();
 			Git.cloneRepository()
 			.setURI(cherryPickRepo)
 			.setDirectory(localPath)
 			.call();
-
+			
 			Repository repo = new FileRepository(localPath+"/.git");
 			Git git = new Git(repo);
 			StoredConfig config = git.getRepository().getConfig();
 			config.unset("remote", "origin", "url");
 			config.save();
-			config.setString("remote", "origin", "url", this.path);
+			config.setString("remote", "origin", "url", this.path);// 보낼 것 위치 지정
 			config.save();
 			git.fetch().call();
 			git.checkout().setName("refs/remotes/origin/"+originalRepoBranch).call();
 			git.branchCreate().setName("org").call();
 			git.checkout().setName("org").call();
-			
+			// 채리픽 시도하여 결과를 문자열로 저장
 			returnState = git.cherryPick().include(CommitUtils.getCommit(repo, cherryPickCommit)).call().getStatus().toString();
 			git.push().setRemote("origin").add("org:"+originalRepoBranch).call();
+			// 원래 저장소로 푸시.
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 			returnState = "Error";

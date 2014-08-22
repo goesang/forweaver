@@ -5,6 +5,7 @@ gitective - https://github.com/kevinsawicki/gitective
 mongodb - www.mongodb.org
 Log4j http://logging.apache.org/log4j/2.x/
 
+d3js - http://d3js.org/
 bootstrap - http://getbootstrap.com/
 bootstrap flat ui - http://designmodo.github.io/Flat-UI/
 jasny bootstrap- http://jasny.github.io/bootstrap/

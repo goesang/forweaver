@@ -26,6 +26,7 @@ import com.forweaver.service.LectureService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
 
+// 숙제 저장소 컨트롤러입니다.
 @Controller
 @RequestMapping("/lecture/{lectureName}")
 public class RepoController {
@@ -41,18 +42,22 @@ public class RepoController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		String repoName = request.getParameter("name");		
 		String category = request.getParameter("category");
+		String period = request.getParameter("period");
+		int periodInt = 0;
+		if(period != null)
+			periodInt = Integer.parseInt(request.getParameter("period"));
 		Repo repo;
 		if(category == null)
 			repo = new Repo(repoName, 
 					1, 
 					WebUtil.removeHtml(request.getParameter("description")), 
-					Integer.parseInt(request.getParameter("period")), 
+					periodInt, 
 					lecture,weaver);	
 		else
 			repo = new Repo(repoName, 
 					2, 
 					WebUtil.removeHtml(request.getParameter("description")), 
-					Integer.parseInt(request.getParameter("period")), 
+					periodInt, 
 					lecture,weaver);	
 
 		lectureService.addRepo(lecture, repo);
@@ -333,7 +338,7 @@ public class RepoController {
 		return "redirect:/lecture/"+lectureName+"/"+repoName+"/browser"; 
 	}
 
-	@RequestMapping("/{repoName}/fork") // 포크
+	@RequestMapping("/{repoName}/fork") // 팀 프로젝트로 포크할 수 있음
 	public String fork(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName){
 		Lecture lecture = lectureService.get(lectureName);

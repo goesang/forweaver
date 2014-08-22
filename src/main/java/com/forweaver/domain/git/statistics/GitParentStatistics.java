@@ -1,14 +1,15 @@
 package com.forweaver.domain.git.statistics;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class GitParentStatistics {
+// GitChildStatistics를 직접 관리하는 클래스
+public class GitParentStatistics implements Serializable {
+	
+	static final long serialVersionUID = 32222213L;
+	
 	private List<GitChildStatistics> gitChildStatistics; 
 	private HashMap<String, GitTotalStatistics> userHashMap; 
 

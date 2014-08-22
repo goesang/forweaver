@@ -7,7 +7,6 @@
           http://www.springframework.org/schema/security
           http://www.springframework.org/schema/security/spring-security.xsd">
 
-
 	<security:http pattern="/favicon.ico" security="none" />
 
 	<!-- Stateless RESTful service using Basic authentication -->

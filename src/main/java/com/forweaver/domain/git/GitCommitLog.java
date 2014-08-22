@@ -4,13 +4,11 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.jgit.revwalk.RevCommit;
-
-import com.forweaver.util.WebUtil;
-
+// 커밋 로그 정보를 담기 위한 클래스
 public class GitCommitLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;
+	
 	private String commitLogID;
 	private String shortMassage;
 	private String fullMassage;

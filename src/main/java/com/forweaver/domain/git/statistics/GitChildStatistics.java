@@ -1,10 +1,14 @@
 package com.forweaver.domain.git.statistics;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
-public class GitChildStatistics {
+//날짜별로 유저의 커밋을 분석하고 정보를 담는 클래스.
+public class GitChildStatistics implements Serializable {
+	
+	static final long serialVersionUID = 323232313L;
+	
 	private String userEmail;
 	private int addLine;
 	private int deleteLine;

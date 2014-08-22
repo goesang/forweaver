@@ -1,6 +1,12 @@
 package com.forweaver.domain.git.statistics;
 
-public class GitTotalStatistics {
+import java.io.Serializable;
+
+// 단순히 최종 추가 및 최종 커밋 수를 파악하여 정보를 담는 클래스
+public class GitTotalStatistics implements Serializable{
+	
+	static final long serialVersionUID = 2219L;
+		
 	private int totalAdd;
 	private int totalDelete;
 	private int totalAddFile;

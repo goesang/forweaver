@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class CherryPickRequest {
-	static final long serialVersionUID = 5411122234L;
+	static final long serialVersionUID = 541112234L;
 	@Id
 	private String id;
 	@DBRef

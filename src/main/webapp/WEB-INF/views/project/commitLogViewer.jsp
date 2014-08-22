@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
@@ -152,12 +151,18 @@ function fileUploadChange(fileUploader){
 							<td style="width: 710px;"
 								class="none-top-border post-top-title-short">${fn:substring(gitCommitLog.shortMassage,0,50)}</td>
 								
-							<td class="none-top-border" style="width:190px" rowspan="2">
+							<td class="none-top-border" 
+								<c:if test="${project.getOriginalProject() != null}">
+									style="width:190px" 
+								</c:if>
+								rowspan="2">
+							<c:if test="${project.getOriginalProject() != null}">
 								<a	onclick="return confirm('정말 이 커밋을 체리 바구니하시겠습니까?')" 
 								href="/project/${project.name}/cherry-pick/commit:${gitCommitLog.commitLogID}/add">
 										<span class="span-button"> <i  class="icon-css-padding icon-cherry"></i>
 											<p style ="margin-top: -2px;" class="p-button">체리</p></span>
 									</a>
+									</c:if>
 									<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 										<span class="span-button"> <i class="fa fa-eye"></i>
 											<p class="p-button">전체</p></span>

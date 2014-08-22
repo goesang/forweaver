@@ -44,7 +44,8 @@ import org.gitective.core.stat.CommitterHistogramFilter;
 import org.gitective.core.stat.UserCommitActivity;
 
 
-
+//https://github.com/kevinsawicki/git-reports/blob/master/lib/src/main/java/com/github/kevinsawicki/git/reports/TotalHistoryReport.java
+//위에 주소에서 코드를 가져옴.
 public class GitInfo {
 	public static class LineStats implements Comparable<LineStats> {
 

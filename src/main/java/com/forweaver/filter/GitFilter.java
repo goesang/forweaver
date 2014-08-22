@@ -24,9 +24,8 @@ import com.forweaver.service.ProjectService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.GitUtil;
 
-/**
- * Servlet Filter implementation class MyFilterExample
- */
+//git clone이나 그외 git 프로그램으로 접근시 먼저 접근을 막고 검사하는 필터
+//git에서 권한 설정 기능이 없어서 필터로 구현함.
 @Component("GitFilter")
 public class GitFilter implements Filter {
 	@Autowired WeaverService weaverService;
@@ -37,8 +36,6 @@ public class GitFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain filterchain) throws IOException, ServletException {
-
-
 		String requestUrl = ((HttpServletRequest) req).getRequestURI();
 		String[] requstUrlArray = requestUrl.split("/");
 		String lectureName = requstUrlArray[2];

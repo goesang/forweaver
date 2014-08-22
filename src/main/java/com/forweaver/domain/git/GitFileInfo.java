@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
+// 파일 정보를 담기 위한 클래스
 public class GitFileInfo implements Serializable {
 
 	static final long serialVersionUID = 39311473L;
+	
 	private String name;
 	private String content;
 	private List<RevCommit> gitLogList = new ArrayList<RevCommit>();

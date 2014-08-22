@@ -4,13 +4,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.CacheManager;
-
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitCommitLog;
 import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
@@ -24,7 +21,6 @@ import com.forweaver.util.GitUtil;
 public class GitService {
 
 	@Autowired private WeaverDao weaverDao;
-
 
 	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){

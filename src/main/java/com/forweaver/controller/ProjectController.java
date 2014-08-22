@@ -722,6 +722,7 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 
+	// 프로젝트 정보 불러오기
 	@RequestMapping("/{creatorName}/{projectName}/info")
 	public String info(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
@@ -731,6 +732,7 @@ public class ProjectController {
 		return "/project/info";
 	}
 
+	// 프로젝트 스트림 시각화
 	@RequestMapping("/{creatorName}/{projectName}/info:stream")
 	public String stream(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){
@@ -740,7 +742,8 @@ public class ProjectController {
 		model.addAttribute("gps", gitService.loadStatistics(creatorName, projectName));
 		return "/project/stream";
 	}
-
+	
+	// 프로젝트 빈도수 시각화
 	@RequestMapping("/{creatorName}/{projectName}/info:frequency")
 	public String punchcard(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName, Model model){

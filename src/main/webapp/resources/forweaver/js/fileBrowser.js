@@ -1,3 +1,4 @@
+
 function IndexOf(Val, Str, x) {
 	if (x <= (Str.split(Val).length - 1)) {
 		Ot = Str.indexOf(Val);

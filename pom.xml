@@ -32,7 +32,6 @@
 		<org.eclipse.jgit-version>3.4.1.201406201815-r</org.eclipse.jgit-version>
 	</properties>
 	<dependencies>
-
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -43,6 +43,8 @@ public class ProjectDao {
 		update.set("description", project.getDescription());
 		update.set("tags", project.getTags());
 		update.set("push", project.getPush());
+		update.set("adminWeavers", project.getAdminWeavers());
+		update.set("joinWeavers", project.getJoinWeavers());
 		update.set("childProjects", project.getChildProjects());
 		mongoTemplate.updateFirst(query, update, Project.class);
 	}

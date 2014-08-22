@@ -6,11 +6,11 @@ import java.util.Date;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
-import com.forweaver.util.WebUtil;
-
+//커밋 브라우져에서 볼 수 있도록 리스트에 담길 클래스
 public class GitSimpleCommitLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;
+	
 	private String commitLogID;
 	private String shortMassage;
 	private String commiterName;

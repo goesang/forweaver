@@ -1,11 +1,15 @@
 package com.forweaver.domain.git;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
-public class GitBlame {
+//git blame 정보를 담기 위한 클래스
+public class GitBlame  implements Serializable {
 
+	static final long serialVersionUID = 12224423434L;
+	
 	private String commitID;
 	private String userName;
 	private String userEmail;

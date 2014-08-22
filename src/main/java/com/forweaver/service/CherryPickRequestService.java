@@ -14,6 +14,7 @@ import com.forweaver.util.GitUtil;
 
 @Service
 public class CherryPickRequestService {
+	
 	@Autowired private CherryPickRequestDao cherryPickRequestDao;
 	@Autowired private PostDao postDao;
 
