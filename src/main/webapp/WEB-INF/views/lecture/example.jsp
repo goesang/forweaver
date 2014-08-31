@@ -95,7 +95,7 @@ showFileBrowser("/");
 						id="hide-content-button" class="btn btn-primary"
 						href="javascript:hideUploadContent();"> <i
 						
-						class="fa fa-arrow-circle-o-up"> </i></a> <a class="btn btn-primary" href="/lecture/${lecture.name}/repo/example/${selectBranch}/${lecture.name}-ex-${selectBranch}.zip">
+						class="fa fa-arrow-circle-o-up"> </i></a> <a class="btn btn-primary" href="/lecture/${lecture.name}/example/${selectBranch}/${lecture.name}-ex-${selectBranch}.zip">
 					<i  class="fa fa-arrow-circle-o-down">
 					</i></a>
 				</div>
@@ -108,7 +108,7 @@ showFileBrowser("/");
 
 				</select>
 				
-				<form id="upload-form" enctype="multipart/form-data" action="/lecture/${lecture.name}/repo/example/upload"
+				<form id="upload-form" enctype="multipart/form-data" action="/lecture/${lecture.name}/example/upload"
 					method="post">
 					<div class="span12">
 						<input class="title span10" type="text" name="message"

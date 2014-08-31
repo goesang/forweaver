@@ -347,7 +347,7 @@ public class GitUtil {
 		File hideDirectory = new File(path+"/refs/heads/edih");
 
 		for(File file:currentDirectory.listFiles()){
-			if(!file.getName().endsWith("$"+userName))
+			if(!file.getName().endsWith("-"+userName))
 				file.renameTo(new File(path+"/refs/heads/edih/"+file.getName()));
 		}
 		hideDirectory.setWritable(false);
@@ -388,7 +388,7 @@ public class GitUtil {
 
 		try{
 			for(String branchName : this.getBranchList()){
-				if(branchName.endsWith("$"+weaverName)){
+				if(branchName.endsWith("-"+weaverName)){
 					FileWriter reader = new FileWriter(this.localRepo.getDirectory().getAbsolutePath()+"/HEAD");
 					reader.write("ref: "+branchName);
 					reader.close();
@@ -414,12 +414,11 @@ public class GitUtil {
 	}
 	// 강사가 숙제 저장소에 최초로 푸시하면 브랜치를 학생들 이름으로 복사함.
 	// 예를 들어 처음 그냥 푸시하면 master가 푸시되는데 이때 root라는 아이디의 학생이 있으면 
-	// master$root 브랜치가 파생되고 이 브랜치는 강사와 root라는 학생만 접근 가능.
+	// master-root 브랜치가 파생되고 이 브랜치는 강사와 root라는 학생만 접근 가능.
 	public void createStudentBranch(List<String> beforeBranchList,
 			Lecture lecture) {
 		List<String> createBranch = getBranchList();
 		try {
-			
 			if (createBranch.removeAll(beforeBranchList)
 					|| beforeBranchList.size() == 0) {
 				for (String branchPath : createBranch) {
@@ -428,7 +427,7 @@ public class GitUtil {
 						git.branchCreate()
 						.setStartPoint(branchName)
 						.setName(
-								branchName + "$" + weaver.getId())
+								branchName + "-" + weaver.getId())
 								.call();
 					}
 				}
