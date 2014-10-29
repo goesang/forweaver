@@ -11,26 +11,37 @@
 
 배포 라이센스는 MIT License하의 배포되며 그외 저희가 사용한 라이브러리는 NOTICE.txt를 참조하시면 됩니다.
 
+## 실행방법
+
+우선 몽고디비를 실행하시고 나서 내려받은 forweaver 디렉토리에서
+
+> mvn tomcat7:run
+
+그리고 나서 
+
+> http://127.0.0.1:8080
+
+에 접속해주시면 됩니다.
+
 ## 주요 스크린샷
 ### 로그인 화면
-![Screenshot - 2014년 09월 01일 - 00시 32분 57초.png](/files/1364)
+![Screenshot - 2014년 09월 01일 - 00시 32분 57초.png](http://yobi.d2fest.kr/files/1364)
 
 ### 프로젝트 관리 화면
-![Screenshot - 2014년 09월 01일 - 00시 45분 02초.png](/files/1379)
+![Screenshot - 2014년 09월 01일 - 00시 45분 02초.png](http://yobi.d2fest.kr/files/1379)
 
 ### 태그 게시판 화면 
-![Screenshot - 2014년 09월 01일 - 00시 44분 07초.png](/files/1363)
+![Screenshot - 2014년 09월 01일 - 00시 44분 07초.png](http://yobi.d2fest.kr/files/1363)
 
 ### 위버 관리 화면 
-![Screenshot - 2014년 09월 01일 - 00시 43분 45초.png](/files/1361)
+![Screenshot - 2014년 09월 01일 - 00시 43분 45초.png](http://yobi.d2fest.kr/files/1361)
 
 ## 링크
 
 ###  동영상
-* 예선 동영상 [fornaver.mp4](/files/1141)
-* 최종 동영상 [forweaver.mkv](/files/1335)
+* 예선 동영상 [fornaver.mp4](http://yobi.d2fest.kr/files/1141)
+* 최종 동영상 [forweaver.mkv](http://yobi.d2fest.kr/files/1335)
 
 ###  소개자료
-* 예선 소개 자료 [forweaver.pdf](/files/1142)
-* 최종 소개 자료 [forweaver.pptx](/files/1356)
-
+* 예선 소개 자료 [forweaver.pdf](http://yobi.d2fest.kr/files/1142)
+* 최종 소개 자료 [forweaver.pptx](http://yobi.d2fest.kr/files/1356)
