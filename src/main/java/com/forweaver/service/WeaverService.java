@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
@@ -30,7 +31,8 @@ import com.mongodb.DBObject;
 public class WeaverService implements UserDetailsService {
 
 	@Autowired private WeaverDao weaverDao;
-
+	@Autowired PasswordEncoder passwordEncoder;
+	
 	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
 
@@ -69,6 +71,7 @@ public class WeaverService implements UserDetailsService {
 		 else
 			 pass = new Pass("ROLE_ADMIN"); // 최초 회원 가입시 운영자 지위
 		weaver.addPass(pass);
+		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
 		weaverDao.insert(weaver);
 		File file = new File(GitUtil.GitPath + weaver.getId());
 		file.mkdir();
@@ -76,6 +79,7 @@ public class WeaverService implements UserDetailsService {
 
 	public void update(Weaver weaver) { // 회원 수정
 		// TODO Auto-generated method stub
+		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
 		weaverDao.update(weaver);
 	}
 

@@ -20,10 +20,10 @@
 				</ul>
 
 				<ul class="nav pull-right">
-					<sec:authorize ifNotGranted="ROLE_USER">
+					<sec:authorize ifNotGranted="ROLE_USER, ROLE_ADMIN">
 						<li><a href="<c:url value="/login" />"><i class="fa fa-user"></i>&nbsp;로그인</a></li>
 					</sec:authorize>
-					<sec:authorize ifAnyGranted="ROLE_USER">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
 
 						<li class="dropdown"><a href="#" class="dropdown-toggle"
 							data-toggle="dropdown"> 
