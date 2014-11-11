@@ -41,15 +41,15 @@ public class WeaverController {
 	@Autowired
 
 	PostService postService;
-	
+
 	@Autowired
 
 	ProjectService projectService;
-	
+
 	@Autowired
 
 	LectureService lectureService;
-	
+
 	@Autowired
 
 	CodeService codeService;
@@ -78,7 +78,7 @@ public class WeaverController {
 
 		if (weaverService.idCheck(id) || weaverService.idCheck(email))
 			return "/weaver/join";
-		
+
 		Weaver weaver = new Weaver(id, password, email,say, new Data(image,id));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
@@ -89,7 +89,7 @@ public class WeaverController {
 	public String weavers(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"page:1";
 	}
-	
+
 	@RequestMapping("/weaver/page:{page}")
 	public String weavers(@PathVariable("page") String page,Model model) {
 		int pageNum;
@@ -101,25 +101,25 @@ public class WeaverController {
 		}else{
 			pageNum =Integer.parseInt(page);
 		}
-		
+
 		Object[] returnObjejct = weaverService.getWeaverInfos(null,pageNum,number);
-		int weaverCount = (int)returnObjejct[0];
+		//int weaverCount = (int)returnObjejct[0];
 		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
-				
+
 		model.addAttribute("weavers", weavers);	
-		model.addAttribute("weaverCount", weaverCount);
-		
+		//model.addAttribute("weaverCount", weaverCount);
+
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", number);
 		model.addAttribute("pageUrl", "/weaver/page:");
 		return "/weaver/weavers";
 	}
-	
+
 	@RequestMapping("/weaver/tags:{tagNames}")
 	public String weaversTags(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"/page:1";
 	}
-	
+
 	@RequestMapping("/weaver/tags:{tagNames}/page:{page}")
 	public String weaversTags(Model model,@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page) {
@@ -133,20 +133,20 @@ public class WeaverController {
 		}else{
 			pageNum =Integer.parseInt(page);
 		}
-		
+
 		Object[] returnObjejct = weaverService.getWeaverInfos(tagList,pageNum-1,number);
-		int weaverCount = (int)returnObjejct[0];
+		//int weaverCount = (int)returnObjejct[0];
 		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
-				
+
 		model.addAttribute("weavers", weavers);	
-		model.addAttribute("weaverCount", weaverCount);
-		
+		//model.addAttribute("weaverCount", weaverCount);
+
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", number);
 		model.addAttribute("pageUrl", "/weaver/tags:"+tagNames+"/page:");
 		return "/weaver/weavers";
 	}
-	
+
 	@RequestMapping("/{id}")
 	public String home(@PathVariable("id") String id, Model model) {
 		Weaver weaver = weaverService.get(id.replace(",", "."));
@@ -154,7 +154,7 @@ public class WeaverController {
 			return "/error404";
 		else
 			return "redirect:/" + weaver.getId() + "/sort:age-desc/page:1";
-		
+
 	}
 
 	@RequestMapping("/{id}/project")
@@ -163,9 +163,9 @@ public class WeaverController {
 
 		if (weaver == null)
 			return "redirect:/";
-		
+
 		List<Project> projects = new ArrayList<Project>();
-		
+
 		for(Pass pass :weaver.getPasses()){
 			Project project = projectService.get(pass.getJoinName());
 			if(project != null)
@@ -176,7 +176,7 @@ public class WeaverController {
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
-	
+
 	@RequestMapping("/{id}/lecture")
 	public String lecture(@PathVariable("id") String id, Model model) {
 		Weaver weaver = weaverService.get(id);
@@ -186,7 +186,7 @@ public class WeaverController {
 		}
 
 		List<Lecture> lectures = new ArrayList<Lecture>();
-		
+
 		for(Pass pass :weaver.getPasses()){
 			Lecture lecture = lectureService.get(pass.getJoinName());
 			if(lecture != null)
@@ -197,7 +197,7 @@ public class WeaverController {
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
-	
+
 	@RequestMapping("/{id}/code")
 	public String code(@PathVariable("id") String id, Model model) {
 		Weaver weaver = weaverService.get(id);
@@ -205,13 +205,13 @@ public class WeaverController {
 		if (weaver == null) {
 			return "redirect:/";
 		}
-		
+
 		model.addAttribute("weaver", weaver);
 		model.addAttribute("codes", codeService.getCodesWhenWeaverHome(weaver, "", 1, 100));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
-	
+
 	@RequestMapping("/{id}/sort:{sort}/page:{page}")
 	public String page(@PathVariable("id") String id,
 			@PathVariable("page") String page,
@@ -344,7 +344,7 @@ public class WeaverController {
 		return "/weaver/home";
 	}
 
-	
+
 	@RequestMapping(value = "/{id}/edit")
 	public String editWeaver(@PathVariable("id") String id,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -353,7 +353,7 @@ public class WeaverController {
 		model.addAttribute("weaver", weaver);
 		return "/weaver/edit";
 	}
-	
+
 	@RequestMapping(value = "/{id}/edit", method = RequestMethod.POST)
 	public String editWeaver(@PathVariable("id") String id,
 			@RequestParam("password") String password,
@@ -373,9 +373,9 @@ public class WeaverController {
 
 		if(say != null && !say.equals(""))
 			weaver.setSay(say);
-		
+
 		weaverService.update(weaver);
-		
+
 		return "redirect:/"+id+"/edit";
 	}
 
@@ -410,8 +410,8 @@ public class WeaverController {
 	public boolean nickNameCheck(HttpServletRequest req) {
 		return weaverService.idCheck(req.getParameter("id"));
 	}
-	
 
-	
+
+
 
 }

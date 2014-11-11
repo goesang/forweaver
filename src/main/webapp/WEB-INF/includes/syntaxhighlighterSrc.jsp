@@ -1,15 +1,15 @@
-<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/shCoreEclipse.css"/>
+<link rel="stylesheet" type="text/css" href="/resources/css/shCoreEclipse.css"/>
 
 
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shCore.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushJScript.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushXml.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushJava.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushPlain.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushRuby.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushCss.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushCpp.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushCSharp.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushSql.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushDiff.js"></script>
-<script type="text/javascript" src="/resources/forweaver/syntaxhighlighter/shBrushPython.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shCore.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushJScript.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushXml.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushJava.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushPlain.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushRuby.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushCss.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushCpp.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushCSharp.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushSql.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushDiff.js"></script>
+<script type="text/javascript" src="/resources/syntaxhighlighter/shBrushPython.js"></script>
