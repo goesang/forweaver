@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="/resources/css/flat-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/css/font-awesome.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/css/forweaver.css"/>
+<link rel="stylesheet" type="text/css" href="/resources/css/custom.css"/>
 
 <link rel='apple-touch-icon' href="/resources/img/apple-touch-icon.png"/>
 <link rel="SHORTCUT ICON" type="image/x-icon" href="/resources/img/favicon.ico"/>

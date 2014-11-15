@@ -1,0 +1,69 @@
+@font-face {
+	font-family: NG;
+	src: url(../fonts/nanum/NanumGothic.eot);
+	src: local(※), url(../fonts/nanum/NanumGothic.woff) format('woff')
+}
+
+body,table,input,textarea,select,button {
+	font-family: 나눔고딕, NG, sans-serif !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+.navbar .nav > li > a {
+    font-size: 14px;
+}
+
+body{
+	font-size: 90%;
+}
+
+.navbar{
+	margin-top:10px;
+}
+
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 70px;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 70px;
+  background-color: #fff;
+}
+
+.form-group{
+	margin-bottom: 10px;
+}
+
+hr{
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+legend{
+	margin-bottom: 10px;
+}
+
+.carousel-indicators{
+	position:relative;
+	float: right;
+	left:0%;
+	width:70px;
+	top: 5px;
+}
+
+.carousel-indicators li {
+	border: 2px solid #333;
+}
