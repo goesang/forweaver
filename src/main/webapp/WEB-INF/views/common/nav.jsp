@@ -15,8 +15,6 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a>
-                </li>
                 <li><a href="/lecture/"><i class="fa fa-university"></i>&nbsp;강의</a>
                 </li>
                 <li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a>

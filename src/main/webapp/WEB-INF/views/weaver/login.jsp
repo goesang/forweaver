@@ -5,7 +5,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/includes/src.jsp" %>
-    <title>ForWeaver : 학생들을 위한 소셜 코딩!</title>
+    <title>ForWeaver - 학생들을 위한 소셜 코딩!</title>
 </head>
 <body>
     <script>
@@ -88,10 +88,10 @@
                     </form>
                 </div>
             </div>
-            <!-- /container -->
-
+           
+			<%@ include file="/WEB-INF/views/common/footer.jsp" %>
+			 <!-- /container -->
     </div>
-    <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 
 </html>

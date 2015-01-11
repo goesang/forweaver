@@ -3,7 +3,6 @@
 <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/css/flat-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/css/font-awesome.min.css"/>
-<link rel="stylesheet" type="text/css" href="/resources/css/forweaver.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/css/custom.css"/>
 
 <link rel='apple-touch-icon' href="/resources/img/apple-touch-icon.png"/>

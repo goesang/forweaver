@@ -4,8 +4,13 @@
 	src: local(※), url(../fonts/nanum/NanumGothic.woff) format('woff')
 }
 
+.well{
+	background-color: #fff;
+}
+
 body,table,input,textarea,select,button {
 	font-family: 나눔고딕, NG, sans-serif !important;
+	font-size: 14px;
 }
 
 a {
@@ -16,9 +21,6 @@ a {
     font-size: 14px;
 }
 
-body{
-	font-size: 90%;
-}
 
 .navbar{
 	margin-top:10px;
@@ -29,10 +31,7 @@ html {
   position: relative;
   min-height: 100%;
 }
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 70px;
-}
+
 
 footer {
   position: absolute;
@@ -56,6 +55,7 @@ legend{
 	margin-bottom: 10px;
 }
 
+/* login page */
 .carousel-indicators{
 	position:relative;
 	float: right;
@@ -66,4 +66,56 @@ legend{
 
 .carousel-indicators li {
 	border: 2px solid #333;
+}
+
+.carousel-indicators .active {
+    background-color: #000;
+}
+
+.item > p{
+	font-size:14px;
+}
+
+/* footer page */
+ul.unstyled, ol.unstyled {
+    list-style: outside none none;
+    margin-left: 0px;
+    font-size: 12px;
+}
+ul, ol {
+    margin: 0px 0px 10px 25px;
+    padding: 0px;
+}
+
+.footer-h4 {
+    padding-bottom: 5px;
+    font-size: 15px;
+    color: #666;
+    border-bottom: thin solid #E1E1E1;
+    margin-bottom: 5px;
+}
+
+.copyright{
+	font-size: 14px;
+}
+
+/* join page */
+
+.join-form-actions-white {
+    padding: 19px 270px 0px 310px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    background-color: #FEFEFE;
+    border-top: 1px solid #E5E5E5;
+    width: 280px;
+}
+
+.join-div-left{
+	margin-top:50px;
+	text-align: center;
+}
+
+.form-inline-input{
+    float: right;
+    max-width: 410px;
 }
