@@ -259,35 +259,4 @@ public class LectureService {
 		return this.get(lectureAndRepoName.split("/")[0]).getRepo(lectureAndRepoName.split("/")[1]);
 	}
 	
-	public String createTeamProject(Lecture lecture,Repo repo, Project newProject, Weaver weaver){
-		
-		if(!repo.getCreator().getId().equals(weaver.getId()) 
-				&& repo.getCategory() == 2 
-				&& repo.isNotJoinWeaver(weaver)){
-			repo.deleteIsNotJoinWeaver(weaver);
-			if(this.get(newProject.getName())!=null){
-				while(true){
-					int cnt=1;
-					if(projectDao.get(newProject.getName()+'-'+cnt)==null){
-						newProject.setName(newProject.getName()+'-'+cnt);
-						break;
-					}
-					cnt++;
-				}
-			}
-			
-			GitUtil gitUtil = new GitUtil(newProject);
-			gitUtil.forkRepository(repo.getLectureName()+"/"+repo.getName(), newProject.getName());
-			projectDao.insert(newProject);
-			lectureDao.update(lecture);
-			
-			Pass pass = new Pass(newProject.getName(), 1);
-			weaver.addPass(pass);
-
-			weaverDao.update(weaver);
-
-			return newProject.getName();
-		}
-		return null;
-	}
 }

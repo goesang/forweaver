@@ -17,7 +17,7 @@ public class Project implements Serializable {
 	static final long serialVersionUID = 423123232123124234L;
 	@Id
 	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, 2이면 팀프로젝트 포크.
+	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트
 	private String description; // 프로젝트 소개
 	private Date openingDate; // 프로젝트 시작일
 	private Date endDate; // 프로젝트 종료일
@@ -83,22 +83,6 @@ public class Project implements Serializable {
 		
 	}
 	
-	public Project(String name,Weaver weaver,Repo repo,List<String> tags) { //팀 프로젝트 포크할 때 생성자
-		super();
-		this.name = weaver.getId()+"/"+name;
-		this.category = 2;
-		this.description = repo.getDescription();
-		this.openingDate = new Date();
-		this.endDate = repo.getDeadLine();
-		this.creator = weaver;
-		this.adminWeavers.add(weaver);
-		this.tags.add("@"+repo.getLectureName()+"/"+repo.getName());
-		this.tags.addAll(tags);
-		repo.getChildProjects().add(this);
-		this.originalProject = repo.getLectureName()+"/"+repo.getName();
-	}
-
-
 	public String getName() {
 		return name;
 	}

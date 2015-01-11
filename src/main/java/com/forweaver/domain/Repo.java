@@ -23,9 +23,6 @@ public class Repo implements Serializable {
 	private Weaver creator;
 	@DBRef
 	private List<Project> childProjects = new ArrayList<Project>(); // 파생 프로젝트 모음
-	@DBRef
-	private List<Weaver> isNotJoinWeaver = new ArrayList<Weaver>(); // 팀프로젝트에 아직 가입하지 않은 회원들을 기록함.
-	
 
 	public Repo() {
 		
@@ -47,10 +44,6 @@ public class Repo implements Serializable {
 			this.deadLine = null;
 		this.creator = creator;
 		this.LectureName = lecture.getName();
-		
-		if(category == 2) //팀프로젝트용 숙제 저장소의 경우
-			for(Weaver weaver : lecture.getJoinWeavers())
-				this.isNotJoinWeaver.add(weaver);
 	}
 
 	public int getRepoID() {
@@ -148,27 +141,5 @@ public class Repo implements Serializable {
 	public void setChildProjects(List<Project> childProjects) {
 		this.childProjects = childProjects;
 	}
-
-	public List<Weaver> getIsNotJoinWeaver() {
-		return isNotJoinWeaver;
-	}
-
-	public void setIsNotJoinWeaver(List<Weaver> isNotJoinWeaver) {
-		this.isNotJoinWeaver = isNotJoinWeaver;
-	}	
-	
-	public void deleteIsNotJoinWeaver(Weaver joinWeaver){
-		for(int i=0;i<this.isNotJoinWeaver.size();i++)
-			if(this.isNotJoinWeaver.get(i).getId().equals(joinWeaver.getId()))
-				this.isNotJoinWeaver.remove(i);
-	}
-	
-	public boolean isNotJoinWeaver(Weaver joinWeaver){
-		for(int i=0;i<this.isNotJoinWeaver.size();i++)
-			if(this.isNotJoinWeaver.get(i).getId().equals(joinWeaver.getId()))
-				return true;
-		return false;
-	}
-	
 	
 }

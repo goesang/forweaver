@@ -102,12 +102,13 @@
 
 	</security:authentication-manager>
 
+
+	<bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
+
 	<bean id="daoAuthenticationProvider"
 		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 		<property name="userDetailsService" ref="userDetailsService" />
-		<!--<property name="passwordEncoder" ref="passwordEncoder"/> -->
-		<!-- Enable the following if you are using a stitle with the password encoding -->
-		<!-- <property name="stitleSource" ref="stitleSource"/> -->
+		<property name="passwordEncoder" ref="passwordEncoder" />
 	</bean>
-
 </beans>

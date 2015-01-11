@@ -35,28 +35,22 @@ import com.forweaver.util.WebUtil;
 public class WeaverController {
 
 	@Autowired
-
-	WeaverService weaverService;
+	private WeaverService weaverService;
 
 	@Autowired
-
-	PostService postService;
+	private PostService postService;
 	
 	@Autowired
-
-	ProjectService projectService;
+	private ProjectService projectService;
 	
 	@Autowired
-
-	LectureService lectureService;
+	private LectureService lectureService;
 	
 	@Autowired
+	private CodeService codeService;
 
-	CodeService codeService;
-
-	@Autowired
-
-	TagService tagService;
+	@Autowired 
+	private TagService tagService;
 
 	@RequestMapping("/login")
 	public String login() {
@@ -85,6 +79,7 @@ public class WeaverController {
 		return "redirect:/";
 	}
 
+	/*
 	@RequestMapping("/weaver")
 	public String weavers(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"page:1";
@@ -146,6 +141,8 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/weaver/tags:"+tagNames+"/page:");
 		return "/weaver/weavers";
 	}
+	
+	*/
 	
 	@RequestMapping("/{id}")
 	public String home(@PathVariable("id") String id, Model model) {

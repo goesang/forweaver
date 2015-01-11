@@ -82,8 +82,6 @@ $(document).ready(function() {
 
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
-		<div class="span12">
-			</div>
 			<div id="signupform" class="well-white">
 				<form enctype="multipart/form-data"  onsubmit="return check" class="form-horizontal" action="" method="POST">
 					<fieldset >

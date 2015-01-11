@@ -31,9 +31,12 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/lecture/{lectureName}")
 public class RepoController {
 
-	@Autowired WeaverService weaverService;
-	@Autowired LectureService lectureService;
-	@Autowired GitService gitService;
+	@Autowired 
+	private WeaverService weaverService;
+	@Autowired
+	private LectureService lectureService;
+	@Autowired 
+	private GitService gitService;
 
 	@RequestMapping(value = "/add")
 	public String add(@PathVariable("lectureName") String lectureName,
@@ -338,23 +341,5 @@ public class RepoController {
 		return "redirect:/lecture/"+lectureName+"/"+repoName+"/browser"; 
 	}
 
-	@RequestMapping("/{repoName}/fork") // 팀 프로젝트로 포크할 수 있음
-	public String fork(@PathVariable("lectureName") String lectureName,
-			@PathVariable("repoName") String repoName){
-		Lecture lecture = lectureService.get(lectureName);
-		Repo repo = lecture.getRepo(repoName);
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
-		String newProjectName=
-				lectureService.createTeamProject(lecture,repo, 
-						new Project(repo.getName(), currentWeaver, repo, lecture.getTags()),
-						currentWeaver);
-
-		if(newProjectName == null){
-			return "redirect:/lecture/"+lectureName+"/"+repoName;
-		}else{
-			return "redirect:/project/"+newProjectName;
-		}
-	}
 
 }

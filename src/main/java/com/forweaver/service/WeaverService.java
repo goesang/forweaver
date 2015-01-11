@@ -30,8 +30,10 @@ import com.mongodb.DBObject;
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
 
-	@Autowired private WeaverDao weaverDao;
-	@Autowired PasswordEncoder passwordEncoder;
+	@Autowired 
+	private WeaverDao weaverDao;
+	@Autowired 
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
@@ -147,6 +149,7 @@ public class WeaverService implements UserDetailsService {
 		return result;
 	}
 
+	/*
 	//위버정보들과 수 파악함.
 	public Object[] getWeaverInfos(List<String> tags,int page, int size ){
 		List<Weaver> weavers = new ArrayList<Weaver>();
@@ -226,6 +229,6 @@ public class WeaverService implements UserDetailsService {
 		}
 	}
 	
-	
+	*/
 
 }
