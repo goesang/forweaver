@@ -16,6 +16,7 @@
 				<configuration>
 					<contextReloadable>true</contextReloadable>
 					<path>/</path>
+					<port>8081</port>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -55,6 +55,19 @@ legend{
 	margin-bottom: 10px;
 }
 
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
+    font-weight: normal;
+    line-height: 1;
+    color: #999;
+}
+
+.page-header {
+    margin-top: 20px;
+    border-bottom: 0px none;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
 /* login page */
 .carousel-indicators{
 	position:relative;
@@ -83,7 +96,6 @@ ul.unstyled, ol.unstyled {
     font-size: 12px;
 }
 ul, ol {
-    margin: 0px 0px 10px 25px;
     padding: 0px;
 }
 
@@ -97,6 +109,15 @@ ul, ol {
 
 .copyright{
 	font-size: 14px;
+}
+
+
+.nav-tabs{
+	margin-bottom: 20px;
+}
+
+.form-control{
+	font-size:13px;
 }
 
 /* join page */
