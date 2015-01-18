@@ -25,12 +25,12 @@
 					<strong style="font-size:22px;">ForWeaver</strong>는 <a href="https://about.gitlab.com/">GitLab</a>과 같이 소프트웨어 개발 및 저장소와 회원 관리 기능을 제공하는 협업 개발 플랫폼입니다.<br><br>
 					'숙제 저장소'나 '예제 저장소'와 같은 특별한 저장소 관리 서비스, 각종 문서와 정보를 간편하게 공유할 수 있는 게시판, 소스코드의 변경내역을 편리하게 관리할 수 있는 형상관리 툴을 비롯하여, 팀 개발을 위한 다양한 기능을 포함하고 있습니다.<br><br>
 				</div>
-				<div class="col-md-2 col-md-offset-1"><br>
-					<embed src="/resources/img/mainpage.png" height="300" />
+				<div class="col-md-5 col-md-offset-1"><br>
+					<embed src="/resources/img/mainpage.png" style="max-width: 100%;"/>
 				</div>
 			</div>
-			<div class="row" style = "background-color:#F2F2F2">
-			<hr/>
+			<div class="row" style = "background-color:#F3F3F3">
+			<!--  <hr/>-->
 			<center><h3>ForWeaver란?</h3></center>
 				<div class="col-md-4 col-md-offset-1">
 					<center>
@@ -44,31 +44,38 @@
 					<br><br><br>
 					</center>
 				</div>
-				<div class="col-md-1">
-					<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Philetairus_socius_%28Etosha%2C_2013%29.jpg/800px-Philetairus_socius_%28Etosha%2C_2013%29.jpg" height="200px"/>
-				</div>
-				<div class="col-md-1 col-md-offset-1">
-					<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Webervogelnst_Auoblodge.JPG/800px-Webervogelnst_Auoblodge.JPG" height="200px"/>
-				</div>
+					<div class="col-xs-6 col-md-3">
+						<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Philetairus_socius_%28Etosha%2C_2013%29.jpg/800px-Philetairus_socius_%28Etosha%2C_2013%29.jpg" style="max-width: 100%;" />
+					</div>
+					<div class="col-xs-6 col-md-3">
+						<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Webervogelnst_Auoblodge.JPG/800px-Webervogelnst_Auoblodge.JPG" style="max-width: 89%;"/>
+					</div>
 			</div>
 			<center><h3>기본 기능은?</h3></center>
 			<div class="row">
 				<div class="col-md-4 col-md-offset-1">
-					<center><h3>태그 페이지!</h3></center>
+					<center><h4>태그 페이지!</h4></center>
 					<strong style="font-size:22px;">Tag</strong>를 통해 <br>
 					프로젝트, 게시글 등을 검색 및 관리할 수 있으며,<br>
 					2개 이상의 태그를 이용한 분리 검색이 가능합니다.<br><br>
 				</div>
-				<div class="col-md-2 col-md-offset-1"><br>
-					<embed src="/resources/img/tagpage.png" height="300" />
+				<div class="col-md-4 col-md-offset-1"><br>
+					<embed src="/resources/img/tagpage.png" style="max-width: 100%;" />
 				</div>
 			</div>
+			<br>
+			<div class="row">
+				<div class="col-md-9 col-md-offset-1">
+					<hr style="border-top: 3px dashed;"/>
+				</div>
+			</div>
+			<br>
 			<div class="row">
 				<div class="col-md-4 col-md-offset-1"><br>
-					<embed src="/resources/img/projectpage.png" height="300" />
+					<embed src="/resources/img/projectpage.png" style="max-width: 100%;" />
 				</div>
 				<div class="col-md-4 col-md-offset-1">
-					<center><h3>프로젝트 페이지!</h3></center>
+					<center><h4>프로젝트 페이지!</h4></center>
 					<strong style="font-size:22px;">Project</strong>는 <br>
 					안전하게 서버에 보관되며,<br>
 					해당 프로젝트 사용자들 간의 채팅,<br>
@@ -76,15 +83,22 @@
 					코드 주고받기 등 다양한 기능을 제공합니다.<br><br>
 				</div>
 			</div>
+			<br>
+			<div class="row">
+				<div class="col-md-9 col-md-offset-1">
+					<hr style="border-top: 3px dashed;"/>
+				</div>
+			</div>
+			<br>
 			<div class="row">
 				<div class="col-md-4 col-md-offset-1">
-					<center><h3>위버 관리 페이지!</h3></center>
+					<center><h4>위버 관리 페이지!</h4></center>
 					<strong style="font-size:22px;">Weaver</strong>&nbsp; 페이지를 통해 다른 사용자를 찾아보세요.<br>
 					관심 있는 주제를 확인할 수 있고,<br>
 					사용자의 최근 정보를 보는 것이 가능합니다.<br><br>
 				</div>
-				<div class="col-md-2 col-md-offset-1"><br>
-					<embed src="/resources/img/weaverpage.png" height="300" />
+				<div class="col-md-4 col-md-offset-1"><br>
+					<embed src="/resources/img/weaverpage.png" style="max-width: 100%;" />
 				</div>
 			</div>
 			<!-- 
