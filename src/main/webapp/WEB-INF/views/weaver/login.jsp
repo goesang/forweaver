@@ -30,9 +30,9 @@
                         <div class="carousel-inner">
                             <div style="height: 406px;" class="active item text-center">
                                 <embed src="/resources/svg/noun_project_8428.svg" width="240" height="240" type="image/svg+xml" />
-                                <h5>포위버에 오신것을 환영합니다!</h5>
+                                <h5>학생들을 위한 소셜 코딩!</h5>
                                 <p>소스코드 공유가 어려우셨나요?
-                                    <br>분산버젼관리 GIT의 보편화 forweaver!</p>
+                                <br>포위버에 오신것을 환영합니다!</p>
                             </div>
                             <div style="height: 406px;" class="item text-center">
                                 <embed src="/resources/svg/noun_project_14888.svg" width="240" height="240" type="image/svg+xml" />

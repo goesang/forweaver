@@ -1,6 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <sec:authentication property="principal" var="currentUser" />
 
+<script>
+$(function(){
+	$('#forweaver-tags').tagsinput({
+		  confirmKeys: [13, 32, 44]
+	});
+});	
+</script>
 <!-- Static navbar -->
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
@@ -59,7 +66,7 @@
 
         </div>
         <!--/.nav-collapse -->
-        <input placeholder="태그를 입력해 보세요!" name="tagsinput" class="tagsinput" data-role="tagsinput" />
+        <input id = "forweaver-tags" placeholder="태그를 입력해 보세요!" name="tagsinput" class="tagsinput" />
 
 
     </div>

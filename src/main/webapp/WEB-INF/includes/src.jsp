@@ -12,5 +12,6 @@
 <script src="/resources/js/jasny-bootstrap.min.js"></script>
 <script src="/resources/js/flat-ui.min.js"></script>
 <script src="/resources/js/forweaver-util.js"></script>
+<script src="/resources/js/jquery.twbsPagination.min.js"></script>
 
 <meta name="robots" content="noindex">

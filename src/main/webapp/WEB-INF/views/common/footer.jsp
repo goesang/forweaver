@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <div style="clear:both"></div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<h4 class ="footer-h4">기본 소개</h4>
 			<ul class="unstyled">
 				<li><a href="/forweaver">Forweaver.com이란?</a></li>		
 				<li><a href="/weavernest">WeaverNest란	무엇인가?</a></li>	
 			</ul>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<h4 class ="footer-h4">관련 사이트</h4>
 			<ul class="unstyled">
 				<li><a href="https://github.com/">깃허브</a></li>
@@ -17,7 +17,7 @@
 			</ul>
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<h4 class ="footer-h4">감사드리며</h4>
 			<ul class="unstyled">
 				<li><a target="#" href="http://www.git-scm.com/">GIT</a></li>
