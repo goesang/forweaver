@@ -75,9 +75,10 @@
 						<div class="file-div"></div>
 				</div>
 			</form>
-
+			
+			<div style="clear:both"></div>
+			
 			<div class="col-md-12">
-
 				<table id="post-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${posts}" var="post">
