@@ -19,7 +19,8 @@ import com.mongodb.DBObject;
 @Repository
 public class WeaverDao {
 	
-	@Autowired private MongoTemplate mongoTemplate;
+	@Autowired 
+	private MongoTemplate mongoTemplate;
 	
 	public boolean existsWeaver() { // 회원 존재 여부
 		return mongoTemplate.collectionExists(Weaver.class);
@@ -65,6 +66,7 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 
+	/*
 	public List<DBObject> getWeaverInfosInPost(List<String> tags){
 		Criteria criteria = new Criteria();
 		
@@ -136,5 +138,5 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "code", DBObject.class).getMappedResults();
 	}
 
-	
+	*/
 }

@@ -6,8 +6,7 @@
 	<version>0.3.17-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<build>
-		<finalName>ROOT</finalName>
-
+		<finalName>forweaver</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
@@ -29,11 +28,13 @@
 		</plugins>
 	</build>
 	<properties>
-		<java-version>1.7</java-version>
-		<org.springframework-version>4.1.1.RELEASE</org.springframework-version>
+		<java-version>1.8</java-version>
+		<org.springframework-version>4.1.4.RELEASE</org.springframework-version>
+		<org.springframework.security-version>3.2.5.RELEASE</org.springframework.security-version>
 		<org.aspectj-version>1.6.11</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
-		<org.eclipse.jgit-version>3.4.1.201406201815-r</org.eclipse.jgit-version>
+		<org.eclipse.jgit-version>3.6.1.201501031845-r</org.eclipse.jgit-version>
+		<tomcat.version>7.0.37</tomcat.version>
 	</properties>
 	<dependencies>
 		<!-- Spring -->
@@ -69,26 +70,31 @@
 			<artifactId>spring-messaging</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
 		<!-- security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
-			<version>3.2.4.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>3.2.4.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>3.2.4.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>3.2.4.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 		</dependency>
 
 		<!-- Database connection pooling -->
@@ -98,15 +104,15 @@
 			<version>1.4</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- Database drivers -->
 
+		<!-- Database drivers -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
-			<version>1.5.1.RELEASE</version>
+			<version>1.6.1.RELEASE</version>
 		</dependency>
-		<!-- ehcache -->
 
+		<!-- ehcache -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
@@ -124,8 +130,6 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.4.1.3</version>
 		</dependency>
-
-
 		<!-- File uploading -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -255,8 +259,6 @@
 			<artifactId>markdown4j</artifactId>
 			<version>2.2-cj-1.0</version>
 		</dependency>
-		<!-- vertx -->
-
 	</dependencies>
 
 	<repositories>

@@ -22,13 +22,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.CherryPickRequest;
 import com.forweaver.domain.Data;
-import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
-import com.forweaver.domain.Repo;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.chat.ChatRoom;
@@ -53,17 +51,28 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/project")
 public class ProjectController {
 
-	@Autowired WaitJoinService waitJoinService;
-	@Autowired WeaverService weaverService;
-	@Autowired ProjectService projectService;
-	@Autowired PostService postService;
-	@Autowired RePostService rePostService;
-	@Autowired GitService gitService;
-	@Autowired TagService tagService;
-	@Autowired ChatService chatService;
-	@Autowired CherryPickRequestService cherryPickRequestService;
-	@Autowired LectureService lectureService;
-	@Autowired DataService dataService;
+	@Autowired 
+	private WaitJoinService waitJoinService;
+	@Autowired 
+	private WeaverService weaverService;
+	@Autowired 
+	private ProjectService projectService;
+	@Autowired 
+	private PostService postService;
+	@Autowired 
+	private RePostService rePostService;
+	@Autowired 
+	private GitService gitService;
+	@Autowired 
+	private TagService tagService;
+	@Autowired 
+	private ChatService chatService;
+	@Autowired 
+	private CherryPickRequestService cherryPickRequestService;
+	@Autowired 
+	private LectureService lectureService;
+	@Autowired 
+	private DataService dataService;
 
 	@RequestMapping("/")
 	public String projects() {
@@ -188,14 +197,7 @@ public class ProjectController {
 			@PathVariable("projectName") String projectName) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		if(projectService.delete(currentWeaver, project)){
-			if(project.getCategory() == 2){
-				Lecture lecture = lectureService.get(project.getOriginalProject().split("/")[0]);
-				Repo repo = lecture.getRepo(project.getOriginalProject().split("/")[1]);
-				repo.getIsNotJoinWeaver().add(currentWeaver);
-				lectureService.update(lecture);
-			}
-		}
+		projectService.delete(currentWeaver, project);
 		return "redirect:/project/";
 	}
 
@@ -506,8 +508,6 @@ public class ProjectController {
 	public String manageWeaver(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		if(project.getCategory() == 2)
-			model.addAttribute("weavers", lectureService.getRepo(project.getOriginalProject()).getIsNotJoinWeaver());
 		model.addAttribute("project", project);
 		return "/project/manageWeaver";
 	}
@@ -549,11 +549,6 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver waitingWeaver = weaverService.get(weaver);
 		Weaver proposer = weaverService.getCurrentWeaver();
-
-		if(project.getCategory() == 2  //팀 프로젝트의 경우 오로지 가입하지 않는 위버만 추가 가능.
-				&& !lectureService.getRepo(
-						project.getOriginalProject()).isNotJoinWeaver(waitingWeaver))
-			return "redirect:/project/"+ creatorName+"/"+projectName+"/weaver";
 
 		if(waitJoinService.isCreateProjectWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
