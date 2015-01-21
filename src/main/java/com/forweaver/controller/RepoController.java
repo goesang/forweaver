@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
-import com.forweaver.domain.Project;
 import com.forweaver.domain.Repo;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitFileInfo;
@@ -43,25 +42,16 @@ public class RepoController {
 			HttpServletRequest request) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		String repoName = request.getParameter("name");		
-		String category = request.getParameter("category");
+		String repoName = request.getParameter("name");
 		String period = request.getParameter("period");
 		int periodInt = 0;
 		if(period != null)
 			periodInt = Integer.parseInt(request.getParameter("period"));
-		Repo repo;
-		if(category == null)
-			repo = new Repo(repoName, 
+		Repo repo = new Repo(repoName, 
 					1, 
 					WebUtil.removeHtml(request.getParameter("description")), 
 					periodInt, 
-					lecture,weaver);	
-		else
-			repo = new Repo(repoName, 
-					2, 
-					WebUtil.removeHtml(request.getParameter("description")), 
-					periodInt, 
-					lecture,weaver);	
+					lecture,weaver);
 
 		lectureService.addRepo(lecture, repo);
 
@@ -243,7 +233,7 @@ public class RepoController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(lectureName,repoName,commit));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(lectureName,repoName,commit,1,10));
+				gitService.getGitCommitLogList(lectureName,repoName,commit,1,15));
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
@@ -255,7 +245,10 @@ public class RepoController {
 	public String commitLog(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
 			@PathVariable("commit") String commit,
-			@PathVariable("page") int page,Model model) {
+			@PathVariable("page") String page,Model model) {
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -272,7 +265,7 @@ public class RepoController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(lectureName,repoName,commit));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(lectureName,repoName,commit,page,10));
+				gitService.getGitCommitLogList(lectureName,repoName,commit,pageNum,size));
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);

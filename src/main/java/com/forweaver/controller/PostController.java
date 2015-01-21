@@ -34,11 +34,16 @@ import com.forweaver.util.WebUtil;
 @RequestMapping("/community")
 
 public class PostController {
-	@Autowired PostService postService;
-	@Autowired RePostService rePostService;
-	@Autowired TagService tagService;
-	@Autowired WeaverService weaverService;
-	@Autowired DataService dataService;
+	@Autowired 
+	private PostService postService;
+	@Autowired 
+	private RePostService rePostService;
+	@Autowired 
+	private TagService tagService;
+	@Autowired 
+	private WeaverService weaverService;
+	@Autowired 
+	private DataService dataService;
 
 	@RequestMapping("/")
 	public String front(){
@@ -73,25 +78,18 @@ public class PostController {
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String page(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
 		model.addAttribute("posts", 
-				postService.getPosts(currentWeaver, sort, pageNum, number));
+				postService.getPosts(currentWeaver, sort, pageNum, size));
 		model.addAttribute("postCount", 
 				postService.countPosts(currentWeaver, sort));
 
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/community/sort:"+sort+"/page:");
 		return "/post/front";
 	}
@@ -107,25 +105,19 @@ public class PostController {
 			@PathVariable("sort") String sort,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
 
-		int pageNum;
-		int number = 15;
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver,tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver,tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver,tagList, sort));
+				postService.countPosts(currentWeaver,tagList, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/community/tags:"+tagNames+"/sort:"+sort+"/page:");
 
 		return "/post/front";
@@ -142,24 +134,17 @@ public class PostController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
-
+		
 		model.addAttribute("posts", 
-				postService.getPostsWithTagsAndSearch(currentWeaver,tagList,search, sort, pageNum, number));
+				postService.getPosts(currentWeaver,tagList,search, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTagsAndSearch(currentWeaver,tagList,search, sort));
+				postService.countPosts(currentWeaver,tagList,search, sort));
 
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("search", search);
 		model.addAttribute("pageIndex", page);

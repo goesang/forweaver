@@ -67,20 +67,14 @@ public class LectureController {
 		
 	@RequestMapping("/page:{page}")
 	public String page(@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 		
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, pageNum, number));
+		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, pageNum, size));
 		model.addAttribute("lectureCount", lectureService.countLectures());
 		model.addAttribute("pageIndex", page);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/lecture/page:");
 		return "/lecture/lectures";
 	}
@@ -95,20 +89,16 @@ public class LectureController {
 	@RequestMapping("/tags:{tagNames}/page:{page}")
 	public String tagsWithPage(@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
+	
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}		
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLecturesWithTags(currentWeaver,tagList,pageNum, number));
-		model.addAttribute("lectureCount", lectureService.countLecturesWithTags(tagList));
+		model.addAttribute("lectures", lectureService.getLectures(currentWeaver,tagList,pageNum, size));
+		model.addAttribute("lectureCount", lectureService.countLectures(tagList));
 		model.addAttribute("pageIndex", page);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/lecture/tags:"+tagNames+"/page:");
 		return "/lecture/lectures";
 	}
@@ -122,20 +112,15 @@ public class LectureController {
 	public String tagsWithSearch(@PathVariable("tagNames") String tagNames,
 			@PathVariable("search") String search,
 			@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}		
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLecturesWithTagsAndSearch(currentWeaver,tagList,search,pageNum, number));
-		model.addAttribute("lectureCount", lectureService.countLecturesWithTagsAndSearch(tagList,search));
+		model.addAttribute("lectures", lectureService.getLectures(currentWeaver,tagList,search,pageNum, size));
+		model.addAttribute("lectureCount", lectureService.countLectures(tagList,search));
 		model.addAttribute("pageIndex", page);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/lecture/tags:"+tagNames+"/search:"+search+"/page:");
 		return "/lecture/lectures";
 	}
@@ -171,15 +156,8 @@ public class LectureController {
 	public String community(@PathVariable("lectureName") String lectureName,
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
-		
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 		
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -188,9 +166,9 @@ public class LectureController {
 		
 		model.addAttribute("lecture", lecture);
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver, tagList, sort));
+				postService.countPosts(currentWeaver, tagList, sort));
 		
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("pageUrl", "/lecture/"+lectureName+"/community/sort:"+sort+"/page:");
@@ -208,15 +186,9 @@ public class LectureController {
 			@PathVariable("page") String page,
 			@PathVariable("sort") String sort,
 			Model model){
-		int pageNum;
-		int number = 15;
-		
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
+
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 		
 		Lecture lecture = lectureService.get(lectureName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
@@ -225,16 +197,16 @@ public class LectureController {
 	
 		model.addAttribute("lecture", lecture);
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver, tagList, sort));
+				postService.countPosts(currentWeaver, tagList, sort));
 
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("pageUrl", 
 				"/lecture/"+lectureName+"/community/tags:"+tagNames+"/sort:"+sort+"/page:");
 		return "/lecture/community";
 	}
-	//¿¡·¯ ¼öÁ¤ÇÒ ÇÊ¿ä ÀÖÀ½.
+	//ì—ëŸ¬ ìˆ˜ì •í•  í•„ìš” ìˆìŒ.
 	@RequestMapping(value = "/{lectureName}/community/add")
 	public String addPost(@PathVariable("lectureName") String lectureName,
 			HttpServletRequest request) throws UnsupportedEncodingException {
@@ -243,7 +215,7 @@ public class LectureController {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		
-		if(tags == null || title == null) // ÅÂ±×°¡ ¾øÀ» ¶§
+		if(tags == null || title == null) // íƒœê·¸ê°€ ì—†ì„ ë•Œ
 			return "redirect:/lecture/"+lectureName;
 		else if(content == null)
 			content = "";
@@ -252,7 +224,7 @@ public class LectureController {
 		tagList.add(new String("@"+lectureName));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(!tagService.validateTag(tagList,weaver)) // ÅÂ±×¿¡ ±ÇÇÑÀÌ ¾øÀ»¶§
+		if(!tagService.validateTag(tagList,weaver)) // íƒœê·¸ì— ê¶Œí•œì´ ì—†ì„ë•Œ
 			return "redirect:/lecture/"+lectureName;
 			
         
@@ -276,7 +248,7 @@ public class LectureController {
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, "example","HEAD");
 		
-		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// ÆÄÀÏµéÀ» °Ë»öÇØ¼­ ¸®µå¹Ì ÆÄÀÏÀ» Ã£¾Æ³¿
+		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// íŒŒì¼ë“¤ì„ ê²€ìƒ‰í•´ì„œ ë¦¬ë“œë¯¸ íŒŒì¼ì„ ì°¾ì•„ëƒ„
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
 				readme = WebUtil.markDownEncoder(
 						gitService.getFileInfo(
@@ -304,7 +276,7 @@ public class LectureController {
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, "example",commit);
 		
-		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// ÆÄÀÏµéÀ» °Ë»öÇØ¼­ ¸®µå¹Ì ÆÄÀÏÀ» Ã£¾Æ³¿
+		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// íŒŒì¼ë“¤ì„ ê²€ìƒ‰í•´ì„œ ë¦¬ë“œë¯¸ íŒŒì¼ì„ ì°¾ì•„ëƒ„
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
 				readme = WebUtil.markDownEncoder(
 						gitService.getFileInfo(
@@ -360,7 +332,7 @@ public class LectureController {
 	}
 
 
-	@RequestMapping( "/{lectureName}/weaver/{weaverName}/delete") // È¸¿ø »èÁ¦¿ë
+	@RequestMapping( "/{lectureName}/weaver/{weaverName}/delete") // íšŒì› ì‚­ì œìš©
 	public String deleteWeaver(@PathVariable("lectureName") String lectureName,
 			@PathVariable("weaverName") String weaverName) {
 		Lecture lecture = lectureService.get(lectureName);
@@ -369,19 +341,19 @@ public class LectureController {
 		
 		if(lectureService.deleteWeaver(lecture, currentWeaver,deleteWeaver)){
 			Post post;
-			if(currentWeaver.getId().equals(lecture.getCreatorName())){//°ü¸®ÀÚ°¡ Å»Åğ½ÃÅ³½Ã¿¡ ¸Ş¼¼Áö
+			if(currentWeaver.getId().equals(lecture.getCreatorName())){//ê´€ë¦¬ìê°€ íƒˆí‡´ì‹œí‚¬ì‹œì— ë©”ì„¸ì§€
 				post = new Post(currentWeaver, 
-						deleteWeaver.getId()+"´ÔÀ» Å»Åğ Ã³¸®ÇÏ¿´½À´Ï´Ù.", "", 
-						tagService.stringToTagList("@"+lecture.getName()+",Å»Åğ"));//°­ÀÇ½Ç¿¡ ¸Ş¼¼Áö º¸³¿
+						deleteWeaver.getId()+"ë‹˜ì„ íƒˆí‡´ ì²˜ë¦¬í•˜ì˜€ìŠµë‹ˆë‹¤.", "", 
+						tagService.stringToTagList("@"+lecture.getName()+",íƒˆí‡´"));//ê°•ì˜ì‹¤ì— ë©”ì„¸ì§€ ë³´ëƒ„
 				postService.add(post,null);
 				post = new Post(currentWeaver, 
-						"°­ÀÇ¸í:"+lecture.getName()+"¿¡¼­ Å»Åğ´çÇÏ¼Ì½À´Ï´Ù.", "", 
-						tagService.stringToTagList("$"+deleteWeaver.getId()));//°­ÀÇ½Ç¿¡ ¸Ş¼¼Áö º¸³¿
+						"ê°•ì˜ëª…:"+lecture.getName()+"ì—ì„œ íƒˆí‡´ë‹¹í•˜ì…¨ìŠµë‹ˆë‹¤.", "", 
+						tagService.stringToTagList("$"+deleteWeaver.getId()));//ê°•ì˜ì‹¤ì— ë©”ì„¸ì§€ ë³´ëƒ„
 				postService.add(post,null);
-			}else{//»ç¿ëÀÚ°¡ Å»ÅğÇÒ½Ã¿¡ ¸Ş¼¼Áö
+			}else{//ì‚¬ìš©ìê°€ íƒˆí‡´í• ì‹œì— ë©”ì„¸ì§€
 				post = new Post(currentWeaver, 
-						deleteWeaver.getId()+"´ÔÀÌ Å»ÅğÇÏ¼Ì½À´Ï´Ù.", "", 
-						tagService.stringToTagList("@"+lecture.getName()+",Å»Åğ"));//°­ÀÇ½Ç¿¡ ¸Ş¼¼Áö º¸³¿
+						deleteWeaver.getId()+"ë‹˜ì´ íƒˆí‡´í•˜ì…¨ìŠµë‹ˆë‹¤.", "", 
+						tagService.stringToTagList("@"+lecture.getName()+",íƒˆí‡´"));//ê°•ì˜ì‹¤ì— ë©”ì„¸ì§€ ë³´ëƒ„
 				postService.add(post,null);
 			}
 			
@@ -398,8 +370,8 @@ public class LectureController {
 
 		if(waitJoinService.isCreateLectureWaitJoin(lecture, waitingWeaver, proposer)){
 			Weaver lectureCreator = weaverService.get(lecture.getCreatorName());
-			String title ="°­ÀÇ¸í:"+lectureName+"¿¡ °¡ÀÔ ÃÊ´ë¸¦ <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-ok'>½Â¶ôÇÏ½Ã°Ú½À´Ï±î?</a> "
-					+ "¾Æ´Ï¸é <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-cancel'>°ÅÀıÇÏ½Ã°Ú½À´Ï±î?</a>";
+			String title ="ê°•ì˜ëª…:"+lectureName+"ì— ê°€ì… ì´ˆëŒ€ë¥¼ <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-ok'>ìŠ¹ë½í•˜ì‹œê² ìŠµë‹ˆê¹Œ?</a> "
+					+ "ì•„ë‹ˆë©´ <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-cancel'>ê±°ì ˆí•˜ì‹œê² ìŠµë‹ˆê¹Œ?</a>";
 			
 			Post post = new Post(lectureCreator,
 					title, 
@@ -416,14 +388,14 @@ public class LectureController {
 	}
 	
 	
-	@RequestMapping("/{lectureName}/join") //º»ÀÎÀÌ Á÷Á¢ ½ÅÃ»
+	@RequestMapping("/{lectureName}/join") //ë³¸ì¸ì´ ì§ì ‘ ì‹ ì²­
 	public String join(@PathVariable("lectureName") String lectureName) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver waitingWeaver = weaverService.getCurrentWeaver();
 
 		if(waitJoinService.isCreateLectureWaitJoin(lecture, waitingWeaver, waitingWeaver)){
-			String title = waitingWeaver.getId()+"´ÔÀÌ °­ÀÇ¸í:"+lectureName+"¿¡ °¡ÀÔ ½ÅÃ»À» <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>½Â¶ôÇÏ½Ã°Ú½À´Ï±î?</a> "
-					+ "¾Æ´Ï¸é <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>°ÅÀıÇÏ½Ã°Ú½À´Ï±î?</a>";
+			String title = waitingWeaver.getId()+"ë‹˜ì´ ê°•ì˜ëª…:"+lectureName+"ì— ê°€ì… ì‹ ì²­ì„ <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>ìŠ¹ë½í•˜ì‹œê² ìŠµë‹ˆê¹Œ?</a> "
+					+ "ì•„ë‹ˆë©´ <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>ê±°ì ˆí•˜ì‹œê² ìŠµë‹ˆê¹Œ?</a>";
 			Post post = new Post(waitingWeaver,
 					title, 
 					"", 
@@ -440,7 +412,7 @@ public class LectureController {
 	}
 	
 	
-	@RequestMapping("/{lectureName}/weaver/{weaver}/join-ok") // °­ÀÇ °¡ÀÔ ½ÂÀÎ
+	@RequestMapping("/{lectureName}/weaver/{weaver}/join-ok") // ê°•ì˜ ê°€ì… ìŠ¹ì¸
 	public String joinOK(@PathVariable("lectureName") String lectureName,@PathVariable("weaver") String weaver) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -448,67 +420,67 @@ public class LectureController {
 		WaitJoin waitJoin = waitJoinService.get(lectureName, weaver);
 		Pass pass = new Pass(lectureName, 0);
 
-		if(waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver) //¿äÃ»ÀÚ°¡ ÂÊÁö¸¦ º¸³»°í °ü¸®ÀÚ°¡ ½ÂÀÎÀ» ÇÏ´Â °æ¿ì
+		if(waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver) //ìš”ì²­ìê°€ ìª½ì§€ë¥¼ ë³´ë‚´ê³  ê´€ë¦¬ìê°€ ìŠ¹ì¸ì„ í•˜ëŠ” ê²½ìš°
 				&& lecture.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, waitingWeaver)){
 						
-			lecture.addJoinWeaver(waitingWeaver); //°­ÀÇ ¸ñ·Ï¿¡ Ãß°¡
+			lecture.addJoinWeaver(waitingWeaver); //ê°•ì˜ ëª©ë¡ì— ì¶”ê°€
 			waitingWeaver.addPass(pass);
 			weaverService.update(waitingWeaver);
 			lectureService.update(lecture);
 			Post post = new Post(waitingWeaver, 
-					"°ü¸®ÀÚ "+lecture.getCreatorName()+"´ÔÀÇ ½ÂÀÎÀ¸·Î °­ÀÇ¸í:"+
+					"ê´€ë¦¬ì "+lecture.getCreatorName()+"ë‹˜ì˜ ìŠ¹ì¸ìœ¼ë¡œ ê°•ì˜ëª…:"+
 					"<a href='/lecture/"+lectureName+"/'>"+
 					lectureName+
 					"</a>"+
-					"¿¡ °¡ÀÔÀÌ ½ÂÀÎµÇ¾ú½À´Ï´Ù!", 
+					"ì— ê°€ì…ì´ ìŠ¹ì¸ë˜ì—ˆìŠµë‹ˆë‹¤!", 
 					"", 
-					tagService.stringToTagList("@"+lecture.getName()+",°¡ÀÔ")); //@°­ÀÇ¸í,°¡ÀÔ ÅÂ±×¸¦ °É¾îÁÜ
+					tagService.stringToTagList("@"+lecture.getName()+",ê°€ì…")); //@ê°•ì˜ëª…,ê°€ì… íƒœê·¸ë¥¼ ê±¸ì–´ì¤Œ
 			
 			postService.add(post,null);
 			
 			return "redirect:/lecture/"+lectureName+"/weaver";
 			
-		}else if(lecture != null //°ü¸®ÀÚ°¡ ÂÊÁö¸¦ º¸³»°í °¡ÀÔÀÚ°¡ ½ÂÀÎÀ» ÇÏ´Â °æ¿ì
+		}else if(lecture != null //ê´€ë¦¬ìê°€ ìª½ì§€ë¥¼ ë³´ë‚´ê³  ê°€ì…ìê°€ ìŠ¹ì¸ì„ í•˜ëŠ” ê²½ìš°
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
 				&& !lecture.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, currentWeaver)){
-			lecture.addJoinWeaver(currentWeaver); //°­ÀÇ ¸ñ·Ï¿¡ Ãß°¡
+			lecture.addJoinWeaver(currentWeaver); //ê°•ì˜ ëª©ë¡ì— ì¶”ê°€
 			currentWeaver.addPass(pass);
 			weaverService.update(currentWeaver);
 			lectureService.update(lecture);
 			
-			Post post = new Post(currentWeaver, //°¡ÀÔÀÚ°¡ °ü¸®ÀÚ¿¡°Ô º¸³»´Â ¸Ş¼¼Áö
-					currentWeaver.getId()+"´ÔÀÌ °­ÀÇ¸í:"+
+			Post post = new Post(currentWeaver, //ê°€ì…ìê°€ ê´€ë¦¬ìì—ê²Œ ë³´ë‚´ëŠ” ë©”ì„¸ì§€
+					currentWeaver.getId()+"ë‹˜ì´ ê°•ì˜ëª…:"+
 					"<a href='/lecture/"+lectureName+"'>"+
 							lectureName+
-							"</a>"+"¸¦ °¡ÀÔ ÃÊ´ë¸¦ ¼ö¶ôÇÏ¼Ì½À´Ï´Ù!", 
+							"</a>"+"ë¥¼ ê°€ì… ì´ˆëŒ€ë¥¼ ìˆ˜ë½í•˜ì…¨ìŠµë‹ˆë‹¤!", 
 					"", 
-					tagService.stringToTagList("@"+lecture.getName()+",°¡ÀÔ")); //@°­ÀÇ¸í,°¡ÀÔ ÅÂ±×¸¦ °É¾îÁÜ
+					tagService.stringToTagList("@"+lecture.getName()+",ê°€ì…")); //@ê°•ì˜ëª…,ê°€ì… íƒœê·¸ë¥¼ ê±¸ì–´ì¤Œ
 			
 			postService.add(post,null);
 			
 			return "redirect:/lecture/"+lectureName+"/manage";
 		}
 		
-		return "redirect:/";//¾û¶×ÇÑ »ç¶÷ÀÌ µé¾î¿Ã¶§ ±×³É µ¹·Áº¸³¿
+		return "redirect:/";//ì—‰ëš±í•œ ì‚¬ëŒì´ ë“¤ì–´ì˜¬ë•Œ ê·¸ëƒ¥ ëŒë ¤ë³´ëƒ„
 	}
 	
-	@RequestMapping("/{lectureName}/weaver/{weaver}/join-cancel") //°­ÀÇ¿¡ °¡ÀÔ ½ÂÀÎ Ãë¼Ò
+	@RequestMapping("/{lectureName}/weaver/{weaver}/join-cancel") //ê°•ì˜ì— ê°€ì… ìŠ¹ì¸ ì·¨ì†Œ
 	public String joinCancel(@PathVariable("lectureName") String lectureName,@PathVariable("weaver") String weaver) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		WaitJoin waitJoin = waitJoinService.get(lecture.getName(), weaver);
 			
-		if(lecture != null //¿äÃ»ÀÚ°¡ ÂÊÁö¸¦ º¸³»°í °ü¸®ÀÚ°¡ ½ÂÀÎÀ» ÇÏ´Â °æ¿ì
+		if(lecture != null //ìš”ì²­ìê°€ ìª½ì§€ë¥¼ ë³´ë‚´ê³  ê´€ë¦¬ìê°€ ìŠ¹ì¸ì„ í•˜ëŠ” ê²½ìš°
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
 				&& lecture.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, currentWeaver)){
 			
-			Post post = new Post(currentWeaver,  //°ü¸®ÀÚ°¡ °¡ÀÔÀÚ¿¡°Ô º¸³»´Â ¸Ş¼¼Áö
-					"°ü¸®ÀÚ "+lecture.getCreatorName()+"´ÔÀÇ °­ÀÇ¸í:"+
+			Post post = new Post(currentWeaver,  //ê´€ë¦¬ìê°€ ê°€ì…ìì—ê²Œ ë³´ë‚´ëŠ” ë©”ì„¸ì§€
+					"ê´€ë¦¬ì "+lecture.getCreatorName()+"ë‹˜ì˜ ê°•ì˜ëª…:"+
 					lectureName+
-					"¿¡ °¡ÀÔÀÌ °ÅÀıµÇ¾ú½À´Ï´Ù.", 
+					"ì— ê°€ì…ì´ ê±°ì ˆë˜ì—ˆìŠµë‹ˆë‹¤.", 
 					"", 
 					tagService.stringToTagList("$"+weaver));
 			
@@ -516,16 +488,16 @@ public class LectureController {
 			
 			return "redirect:/lecture/"+lectureName+"/weaver";
 			
-		}else if(lecture != null //°ü¸®ÀÚ°¡ ÂÊÁö¸¦ º¸³»°í °¡ÀÔÀÚ°¡ °ÅÀı ÇÏ´Â °æ¿ì
+		}else if(lecture != null //ê´€ë¦¬ìê°€ ìª½ì§€ë¥¼ ë³´ë‚´ê³  ê°€ì…ìê°€ ê±°ì ˆ í•˜ëŠ” ê²½ìš°
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
 				&& !lecture.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, currentWeaver)){
 						
-			Post post = new Post(currentWeaver, //°¡ÀÔÀÚ°¡ °ü¸®ÀÚ¿¡°Ô º¸³»´Â ¸Ş¼¼Áö
-					currentWeaver.getId()+"´ÔÀÌ °­ÀÇ¸í:"+
+			Post post = new Post(currentWeaver, //ê°€ì…ìê°€ ê´€ë¦¬ìì—ê²Œ ë³´ë‚´ëŠ” ë©”ì„¸ì§€
+					currentWeaver.getId()+"ë‹˜ì´ ê°•ì˜ëª…:"+
 					"<a href='/lecture/"+lectureName+"'>"+
 							lectureName+
-							"</a>"+"¸¦ °¡ÀÔ ÃÊ´ë¸¦ °ÅÀıÇÏ¼Ì½À´Ï´Ù.", 
+							"</a>"+"ë¥¼ ê°€ì… ì´ˆëŒ€ë¥¼ ê±°ì ˆí•˜ì…¨ìŠµë‹ˆë‹¤.", 
 					"", 
 					tagService.stringToTagList("$"+lecture.getCreatorName()));
 			
@@ -534,10 +506,10 @@ public class LectureController {
 			return "redirect:/lecture/"+lectureName+"/manage";
 		}
 		
-		return "redirect:/";//¾û¶×ÇÑ »ç¶÷ÀÌ µé¾î¿Ã¶§ ±×³É µ¹·Áº¸³¿
+		return "redirect:/";//ì—‰ëš±í•œ ì‚¬ëŒì´ ë“¤ì–´ì˜¬ë•Œ ê·¸ëƒ¥ ëŒë ¤ë³´ëƒ„
 	}
 	
-	@RequestMapping("/{lectureName}/chat") //Ã¤ÆÃ
+	@RequestMapping("/{lectureName}/chat") //ì±„íŒ…
 	public String chat(@PathVariable("lectureName") String lectureName,Model model){
 		Lecture lecture = lectureService.get(lectureName);	
 		Weaver currentWeaver = weaverService.getCurrentWeaver();

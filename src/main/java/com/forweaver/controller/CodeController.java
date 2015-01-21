@@ -35,11 +35,16 @@ import com.forweaver.util.WebUtil;
 @Controller
 @RequestMapping("/code")
 public class CodeController {
-	@Autowired CodeService codeService;
-	@Autowired TagService tagService;
-	@Autowired WeaverService weaverService;
-	@Autowired RePostService rePostService;
-	@Autowired DataService dataService;
+	@Autowired 
+	private CodeService codeService;
+	@Autowired 
+	private TagService tagService;
+	@Autowired 
+	private WeaverService weaverService;
+	@Autowired 
+	private RePostService rePostService;
+	@Autowired 
+	private DataService dataService;
 	
 	@RequestMapping("/")
 	public String front(){
@@ -97,9 +102,9 @@ public class CodeController {
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodesWithTags(tagList, sort, pageNum, number));
+				codeService.getCodes(tagList, sort, pageNum, number));
 		model.addAttribute("codeCount", 
-				codeService.countCodesWithTags(tagList, sort));
+				codeService.countCodes(tagList, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -132,9 +137,9 @@ public class CodeController {
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodesWithTagsAndSearch(tagList,search, sort, pageNum, number));
+				codeService.getCodes(tagList,search, sort, pageNum, number));
 		model.addAttribute("codeCount", 
-				codeService.countCodesWithTagsAndSearch(tagList,search, sort));
+				codeService.countCodes(tagList,search, sort));
 
 		model.addAttribute("number", number);
 		model.addAttribute("tagNames", tagNames);

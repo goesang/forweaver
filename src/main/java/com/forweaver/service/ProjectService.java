@@ -135,11 +135,11 @@ public class ProjectService{
 		return projects;
 	}
 
-	public long countProjectsWithTags(List<String> tags,String sort){
+	public long countProjects(List<String> tags,String sort){
 		return projectDao.countProjects(tags, null, null, sort);
 	}
 
-	public List<Project> getProjectsWithTags(Weaver currentWeaver,List<String> tags,String sort, int pageNumber,
+	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,String sort, int pageNumber,
 			int lineNumber){
 		List<Project> projects=  projectDao.getProjects(tags, null, null, sort, pageNumber, lineNumber);
 		if(currentWeaver != null)
@@ -150,11 +150,11 @@ public class ProjectService{
 		return projects;
 	}
 
-	public long countProjectsWithTagsAndSearch(List<String> tags,String search,String sort){
+	public long countProjects(List<String> tags,String search,String sort){
 		return projectDao.countProjects(tags, search, null, sort);
 	}
 
-	public List<Project> getProjectsWithTagsAndSearch(Weaver currentWeaver,List<String> tags,String search,String sort, int pageNumber,
+	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,String search,String sort, int pageNumber,
 			int lineNumber){
 		List<Project> projects=  projectDao.getProjects(tags, search, null, sort, pageNumber, lineNumber);
 		if(currentWeaver != null)

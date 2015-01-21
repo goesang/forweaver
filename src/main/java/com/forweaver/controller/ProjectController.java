@@ -95,20 +95,14 @@ public class ProjectController {
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String projectsWithPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjects(currentWeaver,sort, pageNum, number));
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,sort, pageNum, size));
 		model.addAttribute("projectCount", projectService.countProjects(sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
@@ -124,20 +118,15 @@ public class ProjectController {
 	public String projectsWithTags(@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
-		int pageNum;
-		int number = 15;
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}		
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjectsWithTags(currentWeaver,tagList,sort, pageNum, number));
-		model.addAttribute("projectCount", projectService.countProjectsWithTags(tagList,sort));
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(tagList,sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"sort:"+sort+"/page:");
 		return "/project/projects";
 	}
@@ -152,20 +141,15 @@ public class ProjectController {
 			@PathVariable("page") String page,
 			@PathVariable("search") String search,
 			@PathVariable("sort") String sort,Model model) {
-		int pageNum;
-		int number = 15;
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}		
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjectsWithTagsAndSearch(currentWeaver,tagList,search,sort, pageNum, number));
-		model.addAttribute("projectCount", projectService.countProjectsWithTagsAndSearch(tagList,search,sort));
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,search,sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(tagList,search,sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/search:"+search+"/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
@@ -311,16 +295,9 @@ public class ProjectController {
 			@PathVariable("sort") String sort,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
-
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = new ArrayList<String>();
@@ -328,9 +305,9 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver, tagList, sort));
+				postService.countPosts(currentWeaver, tagList, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/sort:"+sort+"/page:");
 		return "/project/community";
@@ -347,15 +324,8 @@ public class ProjectController {
 			@PathVariable("tagNames") String tagNames,
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);	
 
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
@@ -364,9 +334,9 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver, tagList, sort));
+				postService.countPosts(currentWeaver, tagList, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", 
@@ -418,7 +388,7 @@ public class ProjectController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(creatorName, projectName,gitBranchList.get(0)));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(creatorName, projectName,gitBranchList.get(0),1,10));
+				gitService.getGitCommitLogList(creatorName, projectName,gitBranchList.get(0),1,15));
 
 		return "/project/commitLog";
 	}
@@ -465,7 +435,7 @@ public class ProjectController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(creatorName, projectName,commit));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(creatorName, projectName,commit,1,10));
+				gitService.getGitCommitLogList(creatorName, projectName,commit,1,15));
 		return "/project/commitLog";
 	}
 
@@ -473,10 +443,12 @@ public class ProjectController {
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,
-			@PathVariable("page") int page,Model model) {
+			@PathVariable("page") String page,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+		
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
@@ -485,7 +457,7 @@ public class ProjectController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(creatorName, projectName,commit));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(creatorName, projectName,commit,page,10));
+				gitService.getGitCommitLogList(creatorName, projectName,commit,pageNum,size));
 		return "/project/commitLog";
 	}
 

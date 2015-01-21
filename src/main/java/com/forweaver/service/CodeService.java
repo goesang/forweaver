@@ -102,50 +102,50 @@ public class CodeService {
 		return codeDao.getCodes(null, null, null, sort, page, size);
 	}
 
-	public long countCodesWithTags(List<String> tags, String sort) {
+	public long countCodes(List<String> tags, String sort) {
 		return codeDao.countCodes(tags, null, null, sort);
 	}
 
-	public List<Code> getCodesWithTags(List<String> tags, String sort,
+	public List<Code> getCodes(List<String> tags, String sort,
 			int page, int size) {
 		return codeDao.getCodes(tags, null, null, sort, page, size);
 	}
 
-	public long countCodesWithTagsAndSearch(List<String> tags, String serach,
+	public long countCodes(List<String> tags, String serach,
 			String sort) {
 		return codeDao.countCodes(tags, serach, null, sort);
 	}
 
-	public List<Code> getCodesWithTagsAndSearch(List<String> tags,
+	public List<Code> getCodes(List<String> tags,
 			String serach, String sort, int page, int size) {
 		return codeDao.getCodes(tags, serach, null, sort, page, size);
 	}
 
-	public long countCodesWhenWeaverHome(Weaver weaver, String sort) {
+	public long countCodes(Weaver weaver, String sort) {
 		return codeDao.countCodes(null, null, weaver, sort);
 	}
 
-	public List<Code> getCodesWhenWeaverHome(Weaver weaver, String sort,
+	public List<Code> getCodes(Weaver weaver, String sort,
 			int page, int size) {
 		return codeDao.getCodes(null, null, weaver, sort, page, size);
 	}
 
-	public long countCodesWhenWeaverHomeWithTags(List<String> tags,
+	public long countCodes(List<String> tags,
 			Weaver weaver, String sort) {
 		return codeDao.countCodes(tags, null, weaver, sort);
 	}
 
-	public List<Code> getCodesWhenWeaverHomeWithTags(List<String> tags,
+	public List<Code> getCodes(List<String> tags,
 			Weaver weaver, String sort, int page, int size) {
 		return codeDao.getCodes(tags, sort, weaver, sort, page, size);
 	}
 
-	public long countCodesWhenWeaverHomeWithTagsAndSeach(List<String> tags,
+	public long countCodes(List<String> tags,
 			Weaver weaver, String serach, String sort) {
 		return codeDao.countCodes(tags, serach, weaver, sort);
 	}
 
-	public List<Code> getCodesWhenWeaverHomeWithTagsAndSeach(List<String> tags,
+	public List<Code> getCodes(List<String> tags,
 			Weaver weaver, String serach, String sort, int page, int size) {
 		return codeDao.getCodes(tags, serach, weaver, sort, page, size);
 	}

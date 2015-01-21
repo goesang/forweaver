@@ -171,12 +171,12 @@ public class LectureService {
 		return lectures;
 	}
 
-	public long countLecturesWithTags(List<String> tags) {
+	public long countLectures(List<String> tags) {
 		// TODO Auto-generated method stub
 		return lectureDao.countLectures(tags, null, null);
 	}
 
-	public List<Lecture> getLecturesWithTags(Weaver currentWeaver,List<String> tags, int pageNumber,
+	public List<Lecture> getLectures(Weaver currentWeaver,List<String> tags, int pageNumber,
 			int lineNumber) {
 		// TODO Auto-generated method stub	
 		List<Lecture> lectures = lectureDao.getLectures(tags, null, null, pageNumber, lineNumber);
@@ -190,12 +190,12 @@ public class LectureService {
 		return lectures;
 	}
 	
-	public long countLecturesWithTagsAndSearch(List<String> tags,String search) {
+	public long countLectures(List<String> tags,String search) {
 		// TODO Auto-generated method stub
 		return lectureDao.countLectures(tags, search, null);
 	}
 
-	public List<Lecture> getLecturesWithTagsAndSearch(Weaver currentWeaver,List<String> tags ,String search, int pageNumber,
+	public List<Lecture> getLectures(Weaver currentWeaver,List<String> tags ,String search, int pageNumber,
 			int lineNumber) {
 		// TODO Auto-generated method stub	
 		List<Lecture> lectures = lectureDao.getLectures(tags, search, null, pageNumber, lineNumber);
