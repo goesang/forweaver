@@ -289,3 +289,11 @@ ul, ol {
 	float: right;
 	max-width: 410px;
 }
+/* info page */
+.strong-size {
+	font-size:22px;
+}
+.img{
+	max-width: 100%;
+	/*box-shadow:5px 5px 5px silver;*/
+}
