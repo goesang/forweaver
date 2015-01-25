@@ -64,7 +64,7 @@
 				</div>
 			</div>
 			<br>
-			<center><h3>Git 저장소 복제 방법</h3></center>
+			<center><h3><i class="fa fa-git"></i>&nbsp;저장소 복제 방법</h3></center>
 			<div class="row">			
 				<div class="col-md-6 col-md-offset-3">
 				<strong class="strong-size">저장소 접근</strong><br>
@@ -150,8 +150,8 @@
 					<p><strong class="strong-size">Chart</strong>는 위버들의 발자취를 엿볼 수 있는<br>
 					 아주 효과적인 툴입니다.</p>
 					<p><br>Line Chart, HeatMap은 주일 간의 작업량을, <br>
-					Punch Card는 주일 어느 시간대의 작업량을! <br>
-					차트를 통해 세부적인 진행사항을 지켜보세요.</p>
+					Punch Card는 주일 상세 시간대의 작업량을! <br>
+					차트를 통해 팀 위버의 진행사항을 지켜보세요.</p>
 				</div>
 			</div>
 			<br>
@@ -207,8 +207,8 @@
 					Git에 없던 특정 권한을 부여하는 것을 <br>가능케 했습니다.</p>
 					<p><br>저장소 생성 시 가입자들의 브랜치가 자동 생성, <br>
 					강사는 모두를 관리할 수 있으며<br>
-					학생은 본인의 브랜치 외에 접근할 수 없습니다!<br></p>
-					<p><br>강사와 학생간의 Commit은 <br>그들의 소통을 가능케 할 것입니다.</p>
+					학생은 본인의 브랜치 외엔 접근할 수 없습니다!<br></p>
+					<p><br>강사와 학생간의 Commit은 <br>그들의 원활한 소통을 가능케 할 것입니다.</p>
 				</div>
 				<div class="col-md-5 col-md-offset-1"><br>
 					<embed class="img" src="/resources/img/repomainpage.png"/>
