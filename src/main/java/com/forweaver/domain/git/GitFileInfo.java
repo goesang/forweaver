@@ -15,7 +15,7 @@ public class GitFileInfo implements Serializable {
 	private String content;
 	private List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 	private int selectCommitIndex;
-	
+	private boolean isDirectory;
 	private List<GitBlame> gitBlames = new ArrayList<GitBlame>();
 
 	
@@ -23,11 +23,14 @@ public class GitFileInfo implements Serializable {
 	}
 	
 	public GitFileInfo(String name, String content,
-			List<RevCommit> gitLogList,int selectCommitIndex) {
+			List<RevCommit> gitLogList,int selectCommitIndex,boolean isDirectory) {
 		this.name = name;
 		this.content = content;
 		this.gitLogList = gitLogList;
 		this.selectCommitIndex = selectCommitIndex;
+		this.isDirectory = isDirectory;
+		System.out.println("-------------------------------");
+		System.out.println(isDirectory);
 	}
 	public String getName() {
 		return name;
@@ -75,6 +78,15 @@ public class GitFileInfo implements Serializable {
 		this.gitBlames = gitBlames;
 	}
 
+	public boolean isDirectory() {
+		return isDirectory;
+	}
+
+	public void setDirectory(boolean isDirectory) {
+		this.isDirectory = isDirectory;
+	}
+
+	
 	
 	
 }

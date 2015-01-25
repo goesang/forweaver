@@ -79,14 +79,14 @@ function showFileBrowser(directoryPath) {
 				fileBrowserURL+
 				value["commitID"]+
 				"/filepath:"+
-				filePathTransform(value["path"].substring(1,value["path"].length))+"'>" + 
+				value["path"].substring(1,value["path"].length)+"'>" + 
 				"<img src ='/resources/forweaver/img/file.png'></a></td>" + 
 				"<td class = 'td-filename'>" +
 				"<a rel='external' href='"+
 				fileBrowserURL+
 				value["commitID"]+
 				"/filepath:"+
-				filePathTransform(value["path"].substring(1,value["path"].length))+"'>" + 
+				value["path"].substring(1,value["path"].length)+"'>" + 
 				value["name"] + 
 				"</a></td><td class = 'td-commitlog'>";
 			}

@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.forweaver.domain.Data;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
@@ -246,7 +243,7 @@ public class LectureController {
 		String readme = "";
 		
 		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(lectureName, "example","HEAD");
+				gitService.getGitSimpleFileInfoList(lectureName, "example","HEAD","");
 		
 		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
@@ -274,7 +271,7 @@ public class LectureController {
 		commit = commit.replace(",", ".");
 		String readme = "";
 		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(lectureName, "example",commit);
+				gitService.getGitSimpleFileInfoList(lectureName, "example",commit,"");
 		
 		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
@@ -287,7 +284,7 @@ public class LectureController {
 		
 		model.addAttribute("lecture", lecture);
 		model.addAttribute("gitFileInfoList",gitService.
-				getGitSimpleFileInfoList(lectureName, "example",commit));
+				getGitSimpleFileInfoList(lectureName, "example",commit,""));
 		List<String> gitBranchList = gitService.getBranchList(lectureName, "example");
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
@@ -296,12 +293,12 @@ public class LectureController {
 		return "/lecture/example";
 	}
 	
-	@RequestMapping("/{lectureName}/example/commit:{commit}/filepath:{filePath}")
-	public String fileViewer(@PathVariable("lectureName") String lectureName,
-			@PathVariable("commit") String commit,
-			@PathVariable("filePath") String filePath,Model model) {
+	@RequestMapping("/{lectureName}/example/commit:{commit}/**")
+	public String fileViewer(HttpServletRequest request,@PathVariable("lectureName") String lectureName,
+			@PathVariable("commit") String commit,Model model) {
 		
 		Lecture lecture = lectureService.get(lectureName);		
+		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
 		commit = commit.replace(",", ".");
 		model.addAttribute("lecture", lecture);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(lectureName, "example", commit, filePath);

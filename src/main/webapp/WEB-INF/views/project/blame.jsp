@@ -38,7 +38,7 @@
 	
 	$("#selectCommit").change(function(){
 		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
-			window.location = $("#selectCommit option:selected").val()+filePathTransform("${fileName}")+"/blame";
+			window.location = $("#selectCommit option:selected").val()+"${fileName}";
 	});
 	
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
@@ -102,7 +102,7 @@
 						<c:if test='${status.count == selectCommitIndex + 1}'>
 						selected="selected"
 						</c:if >
-							value="/project/${project.name}/browser/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
+							value="/project/${project.name}/browser/blame/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
 							<jsp:setProperty name="dateValue" property="time"
 								value="${gitLog.getCommitTime()*1000}" />
 							<fmt:formatDate value="${dateValue}" pattern="yy년MM월dd일 HH시mm분" />
@@ -127,7 +127,7 @@
 									
 							</a></td>
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="${fn:substring(requestScope['javax.servlet.forward.servlet_path'],0,(requestScope['javax.servlet.forward.servlet_path']).length()-6)}">
+							<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:${fileName}">
 									<span class="span-button"> <i class="fa fa-file-code-o"></i>
 										<p class="p-button">소스</p>
 									</span>

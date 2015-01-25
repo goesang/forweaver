@@ -84,6 +84,7 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commitName") String commitName,
 			HttpServletResponse response) {
+		
 		if(!gitService.existCommit(creatorName, projectName, commitName))
 			return;
 
@@ -194,26 +195,15 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
-		String readme = "";
 
 		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD");
-
-		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
-			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
-				readme = WebUtil.markDownEncoder(
-						gitService.getFileInfo(
-								creatorName, 
-								projectName, 
-								"HEAD", 
-								gitSimpleFileInfo.getName()).getContent());
+				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD","");
 
 		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList", 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD"));
+		model.addAttribute("gitFileInfoList",gitFileInfoList);
 		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
 		model.addAttribute("selectBranch",gitBranchList.get(0));
-		model.addAttribute("readme",readme);
+		model.addAttribute("readme",gitService.getReadme(creatorName, projectName,"HEAD",gitFileInfoList));
 		return "/project/browser";
 	}
 
@@ -222,39 +212,30 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		String readme = "";
 
 		commit = commit.replace(",", ".");
+		
 		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit);
-
-		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList) // 파일들을 검색해서 리드미 파일을 찾아냄
-			if(gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
-				readme = WebUtil.markDownEncoder(
-						gitService.getFileInfo(
-								creatorName, 
-								projectName, 
-								commit, 
-								gitSimpleFileInfo.getName()).getContent());
-
-
-		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList", gitFileInfoList);
+				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit,"");
+		
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		gitBranchList.remove(commit);
+		
+		model.addAttribute("project", project);
+		model.addAttribute("gitFileInfoList", gitFileInfoList);
+		
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
-		model.addAttribute("readme",readme);
+		model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commit,gitFileInfoList));
 		return "/project/browser";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/filepath:{filePath}")
-	public String fileViewer(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/**")
+	public String fileViewer(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID,
-			@PathVariable("filePath") String filePath,Model model) {
+			@PathVariable("commitID") String commitID,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		commitID = commitID.replace(",", ".");
+		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
 		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
 		model.addAttribute("fileName", gitFileInfo.getName());
@@ -266,13 +247,12 @@ public class ProjectController {
 		return "/project/fileViewer";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/filepath:{filePath}/blame")
-	public String blame(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/browser/blame/commit:{commitID}/**")
+	public String blame(HttpServletRequest request, @PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID,
-			@PathVariable("filePath") String filePath,Model model) {
+			@PathVariable("commitID") String commitID,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		commitID = commitID.replace(",", ".");
+		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
 		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
 		model.addAttribute("fileName", gitFileInfo.getName());

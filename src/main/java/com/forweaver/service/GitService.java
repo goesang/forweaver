@@ -16,6 +16,7 @@ import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitInfo;
 import com.forweaver.util.GitUtil;
+import com.forweaver.util.WebUtil;
 
 @Service
 public class GitService {
@@ -25,8 +26,6 @@ public class GitService {
 	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		filePath = filePath.replace('>', '/');
-		filePath = filePath.replace(',', '.');
 		GitFileInfo gitFileInfo = gitUtil.getFileInfor(commitID, filePath);
 		gitFileInfo.setGitBlames(gitUtil.getBlame(filePath, commitID));
 		return gitFileInfo;
@@ -72,9 +71,9 @@ public class GitService {
 	}
 
 	public List<GitSimpleFileInfo> getGitSimpleFileInfoList(String parentDirctoryName,
-			String repositoryName,String commitID) {
+			String repositoryName,String commitID,String filePath) {
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		List<GitSimpleFileInfo> gitFileInfoList = gitUtil.getGitFileInfoList(commitID);
+		List<GitSimpleFileInfo> gitFileInfoList = gitUtil.getGitFileInfoList(commitID,filePath);
 		return gitFileInfoList;
 	}
 
@@ -119,5 +118,20 @@ public class GitService {
 		GitUtil gitUtil = new GitUtil(parentDirctoryName, repositoryName);	
 		return gitUtil.getGitInfo(branchName);
 	}
+
+	public String getReadme(String creatorName,String projectName,String commit,List<GitSimpleFileInfo> gitFileInfoList){
+		String readme = "";
+		if(gitFileInfoList != null) 
+			for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
+				if(gitSimpleFileInfo.getName().toUpperCase().contains("README.MD"))
+					readme = WebUtil.markDownEncoder(
+							getFileInfo(
+									creatorName, 
+									projectName, 
+									commit, 
+									gitSimpleFileInfo.getName()).getContent());
+		return readme;
+	}
+
 
 }

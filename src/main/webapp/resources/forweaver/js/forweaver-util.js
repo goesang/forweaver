@@ -145,16 +145,8 @@ function endsWith(str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
-function filePathTransform(path) {
-	path = path.split(".").join(",");
-	path = path.split("/").join(">");
-	return path;
-}
-
 function extensionSeach(url){
-	if(endsWith(url,"/blame"))
-		url = url.substring(0, url.length-6); 
-			
+		
 	if(endsWith(url,"java") || endsWith(url,"pde"))
 		return "java";
 	else if(endsWith(url,"css"))

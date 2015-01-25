@@ -82,7 +82,7 @@ public class RepoController {
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 
 		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(lectureName, repoName,"HEAD");
+				gitService.getGitSimpleFileInfoList(lectureName, repoName,"HEAD","");
 
 		if(gitFileInfoList != null) 
 			for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
@@ -123,7 +123,7 @@ public class RepoController {
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 
 		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(lectureName, repoName,commit);
+				gitService.getGitSimpleFileInfoList(lectureName, repoName,commit,"");
 
 		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
@@ -150,15 +150,14 @@ public class RepoController {
 		return "/repo/browser";
 	}
 
-	@RequestMapping("/{repoName}/browser/commit:{commitID}/filepath:{filePath}")
-	public String fileViewer(@PathVariable("lectureName") String lectureName,
+	@RequestMapping("/{repoName}/browser/commit:{commitID}/**")
+	public String fileViewer(HttpServletRequest request,@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
-			@PathVariable("commitID") String commitID,
-			@PathVariable("filePath") String filePath,Model model) {
+			@PathVariable("commitID") String commitID,Model model) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-
+		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <jsp:useBean id="dateValue" class="java.util.Date" />
+
 <!DOCTYPE html>
 <html><head>
 <title>${project.name}~${project.description}</title>
@@ -8,6 +9,7 @@
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
 </head>
 <body>
+
 	<script>
 
 $(document).ready(function() {
@@ -20,7 +22,7 @@ $(document).ready(function() {
 	
 	$("#selectCommit").change(function(){
 		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
-			window.location = $("#selectCommit option:selected").val()+filePathTransform("${fileName}");
+			window.location = $("#selectCommit option:selected").val()+"${fileName}";
 	});
 	
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
@@ -98,8 +100,9 @@ $(document).ready(function() {
 										<p class="p-button">전체</p>
 									</span>
 							</a></td>
+							
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="${requestScope['javax.servlet.forward.servlet_path']}/blame">
+							<a	href="/project/${project.name}/browser/blame/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:${fileName}">
 									<span class="span-button"> <i class="fa fa-search"></i>
 										<p class="p-button">추적</p>
 									</span>
