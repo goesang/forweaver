@@ -64,15 +64,30 @@
 				</div>
 			</div>
 			<br>
-			<center><h3>기본 기능은?</h3></center>
+			<center><h3>Git 저장소 복제 방법</h3></center>
+			<div class="row">			
+				<div class="col-md-6 col-md-offset-3">
+				<strong class="strong-size">저장소 접근</strong><br>
+					git에서 ForWeaver의 저장소에 접근하는 방법은 다음과 같습니다.<br><br>
+					<pre>git clone http://forweaver.com/아이디/저장소.git</pre>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<hr style="border-top: 3px dashed;"/>
+				</div>
+			</div>
+			<br>
+			<center><h4><i class="fa fa-tag"></i>&nbsp;TAG</h4></center>
 			<div class="row">
 				<div class="col-md-4 col-md-offset-1"><br>
 					<center><h4>태그 기반 사이트!</h4></center>
 					<p><strong class="strong-size">Tag</strong>는 <br>
 					위키 혹은 이슈트래커의 쉬운 대체 수단입니다.</p>
 					<p><br>프로젝트, 게시글을 검색 및 관리할 수 있으며,<br>
-					2개 이상의 태그를 이용한 조합 검색 및<br>
-					위버에게 까페, 쪽지 권한을 손쉽게 제공합니다.</p>
+					2개 이상의 태그를 이용한 조합 검색 및,<br>
+					위버들에게 프로젝트 메시지, 쪽지 기능을<br>직관성 있게 제공합니다.</p>
 				</div>
 				<div class="col-md-5 col-md-offset-1"><br>
 					<embed class="img" src="/resources/img/tagpage.png"/>
@@ -85,7 +100,7 @@
 				</div>
 			</div>
 			<br>
-			<center><h4>Project!</h4></center>
+			<center><h4><i class="fa fa-bookmark"></i>&nbsp;PROJECT</h4></center>
 			<div class="row">
 				<div class="col-md-5 col-md-offset-1"><br>
 					<embed class="img" src="/resources/img/projectpage.png"/>
@@ -165,7 +180,7 @@
 				</div>
 			</div>
 			<br>
-			<center><h4>Repository?</h4></center>
+			<center><h4><i class="fa fa-university"></i>&nbsp;REPOSITORY</h4></center>
 			<div class="row">
 				<div class="col-md-5 col-md-offset-1"><br>
 					<embed class="img" src="/resources/img/addrepopage.png"/>
@@ -199,13 +214,14 @@
 					<embed class="img" src="/resources/img/repomainpage.png"/>
 				</div>
 			</div>
-			<br>
+			<br><!--  
 			<div class="row">
 				<div class="col-md-10 col-md-offset-1">
 					<hr style="border-top: 3px dashed;"/>
 				</div>
 			</div>
 			<br>
+			<center><h4><i class="fa fa-twitter"></i>&nbsp;WEAVER</h4></center>
 			<div class="row">
 				<div class="col-md-5 col-md-offset-1"><br>
 					<embed class="img" src="/resources/img/weaverpage.png"/>
@@ -217,6 +233,7 @@
 					다른 위버들의 최근 정보 조회가 가능합니다.</p>
 				</div>
 			</div>
+			-->
 			<!-- 
 			<div class="row">
 			<center><h3>사용 설명서</h3></center>			
