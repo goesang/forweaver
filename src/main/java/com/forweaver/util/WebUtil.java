@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 //각종 웹 유틸 클래스
@@ -179,5 +181,29 @@ public class WebUtil {
 			}
 		}
 		return str;
+	}
+	
+	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
+	 * @param List<String> 파일리스트 문자열
+	 * @return 해당 경로의 파일리스트를 반환
+	 */
+	public static List<String> getFileList(List<String> list, String filePath){
+		List<String> returnList = new ArrayList<String>();
+		
+		int listIndex, pathIndex, splitIndex;
+		
+		for(int i = 0; i < list.size(); i++){
+			if(list.get(i).startsWith(filePath)){
+				listIndex = list.get(i).lastIndexOf("/");
+				pathIndex = (filePath + "/").lastIndexOf("/");
+				
+				splitIndex = list.get(i).substring(pathIndex, listIndex).lastIndexOf("/");
+				
+				if(listIndex != pathIndex && splitIndex <= 0) returnList.add(list.get(i).substring(0, listIndex));
+				else if(splitIndex > 0) ;
+				else returnList.add(list.get(i));
+			}
+		}
+		return returnList;
 	}
 }
