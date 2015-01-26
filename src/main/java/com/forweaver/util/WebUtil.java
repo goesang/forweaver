@@ -189,19 +189,30 @@ public class WebUtil {
 	 */
 	public static List<String> getFileList(List<String> list, String filePath){
 		List<String> returnList = new ArrayList<String>();
-		
+
 		int listIndex, pathIndex, splitIndex;
-		
-		for(int i = 0; i < list.size(); i++){
-			if(list.get(i).startsWith(filePath)){
-				listIndex = list.get(i).lastIndexOf("/");
-				pathIndex = (filePath + "/").lastIndexOf("/");
+
+		for(String allfPath : list){
+			if(allfPath.startsWith(filePath)){
+				listIndex = allfPath.lastIndexOf("/");
 				
-				splitIndex = list.get(i).substring(pathIndex, listIndex).lastIndexOf("/");
+				if(filePath.equals("/")){
+					pathIndex = 0;
+					splitIndex = allfPath.substring(pathIndex, listIndex).lastIndexOf("/");
+					//System.out.println("왜이러는데? : " + splitIndex);
+				} else {
+					pathIndex = (filePath + "/").lastIndexOf("/");
+					splitIndex = allfPath.substring(pathIndex, listIndex).lastIndexOf("/");
+				}
 				
-				if(listIndex != pathIndex && splitIndex <= 0) returnList.add(list.get(i).substring(0, listIndex));
-				else if(splitIndex > 0) ;
-				else returnList.add(list.get(i));
+				if(splitIndex > 0) ;
+				else if(returnList.contains(allfPath.substring(0, listIndex)));
+				else if(returnList.contains(allfPath));
+				else if(listIndex != pathIndex && splitIndex <= 0){
+					returnList.add(allfPath.substring(0, listIndex));
+				} else{
+					returnList.add(allfPath);
+				}
 			}
 		}
 		return returnList;
