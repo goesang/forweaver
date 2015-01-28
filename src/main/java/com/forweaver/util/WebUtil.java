@@ -18,7 +18,7 @@ public class WebUtil {
 	 */
 	public static int getPageSize(String pageUrl){  
 		int size = 15;
-		
+
 		try{
 			if(pageUrl.contains(",")){
 				size = Integer.parseInt(pageUrl.split(",")[1]);
@@ -26,10 +26,10 @@ public class WebUtil {
 				size =Integer.parseInt(pageUrl);
 			}
 		}finally{}
-		
+
 		return size;
 	}
-	
+
 	/** page url 부분을 해석하여 페이지 번호를 가져오는 메서드.
 	 * @param pageUrl
 	 * @return 페이지의 번호
@@ -43,7 +43,7 @@ public class WebUtil {
 				page =Integer.parseInt(pageUrl);
 			}
 		}finally{}
-		
+
 		return page;
 	}
 
@@ -66,7 +66,7 @@ public class WebUtil {
 
 	}
 
-	
+
 	/** xss 방지를 위해 <,> 제거 메서드
 	 * @param str
 	 * @return '<','>' 제거된 문자열
@@ -79,7 +79,7 @@ public class WebUtil {
 		str = str.replace(">", "&gt;");
 		return str;
 	}
-	
+
 	/** 인코딩 에러를 방지하기 위해 문자열 변환 메서드
 	 * @param str
 	 * @return
@@ -92,7 +92,7 @@ public class WebUtil {
 		str = str.replace("&", "@4@");
 		return str;
 	}
-	
+
 	/** 인코딩 에러를 방지하기 위해 문자열 변환 메서드
 	 * @param str
 	 * @return
@@ -106,7 +106,7 @@ public class WebUtil {
 		return str;
 	}
 
-	
+
 	/** 마크다운 문자열을 해석하여 html화된 문자열 변환하는 메서드.
 	 * @param str
 	 * @return html화된 문자열.
@@ -118,7 +118,7 @@ public class WebUtil {
 			return str;
 		}
 	}
-	
+
 	/**	이전시간과 현재시간과의 차이를 계산하여 지난시간 반환
 	 * @param date 날짜를 문자열로 받는다.
 	 * @return 지난시간을 문자열로 반환한다. (Ex] 1초전, 1시간, 1년)
@@ -182,37 +182,52 @@ public class WebUtil {
 		}
 		return str;
 	}
-	
+
+	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
+	 * @param List<String> 파일리스트 문자열
+	 * @return 해당 경로의 파일리스트를 반환
+	 */
+	public static int nth(String source, String pattern, int n) {
+
+		int i = 0, pos = 0, tpos = 0;
+
+		while (i < n) {
+
+			pos = source.indexOf(pattern);
+			if (pos > -1) {
+				source = source.substring(pos+1);
+				tpos += pos+1;
+				i++;
+			} else {
+				return -1;
+			}
+		}
+
+		return tpos - 1;
+	}
+
+
 	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
 	 * @param List<String> 파일리스트 문자열
 	 * @return 해당 경로의 파일리스트를 반환
 	 */
 	public static List<String> getFileList(List<String> list, String filePath){
 		List<String> returnList = new ArrayList<String>();
+		int spiltNumber = 0;
 
-		int listIndex, pathIndex, splitIndex;
+		if(filePath.equals("/"))
+			spiltNumber= 1;
+		else
+			spiltNumber=filePath.split("/").length;
 
-		for(String allfPath : list){
-			if(allfPath.startsWith(filePath)){
-				listIndex = allfPath.lastIndexOf("/");
-				
-				if(filePath.equals("/")){
-					pathIndex = 0;
-					splitIndex = allfPath.substring(pathIndex, listIndex).lastIndexOf("/");
-					//System.out.println("왜이러는데? : " + splitIndex);
-				} else {
-					pathIndex = (filePath + "/").lastIndexOf("/");
-					splitIndex = allfPath.substring(pathIndex, listIndex).lastIndexOf("/");
+		for(String path : list){
+			if(path.startsWith(filePath)){
+				if(path.split("/").length>spiltNumber+1){
+					path = path.substring(0, nth(path,"/",spiltNumber+1));
 				}
-				
-				if(splitIndex > 0) ;
-				else if(returnList.contains(allfPath.substring(0, listIndex)));
-				else if(returnList.contains(allfPath));
-				else if(listIndex != pathIndex && splitIndex <= 0){
-					returnList.add(allfPath.substring(0, listIndex));
-				} else{
-					returnList.add(allfPath);
-				}
+				if(!returnList.contains(path)){
+					returnList.add(path);
+				}		
 			}
 		}
 		return returnList;

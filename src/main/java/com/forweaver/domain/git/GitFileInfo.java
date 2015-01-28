@@ -29,8 +29,6 @@ public class GitFileInfo implements Serializable {
 		this.gitLogList = gitLogList;
 		this.selectCommitIndex = selectCommitIndex;
 		this.isDirectory = isDirectory;
-		System.out.println("-------------------------------");
-		System.out.println(isDirectory);
 	}
 	public String getName() {
 		return name;

@@ -22,7 +22,7 @@ $(document).ready(function() {
 	
 	$("#selectCommit").change(function(){
 		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
-			window.location = $("#selectCommit option:selected").val()+"${fileName}";
+			window.location = $("#selectCommit option:selected").val()+"/"+"${fileName}";
 	});
 	
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
