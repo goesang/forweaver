@@ -185,32 +185,47 @@ public class WebUtil {
 	 * @param List<String> 파일리스트 문자열
 	 * @return 해당 경로의 파일리스트를 반환
 	 */
+	public static int nth(String source, String pattern, int n) {
+
+		int i = 0, pos = 0, tpos = 0;
+
+		while (i < n) {
+
+			pos = source.indexOf(pattern);
+			if (pos > -1) {
+				source = source.substring(pos+1);
+				tpos += pos+1;
+				i++;
+			} else {
+				return -1;
+			}
+		}
+
+		return tpos - 1;
+	}
+
+
+	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
+	 * @param List<String> 파일리스트 문자열
+	 * @return 해당 경로의 파일리스트를 반환
+	 */
 	public static List<String> getFileList(List<String> list, String filePath){
 		List<String> returnList = new ArrayList<String>();
+		int spiltNumber = 0;
 
-		int listIndex, pathIndex, splitIndex;
+		if(filePath.equals("/"))
+			spiltNumber= 1;
+		else
+			spiltNumber=filePath.split("/").length;
 
-		for(String allfPath : list){
-			if(allfPath.startsWith(filePath)){
-				listIndex = allfPath.lastIndexOf("/");
-				
-				if(filePath.equals("/")){
-					pathIndex = 0;
-					splitIndex = allfPath.substring(pathIndex, listIndex).lastIndexOf("/");
-					//System.out.println("왜이러는데? : " + splitIndex);
-				} else {
-					pathIndex = (filePath + "/").lastIndexOf("/");
-					splitIndex = allfPath.substring(pathIndex, listIndex).lastIndexOf("/");
+		for(String path : list){
+			if(path.startsWith(filePath)){
+				if(path.split("/").length>spiltNumber+1){
+					path = path.substring(0, nth(path,"/",spiltNumber+1));
 				}
-				
-				if(splitIndex > 0) ;
-				else if(returnList.contains(allfPath.substring(0, listIndex)));
-				else if(returnList.contains(allfPath));
-				else if(listIndex != pathIndex && splitIndex <= 0){
-					returnList.add(allfPath.substring(0, listIndex));
-				} else{
-					returnList.add(allfPath);
-				}
+				if(!returnList.contains(path)){
+					returnList.add(path);
+				}		
 			}
 		}
 		return returnList;

@@ -118,6 +118,8 @@ public class GitUtil {
 	}
 
 	public boolean isDirectory(String commitID, String filePath){
+		if(filePath.length() == 0)
+			return true;
 		try{
 			ObjectId revId = this.localRepo.resolve(commitID);
 			TreeWalk treeWalk = new TreeWalk(this.localRepo);
@@ -131,7 +133,7 @@ public class GitUtil {
 			treeWalk.reset(new RevWalk(this.localRepo).parseTree(revId));
 			while (treeWalk.next()) {
 				if(treeWalk.getPathString().startsWith(filePath)){
-					return true;
+				return true;
 				}
 			}
 		}catch(Exception e){
@@ -141,7 +143,7 @@ public class GitUtil {
 	}
 
 	//프로젝트의 파일 정보를 가져옴
-	public GitFileInfo getFileInfor(String commitID, String filePath) {
+	public GitFileInfo getFileInfo(String commitID, String filePath) {
 		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 		RevCommit selectCommit = this.getCommit(commitID);
 
@@ -213,8 +215,7 @@ public class GitUtil {
 				String[] strArray = path.substring(1).split("/");
 				GitSimpleFileInfo gitFileInfo = new GitSimpleFileInfo(
 						strArray[strArray.length-1], path.substring(1),
-						0,
-						false,
+						isDirectory(commitID,path.substring(1)),
 						revCommit.getName(), revCommit.getShortMessage(),
 						revCommit.getCommitTime(),
 						revCommit.getCommitterIdent().getName(),

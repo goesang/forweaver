@@ -191,60 +191,53 @@ public class ProjectController {
 		"/{creatorName}/{projectName}/browser"}
 			)
 	public String browser(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,Model model) {
-		Project project = projectService.get(creatorName+"/"+projectName);
-
+			@PathVariable("creatorName") String creatorName) {		
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
-
-		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD","");
-
-		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList",gitFileInfoList);
-		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
-		model.addAttribute("selectBranch",gitBranchList.get(0));
-		model.addAttribute("readme",gitService.getReadme(creatorName, projectName,"HEAD",gitFileInfoList));
-		return "/project/browser";
+		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+gitBranchList.get(0)+"/filepath:/";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commit}")
-	public String browser(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}")
+	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model) {
-		Project project = projectService.get(creatorName+"/"+projectName);
-
-		commit = commit.replace(",", ".");
-		
-		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit,"");
-		
-		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
-		gitBranchList.remove(commit);
-		
-		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList", gitFileInfoList);
-		
-		model.addAttribute("gitBranchList", gitBranchList);
-		model.addAttribute("selectBranch",commit);
-		model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commit,gitFileInfoList));
-		return "/project/browser";
+			@PathVariable("commitID") String commitID){
+		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commitID+"/filepath:/"; 
 	}
-
+	
 	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/**")
-	public String fileViewer(HttpServletRequest request,@PathVariable("projectName") String projectName,
+	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commitID") String commitID,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
-		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
-		model.addAttribute("fileName", gitFileInfo.getName());
-		model.addAttribute("fileContent", gitFileInfo.getContent());
-		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
-		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-		model.addAttribute("gitCommitLog", 
-				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
-		return "/project/fileViewer";
+		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
+			List<GitSimpleFileInfo> gitFileInfoList = 
+					gitService.getGitSimpleFileInfoList(creatorName, projectName,commitID,filePath);
+			
+			List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+			gitBranchList.remove(commitID);
+			
+			model.addAttribute("project", project);
+			model.addAttribute("gitFileInfoList", gitFileInfoList);
+			
+			model.addAttribute("gitBranchList", gitBranchList);
+			model.addAttribute("selectBranch",commitID);
+			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commitID,gitFileInfoList));
+			model.addAttribute("filePath",filePath);
+			return "/project/browser";
+		}else{ // 파일이라면
+			model.addAttribute("project", project);
+			model.addAttribute("fileName", gitFileInfo.getName());
+			model.addAttribute("fileContent", gitFileInfo.getContent());
+			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
+			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
+			model.addAttribute("gitCommitLog", 
+					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+			model.addAttribute("filePath",filePath);
+			return "/project/fileViewer";
+		}
+			
+
 	}
 
 	@RequestMapping("/{creatorName}/{projectName}/browser/blame/commit:{commitID}/**")
@@ -253,15 +246,18 @@ public class ProjectController {
 			@PathVariable("commitID") String commitID,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
-		model.addAttribute("project", project);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
+		
+		if(gitFileInfo.isDirectory()) // 디렉토리의 경우 blame 기능을 이용할 수 없어 프로젝트 메인으로 돌려보냄.
+			return "redirect:/project/"+creatorName+"/"+projectName;
+		
+		model.addAttribute("project", project);
 		model.addAttribute("fileName", gitFileInfo.getName());
 		model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
 		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-		model.addAttribute("gitCommitLog", 
-				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+		model.addAttribute("gitCommitLog", new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 		return "/project/blame";
 	}
 

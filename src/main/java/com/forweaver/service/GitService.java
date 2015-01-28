@@ -26,8 +26,14 @@ public class GitService {
 	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
-		GitFileInfo gitFileInfo = gitUtil.getFileInfor(commitID, filePath);
-		gitFileInfo.setGitBlames(gitUtil.getBlame(filePath, commitID));
+		if(filePath.equals("/") || !filePath.startsWith("/"))
+			return null;
+		else
+			filePath = filePath.substring(1);
+		
+		GitFileInfo gitFileInfo = gitUtil.getFileInfo(commitID, filePath);
+		if(!gitFileInfo.isDirectory())
+			gitFileInfo.setGitBlames(gitUtil.getBlame(filePath, commitID));
 		return gitFileInfo;
 	}
 
@@ -73,6 +79,12 @@ public class GitService {
 	public List<GitSimpleFileInfo> getGitSimpleFileInfoList(String parentDirctoryName,
 			String repositoryName,String commitID,String filePath) {
 		GitUtil gitUtil = new GitUtil(parentDirctoryName,repositoryName);
+		
+		if(filePath.equals("/") || !filePath.startsWith("/"))
+			filePath = "";
+		else
+			filePath = filePath.substring(1);
+		
 		List<GitSimpleFileInfo> gitFileInfoList = gitUtil.getGitFileInfoList(commitID,filePath);
 		return gitFileInfoList;
 	}
@@ -129,7 +141,7 @@ public class GitService {
 									creatorName, 
 									projectName, 
 									commit, 
-									gitSimpleFileInfo.getName()).getContent());
+									"/"+gitSimpleFileInfo.getName()).getContent());
 		return readme;
 	}
 

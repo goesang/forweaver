@@ -47,7 +47,6 @@ fileBrowser.push({
 	"name" : "${fn:substring(gitFileInfo.name,0,20)}",
 	"path" : "${gitFileInfo.path}",
 	"directory" : ${gitFileInfo.isDirectory},
-	"depth" : ${gitFileInfo.depth},
 	"commitLog" :  "${fn:substring(gitFileInfo.simpleCommitLog,0,35)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
 	"commiterName" :  "${gitFileInfo.commiterName}",
@@ -56,9 +55,8 @@ fileBrowser.push({
 	"date": "${gitFileInfo.getCommitDate()}"
 });
 </c:forEach>
-var fileBrowserTree = fileListTransform(fileBrowser);
 var fileBrowserURL = "/project/${project.name}/browser/commit:";
-showFileBrowser("/");
+showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 
 </script>
 	<div class="container">
