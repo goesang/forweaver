@@ -22,10 +22,8 @@ public class WebUtil {
 		try{
 			if(pageUrl.contains(",")){
 				size = Integer.parseInt(pageUrl.split(",")[1]);
-			}else{
-				size =Integer.parseInt(pageUrl);
 			}
-		}finally{}
+		}catch(Exception e){}
 		
 		return size;
 	}
@@ -35,14 +33,14 @@ public class WebUtil {
 	 * @return 페이지의 번호
 	 */
 	public static int getPageNumber(String pageUrl){
-		int page;
+		int page = 1;
 		try{
 			if(pageUrl.contains(",")){
 				page = Integer.parseInt(pageUrl.split(",")[0]);
 			}else{
 				page =Integer.parseInt(pageUrl);
 			}
-		}finally{}
+		}catch(Exception e){}
 		
 		return page;
 	}

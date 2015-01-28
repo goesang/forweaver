@@ -62,7 +62,6 @@ public class WeaverService implements UserDetailsService {
 				.getAuthentication();
 		if (auth.getName().equals("anonymousUser"))
 			return null;
-
 		return (Weaver) auth.getPrincipal();
 	}
 

@@ -55,23 +55,16 @@ public class CodeController {
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String page(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
-
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+				
 		model.addAttribute("codes", 
-				codeService.getCodes(sort, pageNum, number));
+				codeService.getCodes(sort, pageNum, size));
 		model.addAttribute("codeCount", 
 				codeService.countCodes(sort));
 
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/code/sort:"+sort+"/page:");
 		return "/code/front";
 	}
@@ -87,28 +80,22 @@ public class CodeController {
 			@PathVariable("sort") String sort,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
 
-		int pageNum;
-		int number = 15;
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		if(!tagService.validateTag(tagList,currentWeaver)){
 			return "redirect:/code/sort:age-desc/page:1";
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodes(tagList, sort, pageNum, number));
+				codeService.getCodes(tagList, sort, pageNum, size));
 		model.addAttribute("codeCount", 
 				codeService.countCodes(tagList, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/code/tags:"+tagNames+"/sort:"+sort+"/page:");
 
 		return "/code/front";
@@ -126,22 +113,15 @@ public class CodeController {
 			@PathVariable("page") String page,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
 
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 
 		model.addAttribute("codes", 
-				codeService.getCodes(tagList,search, sort, pageNum, number));
+				codeService.getCodes(tagList,search, sort, pageNum, size));
 		model.addAttribute("codeCount", 
 				codeService.countCodes(tagList,search, sort));
 
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("search", search);
 		model.addAttribute("pageIndex", pageNum);
