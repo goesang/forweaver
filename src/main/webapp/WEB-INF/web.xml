@@ -10,6 +10,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
         	  classpath:spring/spring-security-context.xml
+        	  classpath:spring/spring-mail.xml
             classpath:spring/applicationContext.xml
         </param-value>
 	</context-param>
