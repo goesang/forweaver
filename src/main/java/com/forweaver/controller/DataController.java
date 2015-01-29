@@ -21,8 +21,10 @@ import com.forweaver.service.WeaverService;
 @Controller
 @RequestMapping("/data")
 public class DataController {
-	@Autowired DataService dataService;
-	@Autowired WeaverService weaverService;
+	@Autowired 
+	private DataService dataService;
+	@Autowired 
+	private WeaverService weaverService;
 
 	@RequestMapping(value = "/{dataID}")
 	public void data(@PathVariable("dataID") String dataID, HttpServletResponse res)

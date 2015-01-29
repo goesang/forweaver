@@ -203,7 +203,7 @@ public class WeaverController {
 		}
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodesWhenWeaverHome(weaver, "", 1, 100));
+		model.addAttribute("codes", codeService.getCodes(weaver, "", 1, 100));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
@@ -230,10 +230,10 @@ public class WeaverController {
 
 		model.addAttribute("weaver", weaver);
 
-		model.addAttribute("posts", postService.getPostsWhenWeaverHome(
+		model.addAttribute("posts", postService.getPosts(
 				currentWeaver, weaver, sort, pageNum, number));
 		model.addAttribute("postCount",
-				postService.countPostsWhenWeaverHome(currentWeaver, weaver, sort));
+				postService.countPosts(currentWeaver, weaver, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", number);
@@ -275,10 +275,10 @@ public class WeaverController {
 
 		model.addAttribute("weaver", weaver);
 
-		model.addAttribute("posts", postService.getPostsWhenWeaverHomeWithTags(
+		model.addAttribute("posts", postService.getPosts(
 				currentWeaver, tagList, weaver, sort, pageNum, number));
 		model.addAttribute("postCount", postService
-				.countPostsWhenWeaverHomeWithTags(currentWeaver, tagList, weaver,
+				.countPosts(currentWeaver, tagList, weaver,
 						sort));
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -325,10 +325,10 @@ public class WeaverController {
 		model.addAttribute("weaver", weaver);
 
 		model.addAttribute("posts", postService
-				.getPostsWhenWeaverHomeWithTagsAndSearch(currentWeaver,
+				.getPosts(currentWeaver,
 						tagList, weaver, search, sort, pageNum, number));
 		model.addAttribute("postCount", postService
-				.countPostsWhenWeaverHomeWithTagsAndSearch(currentWeaver,
+				.countPosts(currentWeaver,
 						tagList, weaver, search, sort));
 
 		model.addAttribute("tagNames", tagNames);

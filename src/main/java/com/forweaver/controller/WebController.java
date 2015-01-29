@@ -15,8 +15,10 @@ import com.forweaver.service.WeaverService;
 @Controller
 public class WebController {
 	
-	@Autowired private CacheManager cacheManager;
-	@Autowired WeaverService weaverService;
+	@Autowired 
+	private CacheManager cacheManager;
+	@Autowired 
+	private WeaverService weaverService;
 	
 	@RequestMapping("/forweaver")
 	public void forweaver(Model model) {

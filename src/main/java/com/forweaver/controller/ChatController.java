@@ -15,8 +15,10 @@ import com.forweaver.service.ChatService;
 @Controller
 public class ChatController {
 
-	@Autowired private SimpMessagingTemplate template;
-	@Autowired private ChatService chatService;
+	@Autowired 
+	private SimpMessagingTemplate template;
+	@Autowired 
+	private ChatService chatService;
 	
 	@MessageMapping("/chat/pub/{chatroom}")
 	public void chat(String message,@DestinationVariable String chatroom,Principal prin) { 

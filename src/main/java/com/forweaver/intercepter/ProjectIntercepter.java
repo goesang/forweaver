@@ -25,7 +25,6 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)
 					throws Exception {
-
 		String uri = request.getRequestURI();
 
 		String projectName = new String();
@@ -33,10 +32,8 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 			projectName= uri.split("/")[2]+"/"+uri.split("/")[3];
 		}else
 			return true;
-
 		if(uri.endsWith("/join-ok") ||uri.endsWith("/join") || projectName.startsWith("sort:") || projectName.startsWith("tags:"))
 			return true;
-
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Project project = projectService.get(projectName);
 		if(uri.contains("/tags:")){
@@ -75,7 +72,6 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 				}
 			}
 		}
-
 
 		return true;
 	}

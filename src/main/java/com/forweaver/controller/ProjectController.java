@@ -84,6 +84,7 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commitName") String commitName,
 			HttpServletResponse response) {
+		
 		if(!gitService.existCommit(creatorName, projectName, commitName))
 			return;
 
@@ -95,20 +96,14 @@ public class ProjectController {
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String projectsWithPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjects(currentWeaver,sort, pageNum, number));
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,sort, pageNum, size));
 		model.addAttribute("projectCount", projectService.countProjects(sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
@@ -124,20 +119,15 @@ public class ProjectController {
 	public String projectsWithTags(@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
-		int pageNum;
-		int number = 15;
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}		
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjectsWithTags(currentWeaver,tagList,sort, pageNum, number));
-		model.addAttribute("projectCount", projectService.countProjectsWithTags(tagList,sort));
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(tagList,sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"sort:"+sort+"/page:");
 		return "/project/projects";
 	}
@@ -152,20 +142,15 @@ public class ProjectController {
 			@PathVariable("page") String page,
 			@PathVariable("search") String search,
 			@PathVariable("sort") String sort,Model model) {
-		int pageNum;
-		int number = 15;
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}		
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjectsWithTagsAndSearch(currentWeaver,tagList,search,sort, pageNum, number));
-		model.addAttribute("projectCount", projectService.countProjectsWithTagsAndSearch(tagList,search,sort));
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,search,sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(tagList,search,sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/search:"+search+"/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
@@ -206,98 +191,73 @@ public class ProjectController {
 		"/{creatorName}/{projectName}/browser"}
 			)
 	public String browser(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,Model model) {
-		Project project = projectService.get(creatorName+"/"+projectName);
-
+			@PathVariable("creatorName") String creatorName) {		
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
-		String readme = "";
-
-		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD");
-
-		if(gitFileInfoList != null) for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
-			if(gitSimpleFileInfo.getDepth() == 0 && gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
-				readme = WebUtil.markDownEncoder(
-						gitService.getFileInfo(
-								creatorName, 
-								projectName, 
-								"HEAD", 
-								gitSimpleFileInfo.getName()).getContent());
-
-		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList", 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,"HEAD"));
-		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
-		model.addAttribute("selectBranch",gitBranchList.get(0));
-		model.addAttribute("readme",readme);
-		return "/project/browser";
+		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+gitBranchList.get(0)+"/filepath:/";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commit}")
-	public String browser(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}")
+	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model) {
-		Project project = projectService.get(creatorName+"/"+projectName);
-		String readme = "";
-
-		commit = commit.replace(",", ".");
-		List<GitSimpleFileInfo> gitFileInfoList = 
-				gitService.getGitSimpleFileInfoList(creatorName, projectName,commit);
-
-		for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList) // 파일들을 검색해서 리드미 파일을 찾아냄
-			if(gitSimpleFileInfo.getName().toUpperCase().equals("README.MD"))
-				readme = WebUtil.markDownEncoder(
-						gitService.getFileInfo(
-								creatorName, 
-								projectName, 
-								commit, 
-								gitSimpleFileInfo.getName()).getContent());
-
-
-		model.addAttribute("project", project);
-		model.addAttribute("gitFileInfoList", gitFileInfoList);
-		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
-		gitBranchList.remove(commit);
-		model.addAttribute("gitBranchList", gitBranchList);
-		model.addAttribute("selectBranch",commit);
-		model.addAttribute("readme",readme);
-		return "/project/browser";
+			@PathVariable("commitID") String commitID){
+		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commitID+"/filepath:/"; 
 	}
-
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/filepath:{filePath}")
-	public String fileViewer(@PathVariable("projectName") String projectName,
+	
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/**")
+	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID,
-			@PathVariable("filePath") String filePath,Model model) {
+			@PathVariable("commitID") String commitID,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		commitID = commitID.replace(",", ".");
-		model.addAttribute("project", project);
+		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
-		model.addAttribute("fileName", gitFileInfo.getName());
-		model.addAttribute("fileContent", gitFileInfo.getContent());
-		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
-		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-		model.addAttribute("gitCommitLog", 
-				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
-		return "/project/fileViewer";
+		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
+			List<GitSimpleFileInfo> gitFileInfoList = 
+					gitService.getGitSimpleFileInfoList(creatorName, projectName,commitID,filePath);
+			
+			List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+			gitBranchList.remove(commitID);
+			
+			model.addAttribute("project", project);
+			model.addAttribute("gitFileInfoList", gitFileInfoList);
+			
+			model.addAttribute("gitBranchList", gitBranchList);
+			model.addAttribute("selectBranch",commitID);
+			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commitID,gitFileInfoList));
+			model.addAttribute("filePath",filePath);
+			return "/project/browser";
+		}else{ // 파일이라면
+			model.addAttribute("project", project);
+			model.addAttribute("fileName", gitFileInfo.getName());
+			model.addAttribute("fileContent", gitFileInfo.getContent());
+			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
+			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
+			model.addAttribute("gitCommitLog", 
+					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+			model.addAttribute("filePath",filePath);
+			return "/project/fileViewer";
+		}
+			
+
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/filepath:{filePath}/blame")
-	public String blame(@PathVariable("projectName") String projectName,
+	@RequestMapping("/{creatorName}/{projectName}/browser/blame/commit:{commitID}/**")
+	public String blame(HttpServletRequest request, @PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID,
-			@PathVariable("filePath") String filePath,Model model) {
+			@PathVariable("commitID") String commitID,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		commitID = commitID.replace(",", ".");
-		model.addAttribute("project", project);
+		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
+		
+		if(gitFileInfo.isDirectory()) // 디렉토리의 경우 blame 기능을 이용할 수 없어 프로젝트 메인으로 돌려보냄.
+			return "redirect:/project/"+creatorName+"/"+projectName;
+		
+		model.addAttribute("project", project);
 		model.addAttribute("fileName", gitFileInfo.getName());
 		model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
 		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-		model.addAttribute("gitCommitLog", 
-				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+		model.addAttribute("gitCommitLog", new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 		return "/project/blame";
 	}
 
@@ -311,16 +271,9 @@ public class ProjectController {
 			@PathVariable("sort") String sort,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
-
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = new ArrayList<String>();
@@ -328,9 +281,9 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver, tagList, sort));
+				postService.countPosts(currentWeaver, tagList, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/sort:"+sort+"/page:");
 		return "/project/community";
@@ -347,15 +300,8 @@ public class ProjectController {
 			@PathVariable("tagNames") String tagNames,
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
-		int pageNum;
-		int number = 15;
-
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}	
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);	
 
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
@@ -364,9 +310,9 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getPostsWithTags(currentWeaver, tagList, sort, pageNum, number));
+				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countPostsWithTags(currentWeaver, tagList, sort));
+				postService.countPosts(currentWeaver, tagList, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", 
@@ -418,7 +364,7 @@ public class ProjectController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(creatorName, projectName,gitBranchList.get(0)));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(creatorName, projectName,gitBranchList.get(0),1,10));
+				gitService.getGitCommitLogList(creatorName, projectName,gitBranchList.get(0),1,15));
 
 		return "/project/commitLog";
 	}
@@ -465,7 +411,7 @@ public class ProjectController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(creatorName, projectName,commit));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(creatorName, projectName,commit,1,10));
+				gitService.getGitCommitLogList(creatorName, projectName,commit,1,15));
 		return "/project/commitLog";
 	}
 
@@ -473,10 +419,12 @@ public class ProjectController {
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,
-			@PathVariable("page") int page,Model model) {
+			@PathVariable("page") String page,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
+		
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
 		model.addAttribute("selectBranch",commit);
@@ -485,7 +433,7 @@ public class ProjectController {
 		model.addAttribute("gitCommitListCount", 
 				gitService.getCommitListCount(creatorName, projectName,commit));
 		model.addAttribute("gitCommitList", 
-				gitService.getGitCommitLogList(creatorName, projectName,commit,page,10));
+				gitService.getGitCommitLogList(creatorName, projectName,commit,pageNum,size));
 		return "/project/commitLog";
 	}
 

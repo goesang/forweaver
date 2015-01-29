@@ -21,8 +21,6 @@ public class Repo implements Serializable {
 	private String LectureName;
 	@DBRef
 	private Weaver creator;
-	@DBRef
-	private List<Project> childProjects = new ArrayList<Project>(); // 파생 프로젝트 모음
 
 	public Repo() {
 		
@@ -132,14 +130,6 @@ public class Repo implements Serializable {
 			 return -1;
 		 
 		 return leftDay;
-	}
-	
-	public List<Project> getChildProjects() {
-		return childProjects;
-	}
-
-	public void setChildProjects(List<Project> childProjects) {
-		this.childProjects = childProjects;
 	}
 	
 }

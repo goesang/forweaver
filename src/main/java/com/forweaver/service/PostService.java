@@ -180,7 +180,7 @@ public class PostService {
 			return postDao.getPostsWhenLogin(null,weaver.getPrivateTags(),null,null, sort, page, size);
 	}
 	
-	public long countPostsWithTags(Weaver weaver,List<String> tags,String sort) {
+	public long countPosts(Weaver weaver,List<String> tags,String sort) {
 		
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(tags, null, null, sort);
@@ -198,7 +198,7 @@ public class PostService {
 			
 	}
 	
-	public List<Post> getPostsWithTags(Weaver weaver,List<String> tags,String sort, int page, int size) {
+	public List<Post> getPosts(Weaver weaver,List<String> tags,String sort, int page, int size) {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.getPostsWhenNotLogin(tags, null, null, sort, page, size);
@@ -217,7 +217,7 @@ public class PostService {
 			
 	}
 	
-	public long countPostsWithTagsAndSearch(Weaver weaver,
+	public long countPosts(Weaver weaver,
 			List<String> tags,String search,String sort) {
 		
 		if(weaver == null) //로그인하지 않은 회원의 경우
@@ -236,7 +236,7 @@ public class PostService {
 			
 	}
 	
-	public List<Post> getPostsWithTagsAndSearch(Weaver weaver,
+	public List<Post> getPosts(Weaver weaver,
 			List<String> tags,String search,String sort, int page, int size) {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
@@ -258,7 +258,7 @@ public class PostService {
 			
 	}
 	
-	public long countPostsWhenWeaverHome(Weaver loginWeaver,Weaver writer,String sort) {
+	public long countPosts(Weaver loginWeaver,Weaver writer,String sort) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(null, null, writer, sort);
@@ -271,7 +271,7 @@ public class PostService {
 						writer, loginWeaver, null, sort);
 	}
 	
-	public List<Post> getPostsWhenWeaverHome(Weaver loginWeaver,
+	public List<Post> getPosts(Weaver loginWeaver,
 			Weaver writer,String sort, int page, int size) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
@@ -286,7 +286,7 @@ public class PostService {
 	}
 
 	
-	public long countPostsWhenWeaverHomeWithTags(Weaver loginWeaver,List<String> tags,Weaver writer,String sort) {
+	public long countPosts(Weaver loginWeaver,List<String> tags,Weaver writer,String sort) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(tags, null, writer, sort);
@@ -300,7 +300,7 @@ public class PostService {
 	}
 	
 	
-	public List<Post> getPostsWhenWeaverHomeWithTags(Weaver loginWeaver,List<String> tags,
+	public List<Post> getPosts(Weaver loginWeaver,List<String> tags,
 			Weaver writer,String sort, int page, int size) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
@@ -314,7 +314,7 @@ public class PostService {
 						writer, loginWeaver, null, sort, page, size);
 	}
 	
-	public long countPostsWhenWeaverHomeWithTagsAndSearch(Weaver loginWeaver,List<String> tags,Weaver writer,String search,String sort) {
+	public long countPosts(Weaver loginWeaver,List<String> tags,Weaver writer,String search,String sort) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(tags, search, writer, sort);
@@ -328,7 +328,7 @@ public class PostService {
 	}
 	
 	
-	public List<Post> getPostsWhenWeaverHomeWithTagsAndSearch(Weaver loginWeaver,List<String> tags,
+	public List<Post> getPosts(Weaver loginWeaver,List<String> tags,
 			Weaver writer,String search,String sort, int page, int size) {
 		
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우

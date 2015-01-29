@@ -33,6 +33,7 @@ import org.eclipse.jgit.lib.RepositoryCache;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.notes.Note;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
@@ -116,8 +117,33 @@ public class GitUtil {
 		FileUtils.deleteDirectory(new File(this.path));
 	}
 
+	public boolean isDirectory(String commitID, String filePath){
+		if(filePath.length() == 0)
+			return true;
+		try{
+			ObjectId revId = this.localRepo.resolve(commitID);
+			TreeWalk treeWalk = new TreeWalk(this.localRepo);
+			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+			treeWalk.setRecursive(true);
+			while (treeWalk.next()) {
+				if(treeWalk.getPathString().equals(filePath)){
+					return false;
+				}
+			}
+			treeWalk.reset(new RevWalk(this.localRepo).parseTree(revId));
+			while (treeWalk.next()) {
+				if(treeWalk.getPathString().startsWith(filePath)){
+				return true;
+				}
+			}
+		}catch(Exception e){
+			return false;
+		}
+		return false;
+	}
+
 	//프로젝트의 파일 정보를 가져옴
-	public GitFileInfo getFileInfor(String commitID, String filePath) {
+	public GitFileInfo getFileInfo(String commitID, String filePath) {
 		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 		RevCommit selectCommit = this.getCommit(commitID);
 
@@ -143,7 +169,7 @@ public class GitUtil {
 
 			return new GitFileInfo(filePath, BlobUtils.getContent(
 					this.localRepo, selectCommit.getId(), filePath),
-					gitLogList, selectCommitIndex);
+					gitLogList, selectCommitIndex,isDirectory(commitID,filePath));
 
 		}
 	}
@@ -170,35 +196,37 @@ public class GitUtil {
 
 	}
 	// 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
-	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID) {
+	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID,String filePath) {
 		List<GitSimpleFileInfo> gitFileInfoList = new ArrayList<GitSimpleFileInfo>();
-
+		List<String> fileList = new ArrayList<String>();
 		try{
 			ObjectId revId = this.localRepo.resolve(commitID);
 			TreeWalk treeWalk = new TreeWalk(this.localRepo);
-
 			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
 			treeWalk.setRecursive(true);
+			
 			while (treeWalk.next()) {
+				fileList.add("/"+treeWalk.getPathString());
+			}
+			
+			for(String path: WebUtil.getFileList(fileList, "/"+filePath)){
 				RevCommit revCommit = CommitUtils.getLastCommit(this.localRepo,
-						commitID, treeWalk.getPathString());
-				ObjectLoader loader = this.localRepo.open(treeWalk.getObjectId(0));
+						commitID, path.substring(1));
+				String[] strArray = path.substring(1).split("/");
 				GitSimpleFileInfo gitFileInfo = new GitSimpleFileInfo(
-						treeWalk.getNameString(), treeWalk.getPathString(),
-						treeWalk.getDepth(),
-						loader.getType() == Constants.OBJ_TREE,
+						strArray[strArray.length-1], path.substring(1),
+						isDirectory(commitID,path.substring(1)),
 						revCommit.getName(), revCommit.getShortMessage(),
 						revCommit.getCommitTime(),
 						revCommit.getCommitterIdent().getName(),
 						revCommit.getCommitterIdent().getEmailAddress());
 				gitFileInfoList.add(gitFileInfo);
 			}
-		}catch(Exception e){
-			System.err.println(e.getMessage());
-		}
+			
+		}catch(Exception e){}
 		return gitFileInfoList;
 	}
-	
+
 	// 저장소에서 GIT 로그 정보를 가져옴
 	public GitCommitLog getCommitLog(String commitID) {
 		GitCommitLog gitCommitLog = null;
@@ -455,7 +483,7 @@ public class GitUtil {
 					else
 						file.delete();
 				}
-			
+
 			//압축파일을 품.
 			byte[] buffer = new byte[1024];
 
@@ -596,7 +624,7 @@ public class GitUtil {
 	public String cherryPick(String cherryPickRepo,String cherryPickCommit,String originalRepoBranch){
 		String returnState = new String();
 		cherryPickRepo = GitPath+cherryPickRepo+".git";
-			
+
 		try{
 			//임시 git 저장소를 클론함.
 			File localPath = File.createTempFile("cherry", "");
@@ -605,7 +633,7 @@ public class GitUtil {
 			.setURI(cherryPickRepo)
 			.setDirectory(localPath)
 			.call();
-			
+
 			Repository repo = new FileRepository(localPath+"/.git");
 			Git git = new Git(repo);
 			StoredConfig config = git.getRepository().getConfig();

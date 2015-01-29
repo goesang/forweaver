@@ -11,26 +11,49 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**<pre> 프로젝트 정보를 담은 클래스. 
+ * name 프로젝트 이름 이게 기본 키
+ * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트
+ * description  프로젝트 소개
+ * openingDate 프로젝트 시작일
+ * endDate  프로젝트 종료일
+ * originalProject  원본 프로젝트 이름
+ * creator 프로젝트 개설자 정보
+ * push 프로젝트 추천수
+ * childProjects 파생 프로젝트 모음
+ * isJoin 프로젝트 가입 여부
+ * tags 프로젝트 태그 모음
+ * adminWeavers 관리자들
+ * joinWeavers 가입자들
+ * </pre>
+ */
 @Document
 public class Project implements Serializable {
 
 	static final long serialVersionUID = 423123232123124234L;
 	@Id
-	private String name; //프로젝트 이름 이게 기본 키
-	private int category; // 프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트
-	private String description; // 프로젝트 소개
-	private Date openingDate; // 프로젝트 시작일
-	private Date endDate; // 프로젝트 종료일
-	private String originalProject;// 원본 프로젝트 이름
+	private String name;
+	private int category;
+	private String description;
+	private Date openingDate;
+	private Date endDate;
+	private String originalProject;
 	@DBRef
 	private Weaver creator;
-	private int push; // 프로젝트 추천수
+	private int push;
 	
 	@DBRef
-	private List<Project> childProjects = new ArrayList<Project>(); // 파생 프로젝트 모음
+	private List<Project> childProjects = new ArrayList<Project>();
 	
 	@Transient
 	private boolean isJoin;
+	
+	private List<String> tags = new ArrayList<String>();
+	
+	@DBRef
+	private List<Weaver> adminWeavers = new ArrayList<Weaver>();
+	@DBRef
+	private List<Weaver> joinWeavers = new ArrayList<Weaver>();
 	
 	public Date getEndDate() {
 		return endDate;
@@ -40,12 +63,7 @@ public class Project implements Serializable {
 		this.endDate = endDate;
 	}
 
-	private List<String> tags = new ArrayList<String>(); // 프로젝트의 태그 모음
 	
-	@DBRef
-	private List<Weaver> adminWeavers = new ArrayList<Weaver>(); // 관리자들
-	@DBRef
-	private List<Weaver> joinWeavers = new ArrayList<Weaver>(); // 비 관리자 회원들
 	
 	public Project() {
 		

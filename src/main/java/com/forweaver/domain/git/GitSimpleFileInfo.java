@@ -11,7 +11,6 @@ public class GitSimpleFileInfo implements Serializable {
 	
 	private String name;
 	private String path;
-	private int depth;
 	private boolean isDirectory;
 	private String commitID;
 	private String simpleCommitLog;
@@ -20,13 +19,12 @@ public class GitSimpleFileInfo implements Serializable {
 	private String commiterName;
 	private String commiterEmail;
 		
-	public GitSimpleFileInfo(String name, String path, int depth,
+	public GitSimpleFileInfo(String name, String path,
 			boolean isDirectory, String commitID, String simpleCommitLog,
 			int commitDateInt,String commiterName,
 			String commiterEmail) {
 		this.name = name;
 		this.path = "/"+path;
-		this.depth = depth;
 		this.isDirectory = isDirectory;
 		this.commitID = commitID;
 		this.simpleCommitLog = simpleCommitLog;
@@ -46,12 +44,6 @@ public class GitSimpleFileInfo implements Serializable {
 	}
 	public void setPath(String path) {
 		this.path = path;
-	}
-	public int getDepth() {
-		return depth;
-	}
-	public void setDepth(int depth) {
-		this.depth = depth;
 	}
 	public boolean getIsDirectory() {
 		return isDirectory;
