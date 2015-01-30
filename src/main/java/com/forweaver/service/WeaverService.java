@@ -1,8 +1,6 @@
 package com.forweaver.service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -20,12 +19,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
-import com.mongodb.DBObject;
 
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
@@ -34,10 +31,12 @@ public class WeaverService implements UserDetailsService {
 	private WeaverDao weaverDao;
 	@Autowired 
 	private PasswordEncoder passwordEncoder;
-	
 	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
 
+	@Value("${gitpath}")
+	private String gitpath;
+	
 	@Override
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
@@ -74,7 +73,7 @@ public class WeaverService implements UserDetailsService {
 		weaver.addPass(pass);
 		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
 		weaverDao.insert(weaver);
-		File file = new File(GitUtil.GitPath + weaver.getId());
+		File file = new File(gitpath + weaver.getId());
 		file.mkdir();
 	}
 
@@ -127,7 +126,7 @@ public class WeaverService implements UserDetailsService {
 		// TODO Auto-generated method stub
 		weaverDao.delete(weaver);
 		try {
-			FileUtils.deleteDirectory(new File(GitUtil.GitPath + weaver.getId()));
+			FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
 		} catch (Exception e) {
 		}
 	}

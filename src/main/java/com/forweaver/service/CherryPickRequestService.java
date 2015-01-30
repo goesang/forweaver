@@ -3,6 +3,7 @@ package com.forweaver.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.CherryPickRequest;
@@ -15,9 +16,14 @@ import com.forweaver.util.GitUtil;
 @Service
 public class CherryPickRequestService {
 	
-	@Autowired private CherryPickRequestDao cherryPickRequestDao;
-	@Autowired private PostDao postDao;
+	@Autowired 
+	private CherryPickRequestDao cherryPickRequestDao;
+	@Autowired 
+	private PostDao postDao;
 
+	@Value("${gitpath}")
+	private String gitpath;
+	
 	public List<CherryPickRequest> get(Project orginalProject){
 		return cherryPickRequestDao.get(orginalProject);
 	}
@@ -30,8 +36,6 @@ public class CherryPickRequestService {
 			Project cherryPickProject,
 			Weaver weaver,
 			String commitID){
-		GitUtil gitUtil = new GitUtil(cherryPickProject);
-
 		if(orginalProject == null
 				|| cherryPickProject.getCategory() != 0 
 				|| orginalProject.getCategory() != 0
@@ -45,7 +49,7 @@ public class CherryPickRequestService {
 	}
 
 	public boolean accept(CherryPickRequest cherryPickRequest,String originalRepoBranch,Weaver weaver){ // 채리픽 요청을 수락함.
-		GitUtil gitUtil = new GitUtil(cherryPickRequest.getOrginalProject());
+		GitUtil gitUtil = new GitUtil(gitpath,cherryPickRequest.getOrginalProject());
 
 		if(!weaver.isAdminWeaver(cherryPickRequest.getOrginalProject().getName())) // 원본 프로젝트의 운영자만 수락 가능.
 			return false;

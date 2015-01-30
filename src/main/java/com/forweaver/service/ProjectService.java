@@ -7,6 +7,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,13 +24,15 @@ public class ProjectService{
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private ProjectDao projectDao;
 	@Autowired private CacheManager cacheManager;
-
+	
+	@Value("${gitpath}")
+	private String gitpath;
 
 	public void add(Project project,Weaver currentWeaver){
 		// TODO Auto-generated method stub
 
 		try{
-			GitUtil gitUtil = new GitUtil(project);
+			GitUtil gitUtil = new GitUtil(gitpath,project);
 			gitUtil.createRepository();
 		} catch (Exception e) {
 			return;
@@ -62,7 +65,7 @@ public class ProjectService{
 		// TODO Auto-generated method stub
 		if(weaver.getId().equals(project.getCreatorName())){
 			try{
-				GitUtil gitUtil = new GitUtil(project);
+				GitUtil gitUtil = new GitUtil(gitpath,project);
 				gitUtil.deleteRepository();
 			} catch (Exception e) {
 				return false;
@@ -168,7 +171,7 @@ public class ProjectService{
 	public void uploadZip(Project project,Weaver weaver,String message,MultipartFile zip){
 		if(message==null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
-		GitUtil gitUtil = new GitUtil(project);
+		GitUtil gitUtil = new GitUtil(gitpath,project);
 		try{
 			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
 		}catch(Exception e){
@@ -194,7 +197,7 @@ public class ProjectService{
 				}
 			}
 			
-			GitUtil gitUtil = new GitUtil(newProject);
+			GitUtil gitUtil = new GitUtil(gitpath,newProject);
 			gitUtil.forkRepository(originProject.getName(), newProject.getName());
 			projectDao.insert(newProject);
 			projectDao.update(originProject);

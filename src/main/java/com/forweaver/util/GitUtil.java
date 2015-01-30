@@ -39,6 +39,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
 import com.forweaver.domain.Lecture;
@@ -56,16 +57,16 @@ import com.forweaver.domain.git.statistics.GitParentStatistics;
 //git과 관련된 모든 기능 구현.
 public class GitUtil {
 
-	public static String GitPath = "/home/git/";
+	private String gitPath;
 	private String path;
 	private Repository localRepo;
 	private Git git;
 	private StoredConfig config;
 	private boolean isRepo;
 
-	public GitUtil(Repo repo) {
+	public GitUtil(String gitPath,Repo repo) {
 		try {
-			this.path = GitPath + repo.getLectureName() + "/" + repo.getName()
+			this.path = gitPath + repo.getLectureName() + "/" + repo.getName()
 					+ ".git";
 			this.localRepo = new FileRepository(this.path);
 			this.git = new Git(localRepo);
@@ -76,9 +77,9 @@ public class GitUtil {
 		}
 	}
 
-	public GitUtil(Project pro) {
+	public GitUtil(String gitPath,Project pro) {
 		try {
-			this.path = GitPath + pro.getName() + ".git";
+			this.path = gitPath + pro.getName() + ".git";
 			this.localRepo = new FileRepository(this.path);
 			this.git = new Git(localRepo);
 			this.config = localRepo.getConfig();
@@ -88,9 +89,9 @@ public class GitUtil {
 		}
 	}
 
-	public GitUtil(String creatorName, String repositoryName) {
+	public GitUtil(String gitPath,String creatorName, String repositoryName) {
 		try {
-			this.path = GitPath + creatorName + "/" + repositoryName
+			this.path = gitPath + creatorName + "/" + repositoryName
 					+ ".git";
 			this.localRepo = RepositoryCache.open(RepositoryCache.FileKey
 					.lenient(new File(this.path), FS.DETECTED), true);
@@ -524,7 +525,7 @@ public class GitUtil {
 	// 프로젝트를 포크함.
 	public void forkRepository(String originRepo, String newRepo){
 		try{
-			FileUtils.copyDirectory(new File(GitPath+originRepo+".git"),  new File(GitPath+newRepo+".git"));
+			FileUtils.copyDirectory(new File(gitPath+originRepo+".git"),  new File(gitPath+newRepo+".git"));
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
@@ -623,7 +624,7 @@ public class GitUtil {
 	// 브랜치 대 브랜치 병합이 아닌 커밋 대 브랜치 병합인 채리픽 방식으로 통합하는 기능
 	public String cherryPick(String cherryPickRepo,String cherryPickCommit,String originalRepoBranch){
 		String returnState = new String();
-		cherryPickRepo = GitPath+cherryPickRepo+".git";
+		cherryPickRepo = gitPath+cherryPickRepo+".git";
 
 		try{
 			//임시 git 저장소를 클론함.

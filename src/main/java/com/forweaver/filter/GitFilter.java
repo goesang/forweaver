@@ -13,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.forweaver.domain.Pass;
@@ -28,10 +29,16 @@ import com.forweaver.util.GitUtil;
 //git에서 권한 설정 기능이 없어서 필터로 구현함.
 @Component("GitFilter")
 public class GitFilter implements Filter {
-	@Autowired WeaverService weaverService;
-	@Autowired LectureService lectureService;
-	@Autowired ProjectService projectService;
+	@Autowired 
+	private WeaverService weaverService;
+	@Autowired 
+	private LectureService lectureService;
+	@Autowired 
+	private ProjectService projectService;
 
+	@Value("${gitpath}")
+	private String gitpath;
+	
 	private FilterConfig config = null;
 
 	public void doFilter(ServletRequest req, ServletResponse res,
@@ -42,7 +49,7 @@ public class GitFilter implements Filter {
 		String repoName = requstUrlArray[3].substring(0,
 				requstUrlArray[3].indexOf(".git"));
 
-		if (!new File(GitUtil.GitPath + lectureName + "/" + repoName + ".git")
+		if (!new File(gitpath + lectureName + "/" + repoName + ".git")
 		.exists()) // 저장소가 없는 경우
 			return;
 
@@ -69,7 +76,7 @@ public class GitFilter implements Filter {
 
 		Repo repo = lectureService.getRepo(lectureName + "/" + repoName);
 
-		GitUtil gitUtil = new GitUtil(repo);
+		GitUtil gitUtil = new GitUtil(gitpath,repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
 
 		if (pass.getPermission() == 1) { // 강의 개설자의 경우
