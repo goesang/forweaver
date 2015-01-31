@@ -1,9 +1,15 @@
 package com.forweaver.service;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +23,14 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.Pass;
+import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
-import com.forweaver.util.GitUtil;
+import com.forweaver.util.MailUtil;
 
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
@@ -33,10 +41,14 @@ public class WeaverService implements UserDetailsService {
 	private PasswordEncoder passwordEncoder;
 	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
+	@Autowired 
+	private CacheManager cacheManager;
+	@Autowired 
+	private MailUtil mailUtil;
 
 	@Value("${gitpath}")
 	private String gitpath;
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
@@ -68,8 +80,8 @@ public class WeaverService implements UserDetailsService {
 		Pass pass;
 		if(weaverDao.existsWeaver())
 			pass = new Pass("ROLE_USER"); 
-		 else
-			 pass = new Pass("ROLE_ADMIN"); // 최초 회원 가입시 운영자 지위
+		else
+			pass = new Pass("ROLE_ADMIN"); // 최초 회원 가입시 운영자 지위
 		weaver.addPass(pass);
 		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
 		weaverDao.insert(weaver);
@@ -147,6 +159,60 @@ public class WeaverService implements UserDetailsService {
 		return result;
 	}
 
+
+	/** 비밀번호를 재발급을 위한 메서드
+	 * @param email
+	 * @return 성공여부
+	 */
+	public boolean sendRepassword(String email){
+		Cache rePasswordCache = cacheManager.getCache("repassword");
+		Object object = rePasswordCache.get(email);
+
+		if(object != null ||  weaverDao.get(email) == null) //등록된 이메일이 없을 경우.
+			return false;
+		String password = KeyGenerators.string().generateKey();
+		String key = passwordEncoder.encodePassword(password, null);
+		RePassword rePassword = new RePassword(key, password);
+
+		//mailUtil.sendMail(email,"",""); 미구현.
+		Element newElement = new Element(email, rePassword);
+		rePasswordCache.put(newElement);
+
+		return true;
+	}
+
+	/** 인증된 키를 통해 재발급된 비밀번호로 변경하는 메서드
+	 * @param email
+	 * @param key
+	 * @return 성공여부
+	 */
+	public boolean changePassword(String email,String key){
+		Cache rePasswordCache = cacheManager.getCache("repassword");
+		Element element = rePasswordCache.get(email);
+		if(element == null)
+			return false;
+		RePassword rePassword =  (RePassword)element.getValue();
+
+		if(rePassword.getKey().equals(key)){
+			Weaver weaver = weaverDao.get(email);
+			weaver.setPassword(passwordEncoder.encodePassword(rePassword.getPassword(),null));	
+			weaverDao.update(weaver);
+		}
+		return true;
+	}
+
+	/** 회원의 원래 비밀번호와 입력한 비밀번호가 같은지 비교하는 메서드.
+	 * @param weaver
+	 * @param password
+	 * @return
+	 */
+	public boolean validPassword(Weaver weaver,String password){
+		if(password != null && password.length()<4 && 
+				weaver.getPassword().equals(passwordEncoder.encodePassword(password, null)))
+			return true;
+		return false;
+	}
+
 	/*
 	//위버정보들과 수 파악함.
 	public Object[] getWeaverInfos(List<String> tags,int page, int size ){
@@ -202,7 +268,7 @@ public class WeaverService implements UserDetailsService {
 				else
 					weaverHash.put(name, db);
 			}
-			
+
 			int i = 0;
 			for(DBObject db:weaverHash.values()){
 				if(startNumber <= i){
@@ -218,7 +284,7 @@ public class WeaverService implements UserDetailsService {
 					break;
 				i++;	
 			}
-			
+
 		}
 		finally{
 			returnObject[0] = weaverHash.values().size();
@@ -226,7 +292,7 @@ public class WeaverService implements UserDetailsService {
 			return returnObject;
 		}
 	}
-	
-	*/
+
+	 */
 
 }

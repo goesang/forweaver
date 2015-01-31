@@ -19,6 +19,7 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
 	<bean id="mailUtil" class="com.forweaver.util.MailUtil">
 		<property name="mailSender" ref="mailSender" />
+		<property name="from" value="smtp.gmail.com" />
 	</bean>
 
 </beans>

@@ -11,14 +11,14 @@
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 				<div style="padding-top:60px;padding-bottom:60px;
 				text-align:center;  background-color: #fff;" class="well-white hero-unit center">
-					<h1><i class="fa fa-exclamation-triangle"></i> 일반 에러.
+					<h1><i class="fa fa-lock"></i> 비밀번호 재발급.
 					</h1>
 					<br />
 					<p>
-						<b>원인 모를 에러가 발생하였습니다. 이전화면으로 돌아가주세요.</b>
+						<b>비밀번호가 재발급되었습니다. 바뀐 비밀번호로 로그인해주세요.</b>
 					</p><br />
-					<a href="/" class="btn btn-large btn-info"><i
-						class="icon-home"></i> 메인 화면으로 돌아가기</a>
+					<a onclick="/" class="btn btn-large btn-info"><i
+						class="icon-user"></i> 로그인하기</a>
 				</div>
 				<br />
 		

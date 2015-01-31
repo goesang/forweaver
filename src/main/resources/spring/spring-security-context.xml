@@ -25,6 +25,8 @@
 		use-expressions="true">
 		<security:intercept-url pattern="/login"
 			access="isAnonymous()" />
+		<security:intercept-url pattern="/repassword**"
+			access="isAnonymous()" />
 		<security:intercept-url pattern="/join" access="isAnonymous()" />
 
 		<security:intercept-url pattern="/check"

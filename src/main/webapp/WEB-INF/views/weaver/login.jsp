@@ -6,7 +6,32 @@
 <title>ForWeaver : 학생들을 위한 소셜 코딩!</title>
 </head>
 <body>
-
+<script>
+$(document).ready(function() {
+	$("#repasswordButton").click(function(){
+		$("#repasswordFieldset").show();
+		$("#loginForm").hide();
+	});
+	$("#loginButton").click(function(){
+		$("#loginForm").show();
+		$("#repasswordFieldset").hide();
+	});
+	$("#repasswordSendButton").click(function(){
+		$.ajax({                         
+		    type: "POST",
+		    url: "/repassword",
+		    data: "email="+$("#email").val(),
+		    success: function(msg) {  //성공시 이 함수를 호출한다.
+			    if(msg==true){
+			    	alert("이메일로 비밀번호가 발송되었습니다!");
+				    }else{
+				    alert("가입된 이메일이 아니거나 비밀번호가 이미 발송되었습니다!");
+			 }
+		   }
+		});
+	});
+});
+</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 		<div class="row">
@@ -64,10 +89,21 @@
 							<div class="form-actions-white">
 								<button style="width:145px;" class="btn btn-inverse" type="submit"><i class="fa fa-user"></i>&nbsp;&nbsp;접속하기</button>
 								<a style="width:120px;" class="btn btn-inverse" rel="popover" href="/join"><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;회원가입 </a>
-								<a class="btn full-button btn-primary" href="/forweaver"><i class="fa fa-rocket"></i></i>&nbsp;ForWeaver.com을 소개합니다.</a>
+								<a class="btn full-button btn-primary" id="repasswordButton"><i class="fa fa-lock"></i></i>&nbsp;비밀번호 재발급</a>
 							</div>
 						</fieldset>
 					</form>
+					
+					<fieldset id="repasswordFieldset" style="display:none">
+							<legend>비밀번호 재발급</legend>
+							<label>이메일</label> 
+							<input style="width:90%;" class="text" type="text"
+								name="email" id="email" /> 
+							<div class="form-actions-white">
+								<a class="btn full-button btn-inverse" id="repasswordSendButton"><i class="fa fa-lock"></i></i>&nbsp;재발급하기</a>
+								<a class="btn full-button btn-primary" id="loginButton"><i class="fa fa-user"></i></i>&nbsp;로그인하기</a>
+							</div>
+						</fieldset>
 			</div>
 		</div>
 		
