@@ -114,32 +114,26 @@ public class Weaver implements UserDetails,Serializable {
 		return false;
 	}
 	
-	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
 		return this.passes;
 	}
-	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
 		return this.id;
 	}
-	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	@Override
 	public boolean isAccountNonLocked() {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	@Override
 	public boolean isCredentialsNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return true;
@@ -233,6 +227,13 @@ public class Weaver implements UserDetails,Serializable {
 				return true;
 		}
 		return false;
+	}
+	
+	public List<String> getPassNames(){
+		List<String> passNames = new ArrayList<String>();
+		for(Pass pass:this.passes)
+			passNames.add(pass.getJoinName());
+		return passNames;
 	}
 	
 }

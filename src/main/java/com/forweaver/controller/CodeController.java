@@ -59,9 +59,9 @@ public class CodeController {
 		int size = WebUtil.getPageSize(page);
 				
 		model.addAttribute("codes", 
-				codeService.getCodes(sort, pageNum, size));
+				codeService.getCodes(null, null, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(sort));
+				codeService.countCodes(null, null, null, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
@@ -89,9 +89,9 @@ public class CodeController {
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodes(tagList, sort, pageNum, size));
+				codeService.getCodes(tagList, null, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(tagList, sort));
+				codeService.countCodes(tagList, null, null, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -117,9 +117,9 @@ public class CodeController {
 		int size = WebUtil.getPageSize(page);
 
 		model.addAttribute("codes", 
-				codeService.getCodes(tagList,search, sort, pageNum, size));
+				codeService.getCodes(tagList, null, search, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(tagList,search, sort));
+				codeService.countCodes(tagList, null, search, sort));
 
 		model.addAttribute("number", size);
 		model.addAttribute("tagNames", tagNames);

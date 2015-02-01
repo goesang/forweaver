@@ -22,6 +22,10 @@ public class CodeService {
 
 	@Autowired CodeDao codeDao;
 
+	/** 코드를 추가함.
+	 * @param code
+	 * @param file
+	 */
 	public void add(Code code, MultipartFile file) {
 		try {
 			if ((file.getContentType().equals("application/zip") ||
@@ -75,10 +79,18 @@ public class CodeService {
 		} 
 	}
 
+	/** 코드를 가져옴
+	 * @param codeID
+	 * @return
+	 */
 	public Code get(int codeID) {
 		return codeDao.get(codeID);
 	}
 
+	/** 코드를 다운로드함.
+	 * @param code
+	 * @param os
+	 */
 	public void dowloadCode(Code code, OutputStream os){
 		try {
 			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os));
@@ -93,67 +105,43 @@ public class CodeService {
 			System.err.println(e.getMessage());
 		}
 	}
-
-	public long countCodes(String sort) {
-		return codeDao.countCodes(null, null, null, sort);
-	}
-
-	public List<Code> getCodes(String sort, int page, int size) {
-		return codeDao.getCodes(null, null, null, sort, page, size);
-	}
-
-	public long countCodes(List<String> tags, String sort) {
-		return codeDao.countCodes(tags, null, null, sort);
-	}
-
-	public List<Code> getCodes(List<String> tags, String sort,
-			int page, int size) {
-		return codeDao.getCodes(tags, null, null, sort, page, size);
-	}
-
-	public long countCodes(List<String> tags, String serach,
-			String sort) {
-		return codeDao.countCodes(tags, serach, null, sort);
-	}
-
-	public List<Code> getCodes(List<String> tags,
-			String serach, String sort, int page, int size) {
-		return codeDao.getCodes(tags, serach, null, sort, page, size);
-	}
-
-	public long countCodes(Weaver weaver, String sort) {
-		return codeDao.countCodes(null, null, weaver, sort);
-	}
-
-	public List<Code> getCodes(Weaver weaver, String sort,
-			int page, int size) {
-		return codeDao.getCodes(null, null, weaver, sort, page, size);
-	}
-
-	public long countCodes(List<String> tags,
-			Weaver weaver, String sort) {
-		return codeDao.countCodes(tags, null, weaver, sort);
-	}
-
-	public List<Code> getCodes(List<String> tags,
-			Weaver weaver, String sort, int page, int size) {
-		return codeDao.getCodes(tags, sort, weaver, sort, page, size);
-	}
-
+	
+	/** 코드를 검색하고 갯수를 파악함.
+	 * @param tags
+	 * @param weaver
+	 * @param serach
+	 * @param sort
+	 * @return
+	 */
 	public long countCodes(List<String> tags,
 			Weaver weaver, String serach, String sort) {
 		return codeDao.countCodes(tags, serach, weaver, sort);
 	}
 
+	/** 코드를 검색함.
+	 * @param tags
+	 * @param weaver
+	 * @param serach
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Code> getCodes(List<String> tags,
 			Weaver weaver, String serach, String sort, int page, int size) {
 		return codeDao.getCodes(tags, serach, weaver, sort, page, size);
 	}
 
+	/** 코드 삭제
+	 * @param code
+	 */
 	public void delete(Code code) {
 		codeDao.delete(code);
 	}
 
+	/** 코드 수정
+	 * @param code
+	 */
 	public void update(Code code) {
 		codeDao.update(code);
 	}

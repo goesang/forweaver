@@ -11,14 +11,16 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Lecture;
-import com.forweaver.domain.Weaver;
 
 @Repository
 public class LectureDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 
-	public void add(Lecture lecture) { // 강의 생성함.
+	/** 강의 생성함.
+	 * @param lecture
+	 */
+	public void add(Lecture lecture) {
 
 		if (!mongoTemplate.collectionExists(Lecture.class)) {
 			mongoTemplate.createCollection(Lecture.class);
@@ -26,16 +28,26 @@ public class LectureDao {
 		mongoTemplate.insert(lecture);
 	}
 
-	public Lecture get(String lectureName) { // 강의명으로 강의를 가져옴
+	/** 강의명으로 강의를 가져옴
+	 * @param lectureName
+	 * @return
+	 */
+	public Lecture get(String lectureName) {
 		Query query = new Query(Criteria.where("_id").is(lectureName));
 		return mongoTemplate.findOne(query, Lecture.class);
 	}
 
-	public void delete(Lecture lecture) { // 강의 삭제
+	/** 강의 삭제
+	 * @param lecture
+	 */
+	public void delete(Lecture lecture) {
 		mongoTemplate.remove(lecture);
 	}
 
-	public void update(Lecture lecture) { // 강의 수정하기
+	/** 강의 수정하기
+	 * @param lecture
+	 */
+	public void update(Lecture lecture) {
 		Query query = new Query(Criteria.where("_id").is(lecture.getName()));
 		Update update = new Update();
 		update.set("description", lecture.getDescription());
@@ -46,10 +58,15 @@ public class LectureDao {
 		mongoTemplate.updateFirst(query, update, Lecture.class);
 	}
 
-	public long countLectures( // 강의 검색하고 숫자를 셈
+	/** 강의 검색하고 숫자를 셈
+	 * @param tags
+	 * @param search
+	 * @param creator
+	 * @return
+	 */
+	public long countLectures(
 			List<String> tags,
-			String search,
-			Weaver creator) {
+			String search) {
 		Criteria criteria = new Criteria();
 
 		if(search != null)
@@ -59,16 +76,20 @@ public class LectureDao {
 		if(tags != null)
 			criteria.and("tags").all(tags);
 
-		if(creator != null)
-			criteria.and("creator").is(creator);
-
 		return mongoTemplate.count(new Query(criteria), Lecture.class);
 	}
 
-	public List<Lecture> getLectures( // 강의를 검색
+	/** 강의를 검색
+	 * @param tags
+	 * @param search
+	 * @param creator
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Lecture> getLectures(
 			List<String> tags,
 			String search,
-			Weaver creator,
 			int page, 
 			int size) {
 		Criteria criteria = new Criteria();
@@ -79,9 +100,24 @@ public class LectureDao {
 
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(creator != null)
-			criteria.and("creator").is(creator);
 
+		Query query = new Query(criteria);
+		query.with(new PageRequest(page-1, size));
+
+		return mongoTemplate.find(query, Lecture.class);
+	}
+	
+	/** 로그인한 회원이 자신이 가입한 강의를 가져올 때 활용.
+	 * @param lecturNames
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Lecture> getLectures(
+			List<String> lecturNames,
+			int page, 
+			int size) {
+		Criteria criteria = new Criteria("name").in(lecturNames);
 		Query query = new Query(criteria);
 		query.with(new PageRequest(page-1, size));
 

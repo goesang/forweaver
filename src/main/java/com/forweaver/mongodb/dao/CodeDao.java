@@ -19,7 +19,10 @@ public class CodeDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 	
-	public void insert(Code code) { // 코드 추가하기
+	/** 코드 추가하기
+	 * @param code
+	 */
+	public void insert(Code code) { 
 
 		if (!mongoTemplate.collectionExists(Code.class)) {
 			mongoTemplate.createCollection(Code.class);
@@ -35,16 +38,26 @@ public class CodeDao {
 		mongoTemplate.insert(code);
 	}
 
-	public Code get(int codeID) { // 코드 가져오기
+	/** 코드 가져오기
+	 * @param codeID
+	 * @return
+	 */
+	public Code get(int codeID) {
 		Query query = new Query(Criteria.where("_id").is(codeID));
 		return mongoTemplate.findOne(query, Code.class);
 	}
 	
-	public void delete(Code code) { // 코드 가져오기
+	/** 코드 가져오기
+	 * @param code
+	 */
+	public void delete(Code code) {
 		mongoTemplate.remove(code);
 	}
 
-	public void update(Code code) { // 코드 수정하기
+	/** 코드 수정하기
+	 * @param code
+	 */
+	public void update(Code code) {
 		Query query = new Query(Criteria.where("_id").is(code.getCodeID()));
 		Update update = new Update();
 		update.set("content", code.getContent());
@@ -58,7 +71,14 @@ public class CodeDao {
 	}
 	
 	
-	public long countCodes( // 로그인하지 않은 회원이 글을 셈.
+	/** 검색한 코드의 갯수를 셈.
+	 * @param tags
+	 * @param search
+	 * @param writer
+	 * @param sort
+	 * @return
+	 */
+	public long countCodes(
 			List<String> tags,
 			String search,
 			Weaver writer,
@@ -80,7 +100,16 @@ public class CodeDao {
 		return mongoTemplate.count(new Query(criteria), Code.class);
 	}
 	
-	public List<Code> getCodes( // 로그인하지 않은 회원이 글을 검색
+	/** 코드를 검색함.
+	 * @param tags
+	 * @param search
+	 * @param writer
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Code> getCodes(
 			List<String> tags,
 			String search,
 			Weaver writer,
@@ -108,6 +137,10 @@ public class CodeDao {
 		return mongoTemplate.find(query, Code.class);
 	}
 	
+	/** 검색할 때 필터링함.
+	 * @param criteria
+	 * @param sort
+	 */
 	public void filter(Criteria criteria,String sort){
 		if (sort.equals("download-desc")) {
 			criteria.and("downCount").gt(0);
@@ -120,6 +153,10 @@ public class CodeDao {
 		}
 	}
 	
+	/** 정렬 메서드
+	 * @param query
+	 * @param sort
+	 */
 	public void sorting(Query query,String sort){
 		if (sort.equals("age-asc")) {
 			query.with(new Sort(Sort.Direction.ASC, "_id"));
@@ -133,6 +170,9 @@ public class CodeDao {
 			query.with(new Sort(Sort.Direction.DESC, "_id"));
 	}
 
+	/** 마지막 코드를 가져옴
+	 * @return
+	 */
 	public Code getLast() {
 		Query query = new Query().with(new Sort(Sort.Direction.DESC, "_id"));
 		return mongoTemplate.findOne(query, Code.class);

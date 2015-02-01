@@ -47,7 +47,6 @@ public class Pass implements GrantedAuthority, Serializable {
 	}
 
 	
-	@Override
 	public String getAuthority() {
 		// TODO Auto-generated method stub
 		return this.joinName;

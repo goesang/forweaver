@@ -222,27 +222,27 @@
 										</a>
 									</c:if></td>
 								<td class="td-button" rowspan="2"><sec:authorize
-										ifNotGranted="ROLE_USER">
+										access="isAnonymous()">
 										<a href="/project/${project.name}/join"> <span
 											class="span-button"><i class="fa fa-times"></i>
 												<p class="p-button">가입</p></span>
 										</a>
-									</sec:authorize> <sec:authorize ifAnyGranted="ROLE_USER">
+									</sec:authorize> <sec:authorize access="isAuthenticated()">
 										<c:if
-											test="${!project.isJoin() && project.creatorName != currentUser.username}">
+											test="${project.isJoin() == 0}">
 											<a href="/project/${project.name}/join"> <span
 												class="span-button"><i class="fa fa-times"></i>
 													<p class="p-button">미가입</p></span>
 											</a>
 										</c:if>
 										<c:if
-											test="${project.isJoin() && project.creatorName != currentUser.username}">
+											test="${project.isJoin() == 1}">
 											<a href="/project/${project.name}"> <span
 												class="span-button"><i class="fa fa-user"></i>
 													<p class="p-button">회원</p></span>
 											</a>
 										</c:if>
-										<c:if test="${project.creatorName == currentUser.username}">
+										<c:if test="${project.isJoin () == 2}">
 											<a href="/project/${project.name}"> <span
 												class='span-button'><i class="fa fa-user"></i>
 													<p class='p-button'>관리자</p></span></a>

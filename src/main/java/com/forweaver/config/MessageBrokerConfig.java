@@ -15,7 +15,6 @@ public class MessageBrokerConfig extends AbstractWebSocketMessageBrokerConfigure
 		config.enableSimpleBroker("/chat/sub");
 	}
 
-	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/chat/pub/{chatroom}").withSockJS();
 	}

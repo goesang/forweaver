@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * creator 프로젝트 개설자 정보
  * push 프로젝트 추천수
  * childProjects 파생 프로젝트 모음
- * isJoin 프로젝트 가입 여부
+ * isJoin 프로젝트 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
  * tags 프로젝트 태그 모음
  * adminWeavers 관리자들
  * joinWeavers 가입자들
@@ -46,7 +46,7 @@ public class Project implements Serializable {
 	private List<Project> childProjects = new ArrayList<Project>();
 	
 	@Transient
-	private boolean isJoin;
+	private int isJoin;
 	
 	private List<String> tags = new ArrayList<String>();
 	
@@ -200,11 +200,11 @@ public class Project implements Serializable {
 		this.joinWeavers = joinWeavers;
 	}
 	
-	public boolean isJoin() {
+	public int isJoin() {
 		return isJoin;
 	}
 
-	public void setJoin(boolean isJoin) {
+	public void setJoin(int isJoin) {
 		this.isJoin = isJoin;
 	}
 	public String getImgSrc(){
@@ -253,5 +253,11 @@ public class Project implements Serializable {
 		return false;
 	}
 	
+	public List<Weaver> getWeavers() {
+		List<Weaver> weavers = new ArrayList<Weaver>();
+		weavers.addAll(this.joinWeavers);
+		weavers.addAll(this.adminWeavers);
+		return weavers;
+	}
 	
 }

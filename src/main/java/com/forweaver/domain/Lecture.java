@@ -11,26 +11,38 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**<pre> 강의 정보를 담은 클래스. 
+ * name 강의 이름 이게 기본 키
+ * description  강의 소개
+ * openingDate 강의 시작일
+ * creator 강의 개설자 정보
+ * push 강의 추천수
+ * isJoin 강의 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
+ * tags 강의 태그 모음
+ * adminWeavers 관리자들
+ * joinWeavers 가입자들
+ * </pre>
+ */
 @Document
 public class Lecture implements Serializable {
 
 	static final long serialVersionUID = 423234L;
 	@Id
-	private String name; //강의 이름 이게 기본 키
-	private String description; // 강의 소개
-	private Date openingDate; // 강의 시작일
+	private String name;
+	private String description;
+	private Date openingDate;
 	@DBRef
 	private Weaver creator;
 	
 	@Transient
-	private boolean isJoin;
+	private int isJoin;
 	
-	private List<String> tags = new ArrayList<String>(); // 강의의 태그 모음
+	private List<String> tags = new ArrayList<String>();
 	
 	@DBRef
-	private List<Weaver> adminWeavers = new ArrayList<Weaver>(); // 관리자들
+	private List<Weaver> adminWeavers = new ArrayList<Weaver>();
 	@DBRef
-	private List<Weaver> joinWeavers = new ArrayList<Weaver>(); // 비 관리자 회원들
+	private List<Weaver> joinWeavers = new ArrayList<Weaver>();
 	
 	private List<Repo> repos = new ArrayList<Repo>(); 
 	
@@ -154,16 +166,22 @@ public class Lecture implements Serializable {
 		return null;
 	}
 
-	public boolean isJoin() {
+	public int isJoin() {
 		return isJoin;
 	}
 
-	public void setJoin(boolean isJoin) {
+	public void setJoin(int isJoin) {
 		this.isJoin = isJoin;
 	}
 	public String getImgSrc(){
 		return creator.getImgSrc();
 	}
 	
+	public List<Weaver> getWeavers() {
+		List<Weaver> weavers = new ArrayList<Weaver>();
+		weavers.addAll(this.joinWeavers);
+		weavers.addAll(this.adminWeavers);
+		return weavers;
+	}
 	
 }

@@ -68,8 +68,8 @@ public class LectureController {
 		int size = WebUtil.getPageSize(page);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, pageNum, size));
-		model.addAttribute("lectureCount", lectureService.countLectures());
+		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, null, null, pageNum, size));
+		model.addAttribute("lectureCount", lectureService.countLectures(null,null));
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/lecture/page:");
@@ -92,8 +92,8 @@ public class LectureController {
 		int size = WebUtil.getPageSize(page);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("lectures", lectureService.getLectures(currentWeaver,tagList,pageNum, size));
-		model.addAttribute("lectureCount", lectureService.countLectures(tagList));
+		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, tagList, null, pageNum, size));
+		model.addAttribute("lectureCount", lectureService.countLectures(tagList,null));
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/lecture/tags:"+tagNames+"/page:");
@@ -415,7 +415,7 @@ public class LectureController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver waitingWeaver = weaverService.get(weaver);
 		WaitJoin waitJoin = waitJoinService.get(lectureName, weaver);
-		Pass pass = new Pass(lectureName, 0);
+		Pass pass = new Pass(lectureName, 1);
 
 		if(waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& lecture.getCreatorName().equals(currentWeaver.getId())

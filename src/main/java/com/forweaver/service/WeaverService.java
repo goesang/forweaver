@@ -1,9 +1,7 @@
 package com.forweaver.service;
 
 import java.io.File;
-import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,7 +47,6 @@ public class WeaverService implements UserDetailsService {
 	@Value("${gitpath}")
 	private String gitpath;
 
-	@Override
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
