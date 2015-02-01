@@ -19,6 +19,7 @@
 		$('#post-div').fadeIn('slow');
 		$('#show-write-button').hide();
 		$('#hide-write-button').show();
+		$('#forweaver-table').hide();
 		//editorMode = true;
 	}
 
@@ -31,6 +32,7 @@
 		$('#search-button').show();
 		$('#show-write-button').show();
 		$('#hide-write-button').hide();
+		$('#forweaver-table').show();
 		//editorMode = false;
 	}
 	</script>
@@ -49,15 +51,13 @@
 			</h6>
 		</div>
 		<div class="row">
-			<div id="search-div" class="col-md-10">
+			<div id="search-div" class="col-md-10" style="margin-bottom: 10px;">
 				<input id="post-search-input" class="form-control col-md-10"
 					placeholder="검색어를 입력하여 강의를 찾아보세요!" type="text" />
 			</div>
 			<form onsubmit="return checkLecture()" id="lectureForm"
 				action="/lecture/add" method="post">
-				
-
-				<div id="post-div" class="col-md-10" style="display:none;">
+				<div id="post-div" class="col-md-10" style="display:none; margin-bottom: 10px;">
 					<input name="name" id="lecture-name" class="form-control col-md-4" style="width: 33.33333333%;"
 						placeholder="강의명을 입력해주세요!" type="text" /> <input
 						name="description" id="lecture-description" class="form-control col-md-8" style="width: 66.66666667%;"
@@ -84,7 +84,7 @@
 					<tbody>
 						<c:forEach items="${lectures}" var="lecture">
 							<tr>
-								<td class="forweaver-td-avatar" rowspan="2"><img
+								<td class="forweaver-td-avatar" rowspan="2"><img class="forweaver-avatar"
 									src="${lecture.getImgSrc()}"></td>
 								<td colspan="2" class="post-top-title"><a
 									class="none-color" href="/lecture/${lecture.name}"> <i
@@ -94,27 +94,27 @@
 								<td class="forweaver-td-span" rowspan="2"><sec:authorize
 										ifNotGranted="ROLE_USER">
 										<a href="/lecture/${lecture.name}/join"> <span
-											class="forweaver-td-span"><i class="fa fa-times"></i>
+											class="forweaver-span"><i class="fa fa-times"></i>
 												<p class="p-button">미가입</p></span>
 										</a>
 									</sec:authorize> <sec:authorize ifAnyGranted="ROLE_USER">
 										<c:if
 											test="${!lecture.isJoin() && lecture.creatorName != currentUser.username}">
 											<a href="/lecture/${lecture.name}/join"> <span
-												class="forweaver-td-span"><i class="fa fa-times"></i>
+												class="forweaver-span"><i class="fa fa-times"></i>
 													<p class="p-button">미가입</p></span>
 											</a>
 										</c:if>
 										<c:if
 											test="${lecture.isJoin() && lecture.creatorName != currentUser.username}">
 											<a href="/lecture/${lecture.name}"> <span
-												class="forweaver-td-span"><i class="fa fa-graduation-cap"></i>
+												class="forweaver-span"><i class="fa fa-graduation-cap"></i>
 													<p class="p-button">학생</p></span>
 											</a>
 										</c:if>
 										<c:if test="${lecture.creatorName == currentUser.username}">
 											<a href="/lecture/${lecture.name}"> <span
-												class='forweaver-td-span'><i class="fa fa-user"></i>
+												class='forweaver-span'><i class="fa fa-user"></i>
 													<p class='p-button'>관리자</p>" </span>
 											</a>
 										</c:if>
