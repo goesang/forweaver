@@ -151,11 +151,11 @@ $(function(){
 			<form id="post-form" onsubmit="return checkPost()"
 				action="/community/add" enctype="multipart/form-data" METHOD="POST">
 
-				 <div class="form-group col-md-9 col-lg-10">
+				 <div class="form-group col-md-9 col-lg-10 col-xs-8">
 				    <input class="form-control col-md-12" id="post-title-input" name="title"
 										placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"/>
 				  </div>
-				<div class="col-md-3 col-lg-2 pull-right">
+				<div class="col-md-3 col-lg-2 col-xs-4 pull-right">
 					<span> <a id='search-button'
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-write-button" href="javascript:showWrite();"

@@ -37,6 +37,20 @@
 	}
 	$(function(){
 		$( "#"+getSort(document.location.href) ).addClass( "active" );
+		
+		var pageCount = ${postCount+1}/${number}; //총 페이지 갯수를 계산함
+		pageCount = Math.ceil(pageCount);
+		
+		$('#page-selection').twbsPagination({ // 페이지 네비게이터
+	        totalPages: pageCount,
+	        first:"<<",
+	        prev:"<",
+	        next:">",
+	        last:">>",
+	        visiblePages: 10,
+	        startPage : ${pageIndex},
+	        href: "${pageUrl}"+'{{number}}'
+	    });
 	});
 	</script>
 	<div class="container">
@@ -75,26 +89,26 @@
 				</ul>
 			</div>
 			
-			<div id="search-div" class="col-md-10">
+			<div id="search-div" class="col-md-10 col-xs-9">
 				<input id="post-search-input" class="form-control col-md-10"
 					placeholder="검색어를 입력하여 프로젝트를 찾아보세요!" type="text" style="margin-bottom: 10px;"/>
 			</div>
 			
 			<form id="post-form" onsubmit="return checkProject()" action="/project/add" enctype="multipart/form-data" method="post">
-				<div id="project-div" class="form-group col-md-10" style="display: none;">
-					<input id ="project-name" class="form-control col-md-5" style="width: 41.66666667%;"
+				<div id="project-div" class="form-group col-md-10 col-xs-9" style="display: none;">
+					<input id ="project-name" class="form-control col-md-5 col-xs-4" style="width: 41.66666667%;"
 						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" />
-						<label class="checkbox col-md-2" for="checkbox" style="margin-left: 10px;">
+						<label class="checkbox col-md-2 col-xs-5" for="checkbox" style="margin-left: 10px;">
 							<input type="checkbox" value="" id="project-category-select" name=category data-toggle="checkbox" class="custom-checkbox">
 							<span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
 							 공개 프로젝트   <!-- JS 써서 Flat UI CheckBox 토글해야함. -->
 						</label>
-						<hr class="col-md-10" style="border: none; margin-top: 5px;" />
-						<input name ="description"class="form-control col-md-12" type="text" id="project-description"
+						<hr class="col-md-10 col-xs-9" style="border: none; margin-top: 5px;" />
+						<input name ="description"class="form-control col-md-12 " type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요!"></input>
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-2 col-xs-3">
 					<span> <a id="show-write-button"
 						href="javascript:showProjectContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>

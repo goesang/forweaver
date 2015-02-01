@@ -13,7 +13,6 @@
 		function showCodeContent() {
 			$('#page-selection').hide();
 			$('#post-table').hide();
-			$('#post-content-textarea').fadeIn('slow');
 			$('#post-ok').show();
 			$('#search-button').hide();
 			$('#search-div').hide();
@@ -30,7 +29,6 @@
 			$('#post-table').show();
 			$('#search-div').show();
 			$('#post-div').hide();
-			$('#post-content-textarea').hide();
 			$('#post-ok').hide();
 			$('#search-button').show();
 			$('#show-write-button').show();
@@ -41,6 +39,20 @@
 		}
 		$(function(){
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
+			
+			var pageCount = ${postCount+1}/${number}; //총 페이지 갯수를 계산함
+			pageCount = Math.ceil(pageCount);
+			
+			$('#page-selection').twbsPagination({ // 페이지 네비게이터
+		        totalPages: pageCount,
+		        first:"<<",
+		        prev:"<",
+		        next:">",
+		        last:">>",
+		        visiblePages: 10,
+		        startPage : ${pageIndex},
+		        href: "${pageUrl}"+'{{number}}'
+		    });
 		});
 	</script>
 	<div class="container">
@@ -79,20 +91,20 @@
 					<li id="repost-null"></li>
 				</ul>
 			</div>
-			<div id="search-div" class="col-md-10">
+			<div id="search-div" class="col-md-10 col-xs-9">
 				<input id="post-search-input" class="form-control" placeholder="검색어를 입력하여 코드를 찾아보세요!" style="margin-bottom: 10px;"
 					type="text" />
 			</div>
 			<form id="post-form" onsubmit="return checkCode()" action="/code/add"
 				enctype="multipart/form-data" method="post">
-				<div id="post-div" class="form-group col-md-10" style="display: none;">
-					<input name="name" id="post-name" class="form-control col-md-3"
+				<div id="post-div" class="form-group col-md-10 col-xs-9" style="display: none;">
+					<input name="name" id="post-name" class="form-control col-md-3 col-xs-2"
 						style="width:25%;" placeholder="코드명을 입력해주세요!" type="text" />
-					<input name="content" id="post-content" class="form-control col-md-8"
+					<input name="content" id="post-content" class="form-control col-md-8 col-xs-7"
 						style="width:66.66666667%; margin-left: 5px;" placeholder="소스 코드에 대해 소개해주세요!"
 						type="text" />
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 col-xs-3">
 					<span> <a id="show-write-button"
 						href="javascript:showCodeContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
@@ -106,7 +118,7 @@
 
 					</span>
 				</div>
-				<div id="file-div" class="form-group col-md-9" style="display: none;">
+				<div id="file-div" class="form-group col-md-9 col-xs-9" style="display: none;">
 						<div class='fileinput fileinput-new input-group'
 							data-provides='fileinput'>
 							<div class='form-control' data-trigger='fileinput'>

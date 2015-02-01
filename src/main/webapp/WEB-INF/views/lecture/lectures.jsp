@@ -35,6 +35,21 @@
 		$('#forweaver-table').show();
 		//editorMode = false;
 	}
+	$(function(){
+		var pageCount = ${postCount+1}/${number}; //총 페이지 갯수를 계산함
+		pageCount = Math.ceil(pageCount);
+		
+		$('#page-selection').twbsPagination({ // 페이지 네비게이터
+	        totalPages: pageCount,
+	        first:"<<",
+	        prev:"<",
+	        next:">",
+	        last:">>",
+	        visiblePages: 10,
+	        startPage : ${pageIndex},
+	        href: "${pageUrl}"+'{{number}}'
+	    });
+	});
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/views/common/nav.jsp"%>
@@ -51,20 +66,20 @@
 			</h6>
 		</div>
 		<div class="row">
-			<div id="search-div" class="col-md-10" style="margin-bottom: 10px;">
+			<div id="search-div" class="col-md-10 col-xs-9" style="margin-bottom: 10px;">
 				<input id="post-search-input" class="form-control col-md-10"
 					placeholder="검색어를 입력하여 강의를 찾아보세요!" type="text" />
 			</div>
 			<form onsubmit="return checkLecture()" id="lectureForm"
 				action="/lecture/add" method="post">
-				<div id="post-div" class="col-md-10" style="display:none; margin-bottom: 10px;">
-					<input name="name" id="lecture-name" class="form-control col-md-4" style="width: 33.33333333%;"
+				<div id="post-div" class="col-md-10 col-xs-9" style="display:none; margin-bottom: 10px;">
+					<input name="name" id="lecture-name" class="form-control col-md-4 col-xs-2" style="width: 33.33333333%;"
 						placeholder="강의명을 입력해주세요!" type="text" /> <input
-						name="description" id="lecture-description" class="form-control col-md-8" style="width: 66.66666667%;"
+						name="description" id="lecture-description" class="form-control col-md-8 col-xs-7" style="width: 66.66666667%;"
 						placeholder="강의에 대해 소개해주세요!" type="text" />
 				</div>
 				
-				<div class="col-md-2">
+				<div class="col-md-2 col-xs-3">
 					<span> <a id="show-write-button"
 						href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
