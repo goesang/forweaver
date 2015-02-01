@@ -167,7 +167,6 @@ $(function(){
 						<button id='post-ok' class="post-button btn btn-danger">
 							<i class="fa fa-check"></i>
 						</button>
-
 					</span>
 				</div>
 				<div class="col-md-12">

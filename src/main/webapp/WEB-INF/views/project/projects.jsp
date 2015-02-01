@@ -50,7 +50,7 @@
 					</button>
 
 				</div>
-			</h5>
+			</h6>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
@@ -74,10 +74,10 @@
 			
 			<div id="search-div" class="col-md-10">
 				<input id="post-search-input" class="form-control col-md-10"
-					placeholder="검색어를 입력하여 프로젝트를 찾아보세요!" type="text" style = "margin-bottom: 10px;"/>
+					placeholder="검색어를 입력하여 프로젝트를 찾아보세요!" type="text" style="margin-bottom: 10px;"/>
 			</div>
 			
-			<form onsubmit="return checkProject()" action="/project/add" method="post">
+			<form id="post-form" onsubmit="return checkProject()" action="/project/add" enctype="multipart/form-data" method="post">
 				<div id="project-div" class="form-group col-md-10" style="display: none;">
 					<input id ="project-name" class="form-control col-md-5" style="width: 41.66666667%;"
 						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" /> 
