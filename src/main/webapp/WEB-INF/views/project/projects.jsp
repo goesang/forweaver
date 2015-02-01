@@ -9,7 +9,7 @@
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
-		<script>
+	<script>
 	function showProjectContent() {
 		$('#page-selection').hide();
 		$('#post-table').hide();
@@ -35,6 +35,9 @@
 		$('#forweaver-table').show();
 		//editorMode = false;
 	}
+	$(function(){
+		$( "#"+getSort(document.location.href) ).addClass( "active" );
+	});
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/views/common/nav.jsp"%>
@@ -55,7 +58,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<ul class="nav nav-tabs" id="myTab">
-					<li id="age-desc" class="active"><a
+					<li id="age-desc"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
 					<li id="solo"><a
 							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:solo/page:1">외톨이</a></li>

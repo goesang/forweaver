@@ -39,6 +39,9 @@
 			$('#forweaver-table').show();
 			//editorMode = false;
 		}
+		$(function(){
+			$( "#"+getSort(document.location.href) ).addClass( "active" );
+		});
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/views/common/nav.jsp"%>
@@ -59,7 +62,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<ul class="nav nav-tabs" id="myTab">
-					<li id="age-desc" class="active"><a
+					<li id="age-desc"><a
 						href="/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
 					<c:if test="${massage == null }">
 						<li id="download-desc"><a
