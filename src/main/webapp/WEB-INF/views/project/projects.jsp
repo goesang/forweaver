@@ -80,9 +80,11 @@
 			<form id="post-form" onsubmit="return checkProject()" action="/project/add" enctype="multipart/form-data" method="post">
 				<div id="project-div" class="form-group col-md-10" style="display: none;">
 					<input id ="project-name" class="form-control col-md-5" style="width: 41.66666667%;"
-						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" /> 
-						<label class="checkbox col-md-2" for="checkbox"> 
-							<input id="project-category-select" name=category type="checkbox" data-toggle="checkbox"> 공개 프로젝트
+						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" />
+						<label class="checkbox col-md-2" for="checkbox" style="margin-left: 10px;">
+							<input type="checkbox" value="" id="project-category-select" name=category data-toggle="checkbox" class="custom-checkbox">
+							<span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+							 공개 프로젝트   <!-- JS 써서 Flat UI CheckBox 토글해야함. -->
 						</label>
 						<hr class="col-md-10" style="border: none; margin-top: 5px;" />
 						<input name ="description"class="form-control col-md-12" type="text" id="project-description"
