@@ -1,6 +1,7 @@
 package com.forweaver.util;
 
 import java.io.IOException;
+import java.util.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.ParseException;
@@ -16,6 +17,24 @@ public class WebUtil {
 	 * @param pageUrl
 	 * @return 페이지 사이즈
 	 */
+public static Date getDeadLine(int day){
+		
+		Date time = new Date();
+		Calendar cal = Calendar.getInstance();
+		 cal.setTime(time);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.add(Calendar.DATE, day+1);
+        return cal.getTime();
+	}
+	
+/** @getDeadLine 
+ * 제출날짜 가져오기
+ * 
+ * @param pageUrl
+ * @return
+ */
 	public static int getPageSize(String pageUrl){  
 		int size = 15;
 		
