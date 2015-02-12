@@ -51,7 +51,7 @@
 					</center>
 				</div>
 					<div class="col-xs-6 col-md-3">
-						<img class="img" src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Philetairus_socius_%28Etosha%2C_2013%29.jpg/800px-Philetairus_socius_%28Etosha%2C_2013%29.jpg" />
+						<img class="img" src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Philetairus_socius_%28Etosha%2C_2013%29.jpg/800px-Philetairus_socius_%28Etosha%2C_2013%29.jpg" style = "max-width : 100%;"/>
 					</div>
 					<div class="col-xs-6 col-md-3">
 						<img class="img" src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Webervogelnst_Auoblodge.JPG/800px-Webervogelnst_Auoblodge.JPG" style="max-width: 89%;"/>
