@@ -75,7 +75,7 @@ public class WeaverController {
 		return "redirect:/";
 	}
 
-	/*
+
 	@RequestMapping("/weaver")
 	public String weavers(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"page:1";
@@ -138,7 +138,6 @@ public class WeaverController {
 		return "/weaver/weavers";
 	}
 
-	 */
 
 	@RequestMapping("/{id}")
 	public String home(@PathVariable("id") String id, Model model) {

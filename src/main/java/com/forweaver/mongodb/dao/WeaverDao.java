@@ -66,7 +66,7 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 
-	/*
+
 	public List<DBObject> getWeaverInfosInPost(List<String> tags){
 		Criteria criteria = new Criteria();
 		
@@ -138,5 +138,4 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "code", DBObject.class).getMappedResults();
 	}
 
-	*/
 }
