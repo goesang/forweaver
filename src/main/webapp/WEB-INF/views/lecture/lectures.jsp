@@ -174,27 +174,27 @@
 										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
 								</a></td>
 								<td class="td-button" rowspan="2"><sec:authorize
-										ifNotGranted="ROLE_USER">
+										access="isAnonymous()">
 										<a href="/lecture/${lecture.name}/join"> <span
 											class="span-button"><i class="fa fa-times"></i>
 												<p class="p-button">미가입</p></span>
 										</a>
-									</sec:authorize> <sec:authorize ifAnyGranted="ROLE_USER">
+									</sec:authorize> <sec:authorize access="isAuthenticated()">
 										<c:if
-											test="${!lecture.isJoin() && lecture.creatorName != currentUser.username}">
+											test="${lecture.isJoin() == 0}">
 											<a href="/lecture/${lecture.name}/join"> <span
 												class="span-button"><i class="fa fa-times"></i>
 													<p class="p-button">미가입</p></span>
 											</a>
 										</c:if>
 										<c:if
-											test="${lecture.isJoin() && lecture.creatorName != currentUser.username}">
+											test="${lecture.isJoin() == 1}">
 											<a href="/lecture/${lecture.name}"> <span
 												class="span-button"><i class="fa fa-graduation-cap"></i>
 													<p class="p-button">학생</p></span>
 											</a>
 										</c:if>
-										<c:if test="${lecture.creatorName == currentUser.username}">
+										<c:if test="${lecture.isJoin() == 2}">
 											<a href="/lecture/${lecture.name}"> <span
 												class='span-button'><i class="fa fa-user"></i>
 													<p class='p-button'>관리자</p>" </span>

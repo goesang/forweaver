@@ -37,11 +37,8 @@ public class ProjectService{
 		} catch (Exception e) {
 			return;
 		}
-		Cache cache = cacheManager.getCache("project");
-		Element newElement = new Element(project.getName(), project);
-		cache.put(newElement);
 		projectDao.insert(project);
-		Pass pass = new Pass(project.getName(),1);
+		Pass pass = new Pass(project.getName(),2);
 		currentWeaver.addPass(pass);
 		weaverDao.update(currentWeaver);
 	}
@@ -49,15 +46,7 @@ public class ProjectService{
 
 	public Project get(String projectName) {
 		// TODO Auto-generated method stub
-		Cache cache = cacheManager.getCache("project");
-		Element element = cache.get(projectName);
-		if(element == null || (element != null && element.getValue() == null)){
-			Project project = projectDao.get(projectName);
-			Element newElement = new Element(projectName, project);
-			cache.put(newElement);
-			return project;
-		}
-		return (Project)element.getValue();
+		return projectDao.get(projectName);
 	}
 
 
@@ -79,7 +68,6 @@ public class ProjectService{
 				weaverDao.update(joinWeaver);
 			}
 			projectDao.delete(project);
-			cacheManager.getCache("project").remove(project.getName());
 			return true;
 		}
 		return false;
@@ -110,7 +98,6 @@ public class ProjectService{
 	public boolean push(Project project, Weaver weaver) {
 		if(project == null || weaver == null)
 			return false;
-		cacheManager.getCache("project").remove(project.getName());
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get(project.getName());
 		if (element == null || (element != null && element.getValue() == null)) {
@@ -124,47 +111,30 @@ public class ProjectService{
 	}
 
 
-	public long countProjects(String sort){
-		return projectDao.countProjects(null, null, null, sort);
-	}
-
-	public List<Project> getProjects(Weaver currentWeaver,String sort,int pageNumber,int lineNumber){
-		List<Project> projects= projectDao.getProjects(null, null, null, sort,pageNumber, lineNumber);
-		if(currentWeaver != null)
-			for(Project project:projects){
-				if(currentWeaver.getPass(project.getName()) != null)
-					project.setJoin(true);
-			}
-		return projects;
-	}
-
-	public long countProjects(List<String> tags,String sort){
-		return projectDao.countProjects(tags, null, null, sort);
-	}
-
-	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,String sort, int pageNumber,
-			int lineNumber){
-		List<Project> projects=  projectDao.getProjects(tags, null, null, sort, pageNumber, lineNumber);
-		if(currentWeaver != null)
-			for(Project project:projects){
-				if(currentWeaver.getPass(project.getName()) != null)
-					project.setJoin(true);
-			}
-		return projects;
-	}
-
 	public long countProjects(List<String> tags,String search,String sort){
-		return projectDao.countProjects(tags, search, null, sort);
+		return projectDao.countProjects(tags, search, sort);
 	}
 
 	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,String search,String sort, int pageNumber,
 			int lineNumber){
-		List<Project> projects=  projectDao.getProjects(tags, search, null, sort, pageNumber, lineNumber);
+		List<Project> projects=  projectDao.getProjects(tags, search, sort, pageNumber, lineNumber);
 		if(currentWeaver != null)
 			for(Project project:projects){
-				if(currentWeaver.getPass(project.getName()) != null)
-					project.setJoin(true);
+				Pass pass = currentWeaver.getPass(project.getName());
+				if(pass != null)
+					project.setJoin(pass.getPermission());
+				else
+					project.setJoin(0);
 			}
+		return projects;
+	}
+	
+	public List<Project> getProjects(Weaver currentWeaver,int page,int size){
+		List<Project> projects=  projectDao.getProjects(currentWeaver.getPassJoinNames(), page, size);
+		for(Project project:projects){
+			Pass pass = currentWeaver.getPass(project.getName());
+			project.setJoin(pass.getPermission());
+		}
 		return projects;
 	}
 

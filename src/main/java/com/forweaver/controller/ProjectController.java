@@ -100,8 +100,9 @@ public class ProjectController {
 		int size = WebUtil.getPageSize(page);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjects(currentWeaver,sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(sort));
+		model.addAttribute("projects", 
+				projectService.getProjects(currentWeaver, null, null, sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(null, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");
@@ -124,8 +125,9 @@ public class ProjectController {
 		int size = WebUtil.getPageSize(page);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(tagList,sort));
+		model.addAttribute("projects", 
+				projectService.getProjects(currentWeaver, tagList, null, sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(tagList, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"sort:"+sort+"/page:");
@@ -550,7 +552,7 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver waitingWeaver = weaverService.get(weaver);
 		WaitJoin waitJoin = waitJoinService.get(creatorName+"/"+projectName, weaver);
-		Pass pass = new Pass(creatorName+"/"+projectName, 0);
+		Pass pass = new Pass(creatorName+"/"+projectName, 1);
 
 		if(waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& project.getCreatorName().equals(currentWeaver.getId())

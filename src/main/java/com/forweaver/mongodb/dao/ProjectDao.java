@@ -12,14 +12,16 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Project;
-import com.forweaver.domain.Weaver;
 
 @Repository
 public class ProjectDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 	
-	public void insert(Project project) { // 프로젝트를 생성함.
+	/** 프로젝트를 생성 메서드
+	 * @param project
+	 */
+	public void insert(Project project) {
 		
 		if (!mongoTemplate.collectionExists(Project.class)) {
 			mongoTemplate.createCollection(Project.class);
@@ -27,16 +29,26 @@ public class ProjectDao {
 		mongoTemplate.insert(project);
 	}
 	
-	public Project get(String projectName) { // 프로젝트명으로 강의를 가져옴
+	/** 프로젝트명으로 강의를 가져옴
+	 * @param projectName
+	 * @return
+	 */
+	public Project get(String projectName) {
 		Query query = new Query(Criteria.where("_id").is(projectName));
 		return mongoTemplate.findOne(query, Project.class);
 	}
 	
-	public void delete(Project project) { // 프로젝트 삭제
+	/** 프로젝트 삭제
+	 * @param project
+	 */
+	public void delete(Project project) {
 		mongoTemplate.remove(project);
 	}
 	
-	public void update(Project project) { // 프로젝트 수정하기
+	/** 프로젝트 수정하기
+	 * @param project
+	 */
+	public void update(Project project) {
 		Query query = new Query(Criteria.where("_id").is(project.getName()));
 		Update update = new Update();
 		update.set("category", project.getCategory());
@@ -48,12 +60,19 @@ public class ProjectDao {
 		update.set("childProjects", project.getChildProjects());
 		mongoTemplate.updateFirst(query, update, Project.class);
 	}
-	public long countProjects( // 로그인하지 않은 회원이 프로젝트를 셈.
+	
+	/** 프로젝트를 검색하고 수를 셈.
+	 * @param tags
+	 * @param search
+	 * @param creator
+	 * @param sort
+	 * @return
+	 */
+	public long countProjects(
 			List<String> tags,
 			String search,
-			Weaver creator,
 			String sort) {
-		Criteria criteria = new Criteria().where("category").ne(2);
+		Criteria criteria = new Criteria();
 		
 		if(search != null)
 			criteria.orOperator(new Criteria("name").regex(search),
@@ -61,22 +80,28 @@ public class ProjectDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(creator != null)
-			criteria.and("creator").is(creator);
 			
 		this.filter(criteria, sort);
 
 		return mongoTemplate.count(new Query(criteria), Project.class);
 	}
 	
-	public List<Project> getProjects( // 로그인하지 않은 회원이 프로젝트를 검색
+	/** 프로젝트를 검색
+	 * @param tags
+	 * @param search
+	 * @param creator
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Project> getProjects( 
 			List<String> tags,
 			String search,
-			Weaver creator,
 			String sort,
 			int page, 
 			int size) {
-		Criteria criteria = new Criteria().where("category").ne(2);
+		Criteria criteria = new Criteria();
 		
 		if(search != null)
 			criteria.orOperator(new Criteria("name").regex(search),
@@ -84,8 +109,6 @@ public class ProjectDao {
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
-		if(creator != null)
-			criteria.and("creator").is(creator);
 		
 		this.filter(criteria, sort);
 		
@@ -96,6 +119,29 @@ public class ProjectDao {
 		return mongoTemplate.find(query, Project.class);
 	}
 	
+	/** 로그인한 회원이 자신의 프로젝트를 가져올 때 활용.
+	 * @param projectNames
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Project> getProjects(
+			List<String> projectNames,
+			int page, 
+			int size) {
+		Criteria criteria = new Criteria("name").in(projectNames);
+		Query query = new Query(criteria);
+		query.with(new PageRequest(page-1, size));
+
+		return mongoTemplate.find(query, Project.class);
+	}
+	
+	
+	
+	/** 검색할 때 필터를 적용.
+	 * @param criteria
+	 * @param sort
+	 */
 	public void filter(Criteria criteria,String sort){
 		if (sort.equals("push-many")) {
 			criteria.and("push").gt(0);
@@ -108,6 +154,10 @@ public class ProjectDao {
 		}
 	}
 	
+	/** 검색할 때 정렬함.
+	 * @param query
+	 * @param sort
+	 */
 	public void sorting(Query query,String sort){
 		if (sort.equals("opendate-asc")) {
 			query.with(new Sort(Sort.Direction.ASC, "openingDate"));

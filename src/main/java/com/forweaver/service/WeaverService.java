@@ -51,7 +51,6 @@ public class WeaverService implements UserDetailsService {
 	@Value("${gitpath}")
 	private String gitpath;
 
-	@Override
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
 		// TODO Auto-generated method stub

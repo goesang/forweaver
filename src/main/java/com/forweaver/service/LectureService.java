@@ -41,7 +41,7 @@ public class LectureService {
 		lecture.addRepo(repo);
 		lectureDao.add(lecture);
 		
-		Pass pass = new Pass(lecture.getName(), 1); // 강의의 생성자 권한을 부여
+		Pass pass = new Pass(lecture.getName(), 2); // 강의의 생성자 권한을 부여
 		currentWeaver.addPass(pass);
 		weaverDao.update(currentWeaver);
 		
@@ -155,63 +155,37 @@ public class LectureService {
 		}
 		return false;
 	}
-
-	public long countLectures() {
-		// TODO Auto-generated method stub
-		return lectureDao.countLectures(null, null, null);
-	}
-
-	public List<Lecture> getLectures(Weaver currentWeaver,int pageNumber, int lineNumber) {
-		// TODO Auto-generated method stub
-		List<Lecture> lectures = lectureDao.getLectures(null, null, null, pageNumber, lineNumber);
-		
-		if(currentWeaver != null)
-			for(Lecture lecture:lectures){
-				if(currentWeaver.getPass(lecture.getName()) != null)
-					lecture.setJoin(true);
-			}
-				
-		return lectures;
-	}
-
-	public long countLectures(List<String> tags) {
-		// TODO Auto-generated method stub
-		return lectureDao.countLectures(tags, null, null);
-	}
-
-	public List<Lecture> getLectures(Weaver currentWeaver,List<String> tags, int pageNumber,
-			int lineNumber) {
-		// TODO Auto-generated method stub	
-		List<Lecture> lectures = lectureDao.getLectures(tags, null, null, pageNumber, lineNumber);
-		
-		if(currentWeaver != null)
-			for(Lecture lecture:lectures){
-				if(currentWeaver.getPass(lecture.getName()) != null)
-					lecture.setJoin(true);
-			}
-				
-		return lectures;
-	}
 	
 	public long countLectures(List<String> tags,String search) {
 		// TODO Auto-generated method stub
-		return lectureDao.countLectures(tags, search, null);
+		return lectureDao.countLectures(tags, search);
 	}
 
 	public List<Lecture> getLectures(Weaver currentWeaver,List<String> tags ,String search, int pageNumber,
 			int lineNumber) {
 		// TODO Auto-generated method stub	
-		List<Lecture> lectures = lectureDao.getLectures(tags, search, null, pageNumber, lineNumber);
+		List<Lecture> lectures = lectureDao.getLectures(tags, search, pageNumber, lineNumber);
 		
 		if(currentWeaver != null)
 			for(Lecture lecture:lectures){
-				if(currentWeaver.getPass(lecture.getName()) != null)
-					lecture.setJoin(true);
+				Pass pass = currentWeaver.getPass(lecture.getName());
+				if(pass != null)
+					lecture.setJoin(pass.getPermission());
+				else
+					lecture.setJoin(0);
 			}
 				
 		return lectures;
 	}
 
+	public List<Lecture> getLectures(Weaver currentWeaver,int page,int size){
+		List<Lecture> lectures=  lectureDao.getLectures(currentWeaver.getPassJoinNames(), page, size);
+		for(Lecture Lecture:lectures){
+			Pass pass = currentWeaver.getPass(Lecture.getName());
+			Lecture.setJoin(pass.getPermission());
+		}
+		return lectures;
+	}
 	
 	public void update(Lecture lecture) {
 		lectureDao.update(lecture);

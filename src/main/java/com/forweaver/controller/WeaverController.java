@@ -156,15 +156,8 @@ public class WeaverController {
 		if (weaver == null)
 			return "redirect:/";
 
-		List<Project> projects = new ArrayList<Project>();
-
-		for(Pass pass :weaver.getPasses()){
-			Project project = projectService.get(pass.getJoinName());
-			if(project != null)
-				projects.add(project);
-		}
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("projects", projects);
+		model.addAttribute("projects", projectService.getProjects(weaver, 1, 15));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
@@ -177,15 +170,8 @@ public class WeaverController {
 			return "redirect:/";
 		}
 
-		List<Lecture> lectures = new ArrayList<Lecture>();
-
-		for(Pass pass :weaver.getPasses()){
-			Lecture lecture = lectureService.get(pass.getJoinName());
-			if(lecture != null)
-				lectures.add(lecture);
-		}
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("lectures", lectures);
+		model.addAttribute("lectures", lectureService.getLectures(weaver, 1, 15));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
@@ -199,7 +185,7 @@ public class WeaverController {
 		}
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodes(weaver, "", 1, 100));
+		model.addAttribute("codes", codeService.getCodes(null, weaver, null, null, 1, 100));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}
