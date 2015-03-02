@@ -1,6 +1,8 @@
 package com.forweaver.service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,11 +26,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.MailUtil;
+import com.mongodb.DBObject;
 
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
@@ -210,7 +214,7 @@ public class WeaverService implements UserDetailsService {
 		return false;
 	}
 
-	/*
+
 	//위버정보들과 수 파악함.
 	public Object[] getWeaverInfos(List<String> tags,int page, int size ){
 		List<Weaver> weavers = new ArrayList<Weaver>();
@@ -290,6 +294,5 @@ public class WeaverService implements UserDetailsService {
 		}
 	}
 
-	 */
 
 }
