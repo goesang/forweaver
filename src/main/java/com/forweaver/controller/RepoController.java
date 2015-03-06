@@ -113,10 +113,14 @@ public class RepoController {
 	@RequestMapping("/{repoName}/browser/commit:{commit}")
 	public String browser(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
-			@PathVariable("commit") String commit,Model model) {
+			@PathVariable("commit") String commit,Model model,
+			HttpServletRequest request) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
+		
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
 		String readme = "";
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
@@ -214,11 +218,15 @@ public class RepoController {
 	@RequestMapping("/{repoName}/commitlog/commit:{commit}")
 	public String commitLog(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
-			@PathVariable("commit") String commit,Model model) {
+			@PathVariable("commit") String commit,
+			Model model,HttpServletRequest request) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
-
+		
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 
@@ -244,9 +252,14 @@ public class RepoController {
 	public String commitLog(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
 			@PathVariable("commit") String commit,
-			@PathVariable("page") String page,Model model) {
+			@PathVariable("page") String page,Model model,
+			HttpServletRequest request) {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
+		
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
 		
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
@@ -275,11 +288,15 @@ public class RepoController {
 	@RequestMapping("/{repoName}/commitlog-viewer/commit:{commit}")
 	public String commitLogViewer(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
-			@PathVariable("commit") String commit,Model model) {
+			@PathVariable("commit") String commit,Model model,
+			HttpServletRequest request) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);	
 		Weaver weaver = weaverService.getCurrentWeaver();
-
+		
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 
@@ -312,10 +329,11 @@ public class RepoController {
 		return;
 	}
 
-	@RequestMapping(value="/{repoName}/upload", method=RequestMethod.POST)
+	@RequestMapping(value="/{repoName}/{branchName}/upload", method=RequestMethod.POST)
 	public String uploadZip(Model model,
 			@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
+			@PathVariable("branchName") String branchName,
 			@RequestParam("message") String message,
 			@RequestParam("zip") MultipartFile zip) {
 		Lecture lecture = lectureService.get(lectureName);
@@ -325,7 +343,7 @@ public class RepoController {
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 
-		lectureService.uploadZip(lecture,repo, weaver, message, zip);
+		lectureService.uploadZip(lecture,repo, weaver, branchName,message, zip);
 
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);

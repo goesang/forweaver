@@ -13,8 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Project;
+import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
+import com.forweaver.mongodb.dao.CherryPickRequestDao;
+import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.ProjectDao;
+import com.forweaver.mongodb.dao.WaitJoinDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 
@@ -24,7 +28,9 @@ public class ProjectService{
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private ProjectDao projectDao;
 	@Autowired private CacheManager cacheManager;
-	
+	@Autowired private WaitJoinDao waitJoinDao;
+	@Autowired private PostDao postDao;
+	@Autowired private CherryPickRequestDao cherryPickRequestDao;
 	@Value("${gitpath}")
 	private String gitpath;
 
@@ -52,7 +58,11 @@ public class ProjectService{
 
 	public boolean delete(Weaver weaver,Project project){
 		// TODO Auto-generated method stub
-		if(weaver.getId().equals(project.getCreatorName())){
+		if(weaver == null || project == null)
+			return false;
+		
+		if(weaver.isAdmin() || 
+			weaver.getId().equals(project.getCreatorName())){
 			try{
 				GitUtil gitUtil = new GitUtil(gitpath,project);
 				gitUtil.deleteRepository();
@@ -67,6 +77,11 @@ public class ProjectService{
 				joinWeaver.deletePass(project.getName());
 				weaverDao.update(joinWeaver);
 			}
+			for(WaitJoin waitJoin:waitJoinDao.delete(project.getName())){ // 대기 중인 초대장 삭제.
+				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제.
+				return true;
+			}
+			cherryPickRequestDao.delete(project);
 			projectDao.delete(project);
 			return true;
 		}
@@ -138,12 +153,12 @@ public class ProjectService{
 		return projects;
 	}
 
-	public void uploadZip(Project project,Weaver weaver,String message,MultipartFile zip){
+	public void uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
 		if(message==null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
 		GitUtil gitUtil = new GitUtil(gitpath,project);
 		try{
-			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 		}catch(Exception e){
 			System.err.println(e.getLocalizedMessage());
 		}

@@ -85,6 +85,19 @@ public class WaitJoinService {
 		return false;
 	}
 	
+	public boolean delete(Weaver weaver,String joinTeam){
+		if(weaver == null || joinTeam == null){
+			
+		}
+		else if(weaver.isAdmin()){			
+				for(WaitJoin waitJoin:waitJoinDao.delete(joinTeam)){
+					postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
+					return true;
+				}
+		}			
+		return false;
+	}
+	
 	public WaitJoin get(String joinTeam,String waitingWeaver){
 		return waitJoinDao.get(joinTeam,waitingWeaver);
 	}

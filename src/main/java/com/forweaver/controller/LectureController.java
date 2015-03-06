@@ -265,10 +265,14 @@ public class LectureController {
 	
 	@RequestMapping("/{lectureName}/example/commit:{commit}")
 	public String example(@PathVariable("lectureName") String lectureName,
-			@PathVariable("commit") String commit,Model model) {
+			@PathVariable("commit") String commit,Model model,
+			HttpServletRequest request) {
 		
 		Lecture lecture = lectureService.get(lectureName);
-		commit = commit.replace(",", ".");
+
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		
 		String readme = "";
 		List<GitSimpleFileInfo> gitFileInfoList = 
 				gitService.getGitSimpleFileInfoList(lectureName, "example",commit,"");
@@ -296,10 +300,13 @@ public class LectureController {
 	@RequestMapping("/{lectureName}/example/commit:{commit}/**")
 	public String fileViewer(HttpServletRequest request,@PathVariable("lectureName") String lectureName,
 			@PathVariable("commit") String commit,Model model) {
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
 		
 		Lecture lecture = lectureService.get(lectureName);		
-		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
-		commit = commit.replace(",", ".");
+		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+
 		model.addAttribute("lecture", lecture);
 		GitFileInfo gitFileInfo = gitService.getFileInfo(lectureName, "example", commit, filePath);
 		model.addAttribute("fileName", gitFileInfo.getName());

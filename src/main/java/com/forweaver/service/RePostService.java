@@ -26,26 +26,29 @@ public class RePostService {
 	@Autowired private DataDao dataDao;
 	@Autowired private CodeDao codeDao;
 	@Autowired private CacheManager cacheManager;
-	
-	public void add(RePost rePost,List<Data> datas) {
+
+	public boolean add(RePost rePost,List<Data> datas) {
+		if(rePost == null)
+			return false;
 		if(datas != null)
 			for(Data data:datas){
 				dataDao.insert(data);
 				rePost.addData(dataDao.getLast());
 			}
 		rePostDao.insert(rePost);
+		return true;
 	}
-	
+
 	public List<RePost> get(String ID,int kind,String sort) {
 		return rePostDao.get(ID,kind,sort);
 	}
-	
+
 	public RePost get(int rePostID) {
 		return rePostDao.get(rePostID);
 	}
-	
+
 	public boolean push(RePost rePost, Weaver weaver) {
-		if(weaver == null)
+		if(rePost == null || weaver == null)
 			return false;
 		rePost.push();
 		Cache cache = cacheManager.getCache("push");
@@ -58,41 +61,59 @@ public class RePostService {
 		}
 		return false;
 	}
-	
-	public void update(RePost rePost,String[] removeDataList){
+
+	public boolean update(RePost rePost,String[] removeDataList){
+		if(rePost == null)
+			return false;
 		if(removeDataList != null)
 			for(String dataName: removeDataList){
 				dataDao.delete(rePost.getData(dataName));
 				rePost.deleteData(dataName);
 			}
 		rePostDao.update(rePost);
+		return true;
 	}
-	
+
 	public boolean delete(Post post,RePost rePost,Weaver weaver){
 
-		if(post == null || rePost == null || !rePost.getWriterName().equals(weaver.getId()))
+		if(post == null ||rePost == null || weaver == null)
 			return false;
-		post.rePostCountDown();
-		postDao.update(post);
-		rePostDao.delete(rePost);
-		return true;
+		
+		if(rePost.getWriterName().equals(weaver.getId()) 
+				||  weaver.isAdmin()){
+			post.rePostCountDown();
+			postDao.update(post);
+			rePostDao.delete(rePost);
+			return true;
+		}
+		return false;
 	}
-	
+
 	public boolean delete(Code code,RePost rePost,Weaver weaver){
 
-		if(code == null || rePost == null || !rePost.getWriterName().equals(weaver.getId()))
+		if(code == null ||rePost == null || weaver == null)
 			return false;
-		code.setRePostCount(code.getRePostCount()-1);
-		codeDao.update(code);
-		rePostDao.delete(rePost);
-		return true;
+		
+		if(rePost.getWriterName().equals(weaver.getId()) 
+				||  weaver.isAdmin()){
+			code.rePostCountDown();
+			codeDao.update(code);
+			rePostDao.delete(rePost);
+			return true;
+		}
+		return false;
 	}
-	
+
 	public boolean delete(RePost rePost,Weaver weaver){
 
-		if(rePost == null || !rePost.getWriterName().equals(weaver.getId()))
+		if(rePost == null || weaver == null)
 			return false;
-		rePostDao.delete(rePost);
-		return true;
+		
+		if(rePost.getWriterName().equals(weaver.getId()) 
+				|| weaver.isAdmin()){
+			rePostDao.delete(rePost);
+			return true;
+		}
+		return false;
 	}
 }

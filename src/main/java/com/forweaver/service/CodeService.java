@@ -105,7 +105,7 @@ public class CodeService {
 			System.err.println(e.getMessage());
 		}
 	}
-	
+
 	/** 코드를 검색하고 갯수를 파악함.
 	 * @param tags
 	 * @param weaver
@@ -132,11 +132,23 @@ public class CodeService {
 		return codeDao.getCodes(tags, serach, weaver, sort, page, size);
 	}
 
-	/** 코드 삭제
+
+	/** 코드 삭제.
+	 * @param weaver
 	 * @param code
+	 * @return
 	 */
-	public void delete(Code code) {
-		codeDao.delete(code);
+	public boolean delete(Weaver weaver,Code code) {
+		if(weaver == null || code == null)
+			return false;
+
+		if(weaver.isAdmin() || 
+				weaver.getId().equals(code.getWriterName())){
+
+			codeDao.delete(code);
+			return true;
+		}
+		return false;
 	}
 
 	/** 코드 수정

@@ -135,13 +135,39 @@ public class WeaverService implements UserDetailsService {
 		return weaverDao.list(page,size);
 	}
 
-	public void delete(Weaver weaver) { //위버 삭제
+	public boolean delete(String password,Weaver weaver) { //위버 삭제
 		// TODO Auto-generated method stub
-		weaverDao.delete(weaver);
-		try {
-			FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
-		} catch (Exception e) {
+
+		if(weaver == null || password == null || weaver.isAdmin())
+			return false;
+
+		if(weaver.getPassword().equals(passwordEncoder.encodePassword(password, null))){
+
+			try {
+				FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
+				weaverDao.delete(weaver);
+			} catch (Exception e) {
+				return false;
+			}
 		}
+		return false;
+	}
+	
+	public boolean delete(Weaver adminWeaver,Weaver weaver) { //위버 삭제
+		// TODO Auto-generated method stub
+
+		if(adminWeaver == null || weaver == null || weaver.isAdmin())
+			return false;
+
+		if(adminWeaver.isAdmin()){
+			try {
+				FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
+				weaverDao.delete(weaver);
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	public boolean autoLoginWeaver(Weaver weaver, HttpServletRequest request) {
@@ -221,8 +247,7 @@ public class WeaverService implements UserDetailsService {
 		HashMap<String, DBObject> weaverHash = new HashMap<String, DBObject>();
 		Object[] returnObject = new Object[2];
 		int startNumber = size * (page - 1);
-		System.out.println(startNumber);
-		System.out.println(size);
+
 		try{
 			for(DBObject db:weaverDao.getWeaverInfosInPost(tags)){
 				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();

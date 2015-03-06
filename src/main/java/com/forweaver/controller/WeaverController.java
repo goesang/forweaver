@@ -115,17 +115,10 @@ public class WeaverController {
 	public String weaversTags(Model model,@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		int pageNum;
-		int number = 15;
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
-
-		Object[] returnObjejct = weaverService.getWeaverInfos(tagList,pageNum-1,number);
+		Object[] returnObjejct = weaverService.getWeaverInfos(tagList,pageNum-1,size);
 		int weaverCount = (int)returnObjejct[0];
 		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
 
@@ -133,7 +126,7 @@ public class WeaverController {
 		model.addAttribute("weaverCount", weaverCount);
 
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/weaver/tags:"+tagNames+"/page:");
 		return "/weaver/weavers";
 	}
@@ -185,7 +178,7 @@ public class WeaverController {
 		}
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodes(null, weaver, null, null, 1, 100));
+		model.addAttribute("codes", codeService.getCodes(null, weaver, null, "", 1, 100));
 		model.addAttribute("search", false);
 		return "/weaver/home";
 	}

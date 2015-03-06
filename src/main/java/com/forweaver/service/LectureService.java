@@ -15,9 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Repo;
+import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.LectureDao;
+import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.ProjectDao;
+import com.forweaver.mongodb.dao.WaitJoinDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 
@@ -27,14 +30,18 @@ public class LectureService {
 	@Autowired private LectureDao lectureDao;
 	@Autowired private ProjectDao projectDao;
 	@Autowired private WeaverDao weaverDao;
-	@Autowired private CacheManager cacheManager;
-
+	@Autowired private WaitJoinDao waitJoinDao;
+	@Autowired private PostDao postDao;
+	
 	@Value("${gitpath}")
 	private String gitpath;
 	
 	public void add(Lecture lecture,Weaver currentWeaver) {
 		
-		if(weaverDao.get(lecture.getName()) != null || lectureDao.get(lecture.getName()) != null)
+		if(lecture.getName().toUpperCase().equals("ROLE_ADMIN")||
+			lecture.getName().toUpperCase().equals("ROLE_USER")||	
+				weaverDao.get(lecture.getName()) != null || 
+				lectureDao.get(lecture.getName()) != null)
 			return; // 중복 검사
 		
 		Repo repo = new Repo("example", 0, "강의 자료를 올릴 수 있는 저장소입니다.",0,lecture,currentWeaver);
@@ -55,10 +62,6 @@ public class LectureService {
 		} catch (Exception e) {
 			System.err.println("예제 저장소 생성 불가");
 		}
-		
-		Cache cache = cacheManager.getCache("lecture");
-		Element newElement = new Element(lecture.getName(), lecture);
-		cache.put(newElement);
 	}
 	
 	public void addRepo(Lecture lecture,Repo repo){
@@ -86,15 +89,7 @@ public class LectureService {
 
 	public Lecture get(String name) {
 		// TODO Auto-generated method stub
-		Cache cache = cacheManager.getCache("lecture");
-		Element element = cache.get(name);
-		if (element == null || (element != null && element.getValue() == null)) {
-			Lecture lecture = lectureDao.get(name);
-			Element newElement = new Element(name, lecture);
-			cache.put(newElement);
-			return lecture;
-		}
-		return (Lecture) element.getValue();
+		return lectureDao.get(name);
 	}
 
 	public boolean deleteWeaver(Lecture lecture, Weaver currentWeaver,
@@ -140,7 +135,12 @@ public class LectureService {
 
 	public boolean delete(Weaver weaver,Lecture lecture) {
 		// TODO Auto-generated method stub
-		if(weaver.getId().equals(lecture.getCreatorName())){
+		
+		if(weaver == null || lecture == null)
+			return false;
+		
+		if(weaver.isAdmin() || 
+				weaver.getId().equals(lecture.getCreatorName())){
 			for(Weaver adminWeaver:lecture.getAdminWeavers()){
 				adminWeaver.deletePass(lecture.getName());
 				weaverDao.update(adminWeaver);
@@ -149,8 +149,11 @@ public class LectureService {
 				joinWeaver.deletePass(lecture.getName());
 				weaverDao.update(joinWeaver);
 			}
+			for(WaitJoin waitJoin:waitJoinDao.delete(lecture.getName())){ // 대기 중인 초대장 삭제.
+				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제.
+				return true;
+			}			
 			lectureDao.delete(lecture);
-			cacheManager.getCache("lecture").remove(lecture.getName());
 			return true;
 		}
 		return false;
@@ -191,13 +194,13 @@ public class LectureService {
 		lectureDao.update(lecture);
 	}
 	
-	public void uploadZip(Lecture lecture,Repo repo,Weaver weaver,String message,MultipartFile zip){
+	public void uploadZip(Lecture lecture,Repo repo,Weaver weaver,String branchName,String message,MultipartFile zip){
 		if(message==null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
 		GitUtil gitUtil = new GitUtil(gitpath,repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
 		try{
-			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 		if (lecture.getCreatorName().equals(weaver.getId())) { // 강의 개설자의 경우
 			if (repo.getCategory() == 1) {
 				gitUtil.createStudentBranch(beforeBranchList,	lecture);
@@ -209,7 +212,7 @@ public class LectureService {
 			if (repo.getCategory() == 0) { // 예제 저장소의 경우
 
 				gitUtil.notWriteBranches();
-				gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+				gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 				gitUtil.writeBranches();
 			} else{ // 숙제 저장소의 경우
 
@@ -219,7 +222,7 @@ public class LectureService {
 				}
 				gitUtil.hideNotUserBranches(weaver.getId());
 				gitUtil.checkOutBranch(weaver.getId());
-				gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), message, zip.getInputStream());
+				gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 				gitUtil.showBranches();
 				gitUtil.checkOutMasterBranch();
 

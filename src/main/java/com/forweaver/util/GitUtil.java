@@ -180,7 +180,8 @@ public class GitUtil {
 		try {
 			Iterable<RevCommit> gitLogIterable = this.git
 					.log()
-					.add(CommitUtils.getCommit(this.localRepo, refName).getId())
+					.add(
+					this.getCommit(refName))
 					.call();
 			int length = 0;
 
@@ -196,17 +197,8 @@ public class GitUtil {
 	// 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
 	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID,String filePath) {
 		List<GitSimpleFileInfo> gitFileInfoList = new ArrayList<GitSimpleFileInfo>();
-		List<String> fileList = new ArrayList<String>();
-		try{
-			ObjectId revId = this.localRepo.resolve(commitID);
-			TreeWalk treeWalk = new TreeWalk(this.localRepo);
-			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
-			treeWalk.setRecursive(true);
-			
-			while (treeWalk.next()) {
-				fileList.add("/"+treeWalk.getPathString());
-			}
-			
+		List<String> fileList = this.getGitFileList(commitID);
+		try{			
 			for(String path: WebUtil.getFileList(fileList, "/"+filePath)){
 				RevCommit revCommit = CommitUtils.getLastCommit(this.localRepo,
 						commitID, path.substring(1));
@@ -224,6 +216,23 @@ public class GitUtil {
 		}catch(Exception e){}
 		return gitFileInfoList;
 	}
+	
+	// 프로젝트의 파일 목록을 커밋 아이디를 가지고 가져옴.
+		public List<String> getGitFileList(String commitID) {
+			List<String> fileList = new ArrayList<String>();
+			try{
+				ObjectId revId = this.localRepo.resolve(commitID);
+				TreeWalk treeWalk = new TreeWalk(this.localRepo);
+				treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+				treeWalk.setRecursive(true);
+				
+				while (treeWalk.next()) {
+					fileList.add("/"+treeWalk.getPathString());
+				}
+				
+			}catch(Exception e){}
+			return fileList;
+		}
 
 	// 저장소에서 GIT 로그 정보를 가져옴
 	public GitCommitLog getCommitLog(String commitID) {
@@ -286,7 +295,8 @@ public class GitUtil {
 		int startNumber = number * (page - 1);
 		try {
 
-			for(RevCommit commit:git.log().setSkip(startNumber).setMaxCount(number).call()){
+			for(RevCommit commit:git.log().add(
+					this.getCommit(branchName)).setSkip(startNumber).setMaxCount(number).call()){
 
 				GitSimpleCommitLog gitCommitLog = new GitSimpleCommitLog(commit
 						.getId().getName(), commit.getShortMessage(), commit
@@ -462,8 +472,14 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-	//GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
-	public void uploadZip(String name,String email,String message,InputStream zip){
+	/** GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
+	 * @param name
+	 * @param email
+	 * @param branchName
+	 * @param message
+	 * @param zip
+	 */
+	public void uploadZip(String name,String email,String branchName,String message,InputStream zip){
 		try {
 			// 임시 git 저장소 생성하고 클론.
 			File localPath = File.createTempFile("git", "");
@@ -473,14 +489,12 @@ public class GitUtil {
 			.setDirectory(localPath)
 			.call();
 			// .git을 제외한 파일 모두 삭제.
-			for(String fileName:localPath.list())
-				if(!fileName.equals(".git")){
-					File file = new File(localPath.getAbsoluteFile()+"/"+fileName);
-					if(file.isDirectory())
-						FileUtils.deleteDirectory(file);
-					else
-						file.delete();
-				}
+			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
+			git.checkout().setName(branchName).call();
+			
+			for(String fileName:getGitFileList(branchName))
+				git.rm().addFilepattern(fileName.substring(1)).call();	
+			
 
 			//압축파일을 품.
 			byte[] buffer = new byte[1024];
@@ -490,10 +504,12 @@ public class GitUtil {
 			ZipEntry ze = zis.getNextEntry();
 
 			while(ze!=null){
-
+				if (!ze.isDirectory()) { // 만약 파일의 경우
 				String fileName = ze.getName();
+				if(fileName.startsWith(".git/")) //.git 디렉토리는 제외함.
+					continue;
 				File newFile = new File(localPath + File.separator + fileName);
-
+				
 				new File(newFile.getParent()).mkdirs();
 
 				FileOutputStream fos = new FileOutputStream(newFile);             
@@ -504,19 +520,23 @@ public class GitUtil {
 				}
 
 				fos.close();   
+				}
 				ze = zis.getNextEntry();
 			}
 
 			zis.closeEntry();
 			zis.close();
 			//이제 파일들을 모조리 추가시키고 커밋한 후에 푸시함.
-			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
-			git.add().addFilepattern(".").call();
+
+			
+			git.add().addFilepattern(".").call();		
 			git.commit().setAuthor(name, email).setMessage(message).call();
 			git.push().setRemote("origin").call();
+			
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
+	
 	}
 
 	// 프로젝트를 포크함.
@@ -584,7 +604,8 @@ public class GitUtil {
 	public List<GitBlame> getBlame(String filePath, String commitID){
 		List<GitBlame> gitBlames = new ArrayList<GitBlame>();
 		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
-
+		System.out.println("getBlame");
+		System.out.println(filePath);
 		try{
 			BlameResult result = git.blame().setStartCommit(commit).setFilePath(filePath).call();
 			// 입력 받은 커밋을 기점으로 파일의 라인 별로 코드를 분석함.

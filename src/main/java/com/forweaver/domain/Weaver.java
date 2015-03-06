@@ -3,6 +3,7 @@ package com.forweaver.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
@@ -28,6 +29,7 @@ public class Weaver implements UserDetails,Serializable {
 	private String say;
 	private String imgSrc;
 	private Data image;
+	private Date joinDate;
 	private List<Pass> passes = new ArrayList<Pass>();
 	
 	@Transient
@@ -55,6 +57,7 @@ public class Weaver implements UserDetails,Serializable {
 		this.email = email;
 		this.say = say;
 		this.image = image;
+		this.joinDate = new Date();
 	}
 	
 	public String getPassword() {
@@ -235,5 +238,20 @@ public class Weaver implements UserDetails,Serializable {
 			passNames.add(pass.getJoinName());
 		return passNames;
 	}
+	
+	public boolean isAdmin(){
+		return this.getPass("ROLE_ADMIN") != null;
+	}
+
+
+	public Date getJoinDate() {
+		return joinDate;
+	}
+
+
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
+	}
+	
 	
 }

@@ -158,8 +158,7 @@ public class CodeController {
 	public String delete(@PathVariable("codeID") int codeID){
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Code code = codeService.get(codeID);
-		if(currentWeaver.getId().equals(code.getWriterName()))
-			codeService.delete(code);
+		codeService.delete(currentWeaver,code);
 		return "redirect:/code/";
 	}
 
@@ -179,9 +178,7 @@ public class CodeController {
 			@PathVariable("codeID") int codeID,
 			@PathVariable("codeName") String codeName) throws IOException {
 		Code code = codeService.get(codeID);
-
-		if(code != null && code.getName().equals(codeName))
-			codeService.dowloadCode(code, res.getOutputStream());
+		codeService.dowloadCode(code, res.getOutputStream());
 	}
 
 

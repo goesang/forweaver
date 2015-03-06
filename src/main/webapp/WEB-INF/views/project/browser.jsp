@@ -115,14 +115,14 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 
 				<select id="selectBranch" class="span3">
 					<option
-						value="/project/${project.name}/browser/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
+						value="/project/${project.name}/browser/commit:${selectBranch}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
 						<option
-							value="/project/${project.name}/browser/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
+							value="/project/${project.name}/browser/commit:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
-				<form id="upload-form" enctype="multipart/form-data" action="/project/${project.name}/upload"
-					method="post">
+				<form id="upload-form" enctype="multipart/form-data" 
+				action="/project/${project.name}/${selectBranch}/upload" method="post">
 					<div class="span12">
 						<input class="title span10" type="text" name="message"
 							placeholder="커밋을 입력해주세요!"></input>

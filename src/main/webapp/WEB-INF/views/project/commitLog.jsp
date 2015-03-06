@@ -22,14 +22,14 @@
 					window.location = $("#selectBranch option:selected").val();
 			});
 
-			var pageCount = ${gitCommitListCount+1}/10;
+			var pageCount = ${gitCommitListCount+1}/15;
 			
 			var options = {
 		            currentPage: ${pageIndex},
 		            totalPages: pageCount,
 		            pageUrl: function(type, page, current){
 
-		                return "/project/${project.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}/page:"+page;
+		                return "/project/${project.name}/commitlog/commit:${selectBranch}/page:"+page;
 
 		            }
 		        }
@@ -82,9 +82,9 @@
 					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i>  커밋 목록</h4>
 				</div>
 				<select id="selectBranch" class="span3">
-					<option value="/project/${project.name}/commitlog/commit:${fn:replace(selectBranch,'.', ',')}">${ selectBranch}</option>
+					<option value="/project/${project.name}/commitlog/commit:${selectBranch}">${ selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/project/${project.name}/commitlog/commit:${fn:replace(gitBranchName,'.', ',')}">${ gitBranchName}</option>
+						<option value="/project/${project.name}/commitlog/commit:${gitBranchName}">${ gitBranchName}</option>
 					</c:forEach>
 				</select>
 				

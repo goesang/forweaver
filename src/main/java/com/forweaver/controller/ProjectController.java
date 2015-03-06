@@ -164,10 +164,10 @@ public class ProjectController {
 		int category = 1;
 		if(params.get("category")!= null && params.get("category").equals("on"))
 			category= 0;
+		
 		if(!tagService.isPublicTags(tagList))
 			return "redirect:/project/";
-
-
+		
 		Project project = new Project(params.get("name"), 
 				category, 
 				WebUtil.removeHtml(params.get("description")), 
@@ -198,33 +198,35 @@ public class ProjectController {
 		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+gitBranchList.get(0)+"/filepath:/";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}")
-	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID){
-		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commitID+"/filepath:/"; 
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commit}")
+	public String fileBrowser(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI()+"/filepath:/"; 
 	}
 	
-	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commitID}/**")
+	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commit}/**")
 	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID,Model model) {
+			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
-		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
+		String uri = request.getRequestURI();
+		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
+
+		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
 		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			List<GitSimpleFileInfo> gitFileInfoList = 
-					gitService.getGitSimpleFileInfoList(creatorName, projectName,commitID,filePath);
+					gitService.getGitSimpleFileInfoList(creatorName, projectName,commit,filePath);
 			
 			List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
-			gitBranchList.remove(commitID);
+			gitBranchList.remove(commit);
 			
 			model.addAttribute("project", project);
 			model.addAttribute("gitFileInfoList", gitFileInfoList);
 			
 			model.addAttribute("gitBranchList", gitBranchList);
-			model.addAttribute("selectBranch",commitID);
-			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commitID,gitFileInfoList));
+			model.addAttribute("selectBranch",commit);
+			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commit,gitFileInfoList));
 			model.addAttribute("filePath",filePath);
 			return "/project/browser";
 		}else{ // 파일이라면
@@ -242,15 +244,18 @@ public class ProjectController {
 
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/blame/commit:{commitID}/**")
+	@RequestMapping("/{creatorName}/{projectName}/browser/blame/commit:{commit}/**")
 	public String blame(HttpServletRequest request, @PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commitID") String commitID,Model model) {
+			@PathVariable("commit") String commit,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		String filePath = request.getRequestURI().substring(request.getRequestURI().indexOf("filepath:")+9);
-		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commitID, filePath);
+		String uri = request.getRequestURI();
+		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));		
+		GitFileInfo gitFileInfo = gitService.getFileInfoWithBlame(creatorName, projectName, commit, filePath);
 		
-		if(gitFileInfo.isDirectory()) // 디렉토리의 경우 blame 기능을 이용할 수 없어 프로젝트 메인으로 돌려보냄.
+		if(gitFileInfo==null || gitFileInfo.isDirectory()) // 디렉토리의 경우 blame 기능을 이용할 수 없어 프로젝트 메인으로 돌려보냄.
 			return "redirect:/project/"+creatorName+"/"+projectName;
 		
 		model.addAttribute("project", project);
@@ -401,9 +406,10 @@ public class ProjectController {
 	@RequestMapping("/{creatorName}/{projectName}/commitlog/commit:{commit}")
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model) {
+			@PathVariable("commit") String commit,HttpServletRequest request,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		commit = commit.replace(",", ".");
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 		gitBranchList.remove(commit);
 		model.addAttribute("gitBranchList", gitBranchList);
@@ -421,8 +427,12 @@ public class ProjectController {
 	public String commitLog(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,
-			@PathVariable("page") String page,Model model) {
+			@PathVariable("page") String page,
+			HttpServletRequest request,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
@@ -442,8 +452,11 @@ public class ProjectController {
 	@RequestMapping("/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}")
 	public String commitLogViewer(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model) {
+			@PathVariable("commit") String commit,
+			HttpServletRequest request,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
 		GitCommitLog gitCommitLog = gitService.getGitCommitLog(creatorName, projectName, commit);
 		if(gitCommitLog == null)
 			return "redirect:/project/"+ creatorName+"/"+projectName+"/commitlog";
@@ -644,14 +657,15 @@ public class ProjectController {
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
 
-	@RequestMapping(value="/{creatorName}/{projectName}/upload" , method=RequestMethod.POST)
+	@RequestMapping(value="/{creatorName}/{projectName}/{branchName}/upload" , method=RequestMethod.POST)
 	public String upload(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
+			@PathVariable("branchName") String branchName,
 			@RequestParam("message") String message,
 			@RequestParam("zip") MultipartFile zip) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		projectService.uploadZip(project, currentWeaver, message, zip);
+		projectService.uploadZip(project, currentWeaver,branchName, message, zip);
 
 		return "redirect:/project/"+creatorName+"/"+projectName;
 	}
@@ -747,10 +761,14 @@ public class ProjectController {
 
 	@RequestMapping("/{creatorName}/{projectName}/cherry-pick/commit:{commit}/add") // 채리픽 요청 추가
 	public String addCherryPickRequest(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,@PathVariable("commit") String commit){
+			@PathVariable("creatorName") String creatorName,@PathVariable("commit") String commit,
+			HttpServletRequest request){
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
+		String uri = request.getRequestURI();
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
+		
 		if(!project.isForkProject())
 			return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
 
