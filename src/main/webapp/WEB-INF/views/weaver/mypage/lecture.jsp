@@ -90,23 +90,31 @@
 							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
 								없는 글</a></li>
 					</ul>
-					<ul style="border-bottom: 0px;" class="nav nav-tabs  pull-right">
-						<li><a
-								href="/${weaver.getId()}/lecture"><i
-								class=" fa fa-university"></i> 강의</a></li>
-
-						<li><a
-							href="/${weaver.getId()}/project"><i
-								class=" fa fa-bookmark"></i> 프로젝트</a></li>
-						<li><a
-								href="/${weaver.getId()}/code"><i
-								class=" fa fa-rocket"></i> 코드</a></li>
-					</ul>
+					<div class="navbar navbar-inverse">
+						<ul style="border-bottom: 0px;" class="nav pull-right">
+							<li class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+								<span style="font-size:14px;">
+								<i class=" fa fa-university"></i>&nbsp;강의</span>
+								<b class="caret"></b></button>
+								<ul class="dropdown-menu">
+									<li><a 
+										href="/${weaver.getId()}/"><i
+										class=" fa fa-comments"></i>&nbsp;&nbsp;커뮤니티</a></li>
+									<li><a 
+										href="/${weaver.getId()}/project"><i
+										class=" fa fa-bookmark"></i>&nbsp;&nbsp;프로젝트</a></li>
+									<li><a
+										href="/${weaver.getId()}/code"><i
+										class=" fa fa-rocket"></i>&nbsp;&nbsp;코드</a></li>	
+								</ul></li>
+						</ul>
+					</div>
 				</div>
 				<c:if test="${search == null}">
 					<div class="span11">
 						<input name="title" id="post-title-input" class="title span11"
-							placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text" />
+							placeholder="찾고 싶은 검색어를 입력해주세요!" type="text" />
 					</div>
 					<div class="span1">
 						<span> <a id='search-button'
@@ -123,7 +131,9 @@
 							<tbody>
 								<c:forEach items="${posts}" var="post">
 									<tr>
-										
+										<td class="td-post-writer-img" rowspan="2"><a
+											href="/${post.writerName}"> <img
+												src="${post.getImgSrc()}"></a></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/community/${post.postID}"> <c:if
 													test="${post.isLong()}">
@@ -153,7 +163,7 @@
 											</span></a></td>
 									</tr>
 									<tr>
-										<td class="post-bottom">
+										<td class="post-bottom"><a href="/${post.writerName}"><b>${post.writerName}</b></a>
 											${post.getFormatCreated()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${post.tags}" var="tag">
@@ -178,6 +188,8 @@
 							<tbody>
 								<c:forEach items="${lectures}" var="lecture">
 									<tr>
+										<td class="td-post-writer-img" rowspan="2"><img
+											src="${lecture.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/lecture/${lecture.name}"> <i
 												class='fa fa-university'></i> &nbsp;${lecture.name} ~
@@ -215,7 +227,7 @@
 											</sec:authorize></td>
 									</tr>
 									<tr>
-										<td class="post-bottom">
+										<td class="post-bottom"><b>${lecture.creatorName}</b>
 											${lecture.getOpeningDateFormat()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${lecture.tags}" var="tag">
@@ -240,7 +252,8 @@
 							<tbody>
 								<c:forEach items="${codes}" var="code">
 									<tr>
-										
+										<td class="td-post-writer-img" rowspan="2"><img
+											src="${code.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/code/${code.codeID}"> <i
 												class="fa fa-download"></i>&nbsp;${code.name} -
@@ -258,7 +271,7 @@
 											</span></a></td>
 									</tr>
 									<tr>
-										<td class="post-bottom">
+										<td class="post-bottom"><b>${code.writerName}</b>
 											${code.getFormatCreated()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${code.tags}" var="tag">
@@ -276,6 +289,8 @@
 							<tbody>
 								<c:forEach items="${projects}" var="project">
 									<tr>
+										<td class="td-post-writer-img" rowspan="2"><img
+											src="${project.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/project/${project.name}/"> <i
 												class="fa fa-bookmark"></i> &nbsp;${project.name} ~
@@ -325,7 +340,7 @@
 											</sec:authorize></td>
 									</tr>
 									<tr>
-										<td class="post-bottom">
+										<td class="post-bottom"><b>${project.creatorName}</b>
 											${project.getOpeningDateFormat()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${project.tags}" var="tag">
