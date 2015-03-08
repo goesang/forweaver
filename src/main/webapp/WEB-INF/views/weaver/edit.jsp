@@ -17,11 +17,6 @@ $(document).ready(function() {
 
 </script>
 	<form enctype="multipart/form-data" onsubmit="return check" class="form-horizontal" action="" method="POST">
-<!--
- 						<legend style="padding-left : 15px;">
-							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;회원정보 수정
-						</legend>
--->
 
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#home" data-toggle="tab">기본정보</a></li>
@@ -56,22 +51,13 @@ $(document).ready(function() {
 								</div>
 							</div>
 						</div>
-						<!--  
-				<div class="control-group">
-							<label for="password" class="control-label">비밀번호</label>
-							<div class="controls">
-								<input style="width:40%;" id="password" name="password" class="input-large"
-									type="password" />
-							</div>
-						</div>
--->
 						<div class="control-group" style="padding-left: 7px;">
 							<textarea placeholder="자기소개를 다시 입력해주세요!" name="say" id="say"
 								style="width: 249px;" rows="3">${weaver.say}</textarea>
 						</div>
 
 					<div class="control-group" style="padding-left: 6px;">
-						<button style="width: 275px;" type="submit"
+						<button onclick="window.close();" style="width: 275px;" type="submit"
 							class="btn btn-block btn-inverse">
 							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기
 						</button>
@@ -93,7 +79,7 @@ $(document).ready(function() {
 						<input type="password" id="newpassword" name="newpassword" class="input-large"></input>
 					</div>
 					<div align="center" style="padding-left: 6px;">
-						<button style="width: 225px;" type="submit" class="btn btn-block btn-inverse">
+						<button onclick="window.close();"style="width: 225px;" type="submit" class="btn btn-block btn-inverse">
 							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기
 						</button>
 					</div>

@@ -79,21 +79,22 @@ public class CodeDao {
 	 * @return
 	 */
 	public long countCodes(
+			Weaver writer,
 			List<String> tags,
 			String search,
-			Weaver writer,
 			String sort) {
 		Criteria criteria = new Criteria();
 		
-		if(search != null)
+		if(search != null && search.length()>0)
 			criteria.orOperator(new Criteria("name").regex(search),
 					new Criteria("content").regex(search),
 					new Criteria("readme").regex(search));
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
+		
 		if(writer != null)
-			criteria.and("creator").is(writer);
+			criteria.and("writer").is(writer);
 			
 		this.filter(criteria, sort);
 
@@ -118,7 +119,7 @@ public class CodeDao {
 			int size) {
 		Criteria criteria = new Criteria();
 		
-		if(search != null)
+		if(search != null && search.length()>0)
 			criteria.orOperator(new Criteria("name").regex(search),
 					new Criteria("content").regex(search),
 					new Criteria("readme").regex(search));

@@ -195,9 +195,8 @@
 				<table id="project-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${projects}" var="project">
-							<tr>
-								<td class="td-post-writer-img" rowspan="2"><img
-									src="${project.getImgSrc()}"></td>
+							<tr><td class="td-post-writer-img" rowspan="2"><a
+									href="/${project.creatorName}"> <img src="${project.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/project/${project.name}/">
 									<c:if test="${!project.isForkProject()}">
@@ -250,7 +249,7 @@
 									</sec:authorize></td>
 							</tr>
 							<tr>
-								<td class="post-bottom"><b>${project.creatorName}</b>
+								<td class="post-bottom"><a href="/${project.creatorName}"><b>${project.creatorName}</b></a>
 									${project.getOpeningDateFormat()}</td>
 								<td class="post-bottom-tag"><c:forEach
 										items="${project.tags}" var="tag">

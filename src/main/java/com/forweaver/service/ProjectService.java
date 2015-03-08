@@ -1,5 +1,6 @@
 package com.forweaver.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
@@ -60,9 +61,9 @@ public class ProjectService{
 		// TODO Auto-generated method stub
 		if(weaver == null || project == null)
 			return false;
-		
+
 		if(weaver.isAdmin() || 
-			weaver.getId().equals(project.getCreatorName())){
+				weaver.getId().equals(project.getCreatorName())){
 			try{
 				GitUtil gitUtil = new GitUtil(gitpath,project);
 				gitUtil.deleteRepository();
@@ -130,8 +131,8 @@ public class ProjectService{
 		return projectDao.countProjects(tags, search, sort);
 	}
 
-	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,String search,String sort, int pageNumber,
-			int lineNumber){
+	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,
+			String search,String sort, int pageNumber,int lineNumber){
 		List<Project> projects=  projectDao.getProjects(tags, search, sort, pageNumber, lineNumber);
 		if(currentWeaver != null)
 			for(Project project:projects){
@@ -143,16 +144,53 @@ public class ProjectService{
 			}
 		return projects;
 	}
+
 	
-	public List<Project> getProjects(Weaver currentWeaver,int page,int size){
-		List<Project> projects=  projectDao.getProjects(currentWeaver.getPassJoinNames(), page, size);
-		for(Project project:projects){
-			Pass pass = currentWeaver.getPass(project.getName());
-			project.setJoin(pass.getPermission());
-		}
+	public long countProjects(Weaver weaver,List<String> tags,String sort){
+		if(sort.equals("join"))
+			return projectDao.countProjects(weaver.getJoinProjects(),tags,sort);
+		else if(sort.equals("admin"))
+			return projectDao.countProjects(weaver.getAdminProjects(),tags,sort);
+		else
+			return projectDao.countProjects(weaver.getProjects(),tags,sort);
+	}
+	
+	/** 회원을 기준으로 프로젝트를 검색함.
+	 * @param weaver
+	 * @param tags
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Project> getProjects(Weaver currentWeaver,Weaver weaver,List<String> tags,String sort,int page,int size){
+		List<Project> projects=  new ArrayList<Project>();
+
+		if(sort.equals("join"))
+			projects = projectDao.getProjects(weaver.getJoinProjects(),tags,sort, page, size);
+		else if(sort.equals("admin"))
+			projects = projectDao.getProjects(weaver.getAdminProjects(),tags,sort, page, size);
+		else
+			projects = projectDao.getProjects(weaver.getProjects(),tags,sort, page, size);
+
+		if(currentWeaver != null)
+			for(Project project:projects){
+				Pass pass = currentWeaver.getPass(project.getName());
+				if(pass != null)
+					project.setJoin(pass.getPermission());
+				else
+					project.setJoin(0);
+			}
 		return projects;
 	}
 
+	/** 압축파일을 올리면 자동으로 커밋함.
+	 * @param project
+	 * @param weaver
+	 * @param branchName
+	 * @param message
+	 * @param zip
+	 */
 	public void uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
 		if(message==null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
@@ -181,13 +219,13 @@ public class ProjectService{
 					cnt++;
 				}
 			}
-			
+
 			GitUtil gitUtil = new GitUtil(gitpath,newProject);
 			gitUtil.forkRepository(originProject.getName(), newProject.getName());
 			projectDao.insert(newProject);
 			projectDao.update(originProject);
-			
-			Pass pass = new Pass(newProject.getName(), 1);
+
+			Pass pass = new Pass(newProject.getName(), 2);
 			weaver.addPass(pass);
 
 			weaverDao.update(weaver);
@@ -196,5 +234,5 @@ public class ProjectService{
 		}
 		return null;
 	}
-	
+
 }

@@ -74,7 +74,7 @@ public class ProjectDao {
 			String sort) {
 		Criteria criteria = new Criteria();
 		
-		if(search != null)
+		if(search != null && search.length()>0)
 			criteria.orOperator(new Criteria("name").regex(search),
 					new Criteria("description").regex(search));
 		
@@ -103,7 +103,7 @@ public class ProjectDao {
 			int size) {
 		Criteria criteria = new Criteria();
 		
-		if(search != null)
+		if(search != null && search.length()>0)
 			criteria.orOperator(new Criteria("name").regex(search),
 					new Criteria("description").regex(search));
 		
@@ -119,20 +119,48 @@ public class ProjectDao {
 		return mongoTemplate.find(query, Project.class);
 	}
 	
-	/** 로그인한 회원이 자신의 프로젝트를 가져올 때 활용.
+	/** 특정 회원의 프로젝트를 가져올 때 수를 셈.
+	 * @param tags
+	 * @param search
+	 * @param creator
+	 * @param sort
+	 * @return
+	 */
+	public long countProjects(
+			List<String> projectNames,
+			List<String> tags,
+			String sort) {
+		Criteria criteria = new Criteria("name").in(projectNames);	
+		
+		if(tags != null)
+			criteria.and("tags").all(tags);
+			
+		this.filter(criteria, sort);
+
+		return mongoTemplate.count(new Query(criteria), Project.class);
+	}
+	
+	/** 특정 회원의 프로젝트를 가져올 때 활용.
 	 * @param projectNames
+	 * @param tags
+	 * @param sort
 	 * @param page
 	 * @param size
 	 * @return
 	 */
 	public List<Project> getProjects(
 			List<String> projectNames,
+			List<String> tags,
+			String sort,
 			int page, 
 			int size) {
 		Criteria criteria = new Criteria("name").in(projectNames);
+		if(tags != null)
+			criteria.and("tags").all(tags);
+		this.filter(criteria, sort);
 		Query query = new Query(criteria);
 		query.with(new PageRequest(page-1, size));
-
+		
 		return mongoTemplate.find(query, Project.class);
 	}
 	
@@ -148,9 +176,9 @@ public class ProjectDao {
 		} else if (sort.equals("push-null")) {
 			criteria.and("push").is(0);
 		} else if (sort.equals("fork")) {
-			criteria.and("originalProject").exists(true);
+			criteria.and("kind").is(2);
 		} else if (sort.equals("solo")) {
-			criteria.where("adminWeavers").size(1).and("joinWeavers").size(0);
+			criteria.and("adminWeavers").size(1).and("joinWeavers").size(0);
 		}
 	}
 	

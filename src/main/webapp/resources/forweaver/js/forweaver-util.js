@@ -206,7 +206,7 @@ function movePage(tagArrayString,searchWord){
 	window.location = url;
 }
 
-function moveUserPage(userName,tagArrayString,searchWord){
+function moveUserPage(path,tagArrayString,searchWord){
 	if(editorMode)
 		return;
 	var tagArray = eval(tagArrayString);
@@ -216,7 +216,7 @@ function moveUserPage(userName,tagArrayString,searchWord){
 		window.location = url;
 		return;
 	}
-	url = "/"+userName +"/"+ "tags:"+	tagInputValueConverter(tagArray);
+	url = path + "tags:"+	tagInputValueConverter(tagArray);
 	url = url.substring(0,url.length-1);
 
 	if(searchWord.length != 0)

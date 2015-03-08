@@ -69,7 +69,7 @@ public class LectureDao {
 			String search) {
 		Criteria criteria = new Criteria();
 
-		if(search != null)
+		if(search != null && search.length()>0)
 			criteria.orOperator(new Criteria("name").regex(search),
 					new Criteria("description").regex(search));
 
@@ -94,7 +94,7 @@ public class LectureDao {
 			int size) {
 		Criteria criteria = new Criteria();
 
-		if(search != null)
+		if(search != null && search.length()>0)
 			criteria.orOperator(new Criteria("name").regex(search),
 					new Criteria("description").regex(search));
 
@@ -107,7 +107,25 @@ public class LectureDao {
 		return mongoTemplate.find(query, Lecture.class);
 	}
 	
-	/** 로그인한 회원이 자신이 가입한 강의를 가져올 때 활용.
+	/** 회원이 가입한 강의를 검색하고 숫자를 셈
+	 * @param tags
+	 * @param search
+	 * @param creator
+	 * @return
+	 */
+	public long countLectures(
+			List<String> lecturNames,
+			List<String> tags) {
+		Criteria criteria = new Criteria("name").in(lecturNames);
+
+		if(tags != null)
+			criteria.and("tags").all(tags);
+
+		return mongoTemplate.count(new Query(criteria), Lecture.class);
+	}
+
+	
+	/** 회원이 가입한 강의를 가져올 때 활용.
 	 * @param lecturNames
 	 * @param page
 	 * @param size
@@ -115,9 +133,14 @@ public class LectureDao {
 	 */
 	public List<Lecture> getLectures(
 			List<String> lecturNames,
+			List<String> tags,
 			int page, 
 			int size) {
 		Criteria criteria = new Criteria("name").in(lecturNames);
+		
+		if(tags != null)
+			criteria.and("tags").all(tags);
+		
 		Query query = new Query(criteria);
 		query.with(new PageRequest(page-1, size));
 

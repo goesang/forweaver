@@ -69,7 +69,7 @@ public class LectureController {
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, null, null, pageNum, size));
-		model.addAttribute("lectureCount", lectureService.countLectures(null,null));
+		model.addAttribute("lectureCount", lectureService.countLectures(null, ""));
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/lecture/page:");

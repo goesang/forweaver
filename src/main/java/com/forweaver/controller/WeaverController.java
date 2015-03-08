@@ -130,31 +130,8 @@ public class WeaverController {
 
 	}
 	
-	
-	@RequestMapping("/{id}/code/sort:{sort}/page:{page}")
-	public String code(@PathVariable("id") String id,
-			@PathVariable("sort") String sort,
-			@PathVariable("page") String page, Model model) {
-		Weaver weaver = weaverService.get(id);
-		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
-		
-		if (weaver == null) {
-			return "redirect:/";
-		}
-
-		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodes(null, weaver, null, "", pageNum, size));
-		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/"+id+"/code/sort:" + sort + "/page:");
-		return "/weaver/mypage/code";
-	}
-
-
-	
 	@RequestMapping("/{id}/sort:{sort}/page:{page}")
-	public String page(@PathVariable("id") String id,
+	public String communityPage(@PathVariable("id") String id,
 			@PathVariable("page") String page,
 			@PathVariable("sort") String sort, Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
@@ -178,7 +155,71 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/"+id+"/sort:" + sort + "/page:");
 		return "/weaver/mypage/community";
 	}
+	
+	@RequestMapping("/{id}/code/sort:{sort}/page:{page}")
+	public String codePage(@PathVariable("id") String id,
+			@PathVariable("sort") String sort,
+			@PathVariable("page") String page, Model model) {
+		Weaver weaver = weaverService.get(id);
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
+		if (weaver == null)
+			return "redirect:/";
+			
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("codes", codeService.getCodes(weaver, null, null, sort, pageNum, size));
+		model.addAttribute("codeCount", codeService.countCodes(weaver, null, null, sort));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/code/sort:" + sort + "/page:");
+		return "/weaver/mypage/code";
+	}
+	
+	@RequestMapping("/{id}/project/sort:{sort}/page:{page}")
+	public String projectPage(@PathVariable("id") String id,
+			@PathVariable("sort") String sort,
+			@PathVariable("page") String page, Model model) {
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		Weaver weaver = weaverService.get(id);
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
+		if (weaver == null)
+			return "redirect:/";
 
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("projects", projectService.getProjects(currentWeaver,weaver,null,sort, pageNum, size));
+		model.addAttribute("projectCount", projectService.countProjects(weaver, null, sort));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/project/sort:" + sort + "/page:");
+		return "/weaver/mypage/project";
+	}
+	
+	@RequestMapping("/{id}/lecture/sort:{sort}/page:{page}")
+	public String lecturePage(@PathVariable("id") String id,
+			@PathVariable("sort") String sort,
+			@PathVariable("page") String page, Model model) {
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		Weaver weaver = weaverService.get(id);
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
+		if (weaver == null) 
+			return "redirect:/";
+		
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("lectures", lectureService.getLecturesWithWeaver(currentWeaver, weaver, null, sort, pageNum, size));
+		model.addAttribute("lectureCount", lectureService.countLecturesWithWeaver(weaver, null, sort));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/lecture/sort:" + sort + "/page:");
+		return "/weaver/mypage/lecture";
+	}
+
+
+	
 	@RequestMapping({"/{id}/tags:{tagNames}",
 		"/{id}/code/tags:{tagNames}",
 		"/{id}/project/tags:{tagNames}"
@@ -203,9 +244,8 @@ public class WeaverController {
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
-		if (!tagService.validateTag(tagList, currentWeaver)) {
-			return "redirect:/community/sort:age-desc/page:1";
-		}
+		if (!tagService.validateTag(tagList, currentWeaver))
+			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
 
@@ -217,13 +257,110 @@ public class WeaverController {
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/"+id+"/tags:" + tagNames + "/sort:"
-				+ sort + "/page:");
+		model.addAttribute("pageUrl", "/"+id+"/tags:" + tagNames + "/sort:"+ sort + "/page:");
 
 		return "/weaver/mypage/community";
 	}
+	
+	@RequestMapping("/{id}/code/tags:{tagNames}/sort:{sort}/page:{page}")
+	public String codeTagsWithPage(@PathVariable("tagNames") String tagNames,
+			@PathVariable("id") String id, @PathVariable("page") String page,
+			@PathVariable("sort") String sort, Model model) {
+		List<String> tags = tagService.stringToTagList(tagNames);
 
-	@RequestMapping("/{id}/tags:{tagNames}/search:{search}")
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null)
+			return "redirect:/";
+
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+
+		if (!tagService.validateTag(tags, currentWeaver))
+			return "redirect:/";
+
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("codes", codeService
+				.getCodes(weaver, tags, null, sort, pageNum, size));
+		model.addAttribute("codeCount", codeService
+				.countCodes(weaver, tags, null, sort));
+		model.addAttribute("tagNames", tagNames);
+		model.addAttribute("pageIndex", page);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/code/tags:" + tagNames+ "/sort:" + sort + "/page:");
+
+		return "/weaver/mypage/code";
+	}
+	
+	@RequestMapping("/{id}/project/tags:{tagNames}/sort:{sort}/page:{page}")
+	public String projectTagsWithPage(@PathVariable("tagNames") String tagNames,
+			@PathVariable("id") String id, @PathVariable("page") String page,
+			@PathVariable("sort") String sort, Model model) {
+		List<String> tags = tagService.stringToTagList(tagNames);
+
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+
+		
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null)
+			return "redirect:/";
+
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+
+		if (!tagService.validateTag(tags, currentWeaver))
+			return "redirect:/";
+
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("projects", projectService
+				.getProjects(currentWeaver, weaver, tags, sort, pageNum, size));
+		model.addAttribute("projectCount", projectService
+				.countProjects(weaver, tags, sort));
+		model.addAttribute("tagNames", tagNames);
+		model.addAttribute("pageIndex", page);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/code/tags:" + tagNames+ "/sort:" + sort + "/page:");
+
+		return "/weaver/mypage/project";
+	}
+	
+	@RequestMapping("/{id}/lecture/tags:{tagNames}/sort:{sort}/page:{page}")
+	public String lectureTagsWithPage(@PathVariable("tagNames") String tagNames,
+			@PathVariable("id") String id, @PathVariable("page") String page,
+			@PathVariable("sort") String sort, Model model) {
+		List<String> tags = tagService.stringToTagList(tagNames);
+
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null)
+			return "redirect:/";
+
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+
+		if (!tagService.validateTag(tags, currentWeaver))
+			return "redirect:/";
+
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("lectures", lectureService
+				.getLecturesWithWeaver(currentWeaver, weaver, tags, sort, pageNum, size));
+		model.addAttribute("lectureCount", lectureService
+				.countLecturesWithWeaver(weaver, tags, sort));
+		model.addAttribute("tagNames", tagNames);
+		model.addAttribute("pageIndex", page);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/code/tags:" + tagNames+ "/sort:" + sort + "/page:");
+
+		return "/weaver/mypage/lecture";
+	}
+
+	@RequestMapping({"/{id}/tags:{tagNames}/search:{search}",
+		"/{id}/code/tags:{tagNames}/search:{search}"})
 	public String tagsWithSearch(HttpServletRequest request) {
 		return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
 	}
@@ -244,9 +381,8 @@ public class WeaverController {
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
-		if (!tagService.validateTag(tagList, currentWeaver)) {
-			return "redirect:/community/sort:age-desc/page:1";
-		}
+		if (!tagService.validateTag(tagList, currentWeaver))
+			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
 
@@ -256,7 +392,6 @@ public class WeaverController {
 		model.addAttribute("postCount", postService
 				.countPosts(currentWeaver,
 						tagList, weaver, search, sort));
-
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("search", search);
 		model.addAttribute("pageIndex", page);
@@ -264,6 +399,39 @@ public class WeaverController {
 				+ "/sort:" + sort + "/page:");
 
 		return "/weaver/mypage/community";
+	}
+	
+	@RequestMapping("/{id}/code/tags:{tagNames}/search:{search}/sort:{sort}/page:{page}")
+	public String codeTagsWithSearch(@PathVariable("tagNames") String tagNames,
+			@PathVariable("id") String id,
+			@PathVariable("search") String search,
+			@PathVariable("sort") String sort,
+			@PathVariable("page") String page, Model model) {
+		List<String> tags = tagService.stringToTagList(tagNames);
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		Weaver weaver = weaverService.get(id);
+
+		if (weaver == null)
+			return "redirect:/";
+
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+
+		if (!tagService.validateTag(tags, currentWeaver)) 
+			return "redirect:/";
+
+		model.addAttribute("weaver", weaver);
+		model.addAttribute("codes", codeService
+				.getCodes(weaver, tags, search, sort, pageNum, size));
+		model.addAttribute("codeCount", codeService
+				.countCodes(weaver, tags, search, sort));
+		model.addAttribute("tagNames", tagNames);
+		model.addAttribute("search", search);
+		model.addAttribute("pageIndex", page);
+		model.addAttribute("pageUrl", "/"+id+"/code/tags:" + tagNames + "/search:" + search
+				+ "/sort:" + sort + "/page:");
+
+		return "/weaver/mypage/code";
 	}
 
 
