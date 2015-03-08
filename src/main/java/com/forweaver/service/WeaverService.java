@@ -15,6 +15,8 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -32,6 +34,8 @@ import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.MailUtil;
+import com.forweaver.util.Tuple;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 @Service("userDetailsService")
@@ -132,7 +136,7 @@ public class WeaverService implements UserDetailsService {
 
 	public List<Weaver> weavers(int page,int size) {
 		// TODO Auto-generated method stub
-		return weaverDao.list(page,size);
+		return weaverDao.getWeavers(page,size);
 	}
 
 	public boolean delete(String password,Weaver weaver) { //위버 삭제
@@ -152,7 +156,7 @@ public class WeaverService implements UserDetailsService {
 		}
 		return false;
 	}
-	
+
 	public boolean delete(Weaver adminWeaver,Weaver weaver) { //위버 삭제
 		// TODO Auto-generated method stub
 
@@ -240,12 +244,54 @@ public class WeaverService implements UserDetailsService {
 		return false;
 	}
 
+	public void getWeaverInfos(Weaver weaver){
+		BasicDBObject basicDB = new BasicDBObject();
+		DBObject tempDB = weaverDao.getWeaverInfosInPost(weaver);
 
+		tempDB = weaverDao.getWeaverInfosInPost(weaver);
+		if(tempDB != null){
+			basicDB.put("postCount", tempDB.get("postCount"));
+			basicDB.put("push", tempDB.get("push"));
+			basicDB.put("rePostCount", tempDB.get("rePostCount"));
+		}
+		tempDB = weaverDao.getWeaverInfosInRePost(weaver);
+		if(tempDB != null){
+			basicDB.put("myRePostCount", tempDB.get("myRePostCount"));
+			basicDB.put("rePostPush", tempDB.get("rePostPush"));
+		}
+		tempDB = weaverDao.getWeaverInfosInProject(weaver);
+		if(tempDB != null){
+			basicDB.put("projectCount", tempDB.get("projectCount"));
+			basicDB.put("childProjects", tempDB.get("childProjects"));
+		}
+		tempDB = weaverDao.getWeaverInfosInLecture(weaver);
+		if(tempDB != null){
+			basicDB.put("lectureCount", tempDB.get("lectureCount"));
+			basicDB.put("joinWeavers", tempDB.get("joinWeavers"));
+		}
+		tempDB = weaverDao.getWeaverInfosInCode(weaver);
+		if(tempDB != null){
+			basicDB.put("codeCount", tempDB.get("codeCount"));
+			basicDB.put("downCount", tempDB.get("downCount"));
+		}
+		weaver.setWeaverInfo(basicDB);
+	}
+	
+	public long countWeavers(){
+		return weaverDao.countWeavers();
+	}
+	
+	public List<Weaver> getWeavers(int page, int size) {
+		List<Weaver> weavers = weaverDao.getWeavers(page, size);
+		for(Weaver weaver : weavers)
+			this.getWeaverInfos(weaver);
+		return weavers;
+	}
+	
 	//위버정보들과 수 파악함.
-	public Object[] getWeaverInfos(List<String> tags,int page, int size ){
+	public Tuple<List<Weaver>, Integer> getWeaverInfos(List<String> tags,int page, int size ){
 		List<Weaver> weavers = new ArrayList<Weaver>();
 		HashMap<String, DBObject> weaverHash = new HashMap<String, DBObject>();
-		Object[] returnObject = new Object[2];
 		int startNumber = size * (page - 1);
 
 		try{
@@ -313,9 +359,7 @@ public class WeaverService implements UserDetailsService {
 
 		}
 		finally{
-			returnObject[0] = weaverHash.values().size();
-			returnObject[1] = weavers;
-			return returnObject;
+			return new Tuple<List<Weaver>, Integer>(weavers, weaverHash.values().size());
 		}
 	}
 

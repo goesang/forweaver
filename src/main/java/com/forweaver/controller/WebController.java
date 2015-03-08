@@ -45,5 +45,13 @@ public class WebController {
 			return "redirect:/login";
 		return "redirect:/"+weaver.getId();
 	}
+	
+	@RequestMapping("/test")
+	public void test() {
+		Weaver weaver = weaverService.getCurrentWeaver();
+		weaverService.getWeaverInfos(weaver);
+	}
+	
+	
 		
 }

@@ -2,14 +2,12 @@ package com.forweaver.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Data;
-import com.forweaver.domain.Lecture;
-import com.forweaver.domain.Pass;
-import com.forweaver.domain.Project;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
 import com.forweaver.service.LectureService;
@@ -30,6 +25,7 @@ import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
+import com.forweaver.util.Tuple;
 import com.forweaver.util.WebUtil;
 
 @Controller
@@ -83,25 +79,17 @@ public class WeaverController {
 
 	@RequestMapping("/weaver/page:{page}")
 	public String weavers(@PathVariable("page") String page,Model model) {
-		int pageNum;
-		int number = 15;
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
 
-		if(page.contains(",")){
-			pageNum = Integer.parseInt(page.split(",")[0]);
-			number = Integer.parseInt(page.split(",")[1]);
-		}else{
-			pageNum =Integer.parseInt(page);
-		}
-
-		Object[] returnObjejct = weaverService.getWeaverInfos(null,pageNum,number);
-		int weaverCount = (int)returnObjejct[0];
-		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
+		long weaverCount = weaverService.countWeavers();
+		List<Weaver> weavers = weaverService.getWeavers(pageNum, size);
 
 		model.addAttribute("weavers", weavers);	
 		model.addAttribute("weaverCount", weaverCount);
 
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", number);
+		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/weaver/page:");
 		return "/weaver/weavers";
 	}
@@ -118,10 +106,11 @@ public class WeaverController {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
-		Object[] returnObjejct = weaverService.getWeaverInfos(tagList,pageNum-1,size);
-		int weaverCount = (int)returnObjejct[0];
-		List<Weaver> weavers = (List<Weaver>)returnObjejct[1];
-
+		Tuple<List<Weaver>, Integer> weaverInfos= weaverService.getWeaverInfos(tagList,pageNum-1,size);
+		
+		List<Weaver> weavers = weaverInfos.x;
+		int weaverCount = weaverInfos.y;
+		
 		model.addAttribute("weavers", weavers);	
 		model.addAttribute("weaverCount", weaverCount);
 
@@ -131,58 +120,39 @@ public class WeaverController {
 		return "/weaver/weavers";
 	}
 
-
-	@RequestMapping("/{id}")
-	public String home(@PathVariable("id") String id, Model model) {
-		Weaver weaver = weaverService.get(id.replace(",", "."));
+	@RequestMapping({"/{id}","/{id}/code","/{id}/project","/{id}/lecture"})
+	public String home(@PathVariable("id") String id,HttpServletRequest request) {
+		Weaver weaver = weaverService.get(id);
 		if(weaver == null)
 			return "/error404";
 		else
-			return "redirect:/" + weaver.getId() + "/sort:age-desc/page:1";
+			return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
 
 	}
-
-	@RequestMapping("/{id}/project")
-	public String project(@PathVariable("id") String id, Model model) {
+	
+	
+	@RequestMapping("/{id}/code/sort:{sort}/page:{page}")
+	public String code(@PathVariable("id") String id,
+			@PathVariable("sort") String sort,
+			@PathVariable("page") String page, Model model) {
 		Weaver weaver = weaverService.get(id);
-
-		if (weaver == null)
-			return "redirect:/";
-
-		model.addAttribute("weaver", weaver);
-		model.addAttribute("projects", projectService.getProjects(weaver, 1, 15));
-		model.addAttribute("search", false);
-		return "/weaver/home";
-	}
-
-	@RequestMapping("/{id}/lecture")
-	public String lecture(@PathVariable("id") String id, Model model) {
-		Weaver weaver = weaverService.get(id);
-
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page);
+		
 		if (weaver == null) {
 			return "redirect:/";
 		}
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("lectures", lectureService.getLectures(weaver, 1, 15));
-		model.addAttribute("search", false);
-		return "/weaver/home";
+		model.addAttribute("codes", codeService.getCodes(null, weaver, null, "", pageNum, size));
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("number", size);
+		model.addAttribute("pageUrl", "/"+id+"/code/sort:" + sort + "/page:");
+		return "/weaver/mypage/code";
 	}
 
-	@RequestMapping("/{id}/code")
-	public String code(@PathVariable("id") String id, Model model) {
-		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null) {
-			return "redirect:/";
-		}
-
-		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodes(null, weaver, null, "", 1, 100));
-		model.addAttribute("search", false);
-		return "/weaver/home";
-	}
-
+	
 	@RequestMapping("/{id}/sort:{sort}/page:{page}")
 	public String page(@PathVariable("id") String id,
 			@PathVariable("page") String page,
@@ -205,11 +175,14 @@ public class WeaverController {
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/community/sort:" + sort + "/page:");
-		return "/weaver/home";
+		model.addAttribute("pageUrl", "/"+id+"/sort:" + sort + "/page:");
+		return "/weaver/mypage/community";
 	}
 
-	@RequestMapping("/{id}/tags:{tagNames}")
+	@RequestMapping({"/{id}/tags:{tagNames}",
+		"/{id}/code/tags:{tagNames}",
+		"/{id}/project/tags:{tagNames}"
+		,"/{id}/lecture/tags:{tagNames}"})
 	public String tags(HttpServletRequest request) {
 		return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
 	}
@@ -244,10 +217,10 @@ public class WeaverController {
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/community/tags:" + tagNames + "/sort:"
+		model.addAttribute("pageUrl", "/"+id+"/tags:" + tagNames + "/sort:"
 				+ sort + "/page:");
 
-		return "/weaver/home";
+		return "/weaver/mypage/community";
 	}
 
 	@RequestMapping("/{id}/tags:{tagNames}/search:{search}")
@@ -287,10 +260,10 @@ public class WeaverController {
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("search", search);
 		model.addAttribute("pageIndex", page);
-		model.addAttribute("pageUrl", "/tags:" + tagNames + "/search:" + search
+		model.addAttribute("pageUrl", "/"+id+"/tags:" + tagNames + "/search:" + search
 				+ "/sort:" + sort + "/page:");
 
-		return "/weaver/home";
+		return "/weaver/mypage/community";
 	}
 
 

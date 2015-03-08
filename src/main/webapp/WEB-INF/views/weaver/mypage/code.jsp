@@ -123,9 +123,7 @@
 							<tbody>
 								<c:forEach items="${posts}" var="post">
 									<tr>
-										<td class="td-post-writer-img" rowspan="2"><a
-											href="/${post.writerName}"> <img
-												src="${post.getImgSrc()}"></a></td>
+										
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/community/${post.postID}"> <c:if
 													test="${post.isLong()}">
@@ -155,7 +153,7 @@
 											</span></a></td>
 									</tr>
 									<tr>
-										<td class="post-bottom"><a href="/${post.writerName}"><b>${post.writerName}</b></a>
+										<td class="post-bottom">
 											${post.getFormatCreated()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${post.tags}" var="tag">
@@ -180,8 +178,6 @@
 							<tbody>
 								<c:forEach items="${lectures}" var="lecture">
 									<tr>
-										<td class="td-post-writer-img" rowspan="2"><img
-											src="${lecture.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/lecture/${lecture.name}"> <i
 												class='fa fa-university'></i> &nbsp;${lecture.name} ~
@@ -219,7 +215,7 @@
 											</sec:authorize></td>
 									</tr>
 									<tr>
-										<td class="post-bottom"><b>${lecture.creatorName}</b>
+										<td class="post-bottom">
 											${lecture.getOpeningDateFormat()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${lecture.tags}" var="tag">
@@ -244,8 +240,7 @@
 							<tbody>
 								<c:forEach items="${codes}" var="code">
 									<tr>
-										<td class="td-post-writer-img" rowspan="2"><img
-											src="${code.getImgSrc()}"></td>
+										
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/code/${code.codeID}"> <i
 												class="fa fa-download"></i>&nbsp;${code.name} -
@@ -263,7 +258,7 @@
 											</span></a></td>
 									</tr>
 									<tr>
-										<td class="post-bottom"><b>${code.writerName}</b>
+										<td class="post-bottom">
 											${code.getFormatCreated()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${code.tags}" var="tag">
@@ -281,8 +276,6 @@
 							<tbody>
 								<c:forEach items="${projects}" var="project">
 									<tr>
-										<td class="td-post-writer-img" rowspan="2"><img
-											src="${project.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/project/${project.name}/"> <i
 												class="fa fa-bookmark"></i> &nbsp;${project.name} ~
@@ -332,7 +325,7 @@
 											</sec:authorize></td>
 									</tr>
 									<tr>
-										<td class="post-bottom"><b>${project.creatorName}</b>
+										<td class="post-bottom">
 											${project.getOpeningDateFormat()}</td>
 										<td class="post-bottom-tag"><c:forEach
 												items="${project.tags}" var="tag">
