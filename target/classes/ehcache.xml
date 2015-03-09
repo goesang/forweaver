@@ -60,9 +60,15 @@
 		overflowToDisk="false" diskPersistent="false" timeToLiveSeconds="7200"
 		memoryStoreEvictionPolicy="LFU">
 	</cache>
-	
+
 	<cache name="data" eternal="false" maxElementsInMemory="5000"
 		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="7200"
+		memoryStoreEvictionPolicy="LFU">
+	</cache>
+
+	<!-- 비밀번호 재설정을 위해 5분 동안 저장하는 세션 -->
+	<cache name="repassword" eternal="false" maxElementsInMemory="5000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="300"
 		memoryStoreEvictionPolicy="LFU">
 	</cache>
 
