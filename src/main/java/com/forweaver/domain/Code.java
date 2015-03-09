@@ -161,4 +161,8 @@ public class Code implements Serializable  {
 		SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
 		return df.format(this.openingDate); 
 	}
+	
+	public void rePostCountDown() {
+		this.rePostCount -=1;
+	}
 }

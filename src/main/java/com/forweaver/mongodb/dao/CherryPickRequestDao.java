@@ -44,4 +44,11 @@ public class CherryPickRequestDao {
 	public void delete(CherryPickRequest cherryPickRequest) { // 체리픽 요청 삭제
 		mongoTemplate.remove(cherryPickRequest);
 	}
+	
+	public void delete(Project project) { // 체리픽 요청 삭제
+		Criteria criteria = new Criteria();
+		Query query = new Query(	criteria.orOperator(Criteria.where("cherryPickProject").is(project),
+				Criteria.where("orginalProject").is(project)));
+		mongoTemplate.remove(query);
+	}
 }

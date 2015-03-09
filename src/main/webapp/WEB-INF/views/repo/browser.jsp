@@ -70,15 +70,15 @@ showFileBrowser("/");
 			<div class="span12 row">	
 				<div class="span8"><label id ="labelPath"></label></div>
 				<div style = "margin-right:-10px;" class="span1">
-					<a	class = "btn btn-primary" href="/lecture/${repo.lectureName}/${repo.name}/${fn:replace(selectBranch,'.', ',')}/${repo.lectureName}-${repo.name}.zip">
+					<a	class = "btn btn-primary" href="/lecture/${repo.lectureName}/${repo.name}/${selectBranch}/${repo.lectureName}-${repo.name}.zip">
 					<i  class="fa fa-arrow-circle-o-down">
 					</i></a>
 				</div>				
 							
 				<select id="selectBranch" class="span3">
-					<option value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
+					<option value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${selectBranch}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
+						<option value="/lecture/${repo.lectureName}/${repo.name}/browser/commit:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
 				<table id="fileBrowserTable" class="table table-hover">

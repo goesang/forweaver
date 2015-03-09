@@ -68,7 +68,7 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/*/*/push"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/rss"
+		<security:intercept-url pattern="/project/*/*/fork"
 			access="isAuthenticated()" />
 
 		<security:intercept-url pattern="/lecture/"

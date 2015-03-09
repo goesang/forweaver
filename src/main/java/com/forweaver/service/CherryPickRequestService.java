@@ -63,14 +63,20 @@ public class CherryPickRequestService {
 	}
 
 	public boolean delete(CherryPickRequest cherryPickRequest,Weaver weaver){
-		if(cherryPickRequest != null && (cherryPickRequest.getRequestWeaver().getId().equals(weaver.getId()) 
-				|| weaver.isAdminWeaver(cherryPickRequest.getOrginalProject().getName()))){
+		
+		if(cherryPickRequest == null || weaver == null)
+			return false;
+		
+		if(cherryPickRequest.getRequestWeaver().getId().equals(weaver.getId()) 
+				|| weaver.isAdminWeaver(cherryPickRequest.getOrginalProject().getName())){
 			// 요청한 본인이거나 원본 프로젝트 운영자의 경우 삭제 가능.
 			cherryPickRequestDao.delete(cherryPickRequest);
 			return true;
 		}
 		return false;
 	}
+	
+	
 
 
 

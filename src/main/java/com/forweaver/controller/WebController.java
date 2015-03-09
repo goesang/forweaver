@@ -26,18 +26,7 @@ public class WebController {
 	public void forweaver(Model model) {
 	}
 
-	@RequestMapping("/error400")
-	public void error400() {
-	}
-	
-	@RequestMapping("/error404")
-	public void error404() {
-	}
-	
-	@RequestMapping("/error500")
-	public void error500() {
-	}
-	
+
 	@RequestMapping("/")
 	public String front(Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -45,5 +34,6 @@ public class WebController {
 			return "redirect:/login";
 		return "redirect:/"+weaver.getId();
 	}
+	
 		
 }

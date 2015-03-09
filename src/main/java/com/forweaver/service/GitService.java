@@ -37,6 +37,18 @@ public class GitService {
 			filePath = filePath.substring(1);
 		
 		GitFileInfo gitFileInfo = gitUtil.getFileInfo(commitID, filePath);
+		return gitFileInfo;
+	}
+	
+	public GitFileInfo getFileInfoWithBlame(String parentDirctoryName,String repositoryName,
+			String commitID,String filePath){
+		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		if(filePath.equals("/") || !filePath.startsWith("/"))
+			return null;
+		else
+			filePath = filePath.substring(1);
+		
+		GitFileInfo gitFileInfo = gitUtil.getFileInfo(commitID, filePath);
 		if(!gitFileInfo.isDirectory())
 			gitFileInfo.setGitBlames(gitUtil.getBlame(filePath, commitID));
 		return gitFileInfo;

@@ -15,6 +15,8 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -25,13 +27,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.MailUtil;
+import com.forweaver.util.Tuple;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 @Service("userDetailsService")
@@ -90,9 +96,23 @@ public class WeaverService implements UserDetailsService {
 		file.mkdir();
 	}
 
+	public void update(Weaver weaver,String password,String newpassword,String say,MultipartFile image) { // 회원 수정
+		// TODO Auto-generated method stub
+		if(image != null && image.getSize() > 0)
+			weaver.setImage(new Data(image, weaver.getId()));
+
+		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
+			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));
+				
+		if(say != null && !say.equals(""))
+			weaver.setSay(say);
+		
+		weaverDao.update(weaver);
+	}
+	
 	public void update(Weaver weaver) { // 회원 수정
 		// TODO Auto-generated method stub
-		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
+				
 		weaverDao.update(weaver);
 	}
 
@@ -132,16 +152,42 @@ public class WeaverService implements UserDetailsService {
 
 	public List<Weaver> weavers(int page,int size) {
 		// TODO Auto-generated method stub
-		return weaverDao.list(page,size);
+		return weaverDao.getWeavers(page,size);
 	}
 
-	public void delete(Weaver weaver) { //위버 삭제
+	public boolean delete(String password,Weaver weaver) { //위버 삭제
 		// TODO Auto-generated method stub
-		weaverDao.delete(weaver);
-		try {
-			FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
-		} catch (Exception e) {
+
+		if(weaver == null || password == null || weaver.isAdmin())
+			return false;
+
+		if(weaver.getPassword().equals(passwordEncoder.encodePassword(password, null))){
+
+			try {
+				FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
+				weaverDao.delete(weaver);
+			} catch (Exception e) {
+				return false;
+			}
 		}
+		return false;
+	}
+
+	public boolean delete(Weaver adminWeaver,Weaver weaver) { //위버 삭제
+		// TODO Auto-generated method stub
+
+		if(adminWeaver == null || weaver == null || weaver.isAdmin())
+			return false;
+
+		if(adminWeaver.isAdmin()){
+			try {
+				FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
+				weaverDao.delete(weaver);
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	public boolean autoLoginWeaver(Weaver weaver, HttpServletRequest request) {
@@ -208,21 +254,62 @@ public class WeaverService implements UserDetailsService {
 	 * @return
 	 */
 	public boolean validPassword(Weaver weaver,String password){
-		if(password != null && password.length()<4 && 
+		if(password != null && password.length()>3 && 
 				weaver.getPassword().equals(passwordEncoder.encodePassword(password, null)))
 			return true;
 		return false;
 	}
 
+	public void getWeaverInfos(Weaver weaver){
+		BasicDBObject basicDB = new BasicDBObject();
+		DBObject tempDB = weaverDao.getWeaverInfosInPost(weaver);
 
+		tempDB = weaverDao.getWeaverInfosInPost(weaver);
+		if(tempDB != null){
+			basicDB.put("postCount", tempDB.get("postCount"));
+			basicDB.put("push", tempDB.get("push"));
+			basicDB.put("rePostCount", tempDB.get("rePostCount"));
+		}
+		tempDB = weaverDao.getWeaverInfosInRePost(weaver);
+		if(tempDB != null){
+			basicDB.put("myRePostCount", tempDB.get("myRePostCount"));
+			basicDB.put("rePostPush", tempDB.get("rePostPush"));
+		}
+		tempDB = weaverDao.getWeaverInfosInProject(weaver);
+		if(tempDB != null){
+			basicDB.put("projectCount", tempDB.get("projectCount"));
+			basicDB.put("childProjects", tempDB.get("childProjects"));
+		}
+		tempDB = weaverDao.getWeaverInfosInLecture(weaver);
+		if(tempDB != null){
+			basicDB.put("lectureCount", tempDB.get("lectureCount"));
+			basicDB.put("joinWeavers", tempDB.get("joinWeavers"));
+		}
+		tempDB = weaverDao.getWeaverInfosInCode(weaver);
+		if(tempDB != null){
+			basicDB.put("codeCount", tempDB.get("codeCount"));
+			basicDB.put("downCount", tempDB.get("downCount"));
+		}
+		weaver.setWeaverInfo(basicDB);
+	}
+	
+	public long countWeavers(){
+		return weaverDao.countWeavers();
+	}
+	
+	public List<Weaver> getWeavers(int page, int size) {
+		List<Weaver> weavers = weaverDao.getWeavers(page, size);
+		for(Weaver weaver : weavers)
+			this.getWeaverInfos(weaver);
+		return weavers;
+	}
+	
 	//위버정보들과 수 파악함.
-	public Object[] getWeaverInfos(List<String> tags,int page, int size ){
+	public Tuple<List<Weaver>, Integer> getWeaverInfos(List<String> tags,int page, int size ){
 		List<Weaver> weavers = new ArrayList<Weaver>();
 		HashMap<String, DBObject> weaverHash = new HashMap<String, DBObject>();
-		Object[] returnObject = new Object[2];
 		int startNumber = size * (page - 1);
-		System.out.println(startNumber);
-		System.out.println(size);
+
 		try{
 			for(DBObject db:weaverDao.getWeaverInfosInPost(tags)){
 				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
@@ -288,9 +375,7 @@ public class WeaverService implements UserDetailsService {
 
 		}
 		finally{
-			returnObject[0] = weaverHash.values().size();
-			returnObject[1] = weavers;
-			return returnObject;
+			return new Tuple<List<Weaver>, Integer>(weavers, weaverHash.values().size());
 		}
 	}
 

@@ -242,8 +242,8 @@
 					<tbody>
 						<c:forEach items="${codes}" var="code">
 							<tr>
-								<td class="td-post-writer-img" rowspan="2"><img
-									src="${code.getImgSrc()}"></td>
+								<td class="td-post-writer-img" rowspan="2"><a href="/${code.writerName}"><img
+									src="${code.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/code/${code.codeID}"> <i
 										class="fa fa-download"></i>&nbsp;${code.name} -
@@ -261,7 +261,7 @@
 									</span></a></td>
 							</tr>
 							<tr>
-								<td class="post-bottom"><b>${code.writerName}</b>
+								<td class="post-bottom"><a href="/${code.writerName}"><b>${code.writerName}</b></a>
 									${code.getFormatCreated()}</td>
 								<td class="post-bottom-tag"><c:forEach items="${code.tags}"
 										var="tag">

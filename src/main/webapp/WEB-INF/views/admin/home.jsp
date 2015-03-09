@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
-<html><head>
+<html>
+<head>
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
@@ -9,7 +10,7 @@
 	<script type="text/javascript">	
 		$(function() {
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
-			
+
 					$('.tag-name').click(
 							function() {
 								var tagname = $(this).text();
@@ -52,6 +53,19 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+				      
+				        $('#age-desc').click(
+							function() {
+								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 최신순</span>");
+							});
+						 $('#push-desc').click(
+							function() {
+								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 추천순</span>");
+							});
+						 $('#repost-desc').click(
+							function() {
+								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 최신 답변순</span>");
+							});
 		});
 
 		
@@ -72,41 +86,55 @@
 			<div class="row">
 				<div class="span12">
 					<ul class="nav nav-tabs pull-left" id="myTab">
-						<li id="age-desc"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-desc/page:1">최신순</a></li>
-						<c:if test="${massage == null }">
-							<li id="push-desc"><a
-								href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:push-desc/page:1">추천순</a></li>
-						</c:if>
-						<li id="repost-desc"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-desc/page:1">최신
-								답변순</a></li>
-						<li id="repost-many"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-many/page:1">많은
-								답변순</a></li>
-						<li id="age-asc"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-						<li id="repost-null"><a
-							href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
-								없는 글</a></li>
-					</ul>
-					<ul style="border-bottom: 0px;" class="nav nav-tabs  pull-right">
 						<li><a
 								href="/${weaver.getId()}/lecture"><i
-								class=" fa fa-university"></i> 강의</a></li>
-
+								class=" fa fa-twitter"></i> 위버</a></li>
+						<li><a
+								href="/${weaver.getId()}/"><i
+								class=" fa fa-comments"></i> 커뮤니티</a></li>
 						<li><a
 							href="/${weaver.getId()}/project"><i
 								class=" fa fa-bookmark"></i> 프로젝트</a></li>
 						<li><a
+								href="/${weaver.getId()}/lecture"><i
+								class=" fa fa-university"></i> 강의</a></li>
+						<li><a
 								href="/${weaver.getId()}/code"><i
 								class=" fa fa-rocket"></i> 코드</a></li>
 					</ul>
+					<div class="navbar navbar-inverse">
+						<ul style="border-bottom: 0px;" class="nav pull-right">
+							<li class="dropdown"><button
+								class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+								<span id="sort-menu" style="font-size:14px;"> 최신순 </span><b class="caret"></b></button>
+							 
+								<ul class="dropdown-menu">
+									<li id="age-desc"><a
+										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-desc/page:1">최신순</a></li>
+									<c:if test="${massage == null }">
+										<li id="push-desc"><a
+											href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:push-desc/page:1">추천순</a></li>
+									</c:if>
+									<li id="repost-desc"><a
+										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-desc/page:1">최신
+											답변순</a></li>
+									<li id="repost-many"><a
+										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-many/page:1">많은
+											답변순</a></li>
+									<li id="age-asc"><a
+										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+									<li id="repost-null"><a
+										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
+											없는 글</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</div>
 				<c:if test="${search == null}">
 					<div class="span11">
 						<input name="title" id="post-title-input" class="title span11"
-							placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text" />
+							placeholder="찾고 싶은 검색어를 입력해주세요!" type="text" />
 					</div>
 					<div class="span1">
 						<span> <a id='search-button'

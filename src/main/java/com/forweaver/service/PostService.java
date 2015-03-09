@@ -117,8 +117,11 @@ public class PostService {
 	}
 
 	public boolean delete(Post post, Weaver weaver) {
-
-		if (post.getWriter().getId().equals(weaver.getId())) { // 글쓴이의 경우
+		if(post == null || weaver == null)
+			return false;
+		
+		if (weaver.isAdmin() || 
+			post.getWriter().getId().equals(weaver.getId())) { // 글쓴이 또는 관리자의 경우
 			postDao.delete(post);
 			rePostDao.deleteAll(post.getPostID()+"");
 			cacheManager.getCache("post").remove(post.getPostID());

@@ -3,6 +3,7 @@ package com.forweaver.mongodb.dao;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
 import com.mongodb.DBObject;
 
@@ -40,10 +42,15 @@ public class WeaverDao {
 	}
 
 
-	public List<Weaver> list(int page, int size) {
+	public List<Weaver> getWeavers(int page, int size) {
 		Query query = new Query();
 		query.with(new PageRequest(page - 1, size));
 		return mongoTemplate.find(query, Weaver.class);
+	}
+	
+	public long countWeavers() {
+		Criteria criteria = new Criteria();
+		return mongoTemplate.count(new Query(criteria), Weaver.class);
 	}
 
 	public void delete(Weaver weaver) {
@@ -136,6 +143,56 @@ public class WeaverDao {
 		Aggregation agg = newAggregation(match, group);
 
 		return mongoTemplate.aggregate(agg, "code", DBObject.class).getMappedResults();
+	}
+	
+	public DBObject getWeaverInfosInPost(Weaver weaver){
+		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("writer").count().as("postCount").sum("push").as("push").sum("rePostCount").as("rePostCount");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "post", DBObject.class).getUniqueMappedResult();
+	}
+	
+	public DBObject getWeaverInfosInRePost(Weaver weaver){
+		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("writer").count().as("myRePostCount").sum("push").as("rePostPush");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "rePost", DBObject.class).getUniqueMappedResult();
+	}
+	
+	public DBObject getWeaverInfosInProject(Weaver weaver){
+		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("creator").count().as("projectCount").push("childProjects").as("childProjects");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "project", DBObject.class).getUniqueMappedResult();
+	}
+	
+	public DBObject getWeaverInfosInLecture(Weaver weaver){
+		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("creator").count().as("lectureCount").push("joinWeavers").as("joinWeavers");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "lecture", DBObject.class).getUniqueMappedResult();
+	}
+	
+	public DBObject getWeaverInfosInCode(Weaver weaver){
+		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
+		AggregationOperation match = Aggregation.match(criteria);
+		
+		AggregationOperation group = Aggregation. group("writer").count().as("codeCount").sum("downCount").as("downCount");
+		Aggregation agg = newAggregation(match, group);
+
+		return mongoTemplate.aggregate(agg, "code", DBObject.class).getUniqueMappedResult();
 	}
 
 }

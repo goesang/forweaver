@@ -166,8 +166,8 @@
 					<tbody>
 						<c:forEach items="${lectures}" var="lecture">
 							<tr>
-								<td class="td-post-writer-img" rowspan="2"><img
-									src="${lecture.getImgSrc()}"></td>
+								<td class="td-post-writer-img" rowspan="2"><a href="/${lecture.creatorName}"><img
+									src="${lecture.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/lecture/${lecture.name}"> <i
 										class='fa fa-university'></i>&nbsp;${lecture.name} ~
@@ -203,7 +203,7 @@
 									</sec:authorize></td>
 							</tr>
 							<tr>
-								<td class="post-bottom"><b>${lecture.creatorName}</b>
+								<td class="post-bottom"><a href="/${lecture.creatorName}"><b>${lecture.creatorName}</b></a>
 									${lecture.getOpeningDateFormat()}</td>
 								<td class="post-bottom-tag"><c:forEach
 										items="${lecture.tags}" var="tag">

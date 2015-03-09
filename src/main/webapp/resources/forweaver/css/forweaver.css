@@ -612,3 +612,6 @@ a.post-button {
 	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
+tr:first-child>td {
+	border-top: none !important;
+}

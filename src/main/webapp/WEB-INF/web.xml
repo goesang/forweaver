@@ -89,7 +89,7 @@
 	</servlet>
 	<context-param>
 	    <param-name>gitpath</param-name>
-	    <param-value>/home/git</param-value>
+	    <param-value>/home/git/</param-value>
 	</context-param>
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>

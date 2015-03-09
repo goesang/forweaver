@@ -105,38 +105,50 @@ public class CodeService {
 			System.err.println(e.getMessage());
 		}
 	}
-	
+
 	/** 코드를 검색하고 갯수를 파악함.
-	 * @param tags
 	 * @param weaver
+	 * @param tags
 	 * @param serach
 	 * @param sort
 	 * @return
 	 */
-	public long countCodes(List<String> tags,
-			Weaver weaver, String serach, String sort) {
-		return codeDao.countCodes(tags, serach, weaver, sort);
+	public long countCodes(Weaver weaver,List<String> tags,
+			 String search, String sort) {
+		return codeDao.countCodes(weaver, tags, search, sort);
 	}
 
 	/** 코드를 검색함.
-	 * @param tags
 	 * @param weaver
-	 * @param serach
+	 * @param tags
+	 * @param search
 	 * @param sort
 	 * @param page
 	 * @param size
 	 * @return
 	 */
-	public List<Code> getCodes(List<String> tags,
-			Weaver weaver, String serach, String sort, int page, int size) {
-		return codeDao.getCodes(tags, serach, weaver, sort, page, size);
+	public List<Code> getCodes(Weaver weaver, List<String> tags,
+			String search, String sort, int page, int size) {
+		return codeDao.getCodes(tags, search, weaver, sort, page, size);
 	}
 
-	/** 코드 삭제
+
+	/** 코드 삭제.
+	 * @param weaver
 	 * @param code
+	 * @return
 	 */
-	public void delete(Code code) {
-		codeDao.delete(code);
+	public boolean delete(Weaver weaver,Code code) {
+		if(weaver == null || code == null)
+			return false;
+
+		if(weaver.isAdmin() || 
+				weaver.getId().equals(code.getWriterName())){
+
+			codeDao.delete(code);
+			return true;
+		}
+		return false;
 	}
 
 	/** 코드 수정

@@ -102,7 +102,7 @@ $(document).ready(function() {
 							</a></td>
 							
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/browser/blame/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:${fileName}">
+							<a	href="/project/${project.name}/browser/blame/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:/${fileName}">
 									<span class="span-button"> <i class="fa fa-search"></i>
 										<p class="p-button">추적</p>
 									</span>

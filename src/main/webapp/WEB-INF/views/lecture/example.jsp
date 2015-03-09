@@ -101,9 +101,9 @@ showFileBrowser("/");
 				</div>
 				
 				<select id="selectBranch" class="span3">
-					<option value="/lecture/${lecture.name}/example/commit:${fn:replace(selectBranch,'.', ',')}">${selectBranch}</option>
+					<option value="/lecture/${lecture.name}/example/commit:${selectBranch}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
-						<option value="/lecture/${lecture.name}/example/commit:${fn:replace(gitBranchName,'.', ',')}">${gitBranchName}</option>
+						<option value="/lecture/${lecture.name}/example/commit:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 
 				</select>

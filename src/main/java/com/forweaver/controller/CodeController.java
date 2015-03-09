@@ -78,20 +78,20 @@ public class CodeController {
 	public String tagsWithPage(@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
-		List<String> tagList = tagService.stringToTagList(tagNames);
+		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		if(!tagService.validateTag(tagList,currentWeaver)){
+		if(!tagService.validateTag(tags,currentWeaver)){
 			return "redirect:/code/sort:age-desc/page:1";
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodes(tagList, null, null, sort, pageNum, size));
+				codeService.getCodes(null, tags, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(tagList, null, null, sort));
+				codeService.countCodes(null,tags, null, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -111,15 +111,15 @@ public class CodeController {
 			@PathVariable("search") String search,
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
-		List<String> tagList = tagService.stringToTagList(tagNames);
+		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
 		model.addAttribute("codes", 
-				codeService.getCodes(tagList, null, search, sort, pageNum, size));
+				codeService.getCodes(null,tags, search, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(tagList, null, search, sort));
+				codeService.countCodes(null,tags, search, sort));
 
 		model.addAttribute("number", size);
 		model.addAttribute("tagNames", tagNames);
@@ -158,8 +158,7 @@ public class CodeController {
 	public String delete(@PathVariable("codeID") int codeID){
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Code code = codeService.get(codeID);
-		if(currentWeaver.getId().equals(code.getWriterName()))
-			codeService.delete(code);
+		codeService.delete(currentWeaver,code);
 		return "redirect:/code/";
 	}
 
@@ -179,9 +178,7 @@ public class CodeController {
 			@PathVariable("codeID") int codeID,
 			@PathVariable("codeName") String codeName) throws IOException {
 		Code code = codeService.get(codeID);
-
-		if(code != null && code.getName().equals(codeName))
-			codeService.dowloadCode(code, res.getOutputStream());
+		codeService.dowloadCode(code, res.getOutputStream());
 	}
 
 
