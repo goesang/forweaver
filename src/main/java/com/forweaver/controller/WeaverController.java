@@ -451,22 +451,12 @@ public class WeaverController {
 			@RequestParam("say") String say,
 			@RequestParam("image") MultipartFile image) {
 		Weaver weaver = weaverService.getCurrentWeaver();
+		if (!weaver.getId().equals(id) ) // 본인이 아니거나 비밀번호가 틀린경우
+			return "/exit";
 
-		if (!weaver.getId().equals(id) || weaverService.validPassword(weaver,password)) // 본인이 아니거나 비밀번호가 틀린경우
-			return "redirect:/"+weaver.getId()+"/edit";
+		weaverService.update(weaver,password,newpassword,say,image);
 
-		if(image != null && image.getSize() > 0)
-			weaver.setImage(new Data(image, weaver.getId()));
-
-		if(newpassword != null && !newpassword.equals(""))
-			weaver.setPassword(newpassword);
-		
-		if(say != null && !say.equals(""))
-			weaver.setSay(say);
-
-		weaverService.update(weaver);
-
-		return "redirect:/"+id+"/edit";
+		return "/exit";
 	}
 
 	@RequestMapping(value = "/{id}/img")

@@ -27,8 +27,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
@@ -94,9 +96,23 @@ public class WeaverService implements UserDetailsService {
 		file.mkdir();
 	}
 
+	public void update(Weaver weaver,String password,String newpassword,String say,MultipartFile image) { // 회원 수정
+		// TODO Auto-generated method stub
+		if(image != null && image.getSize() > 0)
+			weaver.setImage(new Data(image, weaver.getId()));
+
+		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
+			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));
+				
+		if(say != null && !say.equals(""))
+			weaver.setSay(say);
+		
+		weaverDao.update(weaver);
+	}
+	
 	public void update(Weaver weaver) { // 회원 수정
 		// TODO Auto-generated method stub
-		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
+				
 		weaverDao.update(weaver);
 	}
 
@@ -238,7 +254,7 @@ public class WeaverService implements UserDetailsService {
 	 * @return
 	 */
 	public boolean validPassword(Weaver weaver,String password){
-		if(password != null && password.length()<4 && 
+		if(password != null && password.length()>3 && 
 				weaver.getPassword().equals(passwordEncoder.encodePassword(password, null)))
 			return true;
 		return false;
