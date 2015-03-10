@@ -371,12 +371,13 @@ public class PostDao {
 			List<String> publicTags, List<String> loginWeaverprivateTags,
 			Weaver writer, Weaver loginWeaver, String search, String sort) {
 		Criteria criteria = new Criteria();
-
+		System.out.println(loginWeaverprivateTags);
 		criteria.orOperator(
 				Criteria.where("kind").is(1).and("writer").is(writer),
 				Criteria.where("tags").in(loginWeaverprivateTags)
 						.and("writer").is(writer),
-				Criteria.where("writer").is(loginWeaver));
+					Criteria.where("tags").in("$"+writer.getId())
+						.and("writer").is(loginWeaver));
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
@@ -406,14 +407,14 @@ public class PostDao {
 			List<String> publicTags, List<String> loginWeaverprivateTags,
 			Weaver writer, Weaver loginWeaver, String search, String sort,
 			int page, int size) {
-
 		Criteria criteria = new Criteria();
 
 		criteria.orOperator(
 				Criteria.where("kind").is(1).and("writer").is(writer),
 				Criteria.where("tags").in(loginWeaverprivateTags)
 						.and("writer").is(writer),
-				Criteria.where("writer").is(loginWeaver));
+				Criteria.where("tags").in("$"+writer.getId())
+				.and("writer").is(loginWeaver));
 
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(

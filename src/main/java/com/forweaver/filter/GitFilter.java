@@ -29,16 +29,10 @@ import com.forweaver.util.GitUtil;
 //git에서 권한 설정 기능이 없어서 필터로 구현함.
 @Component("GitFilter")
 public class GitFilter implements Filter {
-	@Autowired 
-	private WeaverService weaverService;
-	@Autowired 
-	private LectureService lectureService;
-	@Autowired 
-	private ProjectService projectService;
-
-	@Value("${gitpath}")
-	private String gitpath;
-	
+	@Autowired private WeaverService weaverService;
+	@Autowired private LectureService lectureService;
+	@Autowired private ProjectService projectService;
+	@Autowired private GitUtil gitUtil;
 	private FilterConfig config = null;
 
 	public void doFilter(ServletRequest req, ServletResponse res,
@@ -49,8 +43,7 @@ public class GitFilter implements Filter {
 		String repoName = requstUrlArray[3].substring(0,
 				requstUrlArray[3].indexOf(".git"));
 
-		if (!new File(gitpath + lectureName + "/" + repoName + ".git")
-		.exists()) // 저장소가 없는 경우
+		if (!new File(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git").exists()) // 저장소가 없는 경우
 			return;
 
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -76,7 +69,7 @@ public class GitFilter implements Filter {
 
 		Repo repo = lectureService.getRepo(lectureName + "/" + repoName);
 
-		GitUtil gitUtil = new GitUtil(gitpath,repo);
+		gitUtil.Init(repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
 
 		if (pass.getPermission() == 1) { // 강의 개설자의 경우
