@@ -87,19 +87,19 @@
 				<div class="span12">
 					<ul class="nav nav-tabs pull-left" id="myTab">
 						<li><a
-								href="/${weaver.getId()}/lecture"><i
+								href="/admin/weaver"><i
 								class=" fa fa-twitter"></i> 위버</a></li>
 						<li><a
-								href="/${weaver.getId()}/"><i
+								href="/admin"><i
 								class=" fa fa-comments"></i> 커뮤니티</a></li>
 						<li><a
-							href="/${weaver.getId()}/project"><i
+							href="/admin/project"><i
 								class=" fa fa-bookmark"></i> 프로젝트</a></li>
 						<li><a
-								href="/${weaver.getId()}/lecture"><i
+								href="/admin/lecture"><i
 								class=" fa fa-university"></i> 강의</a></li>
 						<li><a
-								href="/${weaver.getId()}/code"><i
+								href="/admin/code"><i
 								class=" fa fa-rocket"></i> 코드</a></li>
 					</ul>
 					<div class="navbar navbar-inverse">
