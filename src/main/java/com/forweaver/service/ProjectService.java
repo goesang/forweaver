@@ -32,14 +32,13 @@ public class ProjectService{
 	@Autowired private WaitJoinDao waitJoinDao;
 	@Autowired private PostDao postDao;
 	@Autowired private CherryPickRequestDao cherryPickRequestDao;
-	@Value("${gitpath}")
-	private String gitpath;
+	@Autowired private GitUtil gitUtil;
 
 	public void add(Project project,Weaver currentWeaver){
 		// TODO Auto-generated method stub
 
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,project);
+			gitUtil.Init(project);
 			gitUtil.createRepository();
 		} catch (Exception e) {
 			return;
@@ -65,7 +64,7 @@ public class ProjectService{
 		if(weaver.isAdmin() || 
 				weaver.getId().equals(project.getCreatorName())){
 			try{
-				GitUtil gitUtil = new GitUtil(gitpath,project);
+				gitUtil.Init(project);
 				gitUtil.deleteRepository();
 			} catch (Exception e) {
 				return false;
@@ -194,7 +193,7 @@ public class ProjectService{
 	public void uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
 		if(message==null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
-		GitUtil gitUtil = new GitUtil(gitpath,project);
+		gitUtil.Init(project);
 		try{
 			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 		}catch(Exception e){
@@ -220,7 +219,7 @@ public class ProjectService{
 				}
 			}
 
-			GitUtil gitUtil = new GitUtil(gitpath,newProject);
+			gitUtil.Init(newProject);
 			gitUtil.forkRepository(originProject.getName(), newProject.getName());
 			projectDao.insert(newProject);
 			projectDao.update(originProject);

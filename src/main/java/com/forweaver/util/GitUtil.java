@@ -37,6 +37,8 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.forweaver.domain.Lecture;
@@ -52,8 +54,10 @@ import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 
 //git과 관련된 모든 기능 구현.
+@Component
 public class GitUtil {
-
+	
+	@Value("${gitpath}")
 	private String gitPath;
 	private String path;
 	private Repository localRepo;
@@ -61,7 +65,15 @@ public class GitUtil {
 	private StoredConfig config;
 	private boolean isRepo;
 
-	public GitUtil(String gitPath,Repo repo) {
+	public String getGitPath() {
+		return gitPath;
+	}
+
+	public void setGitPath(String gitPath) {
+		this.gitPath = gitPath;
+	}
+
+	public void Init(Repo repo) {
 		try {
 			this.path = gitPath + repo.getLectureName() + "/" + repo.getName()
 					+ ".git";
@@ -74,7 +86,7 @@ public class GitUtil {
 		}
 	}
 
-	public GitUtil(String gitPath,Project pro) {
+	public void Init(Project pro) {
 		try {
 			this.path = gitPath + pro.getName() + ".git";
 			this.localRepo = new FileRepository(this.path);
@@ -86,7 +98,7 @@ public class GitUtil {
 		}
 	}
 
-	public GitUtil(String gitPath,String creatorName, String repositoryName) {
+	public void Init(String creatorName, String repositoryName) {
 		try {
 			this.path = gitPath + creatorName + "/" + repositoryName
 					+ ".git";

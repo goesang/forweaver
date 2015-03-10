@@ -515,8 +515,8 @@ public class ProjectController {
 
 		if(waitJoinService.isCreateProjectWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
-			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-cancel'>거절하시겠습니까?</a>";
+			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-cancel'>거절하시겠습니까?</a><a>";
 
 			Post post = new Post(projectCreator,
 					title, 
@@ -540,8 +540,8 @@ public class ProjectController {
 		Weaver waitingWeaver = weaverService.getCurrentWeaver();
 
 		if(waitJoinService.isCreateProjectWaitJoin(project, waitingWeaver, waitingWeaver)){
-			String title = waitingWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+"에 가입 신청을 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a>";
+			String title = waitingWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+"에 가입 신청을 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a><a>";
 			Post post = new Post(waitingWeaver,
 					title, 
 					"", 
@@ -577,9 +577,7 @@ public class ProjectController {
 			projectService.update(project);
 			Post post = new Post(waitingWeaver, 
 					"관리자 "+project.getCreatorName()+"님의 승인으로 프로젝트명:"+
-							"<a href='/project/"+creatorName+"/"+projectName+"/'>"+
 							creatorName+"/"+projectName+
-							"</a>"+
 							"에 가입이 승인되었습니다!", 
 							"", 
 							tagService.stringToTagList("@"+project.getName()+",가입")); //@프로젝트명,가입 태그를 걸어줌
@@ -598,10 +596,8 @@ public class ProjectController {
 			projectService.update(project);
 
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
-					currentWeaver.getId()+"님이 프로젝트명:"+
-					"<a href='/project/"+creatorName+"/"+projectName+"'>"+
-					creatorName+"/"+projectName+
-					"</a>"+"를 가입 초대를 수락하셨습니다!", 
+					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
+					"를 가입 초대를 수락하셨습니다!", 
 					"", 
 					tagService.stringToTagList("@"+project.getName()+",가입")); //@프로젝트명,가입 태그를 걸어줌
 
@@ -642,10 +638,8 @@ public class ProjectController {
 				&& waitJoinService.deleteProjectWaitJoin(waitJoin, project, currentWeaver)){
 
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
-					currentWeaver.getId()+"님이 프로젝트명:"+
-					"<a href='/project/"+creatorName+"/"+projectName+"'>"+
-					creatorName+"/"+projectName+
-					"</a>"+"를 가입 초대를 거절하셨습니다.", 
+					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
+					"를 가입 초대를 거절하셨습니다.", 
 					"", 
 					tagService.stringToTagList("$"+project.getCreatorName()));
 

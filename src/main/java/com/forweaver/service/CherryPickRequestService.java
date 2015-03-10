@@ -20,9 +20,8 @@ public class CherryPickRequestService {
 	private CherryPickRequestDao cherryPickRequestDao;
 	@Autowired 
 	private PostDao postDao;
-
-	@Value("${gitpath}")
-	private String gitpath;
+	@Autowired 
+	private GitUtil gitUtil;
 	
 	public List<CherryPickRequest> get(Project orginalProject){
 		return cherryPickRequestDao.get(orginalProject);
@@ -49,7 +48,7 @@ public class CherryPickRequestService {
 	}
 
 	public boolean accept(CherryPickRequest cherryPickRequest,String originalRepoBranch,Weaver weaver){ // 채리픽 요청을 수락함.
-		GitUtil gitUtil = new GitUtil(gitpath,cherryPickRequest.getOrginalProject());
+		gitUtil.Init(cherryPickRequest.getOrginalProject());
 
 		if(!weaver.isAdminWeaver(cherryPickRequest.getOrginalProject().getName())) // 원본 프로젝트의 운영자만 수락 가능.
 			return false;

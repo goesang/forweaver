@@ -22,15 +22,13 @@ import com.forweaver.util.WebUtil;
 @Service
 public class GitService {
 
-	@Autowired 
-	private WeaverDao weaverDao;
+	@Autowired private WeaverDao weaverDao;
+	@Autowired private GitUtil gitUtil;
 
-	@Value("${gitpath}")
-	private String gitpath;
 	
 	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		if(filePath.equals("/") || !filePath.startsWith("/"))
 			return null;
 		else
@@ -42,7 +40,7 @@ public class GitService {
 	
 	public GitFileInfo getFileInfoWithBlame(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		if(filePath.equals("/") || !filePath.startsWith("/"))
 			return null;
 		else
@@ -55,27 +53,27 @@ public class GitService {
 	}
 
 	public void hideBranch(String parentDirctoryName,String repositoryName,String weaverName){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		gitUtil.hideNotUserBranches(weaverName);
 		gitUtil.checkOutBranch(weaverName);
 	}
 
 	public void showBranch(String parentDirctoryName,String repositoryName){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		gitUtil.showBranches();
 		gitUtil.checkOutMasterBranch();
 	}
 
 	public List<String> getBranchList(String parentDirctoryName,
 			String repositoryName){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		List<String> branchList = gitUtil.getSimpleBranchAndTagNameList();
 		return branchList;
 	}
 
 	public boolean existCommit(String parentDirctoryName,
 			String repositoryName,String commit){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		try{
 			RevCommit revCommit = gitUtil.getCommit(commit);
 			if(revCommit == null)
@@ -89,13 +87,13 @@ public class GitService {
 
 	public int getCommitListCount(String parentDirctoryName,
 			String repositoryName,String commit){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		return gitUtil.getCommitListCount(commit);
 	}
 
 	public List<GitSimpleFileInfo> getGitSimpleFileInfoList(String parentDirctoryName,
 			String repositoryName,String commitID,String filePath) {
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		
 		if(filePath.equals("/") || !filePath.startsWith("/"))
 			filePath = "";
@@ -108,7 +106,7 @@ public class GitService {
 
 	public List<GitSimpleCommitLog> getGitCommitLogList(String parentDirctoryName,
 			String repositoryName,String branchName,int page,int number) {	
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		List<GitSimpleCommitLog> gitCommitLogList = gitUtil.getCommitLogList(branchName,page,number);
 		return gitCommitLogList;
 	}
@@ -116,7 +114,7 @@ public class GitService {
 
 	public GitCommitLog getGitCommitLog(String parentDirctoryName,
 			String repositoryName,String branchName) {
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		GitCommitLog gitCommitLog = gitUtil.getCommitLog(branchName);
 		return gitCommitLog;
 
@@ -125,26 +123,26 @@ public class GitService {
 
 	public void getProjectZip(String parentDirctoryName,
 			String repositoryName,String commitName,HttpServletResponse response){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		gitUtil.getProjectZip(commitName, response);
 	}
 
 
 	public GitParentStatistics loadStatistics(String parentDirctoryName,
 			String repositoryName){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName,repositoryName);
+		gitUtil.Init(parentDirctoryName,repositoryName);
 		return gitUtil.getCommitStatistics();
 	}
 
 	public int[][] loadDayAndHour(String parentDirctoryName,
 			String repositoryName){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName, repositoryName);	
+		gitUtil.Init(parentDirctoryName,repositoryName);	
 		return gitUtil.getDayAndHour();
 	}
 
 	public GitInfo getGitInfo(String parentDirctoryName,
 			String repositoryName,String branchName){
-		GitUtil gitUtil = new GitUtil(gitpath,parentDirctoryName, repositoryName);	
+		gitUtil.Init(parentDirctoryName,repositoryName);	
 		return gitUtil.getGitInfo(branchName);
 	}
 

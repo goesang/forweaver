@@ -4,18 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
-import com.forweaver.domain.Project;
 import com.forweaver.domain.Repo;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
@@ -34,10 +28,8 @@ public class LectureService {
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private WaitJoinDao waitJoinDao;
 	@Autowired private PostDao postDao;
-
-	@Value("${gitpath}")
-	private String gitpath;
-
+	@Autowired private GitUtil gitUtil;
+	
 	public void add(Lecture lecture,Weaver currentWeaver) {
 
 		if(lecture.getName().toUpperCase().equals("ROLE_ADMIN")||
@@ -55,11 +47,11 @@ public class LectureService {
 		weaverDao.update(currentWeaver);
 
 
-		File file = new File(gitpath + lecture.getName());
+		File file = new File(gitUtil.getGitPath() + lecture.getName());
 		file.mkdir();
 
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,repo);
+			gitUtil.Init(repo);
 			gitUtil.createRepository();
 		} catch (Exception e) {
 			System.err.println("예제 저장소 생성 불가");
@@ -68,7 +60,7 @@ public class LectureService {
 
 	public void addRepo(Lecture lecture,Repo repo){
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,repo);
+			gitUtil.Init(repo);
 			gitUtil.createRepository();
 		} catch (Exception e) {
 			return;
@@ -79,7 +71,7 @@ public class LectureService {
 
 	public void removeRepo(Lecture lecture,Repo repo){
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,repo);
+			gitUtil.Init(repo);
 			gitUtil.deleteRepository();
 		} catch (Exception e) {
 			return;
@@ -252,7 +244,7 @@ public class LectureService {
 	public void uploadZip(Lecture lecture,Repo repo,Weaver weaver,String branchName,String message,MultipartFile zip){
 		if(message==null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
-		GitUtil gitUtil = new GitUtil(gitpath,repo);
+		gitUtil.Init(repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
 		try{
 			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
