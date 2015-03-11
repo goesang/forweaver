@@ -204,7 +204,7 @@
 							<span class='input-group-addon btn btn-primary btn-file'><span
 								class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
 								<span class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span> <input type='file'
+									class='icon-repeat icon-white'></i></span><input pl type='file'
 								id='file' multiple='true' name='file'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
 								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>

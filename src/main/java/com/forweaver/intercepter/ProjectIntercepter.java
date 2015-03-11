@@ -32,10 +32,11 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 			projectName= uri.split("/")[2]+"/"+uri.split("/")[3];
 		}else
 			return true;
-		if(uri.endsWith("/join-ok") ||uri.endsWith("/join") || projectName.startsWith("sort:") || projectName.startsWith("tags:"))
+		if(uri.endsWith("/join-cancel") || uri.endsWith("/join-ok") ||uri.endsWith("/join") || projectName.startsWith("sort:") || projectName.startsWith("tags:"))
 			return true;
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Project project = projectService.get(projectName);
+		
 		if(uri.contains("/tags:")){
 			String tags = uri.substring(uri.indexOf("/tags:")+6);
 			if(tags.contains("/"))

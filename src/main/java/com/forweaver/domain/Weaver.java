@@ -94,10 +94,10 @@ public class Weaver implements UserDetails,Serializable {
 
 
 	public String getSay() {
-		if(this.say != null)
+		if(this.say != null && this.say.length() > 0)
 			return say;
-		else
-			return "Hello World!";
+
+		return "Hello World!";
 	}
 
 
@@ -195,7 +195,7 @@ public class Weaver implements UserDetails,Serializable {
 		passNames.add("$"+this.id);
 		return passNames;
 	}
-	
+
 	public List<String> getPrivateTags(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass : this.passes){
@@ -261,16 +261,16 @@ public class Weaver implements UserDetails,Serializable {
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public List<String> getProjects(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(pass.getJoinName().contains("/")
-			&& !pass.getJoinName().startsWith("ROLE"))
+					&& !pass.getJoinName().startsWith("ROLE"))
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public List<String> getJoinLectures(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
@@ -288,12 +288,12 @@ public class Weaver implements UserDetails,Serializable {
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public List<String> getLectures(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(!pass.getJoinName().contains("/")
-			&& !pass.getJoinName().startsWith("ROLE"))
+					&& !pass.getJoinName().startsWith("ROLE"))
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
@@ -305,7 +305,7 @@ public class Weaver implements UserDetails,Serializable {
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public int countProject(){
 		return this.getProjects().size();
 	}
@@ -327,10 +327,19 @@ public class Weaver implements UserDetails,Serializable {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
-	
+
 	public boolean equals(Weaver weaver) {
-		
+
 		return this.id.equals(weaver.getId());
+	}
+
+	public boolean isAdmin(String joinName){
+		Pass pass = this.getPass(joinName);
+
+		if(pass !=null)
+			return pass.getPermission() >1;
+
+		return false;
 	}
 
 }
