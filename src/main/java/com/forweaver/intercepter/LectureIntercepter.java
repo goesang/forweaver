@@ -31,7 +31,7 @@ public class LectureIntercepter extends HandlerInterceptorAdapter {
 		else
 			return true;
 
-		if(uri.endsWith("/join-ok") || uri.endsWith("/join") || lectureName.startsWith("page:") || lectureName.startsWith("tags:") || lectureName.startsWith("add"))
+		if(uri.endsWith("/join-cancel") || uri.endsWith("/join-ok") || uri.endsWith("/join") || lectureName.startsWith("page:") || lectureName.startsWith("tags:") || lectureName.startsWith("add"))
 			return true;
 
 		Weaver weaver = weaverService.getCurrentWeaver();

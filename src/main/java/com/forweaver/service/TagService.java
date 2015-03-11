@@ -11,6 +11,21 @@ import com.forweaver.domain.Weaver;
 @Service
 public class TagService {
 
+	/** 실수로 자신의 메시지 태그를 붙이면 지움.
+	 * @param tagList
+	 * @param weaver
+	 * @return
+	 */
+	public List<String> removeMyMassageTag(List<String> tagList,Weaver weaver){
+		 List<String> tags = new ArrayList<String>();
+		 
+		for (String tag : tagList)
+			if(!tag.equals("$"+weaver.getId()))
+				tags.add(tag);
+		
+		return tags;
+	}
+	
 	public boolean validateTag(List<String> tagList,Weaver weaver) {
 
 		List<String> publicTags = new ArrayList<String>();

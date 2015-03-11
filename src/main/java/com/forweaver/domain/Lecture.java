@@ -117,7 +117,25 @@ public class Lecture implements Serializable {
 	}
 	
 	public void removeJoinWeaver(Weaver weaver){
-		this.joinWeavers.remove(weaver);
+		int index = -1;
+		
+		for(int i = 0;i<this.joinWeavers.size();i++)
+			if(joinWeavers.get(i).getId().equals(weaver.getId()))
+				index = i;
+		
+		if(index >= 0)
+			this.joinWeavers.remove(index);
+	}
+	
+	public void removeAdminWeaver(Weaver weaver){
+		int index = -1;
+		
+		for(int i = 0;i<this.adminWeavers.size();i++)
+			if(adminWeavers.get(i).getId().equals(weaver.getId()))
+				index = i;
+		
+		if(index >= 0)
+			this.adminWeavers.remove(index);
 	}
 	public List<String> getTags() {
 		return tags;

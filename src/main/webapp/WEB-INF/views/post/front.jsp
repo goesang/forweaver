@@ -272,13 +272,22 @@
 										</c:if> &nbsp;${post.title}
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind == 3}">
-										<a href="/community/${post.postID}/delete"> <span
-											class="span-button"> <i class="fa fa-trash-o"></i>
-												<p class="p-button">삭제</p>
+										test="${post.kind == 3 && post.getWriterName().equals(currentUser.id)}">
+										<a href="/community/${post.postID}"> <span
+											class="span-button"> <i class="fa fa-envelope-o"></i>
+												<p class="p-button">보냄</p>
 										</span>
 										</a>
-									</c:if> <c:if test="${post.kind <= 2}">
+									</c:if> 
+									<c:if
+										test="${post.kind == 3 && !post.getWriterName().equals(currentUser.id)}">
+										<a href="/community/${post.postID}"> <span
+											class="span-button"> <i class="fa fa-envelope"></i>
+												<p class="p-button">받음</p>
+										</span>
+										</a>
+									</c:if> 
+									<c:if test="${post.kind <= 2}">
 										<a href="/community/${post.postID}/push"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>

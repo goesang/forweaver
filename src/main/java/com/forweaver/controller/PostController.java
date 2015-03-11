@@ -80,7 +80,7 @@ public class PostController {
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-		
+
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
 		model.addAttribute("posts", 
@@ -136,9 +136,9 @@ public class PostController {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-		
+
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		
+
 		model.addAttribute("posts", 
 				postService.getPosts(currentWeaver,tagList,search, sort, pageNum, size));
 		model.addAttribute("postCount", 
@@ -170,6 +170,9 @@ public class PostController {
 		List<String> tagList = tagService.stringToTagList(
 				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
 		Weaver weaver = weaverService.getCurrentWeaver();
+		
+		tagList = tagService.removeMyMassageTag(tagList,weaver);//실수로 자신의 메세지 태그를 붙이면 지움
+		
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
 			return "redirect:"+"/community";
 
@@ -184,6 +187,10 @@ public class PostController {
 				tagList);
 
 		postService.add(post,datas);
+		
+		if(postService.isMassageTags(tagList))
+			return "redirect:"+"/community/tags:"+"$"+weaver.getId();
+		
 		return "redirect:"+"/community/";
 	}
 

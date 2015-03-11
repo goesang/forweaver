@@ -375,7 +375,7 @@ public class ProjectController {
 
 		return "/project/commitLog";
 	}
-
+/*
 	@RequestMapping("/{creatorName}/{projectName}/rss") 
 	@ResponseBody
 	public String rss(@PathVariable("projectName") String projectName,
@@ -401,7 +401,7 @@ public class ProjectController {
 		return rss+"</channel></rss>";
 	}
 
-
+*/
 
 	@RequestMapping("/{creatorName}/{projectName}/commitlog/commit:{commit}")
 	public String commitLog(@PathVariable("projectName") String projectName,
@@ -494,15 +494,20 @@ public class ProjectController {
 						"프로젝트명:"+project.getName()+"에서 탈퇴당하셨습니다.", "", 
 						tagService.stringToTagList("$"+deleteWeaver.getId()));//프로젝트에 메세지 보냄
 				postService.add(post, null);
+				return "redirect:/project/"+creatorName+"/"+projectName+"/weaver";
+				
 			}else{//사용자가 탈퇴할시에 메세지
 				post = new Post(currentWeaver, 
 						deleteWeaver.getId()+"님이 탈퇴하셨습니다.", "", 
 						tagService.stringToTagList("@"+project.getName()+",탈퇴"));//프로젝트에 메세지 보냄
 				postService.add(post, null);
+				return "redirect:/";
 			}
 
 		}
+		
 		return "redirect:/";
+		
 	}
 
 	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaver}/add-weaver")
@@ -513,7 +518,7 @@ public class ProjectController {
 		Weaver waitingWeaver = weaverService.get(weaver);
 		Weaver proposer = weaverService.getCurrentWeaver();
 
-		if(waitJoinService.isCreateProjectWaitJoin(project, waitingWeaver, proposer)){
+		if(waitJoinService.isCreateWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
 			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
 					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-cancel'>거절하시겠습니까?</a><a>";
@@ -539,7 +544,7 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver waitingWeaver = weaverService.getCurrentWeaver();
 
-		if(waitJoinService.isCreateProjectWaitJoin(project, waitingWeaver, waitingWeaver)){
+		if(waitJoinService.isCreateWaitJoin(project, waitingWeaver, waitingWeaver)){
 			String title = waitingWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+"에 가입 신청을 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
 					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a><a>";
 			Post post = new Post(waitingWeaver,
@@ -566,10 +571,10 @@ public class ProjectController {
 		Weaver waitingWeaver = weaverService.get(weaver);
 		WaitJoin waitJoin = waitJoinService.get(creatorName+"/"+projectName, weaver);
 		Pass pass = new Pass(creatorName+"/"+projectName, 1);
-
+		System.out.println("rrrrrrrrrr");
 		if(waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& project.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteProjectWaitJoin(waitJoin, project, waitingWeaver)){
+				&& waitJoinService.deleteWaitJoin(waitJoin, project, waitingWeaver)){
 
 			project.addJoinWeaver(waitingWeaver); //프로젝트 목록에 추가
 			waitingWeaver.addPass(pass);
@@ -589,7 +594,7 @@ public class ProjectController {
 		}else if(project != null //관리자가 쪽지를 보내고 가입자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& !project.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteProjectWaitJoin(waitJoin, project, currentWeaver)){
+				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
 			project.addJoinWeaver(currentWeaver); //프로젝트 목록에 추가
 			currentWeaver.addPass(pass);
 			weaverService.update(currentWeaver);
@@ -603,13 +608,13 @@ public class ProjectController {
 
 			postService.add(post,null);
 
-			return "redirect:/project/"+creatorName+"/"+projectName+"/manage";
+			return "redirect:/project/"+creatorName+"/"+projectName+"/weaver";
 		}
 
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
 
-	@RequestMapping("/{creatorName}/projectName}/weaver/{weaver}/join-cancel") //프로젝트에 가입 승인 취소
+	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaver}/join-cancel") // 프로젝트 가입 승인
 	public String joinCancel(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,@PathVariable("weaver") String weaver) {
 		Project project = projectService.get(creatorName+"/"+projectName);
@@ -619,7 +624,7 @@ public class ProjectController {
 		if(project != null //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& project.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteProjectWaitJoin(waitJoin, project, currentWeaver)){
+				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
 
 			Post post = new Post(currentWeaver,  //관리자가 가입자에게 보내는 메세지
 					"관리자 "+project.getCreatorName()+"님의 프로젝트명:"+
@@ -635,7 +640,7 @@ public class ProjectController {
 		}else if(project != null //관리자가 쪽지를 보내고 가입자가 거절 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& !project.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteProjectWaitJoin(waitJoin, project, currentWeaver)){
+				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
 
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
@@ -645,7 +650,7 @@ public class ProjectController {
 
 			postService.add(post,null);
 
-			return "redirect:/project/"+creatorName+"/"+projectName+"/manage";
+			return "redirect:/";
 		}
 
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
