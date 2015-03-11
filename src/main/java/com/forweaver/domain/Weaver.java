@@ -186,13 +186,22 @@ public class Weaver implements UserDetails,Serializable {
 		this.id = id;
 	}
 
-	public List<String> getPrivateTags(){
+	public List<String> getPrivateAndMassageTags(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass : this.passes){
 			if(!pass.getJoinName().startsWith("ROLE"))
 				passNames.add("@"+pass.getJoinName());
 		}
 		passNames.add("$"+this.id);
+		return passNames;
+	}
+	
+	public List<String> getPrivateTags(){
+		List<String> passNames = new ArrayList<String>();
+		for(Pass pass : this.passes){
+			if(!pass.getJoinName().startsWith("ROLE"))
+				passNames.add("@"+pass.getJoinName());
+		}
 		return passNames;
 	}
 
@@ -317,6 +326,11 @@ public class Weaver implements UserDetails,Serializable {
 
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
+	}
+	
+	public boolean equals(Weaver weaver) {
+		
+		return this.id.equals(weaver.getId());
 	}
 
 }
