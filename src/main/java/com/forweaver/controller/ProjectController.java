@@ -162,8 +162,13 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
 		int category = 1;
+		boolean isEducation = false;
+		
 		if(params.get("category")!= null && params.get("category").equals("on"))
 			category= 0;
+		
+		if(params.get("isEducation")!= null && params.get("isEducation").equals("on"))
+			isEducation= true;
 		
 		if(!tagService.isPublicTags(tagList))
 			return "redirect:/project/";
@@ -172,7 +177,8 @@ public class ProjectController {
 				category, 
 				WebUtil.removeHtml(params.get("description")), 
 				currentWeaver,
-				tagList);
+				tagList,isEducation);
+		
 		projectService.add(project,currentWeaver);
 		return "redirect:/project/"+project.getName();
 	}
@@ -571,7 +577,7 @@ public class ProjectController {
 		Weaver waitingWeaver = weaverService.get(weaver);
 		WaitJoin waitJoin = waitJoinService.get(creatorName+"/"+projectName, weaver);
 		Pass pass = new Pass(creatorName+"/"+projectName, 1);
-		System.out.println("rrrrrrrrrr");
+
 		if(waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& project.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, waitingWeaver)){

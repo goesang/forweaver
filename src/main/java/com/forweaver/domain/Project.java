@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 /**<pre> 프로젝트 정보를 담은 클래스. 
  * name 프로젝트 이름 이게 기본 키
- * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트 2면 파생 프로젝트
+ * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, 2면 파생 프로젝트, 3이면 과제 프로젝트
  * description  프로젝트 소개
  * openingDate 프로젝트 시작일
  * endDate  프로젝트 종료일
@@ -41,7 +41,6 @@ public class Project implements Serializable {
 	@DBRef
 	private Weaver creator;
 	private int push;
-	
 	@DBRef
 	private List<Project> childProjects = new ArrayList<Project>();
 	

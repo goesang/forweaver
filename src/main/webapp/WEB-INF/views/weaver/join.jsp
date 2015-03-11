@@ -120,11 +120,20 @@ $(document).ready(function() {
 
 							</div>
 						</div>
+						
+						<div class="control-group">
+							<label for="studentID" class="control-label">학번</label>
+							<div class="controls">
+								<input name="studentID" id="studentID" class="input-large" type="text"/>
+
+							</div>
+						
+						</div>
 						</div>
 						<div class="span4">
 						
 						<div class ="control-group" style="text-align:center;">
-						<img id="preview" style="height:150px;width:150px;" class="img-polaroid" src="">
+						<img id="preview" style="height:190px;width:190px;" class="img-polaroid" src="">
 						</div>
 						
 						

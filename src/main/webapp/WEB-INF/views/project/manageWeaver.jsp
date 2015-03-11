@@ -13,7 +13,12 @@ var weaverList = new Array();
 weaverList.push({
 	"admin": true,
 	"id": "${adminWeaver.id}",
-	"email": "${adminWeaver.email}",
+	<c:if test="${project.isEducation()}">
+	"massage": "${adminWeaver.studentID}",
+	</c:if>
+	<c:if test="${!project.isEducation()}">
+	"massage": "${adminWeaver.say}",
+	</c:if>
 	"img": "${adminWeaver.getImgSrc()}"
 });
 </c:forEach>
@@ -21,7 +26,12 @@ weaverList.push({
 weaverList.push({
 	"admin": false,
 	"id": " ${joinWeaver.id}",
-	"email": "${joinWeaver.email}",
+	<c:if test="${project.isEducation()}">
+	"massage": "${joinWeaver.studentID}",
+	</c:if>
+	<c:if test="${!project.isEducation()}">
+	"massage": "${joinWeaver.say}",
+	</c:if>
 	"img": "${joinWeaver.getImgSrc()}",
 	"removeLink": "/project/${project.name}/weaver/${joinWeaver.id}/delete"
 });

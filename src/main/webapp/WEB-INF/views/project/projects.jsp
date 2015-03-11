@@ -77,6 +77,7 @@
 	}
 		$(document).ready(function() {
 			
+
 			hideProjectContent();
 			
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
@@ -167,10 +168,13 @@
 				<div id="project-div" class="span10">
 					<input id ="project-name" class="title span5"
 						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" /> 
-						<label style="display:inline; top: -5px;" class="checkbox" for="checkbox"> 
-						
-						<input id="project-category-select" name=category type="checkbox" data-toggle="checkbox"> 공개 프로젝트
-						</label>
+						<label class="radio radio-period"> 공개 <input type="radio"
+						name="category" value="0" data-toggle="radio" checked="checked">
+					</label> <label class="radio radio-period"> <input type="radio"
+						name="category" value="1" data-toggle="radio"> 비공개
+					</label> <label class="radio radio-period"> <input type="radio"
+						name="category" value="2" data-toggle="radio"> 과제
+					</label> 
 						<input name ="description"class="title span12" type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요!"></input>
 				</div>

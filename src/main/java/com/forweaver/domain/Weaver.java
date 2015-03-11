@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
  * id 회원 아이디
  * password  비밀번호
  * email  이메일
+ * studentID 학번(과제용 자기소개)
  * say 간단한 소개
  * imgSrc  이미지 주소
  * image  이미지 파일
@@ -39,6 +40,7 @@ public class Weaver implements UserDetails,Serializable {
 	private String password;
 	private String email;
 	private String say;
+	private String studentID;
 	private String imgSrc;
 	private Data image;
 	private Date joinDate;
@@ -63,10 +65,11 @@ public class Weaver implements UserDetails,Serializable {
 
 
 
-	public Weaver(String id,String password,String email,String say,Data image){
+	public Weaver(String id,String password,String email,String studentID,String say,Data image){
 		this.id = id;
 		this.password = password;
 		this.email = email;
+		this.studentID = studentID;
 		this.say = say;
 		this.image = image;
 		this.joinDate = new Date();
@@ -90,6 +93,18 @@ public class Weaver implements UserDetails,Serializable {
 	}
 	public void setPasses(List<Pass> passes) {
 		this.passes = passes;
+	}
+
+	public String getStudentID() {
+		if(this.studentID != null && this.studentID.length() > 0)
+			return studentID;
+		
+		return "알수없는 사용자!";
+	}
+
+
+	public void setStudentID(String studentID) {
+		this.studentID = studentID;
 	}
 
 

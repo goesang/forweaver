@@ -19,7 +19,7 @@ function showWeaverList(index) {
 						weaverList[i]["id"]+
 						"</td>"+
 						"<td class='vertical-middle'>" +
-						weaverList[i]["email"]+
+						weaverList[i]["massage"]+
 						"</td>"+
 						"<td style='width: 42px;' class='td-button'>"+
 						"<span class='span-button'><i class='fa fa-user'></i>"+
@@ -35,7 +35,7 @@ function showWeaverList(index) {
 						weaverList[i]["id"]+
 						"</td>"+
 						"<td class='vertical-middle'>" +
-						weaverList[i]["email"]+
+						weaverList[i]["massage"]+
 						"</td>"+
 						"<td style='width: 42px;' class='td-button'> " +
 						"<a href='"+

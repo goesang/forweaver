@@ -98,10 +98,6 @@
 				</div>
 				
 				<div class="span7" style="padding-top:10px;">
-				<label style="display:inline" class="checkbox" for="checkbox"> 
-						
-						<input id="project-category-select" name=category type="checkbox" data-toggle="checkbox"> 팀 프로젝트
-						</label>
 					<label class="radio radio-period"> 일주일 <input type="radio"
 						name="period" value="0" data-toggle="radio" checked="checked">
 					</label> <label class="radio radio-period"> <input type="radio"

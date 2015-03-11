@@ -58,6 +58,7 @@ public class WeaverController {
 	public String join(@RequestParam("id") String id,
 			@RequestParam("email") String email,
 			@RequestParam("password") String password,
+			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
 			@RequestParam("image") MultipartFile image,
 			HttpServletRequest request) {
@@ -65,7 +66,7 @@ public class WeaverController {
 		if (weaverService.idCheck(id) || weaverService.idCheck(email))
 			return "/weaver/join";
 
-		Weaver weaver = new Weaver(id, password, email,say, new Data(image,id));
+		Weaver weaver = new Weaver(id, password, email,studentID,say, new Data(image,id));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
 		return "redirect:/";
@@ -448,13 +449,15 @@ public class WeaverController {
 	public String editWeaver(@PathVariable("id") String id,
 			@RequestParam("password") String password,
 			@RequestParam("newpassword") String newpassword,
+			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
 			@RequestParam("image") MultipartFile image) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if (!weaver.getId().equals(id) ) // 본인이 아니거나 비밀번호가 틀린경우
+		
+		if (!weaver.getId().equals(id) ) // 본인이 아닐때
 			return "/exit";
 
-		weaverService.update(weaver,password,newpassword,say,image);
+		weaverService.update(weaver,password,newpassword,studentID,say,image);
 
 		return "/exit";
 	}

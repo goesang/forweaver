@@ -96,14 +96,17 @@ public class WeaverService implements UserDetailsService {
 		file.mkdir();
 	}
 
-	public void update(Weaver weaver,String password,String newpassword,String say,MultipartFile image) { // 회원 수정
+	public void update(Weaver weaver,String password,String newpassword,String studentID,String say,MultipartFile image) { // 회원 수정
 		// TODO Auto-generated method stub
 		if(image != null && image.getSize() > 0)
 			weaver.setImage(new Data(image, weaver.getId()));
 
 		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
 			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));
-				
+		
+		if(studentID != null && !studentID.equals(""))
+			weaver.setStudentID(studentID);
+		
 		if(say != null && !say.equals(""))
 			weaver.setSay(say);
 		

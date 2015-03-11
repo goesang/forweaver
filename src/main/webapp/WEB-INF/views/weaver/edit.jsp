@@ -51,6 +51,11 @@ $(document).ready(function() {
 								</div>
 							</div>
 						</div>
+						<div class="control-group">
+							<div style="margin-left: 0px;"class="controls">
+								<input value="${weaver.studentID}" name="studentID" id="studentID" class="input-large" type="text"/>
+							</div>						
+						</div>
 						<div class="control-group" style="padding-left: 7px;">
 							<textarea placeholder="자기소개를 다시 입력해주세요!" name="say" id="say"
 								style="width: 249px;" rows="3">${weaver.say}</textarea>
