@@ -75,6 +75,10 @@
 		$('#hide-content-button').hide();
 		editorMode = false;
 	}
+	
+	function changeValue(value){
+		$('#category').val(value);
+	}
 		$(document).ready(function() {
 			
 
@@ -168,12 +172,14 @@
 				<div id="project-div" class="span10">
 					<input id ="project-name" class="title span5"
 						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" /> 
-						<label class="radio radio-period"> 공개 <input type="radio"
-						name="category" value="0" data-toggle="radio" checked="checked">
-					</label> <label class="radio radio-period"> <input type="radio"
-						name="category" value="1" data-toggle="radio"> 비공개
-					</label> <label class="radio radio-period"> <input type="radio"
-						name="category" value="2" data-toggle="radio"> 과제
+					
+					
+					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 <input type="radio"
+						name="group"data-toggle="radio" checked="checked">
+					</label> <label onclick="changeValue(1);" class="radio radio-period"> <input type="radio"
+						name="group" data-toggle="radio"> 비공개
+					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
+						name="group"  data-toggle="radio"> 과제
 					</label> 
 						<input name ="description"class="title span12" type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요!"></input>
@@ -193,7 +199,7 @@
 
 					</span>
 				</div>
-				
+				<input value="0" id ="category" name="category" type="hidden"/> 	
 			</form>
 
 				<table id="project-table" class="table table-hover">
@@ -212,18 +218,30 @@
 									 &nbsp;${project.name} ~
 										&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
 								</a></td>
-								<td class="td-button" rowspan="2"><c:if
-										test="${project.category != 0}">
-										<a href="/project/${project.name}/join"> <span
-											class="span-button"><i class="fa fa-lock"></i>
-												<p class="p-button">비공개</p> </span>
-										</a>
-									</c:if> <c:if test="${project.category == 0}">
+								<td class="td-button" rowspan="2">
+								 <c:if test="${project.category == 0}">
 										<a href="/project/${project.name}/push"> <span
 											class="span-button">${project.push}<p class="p-button">추천</p>
 										</span>
 										</a>
-									</c:if></td>
+									</c:if>
+								<c:if test="${project.category == 1}">
+										<span
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
+									</c:if>
+								<c:if test="${project.category == 2}">
+										<a href="/project/${project.name}"> <span
+											class="span-button"><i class="fa fa-code-fork"></i>
+												<p class="p-button">파생</p> </span>
+										</a>
+									</c:if>	
+								<c:if test="${project.category == 3}">
+										<span
+											class="span-button"><i class="fa fa-university"></i>
+												<p class="p-button">과제</p> </span>
+									</c:if>		
+									</td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
 										<a href="/project/${project.name}/join"> <span

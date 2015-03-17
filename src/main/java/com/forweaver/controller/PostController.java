@@ -49,7 +49,7 @@ public class PostController {
 	public String front(){
 		return "redirect:/community/sort:age-desc/page:1";
 	}
-
+/*
 	@RequestMapping("/sort:{sort}/rss")
 	@ResponseBody
 	public String rss(@PathVariable("sort") String sort){ 
@@ -73,7 +73,7 @@ public class PostController {
 		}
 		return rss+"</channel></rss>";
 	}
-
+*/
 
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String page(@PathVariable("page") String page,

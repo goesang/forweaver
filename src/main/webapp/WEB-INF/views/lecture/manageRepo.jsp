@@ -40,6 +40,10 @@
 			return true;
 		}
 
+		function changeValue(value){
+			$('#period').val(value);
+		}
+		
 		var editorMode = false;
 		$(document)
 				.ready(
@@ -98,14 +102,14 @@
 				</div>
 				
 				<div class="span7" style="padding-top:10px;">
-					<label class="radio radio-period"> 일주일 <input type="radio"
-						name="period" value="0" data-toggle="radio" checked="checked">
-					</label> <label class="radio radio-period"> <input type="radio"
-						name="period" value="1" data-toggle="radio"> 한달
-					</label> <label class="radio radio-period"> <input type="radio"
-						name="period" value="2" data-toggle="radio"> 한학기
-					</label> <label class="radio radio-period"> <input type="radio"
-						name="period" value="3" data-toggle="radio"> 영원히
+					<label onclick="changeValue(0);" class="radio radio-period"> 일주일 <input type="radio"
+						name="group" data-toggle="radio" checked="checked">
+					</label> <label onclick="changeValue(1);" class="radio radio-period"> <input type="radio"
+						name="group"  data-toggle="radio"> 한달
+					</label> <label onclick="changeValue(2);" class="radio radio-period"> <input type="radio"
+						name="group" data-toggle="radio"> 한학기
+					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
+						name="group"  data-toggle="radio"> 영원히
 					</label>
 				</div>
 				<div style="margin-left: 13px" class="span1">
@@ -118,6 +122,7 @@
 					<input class="title span11" placeholder="숙재를 소개해주세요!"
 						id="repo-description"  name = "description" type="text" value="" />
 				</div>
+				<input value="0" id ="period" name="period" type="hidden"/> 
 			</form>
 			<div class="span12">
 				<table id="repoTable" class="table table-hover">
@@ -148,31 +153,6 @@
 								<td class="post-bottom">${repo.description}</td>
 							</tr>
 							
-							<c:forEach items="${repo.childProjects}" var="project">
-							<tr>
-							<td class="td-post-writer-img"  rowspan="2"></td>
-								<td class="post-top-title">
-								<i class="fa fa-level-up fa-flip-horizontal"></i>
-								<b><a class="a-post-title"
-										href="/project/${project.name}/">
-											${project.name} </a></b><small>${project.getOpeningDateFormat()}</small></td>
-								<td class="td-button" rowspan="2"><c:if
-										test="${project.getDDay() == -2}">
-										<span class="span-button"><i class="fa fa-recycle"></i>
-											<p class="p-button">무제한</p> </span>
-									</c:if> <c:if test="${project.getDDay() == -1}">
-										<span class="span-button"><i class="fa fa-clock-o"></i>
-											<p class="p-button">종료</p> </span>
-									</c:if> <c:if test="${project.getDDay() >= 0}">
-										<span class="span-button">${repo.getDDay()}<p
-												class="p-button">마감</p>
-										</span>
-									</c:if></td>
-							</tr>
-							<tr>
-								<td class="post-bottom">${project.description}</td>
-							</tr>
-							</c:forEach>
 						</c:if>
 					</c:forEach>
 				</table>

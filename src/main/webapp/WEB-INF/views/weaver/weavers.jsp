@@ -9,12 +9,25 @@
 	<script type="text/javascript">	
 		$(function() {
 					
-					$('#search-button').click(
-							function() {
-									var tagNames = $("input[name='tags']").val();
-									
-									movePage(tagNames,$('#post-search-input').val());								
-								});
+			
+			$('.tag-name').click(
+					function() {
+						var tagname = $(this).text();
+						var exist = false;
+						var tagNames = $("input[name='tags']").val();
+						if (tagNames.length == 2)
+							movePage("[\"" + tagname + "\"]","");
+						var tagArray = eval(tagNames);
+						$.each(tagArray, function(index, value) {
+							if (value == tagname)
+								exist = true;
+						});
+						if (!exist){
+							movePage(tagNames.substring(0,
+									tagNames.length - 1)
+									+ ",\"" + tagname + "\"]","");
+						}
+					});
 					
 					var pageCount = ${weaverCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
@@ -53,32 +66,44 @@
 					<tbody>
 						<c:forEach items='${weavers}' var='weaver'>
 							<tr>
-								<td class="td-post-writer-img"><a
+								<td class="td-post-writer-img" rowspan="2"><a
 									href="/${weaver.getId()}"> <img
 										src="/${weaver.getId()}/img"></a></td>
-								<td>
-									<p>
+								<td colspan="2" class="post-top-title">
 										<i class="fa fa-quote-left"></i> ${weaver.say} <i
 											class="fa fa-quote-right"></i><small> -
 											${weaver.getId()}</small>
-									</p>
 								</td>
 								
-								<td class="td-button"><span class="span-button"><i
+								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-comments"></i>
 										<p title="글 갯수/답변 달린 갯수" class="p-button-mini">${weaver.getInfo('postCount')}/${weaver.getInfo('rePostCount')}</p> </span></td>
-								<td class="td-button"><span class="span-button"><i
+								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-comments-o"></i>
 											<p title="답변 갯수/답변의 추천수" class="p-button-mini">${weaver.getInfo('myRePostCount')}/${weaver.getInfo('rePostPush')}</p> </span></td>	
-								<td class="td-button"><span class="span-button"><i
+								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-rocket"></i>
 										<p title="코드 업로드 갯수/다운로드 갯수" class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
-								<td class="td-button"><span class="span-button"><i
+								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-university"></i>
 										<p title="강의 갯수/수강중인 학생수" class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','weaverID')}</p> </span></td>	
-								<td class="td-button"><span class="span-button"><i
+								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
 										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.getInfo('projectCount')}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
+							</tr>
+							<tr>
+							<td class="post-bottom-tag"><c:forEach items="${weaver.tags}"
+										var="tag">
+										<span
+											class="tag-name
+										<c:if test="${tag.startsWith('@')}">
+										tag-private
+										</c:if>
+										<c:if test="${tag.startsWith('$')}">
+										tag-massage
+										</c:if>
+										">${tag}</span>
+									</c:forEach></td>
 							</tr>
 						</c:forEach>
 					</tbody>

@@ -26,6 +26,7 @@ import com.mongodb.DBObject;
  * image  이미지 파일
  * joinDate 가입일
  * passes 권한 : 일반 회원의 경우 RULE_USER, 관리자의 경우 RULE_ADMIN 그외 프로젝트의 회원은 1, 관리자는 2
+ * tags 태그
  * weaverInfo 각종 회원 정보
  * </pre>
  */
@@ -45,7 +46,7 @@ public class Weaver implements UserDetails,Serializable {
 	private Data image;
 	private Date joinDate;
 	private List<Pass> passes = new ArrayList<Pass>();
-
+	private List<String> tags = new ArrayList<String>();
 	@Transient
 	private DBObject weaverInfo;
 
@@ -65,10 +66,11 @@ public class Weaver implements UserDetails,Serializable {
 
 
 
-	public Weaver(String id,String password,String email,String studentID,String say,Data image){
+	public Weaver(String id,String password,String email,List<String> tags,String studentID,String say,Data image){
 		this.id = id;
 		this.password = password;
 		this.email = email;
+		this.tags = tags;
 		this.studentID = studentID;
 		this.say = say;
 		this.image = image;
@@ -356,5 +358,14 @@ public class Weaver implements UserDetails,Serializable {
 
 		return false;
 	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+	
 
 }

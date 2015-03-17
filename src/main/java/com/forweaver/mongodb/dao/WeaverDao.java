@@ -42,6 +42,7 @@ public class WeaverDao {
 	}
 
 
+	
 	public List<Weaver> getWeavers(int page, int size) {
 		Query query = new Query();
 		query.with(new PageRequest(page - 1, size));
@@ -51,6 +52,31 @@ public class WeaverDao {
 	public long countWeavers() {
 		Criteria criteria = new Criteria();
 		return mongoTemplate.count(new Query(criteria), Weaver.class);
+	}
+	
+	/** 태그를 이용하여 위버를 검색함.
+	 * @param tags
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Weaver> getWeavers(List<String> tags, int page,int size) {
+		Criteria criteria = new Criteria("tags").all(tags);
+
+		Query query = new Query(criteria);
+		query.with(new PageRequest(page - 1, size));
+
+		return mongoTemplate.find(query, Weaver.class);
+	}
+	/** 태그를 이용하여 위버를 검색하고 숫자를 셈.
+	 * @param tags
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public long countWeavers(List<String> tags) {
+		Criteria criteria = new Criteria("tags").all(tags);
+		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 
 	public void delete(Weaver weaver) {
@@ -70,79 +96,8 @@ public class WeaverDao {
 		update.set("image", weaver.getImage());
 		update.set("imgSrc", weaver.getImgSrc());
 		update.set("say", weaver.getSay());
+		update.set("studentID", weaver.getStudentID());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
-	}
-
-
-	public List<DBObject> getWeaverInfosInPost(List<String> tags){
-		Criteria criteria = new Criteria();
-		
-		if(tags!=null && tags.size()>0)
-			criteria.and("tags").all(tags);
-		
-		AggregationOperation match = Aggregation.match(criteria);
-		
-		AggregationOperation group = Aggregation. group("writer").count().as("postCount").sum("push").as("push").sum("rePostCount").as("rePostCount");
-		Aggregation agg = newAggregation(match, group);
-
-		return mongoTemplate.aggregate(agg, "post", DBObject.class).getMappedResults();
-	}
-	
-	public List<DBObject> getWeaverInfosInRePost(List<String> tags){
-		Criteria criteria = new Criteria();
-		
-		if(tags!=null && tags.size()>0)
-			criteria.and("tags").all(tags);
-		
-		AggregationOperation match = Aggregation.match(criteria);
-		
-		AggregationOperation group = Aggregation. group("writer").count().as("myRePostCount").sum("push").as("rePostPush");
-		Aggregation agg = newAggregation(match, group);
-
-		return mongoTemplate.aggregate(agg, "rePost", DBObject.class).getMappedResults();
-	}
-	
-	public List<DBObject> getWeaverInfosInProject(List<String> tags){
-		Criteria criteria = new Criteria();
-		
-		if(tags!=null && tags.size()>0)
-			criteria.and("tags").all(tags);
-		
-		AggregationOperation match = Aggregation.match(criteria);
-		
-		AggregationOperation group = Aggregation. group("creator").count().as("projectCount").push("childProjects").as("childProjects");
-		Aggregation agg = newAggregation(match, group);
-
-		return mongoTemplate.aggregate(agg, "project", DBObject.class).getMappedResults();
-	}
-	
-	public List<DBObject> getWeaverInfosInLecture(List<String> tags){
-		Criteria criteria = new Criteria();
-		
-		if(tags!=null && tags.size()>0)
-			criteria.and("tags").all(tags);
-		
-		AggregationOperation match = Aggregation.match(criteria);
-		
-		AggregationOperation group = Aggregation. group("creator").count().as("lectureCount").push("joinWeavers").as("joinWeavers");
-		Aggregation agg = newAggregation(match, group);
-
-		return mongoTemplate.aggregate(agg, "lecture", DBObject.class).getMappedResults();
-	}
-	
-	public List<DBObject> getWeaverInfosInCode(List<String> tags){
-		Criteria criteria = new Criteria();
-		
-		if(tags!=null && tags.size()>0)
-			criteria.and("tags").all(tags);
-	
-		
-		AggregationOperation match = Aggregation.match(criteria);
-		
-		AggregationOperation group = Aggregation. group("writer").count().as("codeCount").sum("downCount").as("downCount");
-		Aggregation agg = newAggregation(match, group);
-
-		return mongoTemplate.aggregate(agg, "code", DBObject.class).getMappedResults();
 	}
 	
 	public DBObject getWeaverInfosInPost(Weaver weaver){
@@ -194,5 +149,7 @@ public class WeaverDao {
 
 		return mongoTemplate.aggregate(agg, "code", DBObject.class).getUniqueMappedResult();
 	}
+	
+	
 
 }

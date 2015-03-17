@@ -278,4 +278,8 @@ public class Project implements Serializable {
 		return weavers;
 	}
 	
+	public boolean isEducation(){
+		return this.category == 3;
+	}
+	
 }

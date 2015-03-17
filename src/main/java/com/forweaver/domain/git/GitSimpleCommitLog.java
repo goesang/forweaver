@@ -69,7 +69,7 @@ public class GitSimpleCommitLog implements Serializable {
 	}
 
 	public String getImgSrc(){
-		return "/"+this.commiterEmail.replace(".", ",")+"/img";
+		return "/"+this.commiterEmail+"/img";
 	}
 
 

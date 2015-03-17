@@ -65,7 +65,7 @@ public class GitCommitLog implements Serializable {
 	}
 	
 	public String getImgSrc(){
-		return "/"+this.commiterEmail.replace(".", ",")+"/img";
+		return "/"+this.commiterEmail+"/img";
 	}
 
 	public String getFullMassage() {

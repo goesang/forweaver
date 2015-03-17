@@ -1,8 +1,6 @@
 package com.forweaver.service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +12,6 @@ import net.sf.ehcache.Element;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -29,14 +24,13 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.WeaverDao;
+import com.forweaver.util.GitUtil;
 import com.forweaver.util.MailUtil;
-import com.forweaver.util.Tuple;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -53,9 +47,8 @@ public class WeaverService implements UserDetailsService {
 	private CacheManager cacheManager;
 	@Autowired 
 	private MailUtil mailUtil;
-
-	@Value("${gitpath}")
-	private String gitpath;
+	@Autowired 
+	private GitUtil gitUtil;
 
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
@@ -92,11 +85,11 @@ public class WeaverService implements UserDetailsService {
 		weaver.addPass(pass);
 		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
 		weaverDao.insert(weaver);
-		File file = new File(gitpath + weaver.getId());
+		File file = new File(gitUtil.getGitPath() + weaver.getId());
 		file.mkdir();
 	}
 
-	public void update(Weaver weaver,String password,String newpassword,String studentID,String say,MultipartFile image) { // 회원 수정
+	public void update(Weaver weaver,String password,String newpassword,List<String> tags,String studentID,String say,MultipartFile image) { // 회원 수정
 		// TODO Auto-generated method stub
 		if(image != null && image.getSize() > 0)
 			weaver.setImage(new Data(image, weaver.getId()));
@@ -110,6 +103,7 @@ public class WeaverService implements UserDetailsService {
 		if(say != null && !say.equals(""))
 			weaver.setSay(say);
 		
+		weaver.setTags(tags);
 		weaverDao.update(weaver);
 	}
 	
@@ -167,7 +161,7 @@ public class WeaverService implements UserDetailsService {
 		if(weaver.getPassword().equals(passwordEncoder.encodePassword(password, null))){
 
 			try {
-				FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
+				FileUtils.deleteDirectory(new File(gitUtil.getGitPath() + weaver.getId()));
 				weaverDao.delete(weaver);
 			} catch (Exception e) {
 				return false;
@@ -184,7 +178,7 @@ public class WeaverService implements UserDetailsService {
 
 		if(adminWeaver.isAdmin()){
 			try {
-				FileUtils.deleteDirectory(new File(gitpath + weaver.getId()));
+				FileUtils.deleteDirectory(new File(gitUtil.getGitPath() + weaver.getId()));
 				weaverDao.delete(weaver);
 			} catch (Exception e) {
 				return false;
@@ -307,79 +301,26 @@ public class WeaverService implements UserDetailsService {
 		return weavers;
 	}
 	
-	//위버정보들과 수 파악함.
-	public Tuple<List<Weaver>, Integer> getWeaverInfos(List<String> tags,int page, int size ){
-		List<Weaver> weavers = new ArrayList<Weaver>();
-		HashMap<String, DBObject> weaverHash = new HashMap<String, DBObject>();
-		int startNumber = size * (page - 1);
+	/** 태그를 가지고 위버를 검색하고 활동내역도 검색함.
+	 * @param tags
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Weaver> getWeavers(List<String> tags,int page, int size ){
+		List<Weaver> weavers = weaverDao.getWeavers(tags,page, size);
+		for(Weaver weaver : weavers)
+			this.getWeaverInfos(weaver);
+		return weavers;
+	}
+	
 
-		try{
-			for(DBObject db:weaverDao.getWeaverInfosInPost(tags)){
-				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
-				name = name.substring(1, name.length()-1);
-				weaverHash.put(name, db);
-			}
-			for(DBObject db:weaverDao.getWeaverInfosInRePost(tags)){
-				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
-				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
-				if(dbTmp != null){
-					dbTmp.put("myRePostCount", db.get("myRePostCount"));
-					dbTmp.put("rePostPush", db.get("rePostPush"));
-				}
-				else
-					weaverHash.put(name, db);
-			}
-			for(DBObject db:weaverDao.getWeaverInfosInProject(tags)){
-				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
-				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
-				if(dbTmp != null){
-					dbTmp.put("projectCount", db.get("projectCount"));
-					dbTmp.put("childProjects", db.get("childProjects"));
-				}
-				else
-					weaverHash.put(name, db);
-			}
-			for(DBObject db:weaverDao.getWeaverInfosInLecture(tags)){
-				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
-				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
-				if(dbTmp != null){
-					dbTmp.put("lectureCount", db.get("lectureCount"));
-					dbTmp.put("joinWeavers", db.get("joinWeavers"));
-				}
-				else
-					weaverHash.put(name, db);
-			}
-			for(DBObject db:weaverDao.getWeaverInfosInCode(tags)){
-				String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
-				DBObject dbTmp = weaverHash.get( name.substring(1, name.length()-1));
-				if(dbTmp != null){
-					dbTmp.put("codeCount", db.get("codeCount"));
-					dbTmp.put("downCount", db.get("downCount"));
-				}
-				else
-					weaverHash.put(name, db);
-			}
-
-			int i = 0;
-			for(DBObject db:weaverHash.values()){
-				if(startNumber <= i){
-					String name = new ObjectMapper().readTree(db.get("_id").toString()).get("$id").toString();
-					name = name.substring(1, name.length()-1);
-					Weaver weaver = weaverDao.get(name);
-					if(weaver != null){
-						weaver.setWeaverInfo(db);
-						weavers.add(weaver);
-					}
-				}
-				if(startNumber+size <= i)
-					break;
-				i++;	
-			}
-
-		}
-		finally{
-			return new Tuple<List<Weaver>, Integer>(weavers, weaverHash.values().size());
-		}
+	/** 태그를 가지고 위버를 검색하고 숫자를 셈.
+	 * @param tags
+	 * @return
+	 */
+	public long countWeavers(List<String> tags){
+		return weaverDao.countWeavers(tags);
 	}
 
 

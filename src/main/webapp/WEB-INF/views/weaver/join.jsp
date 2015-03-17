@@ -6,8 +6,28 @@
 </head>
 <body>
 <script>
+editorMode = true;
 var check = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+
+function checkWeaver(){
+		if($("input[name='tags']").val().length < 3){
+			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 태그를 하나 이상 입력해주세요!</div>");
+			return false;
+		}
+		
+		if($("input[name='tags']").val().length > 65){
+			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 태그를 너무 많이 입력하셨습니다!</div>");
+			return false;
+		}
+		
+		if(!check)
+			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
+				
+		$("form:first").append($("input[name='tags']"));
+		return check;
+	}
+
 $(document).ready(function() {
 	
 	$("#image").change(function(){
@@ -82,8 +102,9 @@ $(document).ready(function() {
 
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
+
 			<div id="signupform" class="well-white">
-				<form enctype="multipart/form-data"  onsubmit="return check" class="form-horizontal" action="" method="POST">
+				<form onsubmit="return checkWeaver()" enctype="multipart/form-data" class="form-horizontal" action="" method="POST">
 					<fieldset >
 						<legend><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;회원가입</legend>
 						<div class="span6">

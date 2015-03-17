@@ -131,19 +131,30 @@ tr:first-child>td {
 											class="fa fa-bookmark"></i> &nbsp;${project.name} ~
 											&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
 									</a></td>
-									<td class="td-button" rowspan="2"><c:if
-											test="${project.category != 0}">
-											<a href="/project/${project.name}/join"> <span
-												class="span-button"><i class="fa fa-lock"></i>
-													<p class="p-button">비공개</p> </span>
-											</a>
-										</c:if> <c:if test="${project.category == 0}">
-											<a href="/project/${project.name}/"> <span
-												class="span-button">${project.push}<p
-														class="p-button">추천</p>
-											</span>
-											</a>
-										</c:if></td>
+									<td class="td-button" rowspan="2">
+								 <c:if test="${project.category == 0}">
+										<a href="/project/${project.name}/push"> <span
+											class="span-button">${project.push}<p class="p-button">추천</p>
+										</span>
+										</a>
+									</c:if>
+								<c:if test="${project.category == 1}">
+										<span
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
+									</c:if>
+								<c:if test="${project.category == 2}">
+										<a href="/project/${project.name}"> <span
+											class="span-button"><i class="fa fa-code-fork"></i>
+												<p class="p-button">파생</p> </span>
+										</a>
+									</c:if>	
+								<c:if test="${project.category == 3}">
+										<span
+											class="span-button"><i class="fa fa-university"></i>
+												<p class="p-button">과제</p> </span>
+									</c:if>		
+									</td>
 									<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
 										<a href="/project/${project.name}/join"> <span
