@@ -53,19 +53,6 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
-				      
-				        $('#age-desc').click(
-							function() {
-								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 최신순</span>");
-							});
-						 $('#push-desc').click(
-							function() {
-								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 추천순</span>");
-							});
-						 $('#repost-desc').click(
-							function() {
-								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 최신 답변순</span>");
-							});
 		});
 
 		
@@ -73,61 +60,52 @@
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 		<div class="page-header page-header-none">
-			<alert></alert>
-			<h5 style="text-align: center">
-				<img style="height: 70px; width: 70px;" class="img-polaroid"
-					src="/resources/forweaver/img/admin.png">
-
-			<!-- <span style="font-size: 50px; color: black;"><i class="fa fa-user-secret"></i></span>  -->
-			</h5>
-			<h5 style="text-align: center">
-
-				<big><i class="fa fa-quote-left"></i> 관리자 페이지입니다!
-				 <i class="fa fa-quote-right"></i></big> <small>- Admin</small>
-			</h5>
+			<h1 style="text-align: center; font-weight: 500;">
+				<span style="font-size:55px; color:#999;"><i class="fa fa-wrench"></i></span>
+				 관리자 페이지입니다! 
+			</h1><br/>
+			<div class="pull-right">권한 : <span class="label btn-danger">삭제</span> <span class="label label-warning">관리</span></div>
+			<br/><br/>
 			<div class="row">
 				<div class="span12">
 					<ul class="nav nav-tabs pull-left" id="myTab">
-						<li><a
-								href="/admin/weaver"><i
-								class=" fa fa-twitter"></i> 위버</a></li>
-						<li><a
-								href="/admin"><i
-								class=" fa fa-comments"></i> 커뮤니티</a></li>
-						<li><a
-							href="/admin/project"><i
-								class=" fa fa-bookmark"></i> 프로젝트</a></li>
-						<li><a
-								href="/admin/lecture"><i
-								class=" fa fa-university"></i> 강의</a></li>
-						<li><a
-								href="/admin/code"><i
-								class=" fa fa-rocket"></i> 코드</a></li>
+						<li id="age-desc"><a
+							href="/admin<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+						<c:if test="${massage == null }">
+							<li id="push-desc"><a
+								href="/admin<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-desc/page:1">추천순</a></li>
+						</c:if>
+						<li id="repost-desc"><a
+							href="/admin<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신
+								답변순</a></li>
+						<li id="repost-many"><a
+							href="/admin<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은
+								답변순</a></li>
+						<li id="age-asc"><a
+							href="/admin<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+						<li id="repost-null"><a
+							href="/admin<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변
+								없는 글</a></li>
 					</ul>
 					<div class="navbar navbar-inverse">
 						<ul style="border-bottom: 0px;" class="nav pull-right">
 							<li class="dropdown"><button
 								class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-								<span id="sort-menu" style="font-size:14px;"> 최신순 </span><b class="caret"></b></button>
+								<i class=" fa fa-comments"></i> 커뮤니티<b class="caret"></b></button>
 							 
 								<ul class="dropdown-menu">
-									<li id="age-desc"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-desc/page:1">최신순</a></li>
-									<c:if test="${massage == null }">
-										<li id="push-desc"><a
-											href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:push-desc/page:1">추천순</a></li>
-									</c:if>
-									<li id="repost-desc"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-desc/page:1">최신
-											답변순</a></li>
-									<li id="repost-many"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-many/page:1">많은
-											답변순</a></li>
-									<li id="age-asc"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-									<li id="repost-null"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
-											없는 글</a></li>
+									<li><a
+										href="/admin/weaver"><i
+										class=" fa fa-twitter"></i> 위버</a></li>
+									<li><a
+										href="/admin/project"><i
+										class=" fa fa-bookmark"></i> 프로젝트</a></li>
+									<li><a
+										href="/admin/lecture"><i
+										class=" fa fa-university"></i> 강의</a></li>
+									<li><a
+										href="/admin/code"><i
+										class=" fa fa-rocket"></i> 코드</a></li>
 								</ul>
 							</li>
 						</ul>
