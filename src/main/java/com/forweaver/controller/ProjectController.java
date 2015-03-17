@@ -161,23 +161,19 @@ public class ProjectController {
 	public String add(@RequestParam Map<String, String> params) {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
-		int category = 1;
-		boolean isEducation = false;
+		int categoryInt = 0;
 		
-		if(params.get("category")!= null && params.get("category").equals("on"))
-			category= 0;
-		
-		if(params.get("isEducation")!= null && params.get("isEducation").equals("on"))
-			isEducation= true;
+		if(params.get("category") != null)
+			categoryInt = Integer.parseInt(params.get("category"));
 		
 		if(!tagService.isPublicTags(tagList))
 			return "redirect:/project/";
 		
 		Project project = new Project(params.get("name"), 
-				category, 
+				categoryInt, 
 				WebUtil.removeHtml(params.get("description")), 
 				currentWeaver,
-				tagList,isEducation);
+				tagList);
 		
 		projectService.add(project,currentWeaver);
 		return "redirect:/project/"+project.getName();
