@@ -136,7 +136,7 @@
 			<h5>
 				<big><big><i class="fa fa-rocket"></i> 공유해보세요!</big></big> <small>자신의
 					소스코드를 다른 사람들에게 배포해보세요!</small>
-				<div style="margin-top: -10px" class="pull-right">
+				<div style="margin-top: -10px" class="pull-right" title='전체 코드 갯수&#13;${codeCount}개'>
 
 					<button class="btn btn-warning">
 						<b><i class="fa fa-database"></i> ${codeCount}</b>
@@ -182,14 +182,15 @@
 				<div class="span2">
 
 
-					<span> <a id="show-content-button"
+					<span> <a id="show-content-button" title='코드 게시하기'
 						href="javascript:showCodeContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
-					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="hide-content-button" href="javascript:hideCodeContent();"
+					</a> <a id='search-button' title='코드 검색하기' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
+					</a> <a id="hide-content-button" title='작성 취소하기'
+						href="javascript:hideCodeContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
-						<button id='post-ok' class="post-button btn btn-primary">
+						<button id='post-ok' title='코드 올리기' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
 
@@ -198,7 +199,7 @@
 				<div id="file-div" style="padding-left: 20px;">
 					<div class='fileinput fileinput-new' data-provides='fileinput'>
 						<div class='input-group'>
-							<div class='form-control' data-trigger='fileinput'>
+							<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'>
 								<i class='icon-file '></i> <span class='fileinput-filename'></span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span

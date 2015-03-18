@@ -143,12 +143,12 @@ var editorMode = false;
 				
 			</div>
 			<div class="span1">	
-				<a id='showCommunity'
+				<a id='showCommunity' title="커뮤니티 소식을 정렬하려면 누르세요!"
 						class="post-button btn btn-inverse"> <i class="fa fa-refresh"></i>
 					</a>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
@@ -161,13 +161,13 @@ var editorMode = false;
 						value="" />
 				</div>
 				<div class="span2">
-					<span> <a id="show-content-button" href="javascript:showPostContent();"
+					<span> <a id="show-content-button" href="javascript:showPostContent();" title="글 내용 작성하기"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
-					</a> <a style="display: none;" id="hide-content-button"
+					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
 						href="javascript:hidePostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
-						<button id='post-ok' class="post-button btn btn-primary">
+						<button id='post-ok' class="post-button btn btn-primary" title="글 올리기">
 							<i class="fa fa-check"></i>
 						</button>
 

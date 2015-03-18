@@ -142,7 +142,7 @@ $(document).ready(function() {
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
@@ -156,7 +156,8 @@ $(document).ready(function() {
 					<input id="weaverName" style="width:90%;" placeholder="아이디나 이메일을 입력해주세요!" type="text">
 				</div>
 				<div style="margin-left:-5px;" class="span1">
-					<button id="weaverAdd" class = "btn btn-primary"><i class="fa fa-plus"></i></button>
+					<button id="weaverAdd" class = "btn btn-primary"
+					 title="Weaver 추가"><i class="fa fa-plus"></i></button>
 				</div>
 				
 				<table id="weaverTable" class="table table-hover">

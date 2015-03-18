@@ -72,7 +72,7 @@
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
@@ -167,7 +167,7 @@
 			fileCount++;
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
@@ -192,7 +192,7 @@
 			<h5>
 				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> <small>프로젝트
 					진행사항이나 궁금한 점들을 올려보세요!</small>
-				<div style="margin-top: -10px" class="pull-right">
+				<div style="margin-top: -10px" class="pull-right" title='전체 커뮤니티 글 수&#13;${postCount}개'>
 
 					<button class="btn btn-warning">
 						<b><i class="fa fa-database"></i> ${postCount}</b>
@@ -233,15 +233,16 @@
 						value="" />
 				</div>
 				<div class="span3">
-					<span> <a id='search-button'
+					<span> <a id='search-button' title="글 검색하기"
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="show-content-button" href="javascript:showPostContent();"
+					</a> <a id="show-content-button" title="글 내용 작성하기"
+						href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
-					</a> <a style="display: none;" id="hide-content-button"
+					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
 						href="javascript:hidePostContent();"
 						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
 					</a>
-						<button id='post-ok' class="post-button btn btn-primary">
+						<button id='post-ok' title="글 올리기" class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
 

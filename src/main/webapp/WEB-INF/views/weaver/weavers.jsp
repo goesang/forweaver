@@ -52,7 +52,7 @@
 			<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-twitter"></i> 찾아보세요!</big></big> <small>관심있는 주제를 가지고 다른 위버를 찾아보세요!</small>
-				<div style="margin-top: -10px" class="pull-right">
+				<div style="margin-top: -10px" class="pull-right" title='전체 회원수&#13;${weaverCount}명'>
 					<button class="btn btn-warning">
 						<b><b><i class="fa fa-database"></i> ${weaverCount}</b></b>
 					</button>

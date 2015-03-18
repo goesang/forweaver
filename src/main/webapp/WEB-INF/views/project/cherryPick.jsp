@@ -52,7 +52,7 @@ $(document).ready(function() {
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
@@ -63,7 +63,7 @@ $(document).ready(function() {
 					<h4 style="margin: 10px 0px 0px 0px"><i class="icon-addtocart"></i> 체리 목록</h4>
 				</div>
 				<div style="width: 40px;" class="span1">
-					<a id="show-content-button" class="btn btn-primary"
+					<a id="show-content-button" class="btn btn-primary" title="프로젝트 포크"
 						onclick="return confirm('정말 프로젝트를 포크하시겠습니까?')" href="/project/${project.name}/fork"> <i
 						 class="fa fa-code-fork"> </i></a> 
 

@@ -47,7 +47,7 @@
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git"
 						type="text" class="input-block-level">
@@ -74,13 +74,13 @@
 				<h4>프로젝트 정보 <small>${gitInfo.getEnd().getAuthorIdent().getWhen().toLocaleString()} ~ ${gitInfo.getStart().getAuthorIdent().getWhen().toLocaleString()}</small></h4>
 				<div class="span4">
 					<ul>
-						<li><span class="label label-info">${gitInfo.getCommits()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getCommits()}</span>
 							커밋들</li>
-						<li><span class="label label-info">${gitInfo.getMerges()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getMerges()}</span>
 							병합 커밋들</li>
-						<li><span class="label label-info">${gitInfo.getAuthors().size()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getAuthors().size()}</span>
 							저자들</li>
-						<li><span class="label label-info">${gitInfo.getCommitters().size()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getCommitters().size()}</span>
 							커미터들</li>
 
 					</ul>
@@ -88,21 +88,21 @@
 				<div class="span4">
 					<ul>
 						
-						<li><span class="label label-info">${gitInfo.getLinesAdded()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getLinesAdded()}</span>
 							라인 추가</li>
-						<li><span class="label label-info">${gitInfo.getLinesEdited()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getLinesEdited()}</span>
 							라인 수정</li>
-						<li><span class="label label-info">${gitInfo.getLinesDeleted()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getLinesDeleted()}</span>
 							라인 삭제</li>
 					</ul>
 				</div>
 				<div class="span3">
 					<ul>
-						<li><span class="label label-info">${gitInfo.getAdded()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getAdded()}</span>
 							파일 추가</li>
-						<li><span class="label label-info">${gitInfo.getModified()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getModified()}</span>
 							파일 수정</li>
-						<li><span class="label label-info">${gitInfo.getDeleted()}</span>
+						<li><span class="label label-info" title="라인">${gitInfo.getDeleted()}</span>
 							파일 삭제</li>
 					</ul>
 				</div>
@@ -119,7 +119,7 @@
 				</h5>
 				<ul>
 					<c:forEach items="${gitInfo.getAuthors()}" var="author">
-						<li>${author}&nbsp;&nbsp;<span class="label label-success">${gitInfo.getAuthoredCommits(author)}</span></li>
+						<li>${author}&nbsp;&nbsp;<span class="label label-success" title="라인">${gitInfo.getAuthoredCommits(author)}</span></li>
 					</c:forEach>
 				</ul>
 			</div>
@@ -129,7 +129,7 @@
 				</h5>
 				<ul>
 					<c:forEach items="${gitInfo.getCommitters()}" var="committer">
-						<li>${committer}&nbsp;&nbsp;<span class="label label-success">${gitInfo.getCommittedCommits(committer)}</span></li>
+						<li>${committer}&nbsp;&nbsp;<span class="label label-success" title="라인">${gitInfo.getCommittedCommits(committer)}</span></li>
 					</c:forEach>
 				</ul>
 			</div>
@@ -141,9 +141,9 @@
 				</h5>
 				<ul>
 					<c:forEach items="${gitInfo.getAuthorLineImpacts()}" var="author">
-						<li>${author}&nbsp;&nbsp;<span class="label label-success">+${gitInfo.getAuthorLineImpact(author).getAdd()}</span>
-							<span class="label label-warning">${gitInfo.getAuthorLineImpact(author).getEdit()}</span>
-							<span class="label label-important">-${gitInfo.getAuthorLineImpact(author).getDelete()}</span>
+						<li>${author}&nbsp;&nbsp;<span class="label label-success" title="라인">+${gitInfo.getAuthorLineImpact(author).getAdd()}</span>
+							<span class="label label-warning" title="라인">${gitInfo.getAuthorLineImpact(author).getEdit()}</span>
+							<span class="label label-important" title="라인">-${gitInfo.getAuthorLineImpact(author).getDelete()}</span>
 						</li>
 					</c:forEach>
 				</ul>
@@ -154,9 +154,9 @@
 				</h5>
 				<ul>
 					<c:forEach items="${gitInfo.getAuthorFileImpacts()}" var="author">
-						<li>${author}&nbsp;&nbsp;<span class="label label-success">+${gitInfo.getAuthorFileImpact(author).getAdd()}</span>
-							<span class="label label-warning">${gitInfo.getAuthorFileImpact(author).getEdit()}</span>
-							<span class="label label-important">-${gitInfo.getAuthorFileImpact(author).getDelete()}</span>
+						<li>${author}&nbsp;&nbsp;<span class="label label-success" title="라인">+${gitInfo.getAuthorFileImpact(author).getAdd()}</span>
+							<span class="label label-warning" title="라인">${gitInfo.getAuthorFileImpact(author).getEdit()}</span>
+							<span class="label label-important" title="라인">-${gitInfo.getAuthorFileImpact(author).getDelete()}</span>
 						</li>
 					</c:forEach>
 				</ul>
