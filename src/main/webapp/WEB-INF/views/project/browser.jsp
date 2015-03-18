@@ -35,7 +35,7 @@ $(document).ready(function() {
 	
 	$("select").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
 	$("#selectBranch").change(function(){
-		if($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectBranch option:selected").val() != "empty_Branch")
 			window.location = $("#selectBranch option:selected").val();
 	});
 });
@@ -154,7 +154,8 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 			</div>
 			<c:if test="${readme.length() > 0}">
 				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
-				<div class="span12 readme">${readme}</div>
+				<div class="span12 readme"><s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(readme)" /></div>
+				
 			</c:if>
 		</div>
 		<!-- .row-fluid -->

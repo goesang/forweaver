@@ -58,7 +58,7 @@ $(document).ready(function() {
 						</div>
 						<div class="control-group" style="padding-left: 7px;">
 							<textarea placeholder="자기소개를 다시 입력해주세요!" name="say" id="say"
-								style="width: 249px;" rows="3">${weaver.say}</textarea>
+								style="width: 249px;" rows="3">${cov:htmlEscape(weaver.say)}</textarea>
 						</div>
 
 					<div class="control-group" style="padding-left: 6px;">

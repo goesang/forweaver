@@ -269,7 +269,7 @@
 											<i class=" icon-align-justify"></i>
 										</c:if> <c:if test="${!post.isLong()}">
 											<i class="fa fa-comment"></i>
-										</c:if> &nbsp;${post.title}
+										</c:if> &nbsp;${cov:htmlEscape(post.title)}
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
 										test="${post.kind == 3 && post.getWriterName().equals(currentUser.id)}">

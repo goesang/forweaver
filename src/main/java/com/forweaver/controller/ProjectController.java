@@ -16,12 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.CherryPickRequest;
-import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
@@ -171,7 +168,7 @@ public class ProjectController {
 		
 		Project project = new Project(params.get("name"), 
 				categoryInt, 
-				WebUtil.removeHtml(params.get("description")), 
+				params.get("description"), 
 				currentWeaver,
 				tagList);
 		
@@ -209,12 +206,16 @@ public class ProjectController {
 	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,Model model) {
+		
+
 		Project project = projectService.get(creatorName+"/"+projectName);
 		String uri = request.getRequestURI();
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+		filePath = filePath.replace(",jsp", ".jsp");
+
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));
-
+		
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
 		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			List<GitSimpleFileInfo> gitFileInfoList = 
@@ -240,6 +241,7 @@ public class ProjectController {
 			model.addAttribute("gitCommitLog", 
 					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 			model.addAttribute("filePath",filePath);
+			System.out.println("3333333333");
 			return "/project/fileViewer";
 		}
 			
@@ -253,6 +255,7 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		String uri = request.getRequestURI();
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+		filePath = filePath.replace(",jsp", ".jsp");
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));		
 		GitFileInfo gitFileInfo = gitService.getFileInfoWithBlame(creatorName, projectName, commit, filePath);
@@ -342,18 +345,14 @@ public class ProjectController {
 			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
 		else if(content == null)
 			content = "";
-		List<String> tagList = tagService.stringToTagList(
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
+		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+creatorName+"/"+projectName));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
 			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
 
-		Post post = new Post(weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
-				tagList);
+		Post post = new Post(weaver,title,content,tagList);
 
 		postService.add(post,null);
 		return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
@@ -464,7 +463,7 @@ public class ProjectController {
 			return "redirect:/project/"+ creatorName+"/"+projectName+"/commitlog";
 		model.addAttribute("project", project);
 		model.addAttribute("gitCommitLog",gitCommitLog);
-		model.addAttribute("rePosts", rePostService.get(project.getName()+"/"+gitCommitLog.getCommitLogID(),5,""));
+		//model.addAttribute("rePosts", rePostService.get(project.getName()+"/"+gitCommitLog.getCommitLogID(),5,""));
 		return "/project/commitLogViewer";
 	}
 
@@ -801,6 +800,7 @@ public class ProjectController {
 		return "redirect:/project/"+creatorName+"/"+projectName+"/cherry-pick";
 	}
 
+	/*
 	//코드에 답변달기
 	@RequestMapping(value = "/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/add-repost", method = RequestMethod.POST)
 	public String addRepost(@PathVariable("projectName") String projectName,
@@ -829,14 +829,14 @@ public class ProjectController {
 		RePost rePost = new RePost(project.getName()+"/"+gitCommitLog.getCommitLogID(),
 				commiter,
 				weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
+				WebUtil.specialSignDecoder(URLDecoder.decode(content))),
 				project.getTags(),
 				5);
 		rePostService.add(rePost,datas);
 
 		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
 	}
-
+*/
 	@RequestMapping(value = "/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/add-reply", method = RequestMethod.POST)
 	public String addReply(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -852,8 +852,7 @@ public class ProjectController {
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
 			return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
 
-		rePost.addReply(new Reply(weaver, 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
+		rePost.addReply(new Reply(weaver, content));
 		rePostService.update(rePost,null);	
 
 		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;

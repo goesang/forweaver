@@ -11,7 +11,7 @@
 function acceptCherryPick(cherryPickID){
 	if(!confirm('정말 체리픽 요청을 수락하시겠습니까?'))
 		return;
-	if ($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+	if ($("#selectBranch option:selected").val() != "empty_Branch")
 		window.location =  
 			"/project/${project.name}/cherry-pick/branch:"
 			+$("#selectBranch option:selected").val()

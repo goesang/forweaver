@@ -78,7 +78,7 @@ tr:first-child>td {
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()} <i
+				<big><i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.getSay())} <i
 					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 			<div class="row">
@@ -129,7 +129,7 @@ tr:first-child>td {
 									<td colspan="2" class="post-top-title"><a
 										class="a-post-title" href="/project/${project.name}/"> <i
 											class="fa fa-bookmark"></i> &nbsp;${project.name} ~
-											&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
+											&nbsp;${fn:substring(cov:htmlEscape(project.description),0,100-fn:length(project.name))}
 									</a></td>
 									<td class="td-button" rowspan="2">
 								 <c:if test="${project.category == 0}">

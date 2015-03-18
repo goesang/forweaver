@@ -17,7 +17,7 @@ weaverList.push({
 	"massage": "${adminWeaver.studentID}",
 	</c:if>
 	<c:if test="${!project.isEducation()}">
-	"massage": "${adminWeaver.say}",
+	"massage": "${cov:htmlEscape(adminWeaver.say)}",
 	</c:if>
 	"img": "${adminWeaver.getImgSrc()}"
 });
@@ -30,7 +30,7 @@ weaverList.push({
 	"massage": "${joinWeaver.studentID}",
 	</c:if>
 	<c:if test="${!project.isEducation()}">
-	"massage": "${joinWeaver.say}",
+	"massage": "${cov:htmlEscape(joinWeaver.say)}",
 	</c:if>
 	"img": "${joinWeaver.getImgSrc()}",
 	"removeLink": "/project/${project.name}/weaver/${joinWeaver.id}/delete"

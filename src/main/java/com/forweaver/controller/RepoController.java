@@ -49,7 +49,7 @@ public class RepoController {
 			periodInt = Integer.parseInt(request.getParameter("period"));
 		Repo repo = new Repo(repoName, 
 					1, 
-					WebUtil.removeHtml(request.getParameter("description")), 
+					request.getParameter("description"), 
 					periodInt, 
 					lecture,weaver);
 

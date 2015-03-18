@@ -183,24 +183,24 @@ function fileUploadChange(fileUploader){
 
 						<tr>
 							<td style="border-top: 0px"></td>
-							<td style="font-size:13px;" colspan="3">${gitCommitLog.fullMassage}</td>
+							<td style="font-size:13px;" colspan="3">${cov:htmlEscape(gitCommitLog.fullMassage)}</td>
 						</tr>
 						<c:if test="${gitCommitLog.getNote().length() > 0}">
 						<tr>
 							<td style="border-top: 0px"></td>
 							<td style="font-size:13px;" colspan="3">
 							 <span class="label label-warning"><i class="fa fa-book"></i> 노트:</span> 
-    						${gitCommitLog.getNote()}</td>
+    						${cov:htmlEscape(gitCommitLog.getNote())}</td>
 						</tr>
 						</c:if>
 					</tbody>
 				</table>
 				<c:if test="${fn:length(gitCommitLog.diff)>0}">
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" class="span9 brush: diff"><c:out value="${gitCommitLog.diff}"></c:out></pre>
+					<pre id="source-code" class="span9 brush: diff">${cov:htmlEscape(gitCommitLog.diff)}</pre>
 				</div>
 				</c:if>
-				<!-- 답변 작성란 -->
+				<!-- 답변 작성란 
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/add-repost" method="POST">
 
@@ -219,7 +219,7 @@ function fileUploadChange(fileUploader){
 					<div class="file-div"></div>
 				</form>
 			</div>
-			<!-- 답변 테이블 -->
+			
 			<table id="repost-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${rePosts}" var="rePost">
@@ -233,11 +233,6 @@ function fileUploadChange(fileUploader){
 									<div class="pull-right">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
-										<!--
-											<a
-											href="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/update">
-											<span class="function-button">수정</span>
-										</a>-->
 										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 											href='/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/delete'>
 											<span class="function-button">삭제</span>
@@ -289,7 +284,7 @@ function fileUploadChange(fileUploader){
 						</c:forEach>
 
 					</tbody>
-				</table>
+				</table>-->
 		</div>
 		<!-- .row-fluid -->
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

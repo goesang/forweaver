@@ -56,14 +56,14 @@ function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 				fileBrowserURL+
 				selectBranch+
 				"/filepath:/"+
-				value.path+"'>" + 
+				value.path.replace(".jsp",",jsp")+"'>" + 
 				"<img src ='/resources/forweaver/img/file.png'></a></td>";
 			}
 			
 			
 			
 			appendHTML += "<td class = 'td-filename'>" +
-			"<a href='"+fileBrowserURL+selectBranch+"/filepath:"+value.path+"'>" + value.name + 
+			"<a href='"+fileBrowserURL+selectBranch+"/filepath:"+value.path.replace(".jsp",",jsp")+"'>" + value.name + 
 			"</a></td><td class = 'td-commitlog'>";
 			
 			//이미지를 추가함

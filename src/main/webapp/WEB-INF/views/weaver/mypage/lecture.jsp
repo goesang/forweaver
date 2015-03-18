@@ -71,7 +71,7 @@
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()}
+				<big><i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.getSay())}
 				 <i class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 			</div>

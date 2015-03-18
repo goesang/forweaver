@@ -150,7 +150,7 @@
 									</c:if></td>
 							</tr>
 							<tr>
-								<td class="post-bottom">${repo.description}</td>
+								<td class="post-bottom">${cov:htmlEscape(repo.description)}</td>
 							</tr>
 							
 						</c:if>

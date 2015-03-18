@@ -20,7 +20,7 @@ $(document).ready(function() {
 	$('#selectCommit').selectpicker('refresh');
 	
 	$("#selectCommit").change(function(){
-		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectCommit option:selected").val() != "empty_Branch")
 			window.location = $("#selectCommit option:selected").val()+"${fileName}";
 	});
 	
@@ -104,7 +104,7 @@ $(document).ready(function() {
 					</tbody>
 				</table>
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" >${fileContent}</pre>
+					<pre id="source-code" >${cov:htmlEscape(fileContent)}</pre>
 				</div>
 			</div>
 

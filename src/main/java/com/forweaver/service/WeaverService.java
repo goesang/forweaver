@@ -287,7 +287,6 @@ public class WeaverService implements UserDetailsService {
 			basicDB.put("codeCount", tempDB.get("codeCount"));
 			basicDB.put("downCount", tempDB.get("downCount"));
 		}
-		weaver.setWeaverInfo(basicDB);
 	}
 	
 	public long countWeavers(){

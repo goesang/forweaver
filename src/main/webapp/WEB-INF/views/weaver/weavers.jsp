@@ -70,7 +70,7 @@
 									href="/${weaver.getId()}"> <img
 										src="/${weaver.getId()}/img"></a></td>
 								<td colspan="2" class="post-top-title">
-										<i class="fa fa-quote-left"></i> ${weaver.say} <i
+										<i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.say)} <i
 											class="fa fa-quote-right"></i><small> -
 											${weaver.getId()}</small>
 								</td>

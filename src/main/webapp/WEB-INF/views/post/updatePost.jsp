@@ -147,7 +147,7 @@
 				enctype="multipart/form-data" method="post">
 					<div class="span9">
 						<input id="post-title-input" class="title span9" placeholder="쓰고 싶은 단문의 내용을 입력하거나 글의 제목을 입력해주세요!"
-							type="text" value="${post.title}" />
+							type="text" value="${cov:htmlEscape(post.title)}" />
 					</div>
 					<div class="span2">
 						<span> 							

@@ -84,23 +84,6 @@ function deleteRePost(postID,rePostID){
 	}
 }
 
-function spacialSignEncoder(str) {
-	str = str.split(" ").join("@$@");
-	str = str.split("+").join("@#@");
-	str = str.split("%").join("@!@");
-	str = str.split("&").join("@4@");
-	return str;
-}
-
-function specialSignDecoder(str) {
-	str = str.split("@$@").join(" ");
-	str = str.split("@#@").join("+");
-	str = str.split("@!@").join("%");
-	str = str.split("@4@").join("&");
-	return str;
-}
-
-
 function getSearchWord(url){
 	if(url.indexOf("/search:")==-1)
 		return [];

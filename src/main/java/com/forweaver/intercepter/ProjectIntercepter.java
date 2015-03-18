@@ -51,7 +51,9 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 		if(project == null){
 			response.sendError(404);
 			return false;
-		}else if(project.getCategory() > 0){
+		}
+		
+		if(project.getCategory() > 0){
 			if(weaver == null){
 				response.sendError(400);
 				return false;

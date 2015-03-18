@@ -171,7 +171,7 @@
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/lecture/${lecture.name}"> <i
 										class='fa fa-university'></i>&nbsp;${lecture.name} ~
-										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
+										&nbsp;${fn:substring(cov:htmlEscape(lecture.description),0,100-fn:length(lecture.name))}
 								</a></td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">

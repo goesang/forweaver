@@ -3,7 +3,7 @@
 <jsp:useBean id="dateValue" class="java.util.Date" />
 <!DOCTYPE html>
 <html><head>
-<title>${repo.name}~${repo.description}</title>
+<title>${repo.name}~${cov:htmlEscape(repo.description)}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
 </head>
@@ -15,7 +15,7 @@ $(document).ready(function() {
 	$('#selectCommit').selectpicker('refresh');
 	
 	$("#selectCommit").change(function(){
-		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectCommit option:selected").val() != "empty_Branch")
 			window.location = $("#selectCommit option:selected").val()+"${fileName}";
 	});
 	
@@ -31,7 +31,7 @@ $(document).ready(function() {
 		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
-				<small>${repo.description}</small>
+				<small>${cov:htmlEscape(repo.description)}</small>
 			</h5>
 		</div>
 		<div class="row">
@@ -99,7 +99,7 @@ $(document).ready(function() {
 					</tbody>
 				</table>
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" >${fileContent}</pre>
+					<pre id="source-code" >${cov:htmlEscape(fileContent)}</pre>
 				</div>
 			</div>
 

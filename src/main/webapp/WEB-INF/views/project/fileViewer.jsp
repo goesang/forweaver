@@ -21,7 +21,7 @@ $(document).ready(function() {
 	$('#selectCommit').selectpicker('refresh');
 	
 	$("#selectCommit").change(function(){
-		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectCommit option:selected").val() != "empty_Branch")
 			window.location = $("#selectCommit option:selected").val()+"/"+"${fileName}";
 	});
 	
@@ -102,7 +102,7 @@ $(document).ready(function() {
 							</a></td>
 							
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/browser/blame/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:/${fileName}">
+							<a	href="/project/${project.name}/browser/blame/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:/${fn:replace(fileName,'.jsp', ',jsp')}">
 									<span class="span-button"> <i class="fa fa-search"></i>
 										<p class="p-button">추적</p>
 									</span>
@@ -119,7 +119,7 @@ $(document).ready(function() {
 					</tbody>
 				</table>
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" >${fileContent}</pre>
+					<pre id="source-code" > ${cov:htmlEscape(fileContent)}</pre>
 				</div>
 			</div>
 

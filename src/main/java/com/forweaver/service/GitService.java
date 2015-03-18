@@ -151,12 +151,11 @@ public class GitService {
 		if(gitFileInfoList != null) 
 			for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 				if(gitSimpleFileInfo.getName().toUpperCase().contains("README.MD"))
-					readme = WebUtil.markDownEncoder(
-							getFileInfo(
+					readme = getFileInfo(
 									creatorName, 
 									projectName, 
 									commit, 
-									"/"+gitSimpleFileInfo.getName()).getContent());
+									"/"+gitSimpleFileInfo.getName()).getContent();
 		return readme;
 	}
 

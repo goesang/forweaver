@@ -37,8 +37,8 @@
 	$('#selectCommit').selectpicker('refresh');
 	
 	$("#selectCommit").change(function(){
-		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
-			window.location = $("#selectCommit option:selected").val()+"${fileName}";
+		if($("#selectCommit option:selected").val() != "empty_Branch")
+			window.location = $("#selectCommit option:selected").val()+"/"+"${fileName}";
 	});
 	
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
@@ -127,7 +127,7 @@
 									
 							</a></td>
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:${fileName}">
+							<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:${fn:replace(fileName,'.jsp', ',jsp')}">
 									<span class="span-button"> <i class="fa fa-file-code-o"></i>
 										<p class="p-button">소스</p>
 									</span>
@@ -143,7 +143,7 @@
 					</tbody>
 				</table>
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" >${fileContent}</pre>
+					<pre id="source-code" >${cov:htmlEscape(fileContent)}</pre>
 				</div>
 			</div>
 

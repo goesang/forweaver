@@ -142,7 +142,7 @@ public class CodeController {
 		if(tags == null || name == null || content == null || file == null) // 태그가 없을 때
 			return "redirect:/code/";
 		List<String> tagList = tagService.stringToTagList(
-				WebUtil.removeHtml(URLDecoder.decode(tags)));
+				URLDecoder.decode(tags));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
 		codeService.add(new Code(weaver, name, content, tagList), file);
@@ -168,7 +168,7 @@ public class CodeController {
 		Code code = codeService.get(codeID);
 
 		model.addAttribute("code", code);
-		model.addAttribute("rePosts", rePostService.get(codeID+"",4,sort));
+		model.addAttribute("rePosts", rePostService.get(codeID,4,sort));
 
 		return "/code/viewCode";
 	}
@@ -203,10 +203,9 @@ public class CodeController {
 				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
-		RePost rePost = new RePost(code.getCodeID()+"",
-				code.getWriter(),
+		RePost rePost = new RePost(code,
 				weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
+				content,
 				code.getTags(),
 				4);
 		rePostService.add(rePost,datas);
@@ -227,8 +226,7 @@ public class CodeController {
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
 			return "redirect:/code/"+codeID;
 
-		rePost.addReply(new Reply(weaver, 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
+		rePost.addReply(new Reply(weaver,content));
 		rePostService.update(rePost,null);	
 
 		return "redirect:/code/"+codeID;

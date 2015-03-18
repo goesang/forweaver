@@ -40,7 +40,7 @@ public class Project implements Serializable {
 	private String originalProject;
 	@DBRef
 	private Weaver creator;
-	private int push;
+	private long push;
 	@DBRef
 	private List<Project> childProjects = new ArrayList<Project>();
 	
@@ -171,11 +171,11 @@ public class Project implements Serializable {
 	}
 
 
-	public int getPush() {
+	public long getPush() {
 		return push;
 	}
 
-	public void setPush(int push) {
+	public void setPush(long push) {
 		this.push = push;
 	}
 	

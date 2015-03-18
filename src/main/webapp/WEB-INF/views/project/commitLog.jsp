@@ -18,7 +18,7 @@
 				menuStyle : 'dropdown-inverse'
 			});
 			$("#selectBranch").change(function() {
-				if ($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+				if ($("#selectBranch option:selected").val() != "empty_Branch")
 					window.location = $("#selectBranch option:selected").val();
 			});
 

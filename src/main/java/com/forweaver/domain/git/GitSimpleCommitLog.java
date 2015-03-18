@@ -29,6 +29,8 @@ public class GitSimpleCommitLog implements Serializable {
 	}
 	
 	public GitSimpleCommitLog(RevCommit revCommit){
+		if(revCommit == null)
+			return;
 		this.commitLogID = revCommit.getName();
 		this.shortMassage = revCommit.getShortMessage();
 		this.commiterName = revCommit.getAuthorIdent().getName();

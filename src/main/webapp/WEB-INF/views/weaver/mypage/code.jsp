@@ -73,7 +73,7 @@
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()} <i
+				<big><i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.getSay())} <i
 					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 		</div>
@@ -135,11 +135,11 @@
 									src="${code.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/code/${code.codeID}"> <i
-										class="fa fa-download"></i>&nbsp;${code.name} -
-										${code.content}
+										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
+										${cov:htmlEscape(code.content)}
 								</a></td>
 								<td class="td-button" rowspan="2"><a
-									href="/code/${code.codeID}/${code.name}.zip"> <span
+									href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 										class="span-button"> ${code.downCount}
 											<p class="p-button">다운</p>
 									</span>

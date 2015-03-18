@@ -94,8 +94,8 @@
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />
 
-		<security:form-login login-page='/login'
-			default-target-url='/' />
+		<security:form-login login-page='/login' 
+			default-target-url='/' authentication-failure-url="/loginFail"/>
 		<security:session-management
 			session-authentication-strategy-ref="sas" />
 		<security:logout />

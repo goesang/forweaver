@@ -39,7 +39,7 @@ public class RePostService {
 		return true;
 	}
 
-	public List<RePost> get(String ID,int kind,String sort) {
+	public List<RePost> get(int ID,int kind,String sort) {
 		return rePostDao.get(ID,kind,sort);
 	}
 

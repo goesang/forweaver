@@ -32,10 +32,11 @@ public class RePostDao {
 		mongoTemplate.insert(rePost);
 	}
 
-	public List<RePost> get(String ID,int kind, String sort) { // 글 가져오기
+	public List<RePost> get(int ID,int kind, String sort) { // 글 가져오기
 
-		Criteria criteria = 
-				new Criteria().and("originalPostID").is(ID).and("kind").is(kind);
+		Criteria criteria = new Criteria().orOperator(
+				new Criteria().where("originalPost.$id").is(ID).and("kind").is(kind),
+				new Criteria().where("originalCode.$id").is(ID).and("kind").is(kind));
 
 		this.filter(criteria, sort);
 
@@ -54,7 +55,7 @@ public class RePostDao {
 	}
 
 	public void deleteAll(String originalPostID) {
-		Query query = new Query(Criteria.where("originalPostID").is(
+		Query query = new Query(Criteria.where("originalPost._id").is(
 				originalPostID));
 		mongoTemplate.remove(query, RePost.class);
 	}

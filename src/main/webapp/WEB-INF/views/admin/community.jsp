@@ -140,7 +140,7 @@
 													<i class=" icon-align-justify"></i>
 												</c:if> <c:if test="${!post.isLong()}">
 													<i class="fa fa-comment"></i>
-												</c:if> &nbsp;${post.title}
+												</c:if> &nbsp;${cov:htmlEscape(post.title)}
 										</a></td>
 										<td class="td-button" rowspan="2"><c:if
 												test="${post.kind == 2}">
@@ -256,11 +256,11 @@
 											src="${code.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/code/${code.codeID}"> <i
-												class="fa fa-download"></i>&nbsp;${code.name} -
-												${code.content}
+												class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
+												${cov:htmlEscape(code.content)}
 										</a></td>
 										<td class="td-button" rowspan="2"><a
-											href="/code/${code.codeID}/${code.name}.zip"> <span
+											href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 												class="span-button"> ${code.downCount}
 													<p class="p-button">다운</p>
 											</span>
@@ -294,7 +294,7 @@
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/project/${project.name}/"> <i
 												class="fa fa-bookmark"></i> &nbsp;${project.name} ~
-												&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
+												&nbsp;${fn:substring(cov:htmlEscape(project.description),0,100-fn:length(project.name))}
 										</a></td>
 										<td class="td-button" rowspan="2"><c:if
 												test="${project.category != 0}">

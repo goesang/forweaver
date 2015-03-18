@@ -124,7 +124,7 @@
 							<td colspan="2" class="post-top-title none-top-border"><a
 								rel="external" class="a-post-title"
 								href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>">
-									${post.title}</a></td>
+									${cov:htmlEscape(post.title)}</a></td>
 							<td class="td-button none-top-border" rowspan="2"><span
 								class="span-button">${post.push}
 									<p class="p-button">추천</p>
@@ -150,9 +150,6 @@
 										">${tag}</span>
 								</c:forEach>
 								<div class="function-div pull-right">
-									<!--  	<a href="/community/${post.postID}/update"> <span
-										class="function-button">수정</span></a>
-										-->
 									<a href="javascript:deletePost(${post.postID})"> <span
 										class="function-button">삭제</span></a>
 								</div></td>
@@ -231,13 +228,7 @@
 									<div class="pull-right">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
-										<!--
-											<a
-											href="/community/${post.postID}/${rePost.rePostID}/update">
-											<span class="function-button">수정</span>
-										</a>-->
-										<a
-											href='javascript:deleteRePost(${post.postID},${rePost.rePostID})'>
+										<a href='javascript:deleteRePost(${post.postID},${rePost.rePostID})'>
 											<span class="function-button">삭제</span>
 										</a>
 									</div>

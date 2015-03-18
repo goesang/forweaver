@@ -216,7 +216,7 @@
 										 <i class="fa fa-code-fork"></i>
 									 </c:if>
 									 &nbsp;${project.name} ~
-										&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
+										&nbsp;${fn:substring(cov:htmlEscape(project.description),0,100-fn:length(project.name))}
 								</a></td>
 								<td class="td-button" rowspan="2">
 								 <c:if test="${project.category == 0}">

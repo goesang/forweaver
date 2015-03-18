@@ -7,6 +7,7 @@
 </head>
 <body>
 <script>
+${script}
 $(document).ready(function() {
 	$("#repasswordButton").click(function(){
 		$("#repasswordFieldset").show();

@@ -43,8 +43,14 @@ public class WeaverController {
 	@Autowired 
 	private TagService tagService;
 
-	@RequestMapping("/login")
+	@RequestMapping(value = "/login")
 	public String login() {
+		return "/weaver/login";
+	}
+	
+	@RequestMapping(value = "/loginFail")
+	public String loginFail(Model model) {
+		model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
 		return "/weaver/login";
 	}
 

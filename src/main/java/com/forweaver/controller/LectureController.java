@@ -129,7 +129,7 @@ public class LectureController {
 		if(!tagService.isPublicTags(tagList))
 			return "redirect:/lecture/";
 		Lecture lecture = new Lecture(params.get("name"),
-										WebUtil.removeHtml(params.get("description")),
+										params.get("description"),
 										currentWeaver,
 										tagList);
 		lectureService.add(lecture,currentWeaver);
@@ -216,8 +216,7 @@ public class LectureController {
 			return "redirect:/lecture/"+lectureName;
 		else if(content == null)
 			content = "";
-		List<String> tagList = tagService.stringToTagList(
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
+		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+lectureName));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
@@ -225,10 +224,7 @@ public class LectureController {
 			return "redirect:/lecture/"+lectureName;
 			
         
-		Post post = new Post(weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
-				tagList);
+		Post post = new Post(weaver,title,content,tagList);
 		
 		postService.add(post,null);
 		return "redirect:/lecture/"+lectureName+"/community";

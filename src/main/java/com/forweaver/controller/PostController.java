@@ -162,13 +162,12 @@ public class PostController {
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
-
+		System.out.println(tags);
 		if(tags == null || title == null) // 태그가 없을 때
 			return "redirect:"+"/community";
 		else if(content.equals(""))
 			content = "";
-		List<String> tagList = tagService.stringToTagList(
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
+		List<String> tagList = tagService.stringToTagList(tags);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
 		tagList = tagService.removeMyMassageTag(tagList,weaver);//실수로 자신의 메세지 태그를 붙이면 지움
@@ -181,9 +180,8 @@ public class PostController {
 				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
-		Post post = new Post(weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
+		Post post = new Post(weaver,title, 
+				content, 
 				tagList);
 
 		postService.add(post,datas);
@@ -208,7 +206,7 @@ public class PostController {
 		if(!tagService.validateTag(post.getTags(), weaver))
 			return "redirect:/community/";
 		model.addAttribute("post", post);
-		model.addAttribute("rePosts", rePostService.get(postID+"",post.getKind(),sort));
+		model.addAttribute("rePosts", rePostService.get(postID,post.getKind(),sort));
 
 		return "/post/viewPost";
 	}
@@ -236,10 +234,9 @@ public class PostController {
 				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
-		RePost rePost = new RePost(post.getPostID()+"",
-				post.getWriter(),
+		RePost rePost = new RePost(post,
 				weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))),
+				content,
 				post.getTags(),
 				post.getKind());
 		post.setRecentRePostDate(rePost.getCreated());
@@ -261,13 +258,12 @@ public class PostController {
 		if( weaver == null || rePost == null || post == null || 
 				!tagService.validateTag(post.getTags(),weaver) || content == null) 
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
-			return "redirect:/community/"+rePost.getOriginalPostID();
+			return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 
-		rePost.addReply(new Reply(weaver, 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content)))));
+		rePost.addReply(new Reply(weaver, content));
 		rePostService.update(rePost,null);	
 
-		return "redirect:/community/"+rePost.getOriginalPostID();
+		return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 	}
 
 	@RequestMapping(value="/{postID}/{rePostID}/{number}/delete")
@@ -283,12 +279,12 @@ public class PostController {
 		if( weaver == null || rePost == null || post == null || 
 				!tagService.validateTag(post.getTags(),weaver)) 
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
-			return "redirect:/community/"+rePost.getOriginalPostID();
+			return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 
 		rePost.removeReply(weaver, number);
 		rePostService.update(rePost,null);	
 
-		return "redirect:/community/"+rePost.getOriginalPostID();
+		return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 	}
 
 
@@ -348,8 +344,8 @@ public class PostController {
 		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
 			return "redirect:/community/"+postID;	
 
-		post.setTitle(WebUtil.removeHtml(WebUtil.specialSignDecoder(title)));
-		post.setContent(WebUtil.convertHtml(WebUtil.specialSignDecoder(WebUtil.removeHtml(content))));
+		post.setTitle(WebUtil.specialSignDecoder(title)));
+		post.setContent(WebUtil.convertHtml(WebUtil.specialSignDecoder(content))));
 		post.setTags(tagService.stringToTagList(tags));		
 
 		postService.update(post,fileRemoveList);

@@ -56,7 +56,7 @@ import com.forweaver.domain.git.statistics.GitParentStatistics;
 //git과 관련된 모든 기능 구현.
 @Component
 public class GitUtil {
-	
+
 	@Value("${gitpath}")
 	private String gitPath;
 	private String path;
@@ -143,7 +143,7 @@ public class GitUtil {
 			treeWalk.reset(new RevWalk(this.localRepo).parseTree(revId));
 			while (treeWalk.next()) {
 				if(treeWalk.getPathString().startsWith(filePath)){
-				return true;
+					return true;
 				}
 			}
 		}catch(Exception e){
@@ -193,8 +193,8 @@ public class GitUtil {
 			Iterable<RevCommit> gitLogIterable = this.git
 					.log()
 					.add(
-					this.getCommit(refName))
-					.call();
+							this.getCommit(refName))
+							.call();
 			int length = 0;
 
 			for (RevCommit revCommit : gitLogIterable) {
@@ -224,27 +224,27 @@ public class GitUtil {
 						revCommit.getCommitterIdent().getEmailAddress());
 				gitFileInfoList.add(gitFileInfo);
 			}
-			
+
 		}catch(Exception e){}
 		return gitFileInfoList;
 	}
-	
+
 	// 프로젝트의 파일 목록을 커밋 아이디를 가지고 가져옴.
-		public List<String> getGitFileList(String commitID) {
-			List<String> fileList = new ArrayList<String>();
-			try{
-				ObjectId revId = this.localRepo.resolve(commitID);
-				TreeWalk treeWalk = new TreeWalk(this.localRepo);
-				treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
-				treeWalk.setRecursive(true);
-				
-				while (treeWalk.next()) {
-					fileList.add("/"+treeWalk.getPathString());
-				}
-				
-			}catch(Exception e){}
-			return fileList;
-		}
+	public List<String> getGitFileList(String commitID) {
+		List<String> fileList = new ArrayList<String>();
+		try{
+			ObjectId revId = this.localRepo.resolve(commitID);
+			TreeWalk treeWalk = new TreeWalk(this.localRepo);
+			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+			treeWalk.setRecursive(true);
+
+			while (treeWalk.next()) {
+				fileList.add("/"+treeWalk.getPathString());
+			}
+
+		}catch(Exception e){}
+		return fileList;
+	}
 
 	// 저장소에서 GIT 로그 정보를 가져옴
 	public GitCommitLog getCommitLog(String commitID) {
@@ -355,12 +355,12 @@ public class GitUtil {
 				branchList.add(ref.getName().substring(10));
 			}
 		} catch (IOException e) {
-			branchName = "체크아웃한 브랜치 없음";
+			branchName = "empty_Branch";
 		} catch (GitAPIException e) {
 			System.err.println(e.getMessage());
 		} finally {
 			if (branchList.size() == 0)
-				branchList.add("브랜치가 없습니다!");
+				branchList.add("empty_Branch");
 			else {
 				branchList.remove(branchName);
 				branchList.add(0, branchName);
@@ -501,12 +501,16 @@ public class GitUtil {
 			.setDirectory(localPath)
 			.call();
 			// .git을 제외한 파일 모두 삭제.
+
 			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
-			git.checkout().setName(branchName).call();
-			
+
+			if(!branchName.equals("empty_Branch"))
+				git.checkout().setName(branchName).call();
+
+
 			for(String fileName:getGitFileList(branchName))
 				git.rm().addFilepattern(fileName.substring(1)).call();	
-			
+
 
 			//압축파일을 품.
 			byte[] buffer = new byte[1024];
@@ -517,21 +521,21 @@ public class GitUtil {
 
 			while(ze!=null){
 				if (!ze.isDirectory()) { // 만약 파일의 경우
-				String fileName = ze.getName();
-				if(fileName.startsWith(".git/")) //.git 디렉토리는 제외함.
-					continue;
-				File newFile = new File(localPath + File.separator + fileName);
-				
-				new File(newFile.getParent()).mkdirs();
+					String fileName = ze.getName();
+					if(fileName.startsWith(".git/")) //.git 디렉토리는 제외함.
+						continue;
+					File newFile = new File(localPath + File.separator + fileName);
 
-				FileOutputStream fos = new FileOutputStream(newFile);             
+					new File(newFile.getParent()).mkdirs();
 
-				int len;
-				while ((len = zis.read(buffer)) > 0) {
-					fos.write(buffer, 0, len);
-				}
+					FileOutputStream fos = new FileOutputStream(newFile);             
 
-				fos.close();   
+					int len;
+					while ((len = zis.read(buffer)) > 0) {
+						fos.write(buffer, 0, len);
+					}
+
+					fos.close();   
 				}
 				ze = zis.getNextEntry();
 			}
@@ -540,15 +544,15 @@ public class GitUtil {
 			zis.close();
 			//이제 파일들을 모조리 추가시키고 커밋한 후에 푸시함.
 
-			
+
 			git.add().addFilepattern(".").call();		
 			git.commit().setAuthor(name, email).setMessage(message).call();
 			git.push().setRemote("origin").call();
-			
+
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-	
+
 	}
 
 	// 프로젝트를 포크함.
