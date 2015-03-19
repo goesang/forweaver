@@ -88,7 +88,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
 						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
@@ -100,13 +100,13 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<label id="labelPath"></label>
 				</div>
 				<div style="width: 90px;" class="span2">
-					<a id="show-content-button" class="btn btn-primary"
+					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
 						href="javascript:showUploadContent();"> <i
 						class="fa fa-arrow-circle-o-up"> </i></a> <a
-						id="hide-content-button" class="btn btn-primary"
+						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"
 						href="javascript:hideUploadContent();"> <i
 						class="fa fa-arrow-circle-o-up"> </i></a> <a
-						class="btn btn-primary"
+						class="btn btn-primary" title="프로젝트 .zip파일로 다운로드"
 						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
 						<i class="fa fa-arrow-circle-o-down"> </i>
 					</a>
@@ -126,7 +126,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<div class="span12">
 						<input class="title span10" type="text" name="message"
 							placeholder="커밋을 입력해주세요!"></input>
-						<button type="submit" class="post-button btn btn-primary"
+						<button type="submit" class="post-button btn btn-primary" title="프로젝트 등록"
 							style="margin-top: -10px; display: inline-block;">
 							<i class="fa fa-check"></i>
 
@@ -135,7 +135,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<div id="file-div" style="padding-left: 20px;">
 						<div class='fileinput fileinput-new' data-provides='fileinput'>
 							<div class='input-group'>
-								<div class='form-control' data-trigger='fileinput'>
+								<div class='form-control' data-trigger='fileinput' title="업로드할 파일을 선택하세요">
 									<i class='icon-file '></i> <span class='fileinput-filename'></span>
 								</div>
 								<span class='input-group-addon btn btn-primary btn-file'><span
@@ -143,7 +143,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 									<span class='fileinput-exists'><i
 										class='icon-repeat icon-white'></i></span> <input type='file'
 									id='file' multiple='true' name='zip'></span> <a href='#'
-									class='input-group-addon btn btn-primary fileinput-exists'
+									class='input-group-addon btn btn-primary fileinput-exists' title="업로드 취소"
 									data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
 							</div>
 						</div>

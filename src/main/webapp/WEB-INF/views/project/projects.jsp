@@ -134,7 +134,7 @@
 			<h5>
 				<big><big><i class=" fa fa-bookmark"></i> 참여해보세요!</big></big> <small>같이
 					진행할 동료를 구하거나 흥미로운 프로젝트에 참여해보세요!</small>
-				<div style="margin-top: -10px" class="pull-right">
+				<div style="margin-top: -10px" class="pull-right"  title='전체 프로젝트 갯수&#13;${projectCount}개'>
 
 					<button class="btn btn-warning">
 						<b><i class="fa fa-database"></i> ${projectCount}</b>
@@ -188,12 +188,12 @@
 				<div class="span2">
 					<span> <a id="show-content-button"
 						href="javascript:showProjectContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
-					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
+						class="post-button btn btn-primary" title="프로젝트 개설하기"> <i class="icon-pencil"></i>
+					</a> <a id='search-button' class="post-button btn btn-primary" title="프로젝트 검색하기"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hideProjectContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"  title="개설 취소하기"> <i class="icon-pencil"></i>
 					</a>
-						<button id='project-ok' class="post-button btn btn-primary">
+						<button id='project-ok' class="post-button btn btn-primary" title="프로젝트 올리기">
 							<i class="fa fa-check"></i>
 						</button>
 
