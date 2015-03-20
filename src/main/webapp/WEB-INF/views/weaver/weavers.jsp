@@ -74,22 +74,21 @@
 											class="fa fa-quote-right"></i><small> -
 											${weaver.getId()}</small>
 								</td>
-								
+								<td rowspan="2" class="td-button"><span class="span-button-inverse">
+								${weaver.weaverInfo.score}<p  title="회원의 활동점수" class="p-button">점수</p> </span></td>								
 								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-comments"></i>
-										<p title="글 갯수/답변 달린 갯수" class="p-button-mini">${weaver.getInfo('postCount')}/${weaver.getInfo('rePostCount')}</p> </span></td>
+										<p title="글 갯수 / 추천수" class="p-button-mini">${weaver.weaverInfo.postCount}/${weaver.weaverInfo.postPush}</p> </span></td>
+								
 								<td rowspan="2" class="td-button"><span class="span-button"><i
-										class="fa fa-comments-o"></i>
-											<p title="답변 갯수/답변의 추천수" class="p-button-mini">${weaver.getInfo('myRePostCount')}/${weaver.getInfo('rePostPush')}</p> </span></td>	
+										class="fa fa-comment"></i>
+											<p title="내가 올린 답변 갯수 / 답변의 추천수" class="p-button-mini">${weaver.weaverInfo.myRePostCount}/${weaver.weaverInfo.myRePostPush}</p> </span></td>	
 								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-rocket"></i>
-										<p title="코드 업로드 갯수/다운로드 갯수" class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
-								<td rowspan="2" class="td-button"><span class="span-button"><i
-										class="fa fa-university"></i>
-										<p title="강의 갯수/수강중인 학생수" class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','weaverID')}</p> </span></td>	
+										<p title="코드 업로드 갯수 / 다운로드 갯수" class="p-button-mini">${weaver.weaverInfo.codeCount}/${weaver.weaverInfo.codeDownloadCount}</p> </span></td>	
 								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
-										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.getInfo('projectCount')}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
+										<p title="프로젝트 갯수 / 포크 프로젝트 갯수" class="p-button-mini">${weaver.weaverInfo.projectCount}/${weaver.weaverInfo.forkProjectCount}</p> </span></td>	
 							</tr>
 							<tr>
 							<td class="post-bottom-tag"><c:forEach items="${weaver.tags}"

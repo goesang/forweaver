@@ -47,10 +47,12 @@ public class Weaver implements UserDetails,Serializable {
 	private Date joinDate;
 	private List<Pass> passes = new ArrayList<Pass>();
 	private List<String> tags = new ArrayList<String>();
-
+/*
 	@Transient
+	private DBObject weaverInfo;
+*/
 	private WeaverInfo weaverInfo;
-
+	
 	public Weaver(){}
 
 
@@ -223,6 +225,38 @@ public class Weaver implements UserDetails,Serializable {
 		}
 		return passNames;
 	}
+/*
+	public DBObject getWeaverInfo() {
+		return weaverInfo;
+	}
+	
+	public String getInfo(String field) {
+		Object value = weaverInfo.get(field);
+		if(value == null)
+			value = "0";
+		return value.toString();
+	}
+
+	public String getInfo(String field,String search) {
+		Object value = weaverInfo.get(field);
+		if(value == null)
+			value = "0";
+		return ""+StringUtils.countOccurrencesOf(value.toString(),search);
+	}
+
+	public void setWeaverInfo(DBObject weaverInfo) {
+		this.weaverInfo = weaverInfo;
+	}*/
+	
+	
+
+	public boolean isAdminWeaver(String joinName){
+		for(Pass pass : this.passes){
+			if(pass.getJoinName().equals(joinName) && pass.getPermission() == 2)
+				return true;
+		}
+		return false;
+	}
 
 	public WeaverInfo getWeaverInfo() {
 		return weaverInfo;
@@ -233,13 +267,6 @@ public class Weaver implements UserDetails,Serializable {
 		this.weaverInfo = weaverInfo;
 	}
 
-	public boolean isAdminWeaver(String joinName){
-		for(Pass pass : this.passes){
-			if(pass.getJoinName().equals(joinName) && pass.getPermission() == 2)
-				return true;
-		}
-		return false;
-	}
 
 	public boolean isJoinWeaver(String joinName){
 		for(Pass pass : this.passes){

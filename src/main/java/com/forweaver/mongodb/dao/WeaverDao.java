@@ -100,6 +100,19 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 	
+	public void updateInfo(Weaver weaver,String field,long value) {
+		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
+		Update update = new Update();
+		update.inc(field, value);
+		mongoTemplate.updateFirst(query, update, Weaver.class);   //갯수 추가 및 삭제.
+		
+		weaver = mongoTemplate.findOne(query,Weaver.class); // 점수 재합산
+		weaver.getWeaverInfo().updateScore();
+		update = new Update();
+		update.set("weaverInfo", weaver.getWeaverInfo());
+		mongoTemplate.updateFirst(query, update, Weaver.class);     
+	}
+	
 	public DBObject getWeaverInfosInPost(Weaver weaver){
 		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
@@ -114,7 +127,7 @@ public class WeaverDao {
 		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
 		
-		AggregationOperation group = Aggregation. group("writer").count().as("myRePostCount").sum("push").as("rePostPush");
+		AggregationOperation group = Aggregation. group("writer").count().as("myRePostCount").sum("push").as("rePostPush").push("replys").as("replys");
 		Aggregation agg = newAggregation(match, group);
 
 		return mongoTemplate.aggregate(agg, "rePost", DBObject.class).getUniqueMappedResult();
@@ -124,7 +137,7 @@ public class WeaverDao {
 		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
 		
-		AggregationOperation group = Aggregation. group("creator").count().as("projectCount").push("childProjects").as("childProjects");
+		AggregationOperation group = Aggregation. group("creator").push("childProjects").as("childProjects").sum("push").as("projectPush");
 		Aggregation agg = newAggregation(match, group);
 
 		return mongoTemplate.aggregate(agg, "project", DBObject.class).getUniqueMappedResult();
@@ -134,7 +147,7 @@ public class WeaverDao {
 		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
 		
-		AggregationOperation group = Aggregation. group("creator").count().as("lectureCount").push("joinWeavers").as("joinWeavers");
+		AggregationOperation group = Aggregation. group("creator").push("joinWeavers").as("joinWeavers").push("repos").as("repos");
 		Aggregation agg = newAggregation(match, group);
 
 		return mongoTemplate.aggregate(agg, "lecture", DBObject.class).getUniqueMappedResult();

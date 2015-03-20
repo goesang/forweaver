@@ -70,19 +70,19 @@
 				<div class="span12">
 					<ul class="nav nav-tabs pull-left" id="myTab">
 						<li id="age-desc"><a
-							href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
-						<li id="solo"><a
-								href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:solo/page:1">외톨이</a></li>
-						<li id="fork"><a
-								href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:fork/page:1">포크</a></li>
-						<li id="push-many"><a
-							href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-many/page:1">추천순</a></li>
-						<li id="push-null"><a
-							href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-null/page:1">추천
-								없음</a></li>
-						<li id="age-asc"><a
-							href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-						<li id="repost-null"></li>
+						href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+					<li id="active"><a
+							href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:active/page:1">활동순</a></li>
+					<li id="push-many"><a
+						href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-many/page:1">추천순</a></li>
+					<li id="fork"><a
+							href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:fork/page:1">포크</a></li>
+					<li id="homework"><a
+						href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:homework/page:1">과제</a></li>
+					<li id="private"><a
+						href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">비공개</a></li>	
+					<li id="age-asc"><a
+						href="/admin/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
 					</ul>
 					<div class="navbar navbar-inverse">
 						<ul style="border-bottom: 0px;" class="nav pull-right">

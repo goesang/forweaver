@@ -206,7 +206,7 @@ public class PostController {
 		if(!tagService.validateTag(post.getTags(), weaver))
 			return "redirect:/community/";
 		model.addAttribute("post", post);
-		model.addAttribute("rePosts", rePostService.get(postID,post.getKind(),sort));
+		model.addAttribute("rePosts", rePostService.gets(postID,post.getKind(),sort));
 
 		return "/post/viewPost";
 	}
@@ -255,13 +255,11 @@ public class PostController {
 		Post post = postService.get(postID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( weaver == null || rePost == null || post == null || 
-				!tagService.validateTag(post.getTags(),weaver) || content == null) 
-			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
+		if(!tagService.validateTag(post.getTags(),weaver)) 
+			// 권한 검사.
 			return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 
-		rePost.addReply(new Reply(weaver, content));
-		rePostService.update(rePost,null);	
+		rePostService.addReply(rePost,new Reply(weaver, content));	
 
 		return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 	}
@@ -276,13 +274,10 @@ public class PostController {
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( weaver == null || rePost == null || post == null || 
-				!tagService.validateTag(post.getTags(),weaver)) 
-			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
+		if(!tagService.validateTag(post.getTags(),weaver)) // 권한 검사.
 			return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 
-		rePost.removeReply(weaver, number);
-		rePostService.update(rePost,null);	
+		rePostService.deleteReply(rePost, weaver, number);
 
 		return "redirect:/community/"+rePost.getOriginalPost().getPostID();
 	}

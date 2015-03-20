@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * description  강의 소개
  * openingDate 강의 시작일
  * creator 강의 개설자 정보
- * push 강의 추천수
  * isJoin 강의 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
  * tags 강의 태그 모음
  * adminWeavers 관리자들

@@ -140,8 +140,7 @@ public class RePost implements Serializable {
 	public boolean removeReply(Weaver weaver, int number) {
 		for (int i = 0; i < this.replys.size(); i++) {
 			if (this.replys.get(i).getNumber() == number
-					&& weaver.getId()
-							.equals(this.replys.get(i).getWriterName()))
+					&& weaver.getId().equals(this.replys.get(i).getWriterName()))
 				this.replys.remove(i);
 			return true;
 		}
@@ -210,7 +209,7 @@ public class RePost implements Serializable {
 	}
 
 	public List<String> getTags() {
-		return null;
+		return this.tags;
 	}
 
 	public Post getOriginalPost() {
@@ -227,6 +226,10 @@ public class RePost implements Serializable {
 
 	public void setOriginalCode(Code originalCode) {
 		this.originalCode = originalCode;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}	
 	
 	

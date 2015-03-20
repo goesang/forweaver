@@ -257,6 +257,7 @@ public class WeaverService implements UserDetailsService {
 		return false;
 	}
 
+	/*
 	public void getWeaverInfos(Weaver weaver){
 		BasicDBObject basicDB = new BasicDBObject();
 		DBObject tempDB = weaverDao.getWeaverInfosInPost(weaver);
@@ -274,12 +275,12 @@ public class WeaverService implements UserDetailsService {
 		}
 		tempDB = weaverDao.getWeaverInfosInProject(weaver);
 		if(tempDB != null){
-			basicDB.put("projectCount", tempDB.get("projectCount"));
+			basicDB.put("projectPush", tempDB.get("projectPush"));
 			basicDB.put("childProjects", tempDB.get("childProjects"));
 		}
 		tempDB = weaverDao.getWeaverInfosInLecture(weaver);
 		if(tempDB != null){
-			basicDB.put("lectureCount", tempDB.get("lectureCount"));
+			basicDB.put("repos", tempDB.get("repos"));
 			basicDB.put("joinWeavers", tempDB.get("joinWeavers"));
 		}
 		tempDB = weaverDao.getWeaverInfosInCode(weaver);
@@ -287,16 +288,17 @@ public class WeaverService implements UserDetailsService {
 			basicDB.put("codeCount", tempDB.get("codeCount"));
 			basicDB.put("downCount", tempDB.get("downCount"));
 		}
+		weaver.setWeaverInfo(basicDB);
 	}
-	
+	*/
 	public long countWeavers(){
 		return weaverDao.countWeavers();
 	}
 	
 	public List<Weaver> getWeavers(int page, int size) {
 		List<Weaver> weavers = weaverDao.getWeavers(page, size);
-		for(Weaver weaver : weavers)
-			this.getWeaverInfos(weaver);
+		//for(Weaver weaver : weavers)
+			//this.getWeaverInfos(weaver);
 		return weavers;
 	}
 	
@@ -308,8 +310,8 @@ public class WeaverService implements UserDetailsService {
 	 */
 	public List<Weaver> getWeavers(List<String> tags,int page, int size ){
 		List<Weaver> weavers = weaverDao.getWeavers(tags,page, size);
-		for(Weaver weaver : weavers)
-			this.getWeaverInfos(weaver);
+		//for(Weaver weaver : weavers)
+		//	this.getWeaverInfos(weaver);
 		return weavers;
 	}
 	

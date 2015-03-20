@@ -168,7 +168,7 @@ public class CodeController {
 		Code code = codeService.get(codeID);
 
 		model.addAttribute("code", code);
-		model.addAttribute("rePosts", rePostService.get(codeID,4,sort));
+		model.addAttribute("rePosts", rePostService.gets(codeID,4,sort));
 
 		return "/code/viewCode";
 	}
@@ -226,8 +226,7 @@ public class CodeController {
 			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
 			return "redirect:/code/"+codeID;
 
-		rePost.addReply(new Reply(weaver,content));
-		rePostService.update(rePost,null);	
+		rePostService.addReply(rePost,new Reply(weaver, content));	
 
 		return "redirect:/code/"+codeID;
 	}
@@ -242,11 +241,10 @@ public class CodeController {
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( rePost == null || code == null || !rePost.removeReply(weaver, number)) 
-			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
+		if( rePost == null || code == null) 
 			return "redirect:/code/"+codeID;
 
-		rePostService.update(rePost,null);	
+		rePostService.deleteReply(rePost, weaver, number);
 
 		return "redirect:/code/"+codeID;
 	}

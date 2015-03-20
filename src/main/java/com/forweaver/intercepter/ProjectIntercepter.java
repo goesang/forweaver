@@ -62,11 +62,11 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 				return true;
 			}
 			else{
-				if(project.getOriginalProject() == null){
+				if(project.getOriginalProjectName() == null){
 					response.sendError(400);
 					return false;
 				}
-				Pass pass = weaver.getPass(project.getOriginalProject().split("/")[0]);
+				Pass pass = weaver.getPass(project.getOriginalProjectName().split("/")[0]);
 				if(pass != null && pass.getPermission() == 1 )
 					return true;
 				else{

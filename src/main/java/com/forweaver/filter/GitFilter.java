@@ -48,7 +48,6 @@ public class GitFilter implements Filter {
 
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Pass pass = weaver.getPass(lectureName + "/" + repoName);
-		Project project = projectService.get(lectureName + "/" + repoName);
 		if (pass == null)
 			pass = weaver.getPass(lectureName);
 
@@ -56,14 +55,7 @@ public class GitFilter implements Filter {
 			return;
 
 		if (pass.getJoinName().contains("/")) { // 프로젝트에 권한이 있는 경우
-			if(project.getCategory() ==2 && project.getDDay() == -1)
-				return;
 			filterchain.doFilter(req, res);
-			return;
-		}else if(project != null && project.getCategory() ==2 ){ // 팀 프로젝트이고 강사가 방문하는 경우.
-			pass = weaver.getPass(project.getOriginalProject().split("/")[0]);
-			if(pass != null && pass.getPermission() == 1 )
-				filterchain.doFilter(req, res);
 			return;
 		}
 
@@ -81,7 +73,7 @@ public class GitFilter implements Filter {
 		} else if (pass.getPermission() == 0) { 
 			// 강의 수강자의 경우
 
-			if (repo.getCategory() == 0 || repo.getCategory() == 2) { // 예제 저장소 및 팀 예제 저장소의 경우
+			if (repo.getCategory() == 0) { // 예제 저장소의 경우
 
 				gitUtil.notWriteBranches();
 				filterchain.doFilter(req, res);

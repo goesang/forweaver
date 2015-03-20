@@ -58,6 +58,8 @@ public class ProjectDao {
 		update.set("adminWeavers", project.getAdminWeavers());
 		update.set("joinWeavers", project.getJoinWeavers());
 		update.set("childProjects", project.getChildProjects());
+		update.set("activeDate", project.getActiveDate());
+		update.set("commitCount", project.getCommitCount());
 		mongoTemplate.updateFirst(query, update, Project.class);
 	}
 	
@@ -173,12 +175,12 @@ public class ProjectDao {
 	public void filter(Criteria criteria,String sort){
 		if (sort.equals("push-many")) {
 			criteria.and("push").gt(0);
-		} else if (sort.equals("push-null")) {
-			criteria.and("push").is(0);
+		}else if (sort.equals("homework")) {
+			criteria.and("kind").gt(3);
+		}else if (sort.equals("private")) {
+			criteria.and("kind").is(1);
 		} else if (sort.equals("fork")) {
 			criteria.and("kind").is(2);
-		} else if (sort.equals("solo")) {
-			criteria.and("adminWeavers").size(1).and("joinWeavers").size(0);
 		}
 	}
 	
@@ -189,8 +191,8 @@ public class ProjectDao {
 	public void sorting(Query query,String sort){
 		if (sort.equals("opendate-asc")) {
 			query.with(new Sort(Sort.Direction.ASC, "openingDate"));
-		} else if (sort.equals("push-null")) {
-			query.with(new Sort(Sort.Direction.ASC, "push"));
+		} else if (sort.equals("active")) {
+			query.with(new Sort(Sort.Direction.ASC, "activeDate"));
 		} else if (sort.equals("push-many")) {
 			query.with(new Sort(Sort.Direction.DESC, "push"));
 		} else

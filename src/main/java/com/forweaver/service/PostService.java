@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
+import com.forweaver.domain.RePost;
+import com.forweaver.domain.Reply;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RePostDao;
+import com.forweaver.mongodb.dao.WeaverDao;
 
 @Service
 public class PostService {
@@ -23,8 +26,14 @@ public class PostService {
 	@Autowired private PostDao postDao;
 	@Autowired private RePostDao rePostDao;
 	@Autowired private DataDao dataDao;
+	@Autowired private WeaverDao weaverDao;
 	@Autowired private CacheManager cacheManager;
-
+	
+	/** 글을 생성함.
+	 * @param post
+	 * @param datas
+	 * @return
+	 */
 	public int add(Post post,List<Data> datas) {
 
 		if (post.getContent().length() >= 10)
@@ -46,36 +55,32 @@ public class PostService {
 			}
 
 		}
+		//만약 자료를 올렸다면.
 		if(datas != null && datas.size() >0)
 			for(Data data:datas){
 				dataDao.insert(data);
 				post.addData(dataDao.getLast());
 			}
-
-
+		//사용자가 글을 추가하여 갯수를 올림.
+		weaverDao.updateInfo(post.getWriter(),"weaverInfo.postCount",1);
 		return postDao.insert(post);
 
 	}
 
 	public Post get(int postID) {
-		Cache cache = cacheManager.getCache("post");
-		Element element = cache.get(postID);
-		if (element == null || (element != null && element.getValue() == null)) {
-			Post post = postDao.get(postID);
-			if (post == null)
-				return null;
-			Element newElement = new Element(post.getPostID(), post);
-			cache.put(newElement);
-			return post;
-		}
-		return (Post) element.getValue();
+		return postDao.get(postID);
 	}
 
+	/** 글 추천함.
+	 * @param post
+	 * @param weaver
+	 * @return
+	 */
 	public boolean push(Post post, Weaver weaver) {
 		if (weaver == null || weaver.equals(post.getWriter()))
 			return false;
-		cacheManager.getCache("post").remove(post.getPostID());
-		Cache cache = cacheManager.getCache("push");
+		
+		Cache cache = cacheManager.getCache("push"); // 중복 추천 방지!
 		Element element = cache.get(post.getPostID());
 
 		if (element == null || (element != null && element.getValue() == null)) {
@@ -83,14 +88,15 @@ public class PostService {
 			postDao.update(post);
 			Element newElement = new Element(post.getPostID(), weaver.getId());
 			cache.put(newElement);
+			
+			weaverDao.updateInfo(post.getWriter(),"weaverInfo.postPush",1); //추천을 하면 글쓴이의 추천수가 올라감.
+			weaverDao.update(post.getWriter());
 			return true;
 		}
 		return false;
 	}
 
 	public void update(Post post,String[] removeDataList) {
-		cacheManager.getCache("post").remove(post.getPostID());
-
 		if (post.getContent().length() >= 10)
 			post.setLong(true);
 		else {
@@ -114,20 +120,39 @@ public class PostService {
 				post.deleteData(dataName);
 			}
 		postDao.update(post);
-		cacheManager.getCache("post").put(new Element(post.getPostID(), post));// 수정함
 	}
 
+	/** 실제 글을 삭제하는 메서드
+	 * @param post
+	 */
+	private void delete(Post post){
+		for(RePost rePost : rePostDao.gets(post)){ //답변들을 가져옴.
+			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostCount",-1); // 답변을 단 사람들의 점수를 삭감
+			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostPush",-rePost.getPush()); // 답변을 단 사람들의 추천 삭감.
+			weaverDao.updateInfo(post.getWriter(),"weaverInfo.rePostCount",-1); // 글을 쓴 사람의 답변 점수 삭제
+			for(Reply reply : rePost.getReplys()){ // 댓글들을 가져옴.
+				weaverDao.updateInfo(reply.getWriter(),"weaverInfo.myReplysCount",-1);// 답변에 댓글을 단 사람들의 점수를 삭감
+				weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",-1);// 답변에 댓글 점수를 삭감
+			}
+		}
+		rePostDao.deleteAll(post); // 답변 전부 삭제.
+		weaverDao.updateInfo(post.getWriter(),"weaverInfo.postCount",-1); // 글을 쓴 사람 갯수 삭감.
+		weaverDao.updateInfo(post.getWriter(),"weaverInfo.postPush",-post.getPush()); // 글을 쓴 사람의 추천수 삭감.
+		postDao.delete(post); //댓글 전부 삭제.
+	}
+	
+	/** 글을 삭제함.
+	 * @param post
+	 * @param weaver
+	 * @return
+	 */
 	public boolean delete(Post post, Weaver weaver) {
 		if(post == null || weaver == null)
 			return false;
 
-		if (weaver.isAdmin() || 
-				post.getWriter().equals(weaver.getId())) { // 글쓴이 또는 관리자의 경우
-			postDao.delete(post);
-			rePostDao.deleteAll(post.getPostID()+"");
-			cacheManager.getCache("post").remove(post.getPostID());
+		if (weaver.isAdmin() || 	post.getWriter().equals(weaver.getId())) { // 글쓴이 또는 관리자의 경우
+			this.delete(post);
 			return true;
-
 		} else if (post.getKind() == 2) { // 글쓴이가 아니고 프로젝트 태그의 경우
 			String projectString = "";
 			for (String tag : post.getTags()) {
@@ -138,9 +163,7 @@ public class PostService {
 			for (Pass pass : weaver.getPasses()) {
 				if (projectString.equals("@" + pass.getJoinName())
 						&& pass.getPermission() == 1) {
-					postDao.delete(post);
-					rePostDao.deleteAll(post.getPostID()+"");
-					cacheManager.getCache("post").remove(post.getPostID());
+					this.delete(post);
 					return true;
 				}
 			}
@@ -149,16 +172,13 @@ public class PostService {
 
 			if (post.getTags().size() == 1
 					&& post.getTags().get(0).equals("@" + weaver.getId())) {
-				postDao.delete(post);
-				rePostDao.deleteAll(post.getPostID()+"");
-				cacheManager.getCache("post").remove(post.getPostID());
+				this.delete(post);
 				return true;
 			} else {
 				for (String tag : post.getTags()) {
 					if (tag.equals("@" + weaver.getId())) {
 						post.deleteTag(tag);
 						postDao.update(post);
-						cacheManager.getCache("post").remove(post.getPostID());
 						return true;
 					}
 				}

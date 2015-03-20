@@ -9,7 +9,6 @@
 editorMode = true;
 var check = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
-
 function checkWeaver(){
 		if($("input[name='tags']").val().length < 3){
 			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 태그를 하나 이상 입력해주세요!</div>");
@@ -29,6 +28,9 @@ function checkWeaver(){
 	}
 
 $(document).ready(function() {
+	
+	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!</div>");
+
 	
 	$("#image").change(function(){
         readURL(this);

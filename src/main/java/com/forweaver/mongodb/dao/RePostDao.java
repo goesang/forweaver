@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import com.forweaver.domain.Code;
+import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 
 @Repository
@@ -32,7 +34,7 @@ public class RePostDao {
 		mongoTemplate.insert(rePost);
 	}
 
-	public List<RePost> get(int ID,int kind, String sort) { // 글 가져오기
+	public List<RePost> gets(int ID,int kind, String sort) { // 글 가져오기
 
 		Criteria criteria = new Criteria().orOperator(
 				new Criteria().where("originalPost.$id").is(ID).and("kind").is(kind),
@@ -44,19 +46,52 @@ public class RePostDao {
 		this.sorting(query, sort);
 		return mongoTemplate.find(query, RePost.class);
 	}
+	
+	/** 글에 달린 답변 가져오기
+	 * @param post
+	 * @return
+	 */
+	public List<RePost> gets(Post post) {
+		Criteria criteria = 
+				new Criteria().and("originalPost.$id").is(post.getPostID());
+		Query query = new Query(criteria);
+		return mongoTemplate.find(query, RePost.class);
+	}
+	
+	/** 코드에 달린 답변 가져오기
+	 * @param code
+	 * @return
+	 */
+	public List<RePost> gets(Code code) {
+		Criteria criteria = 
+				new Criteria().and("originalCode.$id").is(code.getCodeID());
+		Query query = new Query(criteria);
+		return mongoTemplate.find(query, RePost.class);
+	}
 
-	public RePost get(int rePostID) { // 글 가져오기
+	/** 답변 가져오기
+	 * @param rePostID
+	 * @return
+	 */
+	public RePost get(int rePostID) {
 		Query query = new Query(Criteria.where("_id").is(rePostID));
 		return mongoTemplate.findOne(query, RePost.class);
 	}
 
+	/** 답변을 삭제합니다.
+	 * @param rePost
+	 */
 	public void delete(RePost rePost) {
 		mongoTemplate.remove(rePost);
 	}
 
-	public void deleteAll(String originalPostID) {
-		Query query = new Query(Criteria.where("originalPost._id").is(
-				originalPostID));
+	public void deleteAll(Code code) {
+		Query query = new Query(Criteria.where("originalCode").is(code));
+		mongoTemplate.remove(query, RePost.class);
+	}
+	
+	public void deleteAll(Post post) {
+		Query query = new Query(Criteria.where("originalPost").is(post));
 		mongoTemplate.remove(query, RePost.class);
 	}
 

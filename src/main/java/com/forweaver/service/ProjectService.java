@@ -34,9 +34,14 @@ public class ProjectService{
 	@Autowired private CherryPickRequestDao cherryPickRequestDao;
 	@Autowired private GitUtil gitUtil;
 
+	/** 프로젝트 추가하는 메서드
+	 * @param project
+	 * @param currentWeaver
+	 */
 	public void add(Project project,Weaver currentWeaver){
 		// TODO Auto-generated method stub
-
+		if(currentWeaver == null)
+			return;
 		try{
 			gitUtil.Init(project);
 			gitUtil.createRepository();
@@ -46,10 +51,14 @@ public class ProjectService{
 		projectDao.insert(project);
 		Pass pass = new Pass(project.getName(),2);
 		currentWeaver.addPass(pass);
-		weaverDao.update(currentWeaver);
+		weaverDao.updateInfo(currentWeaver,"weaverInfo.projectCount",1); //프로젝트 갯수 올림.
 	}
 
 
+	/** 프로젝트 이름으로 불러오기.
+	 * @param projectName
+	 * @return
+	 */
 	public Project get(String projectName) {
 		// TODO Auto-generated method stub
 		return projectDao.get(projectName);
@@ -82,6 +91,10 @@ public class ProjectService{
 				return true;
 			}
 			cherryPickRequestDao.delete(project);
+			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectCount",-1); //프로젝트 갯수 줄임.
+			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectPush",-project.getPush()); //프로젝트 추천수 모두 줄임.
+			project.getCreator().deletePass(project.getName());
+			weaverDao.update(project.getCreator());
 			projectDao.delete(project);
 			return true;
 		}
@@ -120,6 +133,8 @@ public class ProjectService{
 			projectDao.update(project);
 			Element newElement = new Element(project.getName(), weaver.getId());
 			cache.put(newElement);
+			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectPush",1); //프로젝트 추천수 증가.
+			weaverDao.update(project.getCreator());
 			return true;
 		}
 		return false;
@@ -207,6 +222,7 @@ public class ProjectService{
 
 	public String fork(Project originProject, Project newProject, Weaver weaver){
 
+		
 		if(!originProject.getCreator().getId().equals(weaver.getId())){
 			if(this.get(newProject.getName())!=null){
 				while(true){

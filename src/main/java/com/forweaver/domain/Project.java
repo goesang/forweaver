@@ -23,6 +23,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * childProjects 파생 프로젝트 모음
  * isJoin 프로젝트 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
  * tags 프로젝트 태그 모음
+ * activeDate 활성화된 날짜
+ * commitCount 커밋 갯수
  * adminWeavers 관리자들
  * joinWeavers 가입자들
  * </pre>
@@ -37,7 +39,9 @@ public class Project implements Serializable {
 	private String description;
 	private Date openingDate;
 	private Date endDate;
-	private String originalProject;
+	private String originalProjectName;
+	private Date activeDate;
+	private int commitCount;
 	@DBRef
 	private Weaver creator;
 	private long push;
@@ -78,6 +82,7 @@ public class Project implements Serializable {
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
 		this.tags = tagList;
+		this.activeDate = this.openingDate;
 	}
 	
 	public Project(String name,Weaver weaver,Project originalProject) { //포크할 때 생성자
@@ -86,17 +91,18 @@ public class Project implements Serializable {
 		this.category = 2;
 		this.description = originalProject.getDescription();
 		this.openingDate = new Date();
+		this.activeDate = this.openingDate;
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
-		if(originalProject.getOriginalProject() != null 
-				&& originalProject.getOriginalProject().length() >0){
+		if(originalProject.getOriginalProjectName() != null 
+				&& originalProject.getOriginalProjectName().length() >0){
 			this.tags.addAll(originalProject.getTags());
 		}else{
 			this.tags.add("@"+originalProject.getName());
 			this.tags.addAll(originalProject.getTags());
 		}
 		originalProject.getChildProjects().add(this);
-		this.originalProject = originalProject.getName();
+		this.originalProjectName = originalProject.getName();
 		
 	}
 	
@@ -237,12 +243,12 @@ public class Project implements Serializable {
 		return this.name.replace("/", "@");
 	}
 
-	public String getOriginalProject() {
-		return originalProject;
+	public String getOriginalProjectName() {
+		return originalProjectName;
 	}
 
-	public void setOriginalProject(String originalProject) {
-		this.originalProject = originalProject;
+	public void setOriginalProjectName(String originalProjectName) {
+		this.originalProjectName = originalProjectName;
 	}
 
 	public List<Project> getChildProjects() {
@@ -266,7 +272,7 @@ public class Project implements Serializable {
 	}
 	
 	public boolean isForkProject(){
-		if(this.originalProject != null && this.originalProject.length() > 0)
+		if(this.originalProjectName != null && this.originalProjectName.length() > 0)
 			return true;
 		return false;
 	}
@@ -281,5 +287,22 @@ public class Project implements Serializable {
 	public boolean isEducation(){
 		return this.category == 3;
 	}
+
+	public Date getActiveDate() {
+		return activeDate;
+	}
+
+	public void setActiveDate(Date activeDate) {
+		this.activeDate = activeDate;
+	}
+
+	public int getCommitCount() {
+		return commitCount;
+	}
+
+	public void setCommitCount(int commitCount) {
+		this.commitCount = commitCount;
+	}
+	
 	
 }

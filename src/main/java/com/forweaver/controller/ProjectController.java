@@ -772,12 +772,12 @@ public class ProjectController {
 		if(!project.isForkProject())
 			return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
 
-		Project orginalProject = projectService.get(project.getOriginalProject());
+		Project orginalProject = projectService.get(project.getOriginalProjectName());
 
 		if(!gitService.existCommit(orginalProject.getName().split("/")[0],
 				orginalProject.getName().split("/")[1], commit) 
 				&& cherryPickRequestService.add(orginalProject, project, currentWeaver, commit))
-			return "redirect:/project/"+project.getOriginalProject()+"/cherry-pick";
+			return "redirect:/project/"+project.getOriginalProjectName()+"/cherry-pick";
 
 		return "redirect:/project/"+creatorName+"/"+projectName+"/commitlog-viewer/commit:"+commit;
 	}
@@ -879,6 +879,7 @@ public class ProjectController {
 		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
 	}
 
+	/*
 	@RequestMapping("/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/delete")
 	public String deleteRePost(Model model, @PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -888,5 +889,5 @@ public class ProjectController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		rePostService.delete(rePost,weaver);
 		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
-	}
+	}*/
 }
