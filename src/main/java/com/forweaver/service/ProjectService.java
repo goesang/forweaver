@@ -227,15 +227,17 @@ public class ProjectService{
 	 * @param message
 	 * @param zip
 	 */
-	public void uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
-		if(message==null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
-			return;
+	public boolean uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
+		if(message==null || message.length() == 0 || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
+			return false;
 		gitUtil.Init(project);
 		try{
 			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 		}catch(Exception e){
-			System.err.println(e.getLocalizedMessage());
+			return false;
 		}
+		
+		return true;
 	}
 
 	public void update(Project project) {

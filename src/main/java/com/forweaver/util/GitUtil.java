@@ -524,10 +524,8 @@ public class GitUtil {
 			ZipEntry ze = zis.getNextEntry();
 
 			while(ze!=null){
-				if (!ze.isDirectory()) { // 만약 파일의 경우
+				if (!ze.isDirectory() && !ze.getName().contains(".git/")) { // 만약 파일의 경우
 					String fileName = ze.getName();
-					if(fileName.startsWith(".git/")) //.git 디렉토리는 제외함.
-						continue;
 					File newFile = new File(localPath + File.separator + fileName);
 
 					new File(newFile.getParent()).mkdirs();
