@@ -12,7 +12,9 @@ import java.io.Serializable;
  * myReplysCount 내가 올린 댓글 수
  * projectPush 프로젝트 추천수
  * lectureCount 강의 갯수
+ * joinLectureCount 가입한 강의 갯수
  * projectCount 프로젝트 갯수
+ * joinProjectCount 가입한 프로젝트 갯수
  * forkProjectCount 프로젝트 파생된 수
  * studentCount 가르치는 학생수
  * codeCount 올린 코드 갯수
@@ -32,6 +34,7 @@ public class WeaverInfo implements Serializable {
 	private long myRePostPush;
 	private long projectPush;
 	private long projectCount;
+	private long joinProjectCount;
 	private long lectureCount;
 	private long forkProjectCount;
 	private long studentCount;
@@ -40,6 +43,7 @@ public class WeaverInfo implements Serializable {
 	private long codeRePostCount;
 	private long myReplysCount;
 	private long replysCount;
+	private long joinLectureCount;
 	private long score;
 		
 	public WeaverInfo() {
@@ -237,6 +241,28 @@ public class WeaverInfo implements Serializable {
 		this.myReplysCount = myReplysCount;
 	}
 
+	public long getJoinProjectCount() {
+		return joinProjectCount;
+	}
+
+
+
+	public void setJoinProjectCount(long joinProjectCount) {
+		this.joinProjectCount = joinProjectCount;
+	}
+
+
+
+	public long getJoinLectureCount() {
+		return joinLectureCount;
+	}
+
+
+
+	public void setJoinLectureCount(long joinLectureCount) {
+		this.joinLectureCount = joinLectureCount;
+	}
+
 
 
 	public void updateScore(){
@@ -256,6 +282,8 @@ public class WeaverInfo implements Serializable {
 		this.score +=this.lectureCount;
 		this.score +=this.replysCount;
 		this.score +=this.myReplysCount;
+		this.score +=this.joinProjectCount;
+		this.score +=this.joinLectureCount;
 	}
 	
 	

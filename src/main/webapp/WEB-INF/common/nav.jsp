@@ -50,7 +50,7 @@
 			<div class="span11">
 				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
 				<div class="span10 tag-span">
-					<textarea placeholder="태그를 입력해 보세요!" name="tags"
+					<textarea title="태그를 입력하시고 나서 엔터키나 스페이스키를 누르시면 추가가 됩니다." placeholder="태그를 입력해 보세요!" name="tags"
 						class="tagarea tagarea-full" id="tags-input" rows="1"></textarea>
 					<script>
 					

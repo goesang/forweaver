@@ -33,8 +33,6 @@
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/manage"
-			access="isAuthenticated()" />
 
 		<security:intercept-url pattern="/community/add"
 			access="isAuthenticated()" />

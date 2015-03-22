@@ -91,12 +91,6 @@
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	<!-- Setup git servlet -->
-	
-	<context-param>
-	    <param-name>gitpath</param-name>
-	    <param-value>/home/git/</param-value>
-	</context-param>
    <servlet>
      <servlet-name>GitServlet</servlet-name>
      <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>

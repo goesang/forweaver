@@ -42,12 +42,15 @@ public class GitFilter implements Filter {
 		String lectureName = requstUrlArray[2];
 		String repoName = requstUrlArray[3].substring(0,
 				requstUrlArray[3].indexOf(".git"));
-
+		System.out.println(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git");
+		System.out.println(lectureName);
+		System.out.println(repoName);
 		if (!new File(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git").exists()) // 저장소가 없는 경우
 			return;
 
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Pass pass = weaver.getPass(lectureName + "/" + repoName);
+
 		if (pass == null)
 			pass = weaver.getPass(lectureName);
 
@@ -55,6 +58,7 @@ public class GitFilter implements Filter {
 			return;
 
 		if (pass.getJoinName().contains("/")) { // 프로젝트에 권한이 있는 경우
+			System.out.println("ssssssssssssssssssssssssqqqqq");
 			filterchain.doFilter(req, res);
 			return;
 		}

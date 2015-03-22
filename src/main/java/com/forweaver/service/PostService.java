@@ -150,7 +150,7 @@ public class PostService {
 		if(post == null || weaver == null)
 			return false;
 
-		if (weaver.isAdmin() || 	post.getWriter().equals(weaver.getId())) { // 글쓴이 또는 관리자의 경우
+		if (weaver.isAdmin() || 	post.getWriter().getId().equals(weaver.getId())) { // 글쓴이 또는 관리자의 경우
 			this.delete(post);
 			return true;
 		} else if (post.getKind() == 2) { // 글쓴이가 아니고 프로젝트 태그의 경우

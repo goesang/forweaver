@@ -43,8 +43,6 @@
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
 		});
-
-		
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>

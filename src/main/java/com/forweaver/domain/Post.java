@@ -22,6 +22,7 @@ public class Post implements Serializable {
 	private int kind;
 	private Date created;
 	private Date recentRePostDate;
+	private boolean isNotice;
 	@DBRef
 	private Weaver writer;
 	private int push;
@@ -39,6 +40,16 @@ public class Post implements Serializable {
 		this.content = content;
 		this.created = new Date();
 		this.tags = tags;
+	}
+	
+	public Post(Weaver weaver,
+			String title, String content,List<String> tags,boolean isNotice) {
+		this.writer = weaver;
+		this.title = title;
+		this.content = content;
+		this.created = new Date();
+		this.tags = tags;
+		this.isNotice = isNotice;
 	}
 
 	public int getPostID() {
@@ -191,5 +202,14 @@ public class Post implements Serializable {
 	public void setDatas(List<Data> datas) {
 		this.datas = datas;
 	}
+
+	public boolean isNotice() {
+		return isNotice;
+	}
+
+	public void setNotice(boolean isNotice) {
+		this.isNotice = isNotice;
+	}
+	
 	
 }

@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.ArchiveCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.archive.TarFormat;
 import org.eclipse.jgit.archive.ZipFormat;
 import org.eclipse.jgit.blame.BlameResult;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -57,7 +58,7 @@ import com.forweaver.domain.git.statistics.GitParentStatistics;
 @Component
 public class GitUtil {
 
-	@Value("${gitpath}")
+	@Value("/home/git/")
 	private String gitPath;
 	private String path;
 	private Repository localRepo;
@@ -371,16 +372,19 @@ public class GitUtil {
 	}
 
 	// 커밋을 입력받으면 당시 파일들을 압축하여 사용자에게 보내줌.
-	public void getProjectZip(String commitName, HttpServletResponse response) {
+	public void getProjectZip(String commitName,String format, HttpServletResponse response) {
+
 		try {
 			ArchiveCommand.registerFormat("zip", new ZipFormat());
+			ArchiveCommand.registerFormat("tar", new TarFormat());
 			ObjectId revId = this.localRepo.resolve(commitName);
 			git.archive().setOutputStream(response.getOutputStream())
-			.setFormat("zip")
+			.setFormat(format)
 			.setTree(revId)
 			.call();
 
 			ArchiveCommand.unregisterFormat("zip");
+			ArchiveCommand.unregisterFormat("tar");
 			response.flushBuffer();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -620,8 +624,7 @@ public class GitUtil {
 	public List<GitBlame> getBlame(String filePath, String commitID){
 		List<GitBlame> gitBlames = new ArrayList<GitBlame>();
 		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
-		System.out.println("getBlame");
-		System.out.println(filePath);
+
 		try{
 			BlameResult result = git.blame().setStartCommit(commit).setFilePath(filePath).call();
 			// 입력 받은 커밋을 기점으로 파일의 라인 별로 코드를 분석함.

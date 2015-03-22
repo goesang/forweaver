@@ -124,7 +124,8 @@
 							<td colspan="2" class="post-top-title none-top-border"><a
 								rel="external" class="a-post-title"
 								href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>">
-									${cov:htmlEscape(post.title)}</a></td>
+									<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
+										<c:if test="${post.isNotice()}">${post.title}</c:if></a></td>
 							<td class="td-button none-top-border" rowspan="2"><span
 								class="span-button">${post.push}
 									<p class="p-button">추천</p>

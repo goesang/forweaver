@@ -52,6 +52,25 @@ public class ProjectService{
 		Pass pass = new Pass(project.getName(),2);
 		currentWeaver.addPass(pass);
 		weaverDao.updateInfo(currentWeaver,"weaverInfo.projectCount",1); //프로젝트 갯수 올림.
+		weaverDao.update(currentWeaver);
+	}
+	
+	/** 회원 추가함.
+	 * @param project
+	 * @param currentWeaver
+	 * @param joinWeaver
+	 */
+	public boolean addWeaver(Project project,Weaver joinWeaver){
+		// TODO Auto-generated method stub
+		if(project == null || joinWeaver == null)
+			return false;
+		Pass pass = new Pass(project.getName(), 1);
+		project.addJoinWeaver(joinWeaver); //프로젝트 목록에 추가
+		joinWeaver.addPass(pass);
+		weaverDao.update(joinWeaver);
+		this.update(project);
+		weaverDao.updateInfo(joinWeaver,"weaverInfo.joinProjectCount",1); //프로젝트 갯수 올림.
+		return true;
 	}
 
 
@@ -80,10 +99,12 @@ public class ProjectService{
 			}
 			for(Weaver adminWeaver:project.getAdminWeavers()){
 				adminWeaver.deletePass(project.getName());
+				weaverDao.updateInfo(adminWeaver,"weaverInfo.joinProjectCount",-1); //가입 프로젝트 갯수 줄임.
 				weaverDao.update(adminWeaver);
 			}
 			for(Weaver joinWeaver:project.getJoinWeavers()){
 				joinWeaver.deletePass(project.getName());
+				weaverDao.updateInfo(joinWeaver,"weaverInfo.joinProjectCount",-1); //가입 프로젝트 갯수 줄임.
 				weaverDao.update(joinWeaver);
 			}
 			for(WaitJoin waitJoin:waitJoinDao.delete(project.getName())){ // 대기 중인 초대장 삭제.
@@ -93,6 +114,7 @@ public class ProjectService{
 			cherryPickRequestDao.delete(project);
 			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectCount",-1); //프로젝트 갯수 줄임.
 			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectPush",-project.getPush()); //프로젝트 추천수 모두 줄임.
+			
 			project.getCreator().deletePass(project.getName());
 			weaverDao.update(project.getCreator());
 			projectDao.delete(project);
@@ -112,7 +134,7 @@ public class ProjectService{
 				currentWeaver.getId().equals(deleteWeaver.getId())){ //본인이 나가거나
 			deleteWeaver.deletePass(project.getName());
 			project.removeJoinWeaver(deleteWeaver);
-
+			weaverDao.updateInfo(deleteWeaver,"weaverInfo.joinProjectCount",-1); //가입 프로젝트 갯수 줄임.
 			weaverDao.update(deleteWeaver);
 			projectDao.update(project);
 

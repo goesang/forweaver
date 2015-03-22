@@ -138,7 +138,8 @@
 													<i class=" icon-align-justify"></i>
 												</c:if> <c:if test="${!post.isLong()}">
 													<i class="fa fa-comment"></i>
-												</c:if> &nbsp;${cov:htmlEscape(post.title)}
+												</c:if> &nbsp;<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
+										<c:if test="${post.isNotice()}">${post.title}</c:if>
 										</a></td>
 										<td class="td-button" rowspan="2"><c:if
 												test="${post.kind == 2}">

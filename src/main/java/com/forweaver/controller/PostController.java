@@ -1,7 +1,6 @@
 package com.forweaver.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -49,7 +47,7 @@ public class PostController {
 	public String front(){
 		return "redirect:/community/sort:age-desc/page:1";
 	}
-/*
+	/*
 	@RequestMapping("/sort:{sort}/rss")
 	@ResponseBody
 	public String rss(@PathVariable("sort") String sort){ 
@@ -73,7 +71,7 @@ public class PostController {
 		}
 		return rss+"</channel></rss>";
 	}
-*/
+	 */
 
 	@RequestMapping("/sort:{sort}/page:{page}")
 	public String page(@PathVariable("page") String page,
@@ -154,7 +152,7 @@ public class PostController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String add(final HttpServletRequest request) throws UnsupportedEncodingException {
+	public String add(final HttpServletRequest request,Model model) throws UnsupportedEncodingException {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 		final Map<String, MultipartFile> files = multiRequest.getFileMap();
 		ArrayList<Data> datas = new ArrayList<Data>();
@@ -162,18 +160,24 @@ public class PostController {
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
-		System.out.println(tags);
-		if(tags == null || title == null) // 태그가 없을 때
-			return "redirect:"+"/community";
+
+		if(tags == null || title == null){ // 태그가 없을 때
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/community/");
+			return "/alert";
+		}
 		else if(content.equals(""))
 			content = "";
 		List<String> tagList = tagService.stringToTagList(tags);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		
+
 		tagList = tagService.removeMyMassageTag(tagList,weaver);//실수로 자신의 메세지 태그를 붙이면 지움
-		
-		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
-			return "redirect:"+"/community";
+
+		if(!tagService.validateTag(tagList,weaver)){ // 태그에 권한이 없을때
+			model.addAttribute("say", "태그에 권한이 없습니다!!!");
+			model.addAttribute("url", "/community/");
+			return "/alert";
+		}
 
 		for (MultipartFile file : files.values()) {
 			if(!file.isEmpty())
@@ -185,10 +189,10 @@ public class PostController {
 				tagList);
 
 		postService.add(post,datas);
-		
+
 		if(postService.isMassageTags(tagList))
 			return "redirect:"+"/community/tags:"+"$"+weaver.getId();
-		
+
 		return "redirect:"+"/community/";
 	}
 
@@ -212,7 +216,7 @@ public class PostController {
 	}
 
 	@RequestMapping(value = "/{postID}/add-repost", method = RequestMethod.POST)
-	public String addRepost(@PathVariable("postID") int postID,HttpServletRequest request) throws UnsupportedEncodingException {
+	public String addRepost(@PathVariable("postID") int postID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {
 
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
@@ -224,9 +228,11 @@ public class PostController {
 
 
 		if(!tagService.validateTag(post.getTags(),weaver) || 
-				weaver == null || post == null || content.equals("")) 
-			// 권한 검사,로그인 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
-			return "redirect:/"+postID;
+				weaver == null || post == null || content.equals("")) {
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}
 
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (MultipartFile file : files.values()) {
@@ -249,16 +255,19 @@ public class PostController {
 	}
 
 	@RequestMapping(value = "/{postID}/{rePostID}/add-reply", method = RequestMethod.POST)
-	public String addReply(@PathVariable("postID") int postID,@PathVariable("rePostID") int rePostID,HttpServletRequest request) throws UnsupportedEncodingException {
+	public String addReply(@PathVariable("postID") int postID,
+			@PathVariable("rePostID") int rePostID,
+			HttpServletRequest request,Model model) throws UnsupportedEncodingException {
 		String content = request.getParameter("content");
 		RePost rePost = rePostService.get(rePostID);
 		Post post = postService.get(postID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(!tagService.validateTag(post.getTags(),weaver)) 
-			// 권한 검사.
-			return "redirect:/community/"+rePost.getOriginalPost().getPostID();
-
+		if(!tagService.validateTag(post.getTags(),weaver)) {// 권한 검사.
+			model.addAttribute("say", "태그에 권한이 없습니다!!!");
+			model.addAttribute("url", "/community/"+rePost.getOriginalPost().getPostID());
+			return "/alert";
+		}
 		rePostService.addReply(rePost,new Reply(weaver, content));	
 
 		return "redirect:/community/"+rePost.getOriginalPost().getPostID();
@@ -268,14 +277,17 @@ public class PostController {
 	public String deleteReply(@PathVariable("postID") int postID, 
 			@PathVariable("rePostID") int rePostID,
 			@PathVariable("number") int number,
-			HttpServletRequest request) {		
+			HttpServletRequest request,Model model) {		
 
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(!tagService.validateTag(post.getTags(),weaver)) // 권한 검사.
-			return "redirect:/community/"+rePost.getOriginalPost().getPostID();
+		if(!tagService.validateTag(post.getTags(),weaver)) {// 권한 검사.
+			model.addAttribute("say", "태그에 권한이 없습니다!!!");
+			model.addAttribute("url", "/community/"+rePost.getOriginalPost().getPostID());
+			return "/alert";
+		}
 
 		rePostService.deleteReply(rePost, weaver, number);
 
@@ -305,45 +317,52 @@ public class PostController {
 
 		return "redirect:/community/sort:age-desc/page:1";
 	}
-	/* 개발 기한이 촉박한 관계로 일시중단!!!!!!!!!
+
 	@RequestMapping("/{postID}/update")
 	public String update(Model model, @PathVariable("postID") int postID) {		
 		Post post = postService.get(postID);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if(post == null || weaver == null || !post.getWriterName().equals(weaver.getId()))
-			return "redirect:/community";	
+		if(post == null || weaver == null || !post.getWriterName().equals(weaver.getId())){
+			model.addAttribute("say", "권한이 없습니다!!!");
+			model.addAttribute("url", "/community/");
+			return "/alert";
+		}
 		model.addAttribute("post", post);
 
 		return "/post/updatePost";
 	}
 
 	@RequestMapping(value="/{postID}/update", method = RequestMethod.POST)
-	public String update(@PathVariable("postID") int postID,HttpServletRequest request) throws UnsupportedEncodingException {		
+	public String update(@PathVariable("postID") int postID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
 
 		Post post = postService.get(postID);
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
-		String[] fileRemoveList = request.getParameter("fileRemoveList").split("@#@");
+		//String[] fileRemoveList = request.getParameter("fileRemoveList").split("@#@");
 
-		if(post == null || tags == null || title == null || !post.getWriterName().equals(weaver.getId())) // 태그가 없을 때
-			return "redirect:/community/"+postID;	
-
+		if(post == null || tags == null || title == null || !post.getWriterName().equals(weaver.getId())){ // 태그가 없을 때
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}
 		else if(content == null)
 			content = "";
 
 		List<String> tagList = tagService.stringToTagList(tags);
 
 
-		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
-			return "redirect:/community/"+postID;	
-
-		post.setTitle(WebUtil.specialSignDecoder(title)));
-		post.setContent(WebUtil.convertHtml(WebUtil.specialSignDecoder(content))));
+		if(!tagService.validateTag(tagList,weaver)){ // 태그에 권한이 없을때
+			model.addAttribute("say", "권한이 없습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}
+		post.setTitle(title);
+		post.setContent(content);
 		post.setTags(tagService.stringToTagList(tags));		
 
-		postService.update(post,fileRemoveList);
+		postService.update(post,null);
 
 		return "redirect:/community/"+postID;	
 	}
@@ -354,8 +373,11 @@ public class PostController {
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if(post == null || rePost == null || weaver == null || !rePost.getWriterName().equals(weaver.getId()))
-			return "redirect:/community/"+postID;	
+		if(post == null || rePost == null || weaver == null || !rePost.getWriterName().equals(weaver.getId())){
+			model.addAttribute("say", "권한이 없습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}
 		model.addAttribute("post", post);
 		model.addAttribute("rePost", rePost);
 
@@ -363,31 +385,39 @@ public class PostController {
 	}
 
 	@RequestMapping(value="/{postID}/{rePostID}/update", method = RequestMethod.POST)
-	public String update(@PathVariable("postID") int postID, @PathVariable("rePostID") int rePostID,HttpServletRequest request) throws UnsupportedEncodingException {		
+	public String update(@PathVariable("postID") int postID, @PathVariable("rePostID") int rePostID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
 
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(rePost == null || content == null|| !rePost.getWriterName().equals(weaver.getId())) // 태그가 없을 때
-			return "redirect:/community/"+postID;	
+		if(rePost == null || content == null|| !rePost.getWriterName().equals(weaver.getId())){ // 태그가 없을 때
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}	
 
+		if(!tagService.validateTag(post.getTags(),weaver)){ // 태그에 권한이 없을때
+			model.addAttribute("say", "권한이 없습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}	
 
-		if(!tagService.validateTag(post.getTags(),weaver)) // 태그에 권한이 없을때
-			return "redirect:/community";	
-
-		rePostService.update(rePost);
+		rePostService.update(rePost,null);
 
 		return "redirect:/community/"+postID;	
 	}
-	 */
+
 	@RequestMapping("/{postID}/delete")
 	public String deletePost(Model model, @PathVariable("postID") int postID) {
-		if(postService.delete(postService.get(postID),weaverService.getCurrentWeaver()))
-			return "redirect:/community/sort:age-desc/page:1";
+		if(!postService.delete(postService.get(postID),weaverService.getCurrentWeaver())){
+			model.addAttribute("say", "삭제하지 못하였습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}	
 
-		return "redirect:/community/sort:age-desc/page:1";
+		return "redirect:/community/";
 	}
 
 	@RequestMapping("/{postID}/{rePostID}/delete")
@@ -396,8 +426,11 @@ public class PostController {
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver =weaverService.getCurrentWeaver();
 
-		if(rePostService.delete(post,rePost,weaver))
-			return "redirect:/community/"+postID;
+		if(!rePostService.delete(post,rePost,weaver)){
+			model.addAttribute("say", "삭제하지 못하였습니다!!!");
+			model.addAttribute("url", "/community/"+postID);
+			return "/alert";
+		}	
 
 		return "redirect:/community/"+postID;	
 	}

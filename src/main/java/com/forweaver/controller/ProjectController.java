@@ -22,8 +22,6 @@ import com.forweaver.domain.CherryPickRequest;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
-import com.forweaver.domain.RePost;
-import com.forweaver.domain.Reply;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.chat.ChatRoom;
@@ -76,16 +74,20 @@ public class ProjectController {
 		return "redirect:/project/sort:age-desc/page:1";
 	}
 
-	@RequestMapping(value = "/{creatorName}/{projectName}/{commitName}/{download}.zip")
+	@RequestMapping(value = {"/{creatorName}/{projectName}/{commitName}/{download}.zip"
+			,"/{creatorName}/{projectName}/{commitName}/{download}.tar"
+	})
 	public void getProjectZip(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commitName") String commitName,
+			HttpServletRequest request,
 			HttpServletResponse response) {
 		
 		if(!gitService.existCommit(creatorName, projectName, commitName))
 			return;
-
-		gitService.getProjectZip(creatorName, projectName, commitName, response);
+		String url = request.getRequestURI();
+		String format = url.substring(url.lastIndexOf(".")+1);
+		gitService.getProjectZip(creatorName, projectName, commitName, format,response);
 
 		return;
 	}
@@ -155,7 +157,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String add(@RequestParam Map<String, String> params) {
+	public String add(@RequestParam Map<String, String> params,Model model) {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
 		int categoryInt = 0;
@@ -163,8 +165,11 @@ public class ProjectController {
 		if(params.get("category") != null)
 			categoryInt = Integer.parseInt(params.get("category"));
 		
-		if(!tagService.isPublicTags(tagList))
-			return "redirect:/project/";
+		if(params.get("name") == null || params.get("description") == null || !tagService.isPublicTags(tagList)){
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/project/");
+			return "/alert";
+		}
 		
 		Project project = new Project(params.get("name"), 
 				categoryInt, 
@@ -183,8 +188,15 @@ public class ProjectController {
 			@PathVariable("projectName") String projectName) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		projectService.delete(currentWeaver, project);
-		return "redirect:/project/";
+		
+		
+		if(!projectService.delete(currentWeaver, project)){
+			model.addAttribute("say", "삭제하지 못하였습니다!!!");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
+			return "/alert";
+		}
+		
+		return "redirect:/project/"+creatorName+"/"+projectName;
 	}
 
 	@RequestMapping(value=
@@ -205,17 +217,15 @@ public class ProjectController {
 	@RequestMapping("/{creatorName}/{projectName}/browser/commit:{commit}/**")
 	public String fileBrowser(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("commit") String commit,Model model) {
-		
-
+			@PathVariable("commit") String commit,Model model) throws UnsupportedEncodingException  {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		String uri = request.getRequestURI();
+		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
-
+		
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));
-		
+
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
 		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			List<GitSimpleFileInfo> gitFileInfoList = 
@@ -241,7 +251,6 @@ public class ProjectController {
 			model.addAttribute("gitCommitLog", 
 					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 			model.addAttribute("filePath",filePath);
-			System.out.println("3333333333");
 			return "/project/fileViewer";
 		}
 			
@@ -335,23 +344,29 @@ public class ProjectController {
 	@RequestMapping(value = "/{creatorName}/{projectName}/community/add", method = RequestMethod.POST)
 	public String addPost(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			HttpServletRequest request) {
+			HttpServletRequest request,Model model) {
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-
-		if(tags == null || title == null) // 태그가 없을 때
-			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
+		if(tags == null || title == null){ // 태그가 없을 때
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
+			return "/alert";
+		}
+		
 		else if(content == null)
 			content = "";
 		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+creatorName+"/"+projectName));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(!tagService.validateTag(tagList,weaver)) // 태그에 권한이 없을때
-			return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
-
+		if(!tagService.validateTag(tagList,weaver)){ // 태그에 권한이 없을때
+			model.addAttribute("say", "태그에 권한이 없습니다!!!");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
+			return "/alert";
+		}
+		
 		Post post = new Post(weaver,title,content,tagList);
 
 		postService.add(post,null);
@@ -479,7 +494,7 @@ public class ProjectController {
 	@RequestMapping(value = "/{creatorName}/{projectName}/weaver/{weaverName}/delete") // 회원 삭제용
 	public String deleteWeaver(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("weaverName") String weaverName) {
+			@PathVariable("weaverName") String weaverName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver deleteWeaver = weaverService.get(weaverName);
@@ -495,53 +510,62 @@ public class ProjectController {
 						"프로젝트명:"+project.getName()+"에서 탈퇴당하셨습니다.", "", 
 						tagService.stringToTagList("$"+deleteWeaver.getId()));//프로젝트에 메세지 보냄
 				postService.add(post, null);
-				return "redirect:/project/"+creatorName+"/"+projectName+"/weaver";
+				model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/weaver/");
 				
 			}else{//사용자가 탈퇴할시에 메세지
 				post = new Post(currentWeaver, 
 						deleteWeaver.getId()+"님이 탈퇴하셨습니다.", "", 
 						tagService.stringToTagList("@"+project.getName()+",탈퇴"));//프로젝트에 메세지 보냄
 				postService.add(post, null);
-				return "redirect:/";
+				model.addAttribute("url", "/");
 			}
+			
+			model.addAttribute("say", "탈퇴 처리가 성공하였습니다!");
+			return "/alert";
 
 		}
-		
-		return "redirect:/";
+		model.addAttribute("url", "/");
+		model.addAttribute("say", "탈퇴 처리가 실패하였습니다!");
+		return "/alert";
 		
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaver}/add-weaver")
+	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaverName}/add-weaver")
 	public String addWeaver(	@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
-			@PathVariable("weaver") String weaver) {
+			@PathVariable("weaverName") String weaverName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		Weaver waitingWeaver = weaverService.get(weaver);
+		Weaver waitingWeaver = weaverService.get(weaverName);
 		Weaver proposer = weaverService.getCurrentWeaver();
 
 		if(waitJoinService.isCreateWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
-			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaver+"/join-cancel'>거절하시겠습니까?</a><a>";
+			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaverName+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaverName+"/join-cancel'>거절하시겠습니까?</a><a>";
 
 			Post post = new Post(projectCreator,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+weaver));
+					tagService.stringToTagList("$"+weaverName+",가입초대"),true);
 			waitJoinService.createWaitJoin(
 					project.getName(), 
 					proposer.getId(), 
 					waitingWeaver.getId(), 
 					postService.add(post,null));
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/weaver/");
+			model.addAttribute("say", "회원에게 초대장을 보냈습니다!");
+			return "/alert";	
 		}
-		return "redirect:/project/"+ creatorName+"/"+projectName+"/weaver";			
+		model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/weaver/");
+		model.addAttribute("say", "회원을 추가하지 못했습니다!");
+		return "/alert";		
 
 	}
 
 
 	@RequestMapping("/{creatorName}/{projectName}/join") //본인이 직접 신청
 	public String join(	@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName) {
+			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver waitingWeaver = weaverService.getCurrentWeaver();
 
@@ -551,22 +575,26 @@ public class ProjectController {
 			Post post = new Post(waitingWeaver,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+project.getCreatorName()));
+					tagService.stringToTagList("$"+project.getCreatorName()+",가입요청"),true);
 			waitJoinService.createWaitJoin(
 					project.getName(), 
 					waitingWeaver.getId(), 
 					waitingWeaver.getId(), 
 					postService.add(post,null));
-
+			model.addAttribute("url", "/");
+			model.addAttribute("say", "가입 부탁 메시지를 보냈습니다!");
+			return "/alert";	
 		}
-		return "redirect:/";			
+		model.addAttribute("url", "/");
+		model.addAttribute("say", "가입 부탁 메시지를 보내지 못했습니다!");
+		return "/alert";		
 
 	}
 
 
 	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaver}/join-ok") // 프로젝트 가입 승인
 	public String joinOK(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,@PathVariable("weaver") String weaver) {
+			@PathVariable("creatorName") String creatorName,@PathVariable("weaver") String weaver,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver waitingWeaver = weaverService.get(weaver);
@@ -612,12 +640,14 @@ public class ProjectController {
 			return "redirect:/project/"+creatorName+"/"+projectName+"/weaver";
 		}
 
-		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
+		model.addAttribute("url", "/");
+		model.addAttribute("say", "권한이 없습니다!");
+		return "/alert";		
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaver}/join-cancel") // 프로젝트 가입 승인
+	@RequestMapping("/{creatorName}/{projectName}/weaver/{weaver}/join-cancel") // 프로젝트 가입 승인 취소
 	public String joinCancel(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName,@PathVariable("weaver") String weaver) {
+			@PathVariable("creatorName") String creatorName,@PathVariable("weaver") String weaver,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		WaitJoin waitJoin = waitJoinService.get(project.getName(), weaver);
@@ -654,7 +684,9 @@ public class ProjectController {
 			return "redirect:/";
 		}
 
-		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
+		model.addAttribute("url", "/");
+		model.addAttribute("say", "가입 부탁 메시지를 보내지 못했습니다!");
+		return "/alert";		
 	}
 
 	@RequestMapping(value="/{creatorName}/{projectName}/{branchName}/upload" , method=RequestMethod.POST)
@@ -728,7 +760,7 @@ public class ProjectController {
 
 	@RequestMapping("/{creatorName}/{projectName}/fork") // 포크
 	public String fork(@PathVariable("projectName") String projectName,
-			@PathVariable("creatorName") String creatorName){
+			@PathVariable("creatorName") String creatorName,Model model){
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
@@ -738,9 +770,11 @@ public class ProjectController {
 								currentWeaver, 
 								project),
 								currentWeaver);
-
+			
 		if(newProjectName==null){
-			return "redirect:/project/"+project.getName();
+			model.addAttribute("url", "/project/"+project);
+			model.addAttribute("say", "포크하지 못했습니다!");
+			return "/alert";
 		}else{
 			return "redirect:/project/"+newProjectName;
 		}
@@ -836,7 +870,7 @@ public class ProjectController {
 
 		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
 	}
-*/
+
 	@RequestMapping(value = "/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/add-reply", method = RequestMethod.POST)
 	public String addReply(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -879,7 +913,7 @@ public class ProjectController {
 		return "redirect:/project/"+project.getName()+"/commitlog-viewer/commit:"+commit;
 	}
 
-	/*
+
 	@RequestMapping("/{creatorName}/{projectName}/commitlog-viewer/commit:{commit}/{rePostID}/delete")
 	public String deleteRePost(Model model, @PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,

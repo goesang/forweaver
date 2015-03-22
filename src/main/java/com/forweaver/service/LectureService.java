@@ -57,7 +57,23 @@ public class LectureService {
 			System.err.println("예제 저장소 생성 불가");
 		}
 	}
-
+	/** 회원 추가함.
+	 * @param lecture
+	 * @param currentWeaver
+	 * @param joinWeaver
+	 */
+	public boolean addWeaver(Lecture lecture,Weaver joinWeaver){
+		// TODO Auto-generated method stub
+		if(lecture == null || joinWeaver == null)
+			return false;
+		Pass pass = new Pass(lecture.getName(), 1);
+		lecture.addJoinWeaver(joinWeaver); //프로젝트 목록에 추가
+		joinWeaver.addPass(pass);
+		weaverDao.update(joinWeaver);
+		this.update(lecture);
+		weaverDao.updateInfo(joinWeaver,"weaverInfo.joinLectureCount",1); //프로젝트 갯수 올림.
+		return true;
+	}
 	public void addRepo(Lecture lecture,Repo repo){
 		try{
 			gitUtil.Init(repo);

@@ -2,7 +2,6 @@ package com.forweaver.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,7 @@ public class CodeController {
 	private RePostService rePostService;
 	@Autowired 
 	private DataService dataService;
-	
+
 	@RequestMapping("/")
 	public String front(){
 		return "redirect:/code/sort:age-desc/page:1";
@@ -57,7 +56,7 @@ public class CodeController {
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-				
+
 		model.addAttribute("codes", 
 				codeService.getCodes(null, null, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
@@ -131,7 +130,7 @@ public class CodeController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String add(final HttpServletRequest request) throws UnsupportedEncodingException {
+	public String add(final HttpServletRequest request,Model model) throws UnsupportedEncodingException {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
 		MultipartFile file = multiRequest.getFile("file");
@@ -139,10 +138,12 @@ public class CodeController {
 		String name = request.getParameter("name");
 		String content = request.getParameter("content");
 
-		if(tags == null || name == null || content == null || file == null) // 태그가 없을 때
-			return "redirect:/code/";
-		List<String> tagList = tagService.stringToTagList(
-				URLDecoder.decode(tags));
+		if(tags == null || name == null || content == null || file == null){ // 태그가 없을 때
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/code/");
+			return "/alert";
+		}
+		List<String> tagList = tagService.stringToTagList(tags);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
 		codeService.add(new Code(weaver, name, content, tagList), file);
@@ -155,10 +156,15 @@ public class CodeController {
 	}
 
 	@RequestMapping("/{codeID}/delete")
-	public String delete(@PathVariable("codeID") int codeID){
+	public String delete(@PathVariable("codeID") int codeID,Model model){
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Code code = codeService.get(codeID);
-		codeService.delete(currentWeaver,code);
+
+		if(!codeService.delete(currentWeaver,code)){
+			model.addAttribute("say", "코드를 삭제하지 못했습니다. 권한을 확인해보세요!");
+			model.addAttribute("url", "/code/");
+			return "/alert";
+		}
 		return "redirect:/code/";
 	}
 
@@ -183,7 +189,8 @@ public class CodeController {
 
 
 	@RequestMapping(value = "/{codeID}/add-repost", method = RequestMethod.POST)
-	public String addRepost(@PathVariable("codeID") int codeID,HttpServletRequest request) throws UnsupportedEncodingException {
+	public String addRepost(@PathVariable("codeID") int codeID,
+			HttpServletRequest request,Model model) throws UnsupportedEncodingException {
 
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
@@ -193,9 +200,11 @@ public class CodeController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Code code = codeService.get(codeID);
 
-		if(code == null || weaver == null || content.equals("")) 
-			// 권한 검사,로그인 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
-			return "redirect:/"+codeID;
+		if(code == null || weaver == null || content.equals("")) {
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}
 
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (MultipartFile file : files.values()) {
@@ -216,37 +225,36 @@ public class CodeController {
 	}
 
 	@RequestMapping(value = "/{codeID}/{rePostID}/add-reply", method = RequestMethod.POST)
-	public String addReply(@PathVariable("codeID") int codeID,@PathVariable("rePostID") int rePostID,HttpServletRequest request) throws UnsupportedEncodingException {
+	public String addReply(@PathVariable("codeID") int codeID,
+			@PathVariable("rePostID") int rePostID,
+			HttpServletRequest request,Model model) throws UnsupportedEncodingException {
 		String content = request.getParameter("content");
 		RePost rePost = rePostService.get(rePostID);
-		Code code = codeService.get(codeID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( rePost == null || code == null || content == null) 
-			// 권한 검사,로그인 검사, 답변 존재 여부 검사, 글 존재 여부 검사, 내용 존재 여부 검사.
-			return "redirect:/code/"+codeID;
-
-		rePostService.addReply(rePost,new Reply(weaver, content));	
-
-		return "redirect:/code/"+codeID;
+		if(!rePostService.addReply(rePost,new Reply(weaver, content))){
+			model.addAttribute("say", "댓글을 추가히지 못했습니다. 권한을 확인해보세요!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}
+		return "redirect:/code/"+codeID;	
 	}
 
 	@RequestMapping(value="/{codeID}/{rePostID}/{number}/delete")
 	public String deleteReply(@PathVariable("codeID") int codeID, 
 			@PathVariable("rePostID") int rePostID,
 			@PathVariable("number") int number,
-			HttpServletRequest request) {		
+			HttpServletRequest request,Model model) {		
 
-		Code code = codeService.get(codeID);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if( rePost == null || code == null) 
-			return "redirect:/code/"+codeID;
-
-		rePostService.deleteReply(rePost, weaver, number);
-
-		return "redirect:/code/"+codeID;
+		if(!rePostService.deleteReply(rePost, weaver, number)){		
+			model.addAttribute("say", "삭제하지 못했습니다. 권한을 확인해보세요!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}
+		return "redirect:/code/"+codeID;	
 	}
 
 	@RequestMapping("/{codeID}/{rePostID}/delete")
@@ -255,8 +263,12 @@ public class CodeController {
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver =weaverService.getCurrentWeaver();
 
-		rePostService.delete(code,rePost,weaver);
-
+		if(!rePostService.delete(code,rePost,weaver)){
+			model.addAttribute("say", "삭제하지 못했습니다. 권한을 확인해보세요!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}
 		return "redirect:/code/"+codeID;	
+
 	}
 }

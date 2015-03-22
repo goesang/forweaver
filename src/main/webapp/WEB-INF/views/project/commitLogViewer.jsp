@@ -152,12 +152,12 @@ function fileUploadChange(fileUploader){
 								class="none-top-border post-top-title-short">${fn:substring(gitCommitLog.shortMassage,0,50)}</td>
 								
 							<td class="none-top-border" 
-								<c:if test="${project.getOriginalProject() != null}">
+								<c:if test="${project.getOriginalProjectName() != null}">
 									style="width:190px" 
 								</c:if>
 								rowspan="2">
-							<c:if test="${project.getOriginalProject() != null}">
-								<a	onclick="return confirm('정말 이 커밋을 체리 바구니하시겠습니까?')" 
+							<c:if test="${project.getOriginalProjectName() != null}">
+								<a	onclick="return confirm('정말 이 커밋을 체리 바구니에 담으시겠습니까?')" 
 								href="/project/${project.name}/cherry-pick/commit:${gitCommitLog.commitLogID}/add">
 										<span class="span-button"> <i  class="icon-css-padding icon-cherry"></i>
 											<p style ="margin-top: -2px;" class="p-button">체리</p></span>

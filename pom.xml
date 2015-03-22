@@ -32,7 +32,7 @@
 		<org.springframework.security-version>3.2.5.RELEASE</org.springframework.security-version>
 		<org.aspectj-version>1.6.11</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
-		<org.eclipse.jgit-version>3.6.1.201501031845-r</org.eclipse.jgit-version>
+		<org.eclipse.jgit-version>3.7.0.201502260915-r</org.eclipse.jgit-version>
 		<tomcat.version>7.0.37</tomcat.version>
 	</properties>
 	<dependencies>

@@ -122,9 +122,9 @@ public class GitService {
 
 
 	public void getProjectZip(String parentDirctoryName,
-			String repositoryName,String commitName,HttpServletResponse response){
+			String repositoryName,String commitName,String format,HttpServletResponse response){
 		gitUtil.Init(parentDirctoryName,repositoryName);
-		gitUtil.getProjectZip(commitName, response);
+		gitUtil.getProjectZip(commitName,format,response);
 	}
 
 

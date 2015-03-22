@@ -17,9 +17,16 @@ public class WebController {
 	private WeaverService weaverService;
 	
 	@RequestMapping("/forweaver")
-	public void forweaver(Model model) {
-		
-	}
+	public void forweaver() {}
+	
+	@RequestMapping("/error500")
+	public void error500() {}
+	
+	@RequestMapping("/error400")
+	public void error400() {}
+	
+	@RequestMapping("/error404")
+	public void error404() {}
 
 	@RequestMapping("/")
 	public String front(Model model) {

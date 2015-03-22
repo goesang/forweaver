@@ -99,16 +99,23 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 				<div class="span7">
 					<label id="labelPath"></label>
 				</div>
-				<div style="width: 90px;" class="span2">
+				<div style="width: 140px;" class="span3">
 					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
 						href="javascript:showUploadContent();"> <i
 						class="fa fa-arrow-circle-o-up"> </i></a> <a
 						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"
 						href="javascript:hideUploadContent();"> <i
-						class="fa fa-arrow-circle-o-up"> </i></a> <a
+						class="fa fa-arrow-circle-o-up"> </i></a> 
+						
+					<a style="font-size:11px"
 						class="btn btn-primary" title="프로젝트 .zip파일로 다운로드"
 						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
-						<i class="fa fa-arrow-circle-o-down"> </i>
+						ZIP
+					</a>
+					<a style="font-size:11px"
+						class="btn btn-primary" title="프로젝트 .tar파일로 다운로드"
+						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.tar">
+						TAR
 					</a>
 
 				</div>

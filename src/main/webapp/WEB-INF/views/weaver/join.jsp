@@ -11,12 +11,12 @@ var check = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 function checkWeaver(){
 		if($("input[name='tags']").val().length < 3){
-			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 태그를 하나 이상 입력해주세요!</div>");
+			alert("태그를 하나 이상 입력해주세요!");
 			return false;
 		}
 		
 		if($("input[name='tags']").val().length > 65){
-			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 태그를 너무 많이 입력하셨습니다!</div>");
+			alert("태그를 너무 많이 입력하셨습니다!");
 			return false;
 		}
 		
@@ -29,7 +29,7 @@ function checkWeaver(){
 
 $(document).ready(function() {
 	
-	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!</div>");
+	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!");
 
 	
 	$("#image").change(function(){
@@ -39,37 +39,54 @@ $(document).ready(function() {
 	
 	$("#id").focusout(function() {
 		var t = escape($("#id").val());
+		if(t.length == 0)
+			return;
+		
+		if(t.length <5){
+			alert("아이디를 최소 5자 이상 입력해주세요!");
+  			check = false;
+  			return;
+		}
 		var objPattern =  /[~!@\#$%^&*\()\=+_']/gi;
-		  if(objPattern.test(t)){
-  		$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 특수문자를 입력할수 없습니다!</div>");
+		  
+		if(objPattern.test(t)){
+  		alert("특수문자를 입력할수 없습니다!");
   		check = false;
-  	    }else{
-			$.ajax({                         
+  	    }
+			
+		  $.ajax({                         
 			    type: "POST",
 			    url: "/check",
 			    data: "id="+$("#id").val(),
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
 				    if(msg==true){
-				    	$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 닉네임이 중복됩니다!</div>");
+				    	alert("닉네임이 중복됩니다!");
 			    		check = false;
 					    }else{
 			    	check = true;
 				 }
 			   }
 			});
-  	    }
+  	    
 	});
 	$("#password").focusout(function() {
+		if($("#password").val().length == 0)
+			return;
+		
 	    if($("#password").val().length<=3){
-	    	$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 비밀번호를 4자리 이상 입력해주세요!</div>");
+	    	alert("비밀번호를 4자리 이상 입력해주세요!");
     		check = false;
     	    }else{
 	    	check = true;
 		 }
 	});
 	$("#rePassword").focusout(function() {
+		
+		if($("#rePassword").val().length == 0)
+			return;
+		
 		if($("#password").val()!=$("#rePassword").val()){
-			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 비밀번호가 일치하지 않습니다!</div>");
+			alert("비밀번호가 일치하지 않습니다!");
     		check = false;
     	    }else{
 	    	check = true;
@@ -77,8 +94,12 @@ $(document).ready(function() {
 	});
 	$("#email").focusout(function() {
 		var t = escape($("#email").val());
+		
+		if(t.length == 0)
+			return;
+		
 		  if(t.match(/^(\w+)@(\w+)[.](\w+)$/ig) == null && t.match(/^(\w+)@(\w+)[.](\w+)[.](\w+)$/ig) == null){
-			  $("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 올바른 이메일 주소를 입력해주세요!</div>");
+			  alert("올바른 이메일 주소를 입력해주세요!");
     		check = false;
     	    }else{
 	    	check = true;
@@ -115,7 +136,7 @@ $(document).ready(function() {
 							<label  for="id" class="control-label">닉네임</label>
 							<div class="controls">
 								<input id="id" name="id" class="input-large"
-									type="text" value="" />
+									type="text" placeholder="영문 숫자를 조합하여 5자 이상" value="" />
 							</div>
 						</div>
 						
@@ -123,7 +144,7 @@ $(document).ready(function() {
 							<label for="email" class="control-label">이메일</label>
 							<div class="controls">
 								<input id="email" name="email" class="input-large" type="text"
-									value="" />
+									value="" placeholder="프로젝트 진행시 사용할 이메일" />
 							</div>
 						</div>
 						
@@ -147,7 +168,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="studentID" class="control-label">학번</label>
 							<div class="controls">
-								<input name="studentID" id="studentID" class="input-large" type="text"/>
+								<input name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
 
 							</div>
 						
@@ -179,7 +200,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="say" class="control-label">자기소개</label>
 							<div class="controls">
-								<input name="say" id="say" style="width:90%;" type="text"/>
+								<input name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 
 							</div>
 						</div>

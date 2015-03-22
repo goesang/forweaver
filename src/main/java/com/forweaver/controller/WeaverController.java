@@ -67,14 +67,17 @@ public class WeaverController {
 			@RequestParam("say") String say,
 			@RequestParam("tags") String tags,
 			@RequestParam("image") MultipartFile image,
-			HttpServletRequest request) {
+			HttpServletRequest request,Model model) {
 		List<String> tagList = tagService.stringToTagList(tags);
 
 		if(!tagService.isPublicTags(tagList))
 			return "/weaver/join";
 		
-		if (weaverService.idCheck(id) || weaverService.idCheck(email))
-			return "/weaver/join";
+		if (weaverService.idCheck(id) || weaverService.idCheck(email)){
+			model.addAttribute("say", "이미 존재하는 아이디 혹은 이메일입니다.");
+			model.addAttribute("url", "/join");
+			return "/alert";
+		}
 
 		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image,id));
 		weaverService.add(weaver);
