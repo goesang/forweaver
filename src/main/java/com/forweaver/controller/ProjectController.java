@@ -2,7 +2,6 @@ package com.forweaver.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -189,14 +188,15 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
-
-		if(!projectService.delete(currentWeaver, project)){
+		if(projectService.delete(currentWeaver, project))
+			postService.delete(postService.getProjectPosts(project.getName(), null, null, null, null, 0, 0, false));
+		else{
 			model.addAttribute("say", "삭제하지 못하였습니다!!!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";
 		}
-
-		return "redirect:/project/"+creatorName+"/"+projectName;
+		
+		return "redirect:/project/";
 	}
 
 	@RequestMapping(value=
@@ -296,15 +296,12 @@ public class ProjectController {
 		int size = WebUtil.getPageSize(page);
 
 		Project project = projectService.get(creatorName+"/"+projectName);
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		List<String> tagList = new ArrayList<String>();
-		tagList.add(new String("@"+creatorName+"/"+projectName));
-
+		
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
+				postService.getProjectPosts(creatorName+"/"+projectName, null, null, sort, null, pageNum, size,true));
 		model.addAttribute("postCount", 
-				postService.countPosts(currentWeaver, tagList, sort));
+				postService.countProjectPosts(creatorName+"/"+projectName, null, null, sort, null));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/sort:"+sort+"/page:");
 		return "/project/community";
@@ -326,14 +323,12 @@ public class ProjectController {
 
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		tagList.add(new String("@"+creatorName+"/"+projectName));
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
+		
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getPosts(currentWeaver, tagList, sort, pageNum, size));
+				postService.getProjectPosts(creatorName+"/"+projectName, tagList, null, sort, null, pageNum, size,true));
 		model.addAttribute("postCount", 
-				postService.countPosts(currentWeaver, tagList, sort));
+				postService.countProjectPosts(creatorName+"/"+projectName, tagList, null, sort, null));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", 
@@ -438,6 +433,37 @@ public class ProjectController {
 				gitService.getGitCommitLogList(creatorName, projectName,commit,1,15));
 		return "/project/commitLog";
 	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/edit")
+	public String edit(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,Model model) {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		model.addAttribute("project", project);
+		return "/project/edit";
+	}
+	
+	@RequestMapping(value = "/{creatorName}/{projectName}/edit", method = RequestMethod.POST)
+	public String edit(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,@RequestParam Map<String, String> params,Model model) {
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		Project project = projectService.get(creatorName+"/"+projectName);
+		List<String> tagList = tagService.stringToTagList(params.get("tags"));
+		int categoryInt = 0;
+
+		if(params.get("category") != null)
+			categoryInt = Integer.parseInt(params.get("category"));
+
+		if(!project.getCreator().equals(currentWeaver) || params.get("description") == null || !tagService.isPublicTags(tagList)){
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/project/"+project.getName()+"/edit");
+			return "/alert";
+		}
+
+		project.setDescription(params.get("description"));
+		project.setCategory(categoryInt);
+		projectService.update(project);
+		return "redirect:/project/"+project.getName()+"/edit";
+	}
 
 	@RequestMapping("/{creatorName}/{projectName}/commitlog/commit:{commit}/page:{page}")
 	public String commitLog(@PathVariable("projectName") String projectName,
@@ -507,8 +533,8 @@ public class ProjectController {
 						tagService.stringToTagList("@"+project.getName()+",탈퇴"));//프로젝트에 메세지 보냄
 				postService.add(post,null);
 				post = new Post(currentWeaver, 
-						"프로젝트명:"+project.getName()+"에서 탈퇴당하셨습니다.", "", 
-						tagService.stringToTagList("$"+deleteWeaver.getId()));//프로젝트에 메세지 보냄
+						deleteWeaver.getId()+"님이 프로젝트명:"+project.getName()+"에서 탈퇴 당하셨습니다.", "", 
+						tagService.stringToTagList("$"+deleteWeaver.getId()+",탈퇴"));//프로젝트에 메세지 보냄
 				postService.add(post, null);
 				model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/weaver/");
 
@@ -602,9 +628,9 @@ public class ProjectController {
 		Pass pass = new Pass(creatorName+"/"+projectName, 1);
 
 		if(waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
-				&& project.getCreatorName().equals(currentWeaver.getId())
+				&& project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, waitingWeaver)){
-
+			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
 			project.addJoinWeaver(waitingWeaver); //프로젝트 목록에 추가
 			waitingWeaver.addPass(pass);
 			weaverService.update(waitingWeaver);
@@ -614,7 +640,7 @@ public class ProjectController {
 							creatorName+"/"+projectName+
 							"에 가입이 승인되었습니다!", 
 							"", 
-							tagService.stringToTagList("@"+project.getName()+",가입")); //@프로젝트명,가입 태그를 걸어줌
+							tagService.stringToTagList("@"+project.getName()+",가입"),true); //@프로젝트명,가입 태그를 걸어줌
 
 			postService.add(post,null);
 
@@ -622,8 +648,9 @@ public class ProjectController {
 
 		}else if(project != null //관리자가 쪽지를 보내고 가입자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
-				&& !project.getCreatorName().equals(currentWeaver.getId())
+				&& !project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
+			postService.delete(postService.get(waitJoin.getPostID()), project.getCreator());	
 			project.addJoinWeaver(currentWeaver); //프로젝트 목록에 추가
 			currentWeaver.addPass(pass);
 			weaverService.update(currentWeaver);
@@ -633,7 +660,7 @@ public class ProjectController {
 					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
 					"를 가입 초대를 수락하셨습니다!", 
 					"", 
-					tagService.stringToTagList("@"+project.getName()+",가입")); //@프로젝트명,가입 태그를 걸어줌
+					tagService.stringToTagList("@"+project.getName()+",가입"),true); //@프로젝트명,가입 태그를 걸어줌
 
 			postService.add(post,null);
 
@@ -651,18 +678,19 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		WaitJoin waitJoin = waitJoinService.get(project.getName(), weaver);
-
+		Weaver waitingWeaver = weaverService.get(weaver);
+		
 		if(project != null //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
-				&& project.getCreatorName().equals(currentWeaver.getId())
+				&& project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
-
+			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
 			Post post = new Post(currentWeaver,  //관리자가 가입자에게 보내는 메세지
 					"관리자 "+project.getCreatorName()+"님의 프로젝트명:"+
 					creatorName+"/"+projectName+
 					"에 가입이 거절되었습니다.", 
 					"", 
-					tagService.stringToTagList("$"+weaver));
+					tagService.stringToTagList("$"+weaver),true);
 
 			postService.add(post,null);
 
@@ -672,12 +700,12 @@ public class ProjectController {
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& !project.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
-
+			postService.delete(postService.get(waitJoin.getPostID()), project.getCreator());	
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
 					"를 가입 초대를 거절하셨습니다.", 
 					"", 
-					tagService.stringToTagList("$"+project.getCreatorName()));
+					tagService.stringToTagList("$"+project.getCreatorName()),true);
 
 			postService.add(post,null);
 

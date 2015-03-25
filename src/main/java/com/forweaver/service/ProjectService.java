@@ -51,10 +51,10 @@ public class ProjectService{
 		projectDao.insert(project);
 		Pass pass = new Pass(project.getName(),2);
 		currentWeaver.addPass(pass);
-		weaverDao.updateInfo(currentWeaver,"weaverInfo.projectCount",1); //프로젝트 갯수 올림.
+		weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectCount",1); //프로젝트 갯수 올림.
 		weaverDao.update(currentWeaver);
 	}
-	
+
 	/** 회원 추가함.
 	 * @param project
 	 * @param currentWeaver
@@ -69,6 +69,7 @@ public class ProjectService{
 		joinWeaver.addPass(pass);
 		weaverDao.update(joinWeaver);
 		this.update(project);
+		System.out.println("addWeaver");
 		weaverDao.updateInfo(joinWeaver,"weaverInfo.joinProjectCount",1); //프로젝트 갯수 올림.
 		return true;
 	}
@@ -89,18 +90,12 @@ public class ProjectService{
 		if(weaver == null || project == null)
 			return false;
 
-		if(weaver.isAdmin() || 
-				weaver.getId().equals(project.getCreatorName())){
+		if(weaver.isAdmin() || weaver.equals(project.getCreator())){
 			try{
 				gitUtil.Init(project);
 				gitUtil.deleteRepository();
 			} catch (Exception e) {
 				return false;
-			}
-			for(Weaver adminWeaver:project.getAdminWeavers()){
-				adminWeaver.deletePass(project.getName());
-				weaverDao.updateInfo(adminWeaver,"weaverInfo.joinProjectCount",-1); //가입 프로젝트 갯수 줄임.
-				weaverDao.update(adminWeaver);
 			}
 			for(Weaver joinWeaver:project.getJoinWeavers()){
 				joinWeaver.deletePass(project.getName());
@@ -112,11 +107,12 @@ public class ProjectService{
 				return true;
 			}
 			cherryPickRequestDao.delete(project);
+			
 			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectCount",-1); //프로젝트 갯수 줄임.
 			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectPush",-project.getPush()); //프로젝트 추천수 모두 줄임.
-			
-			project.getCreator().deletePass(project.getName());
-			weaverDao.update(project.getCreator());
+
+			weaver.deletePass(project.getName());
+			weaverDao.update(weaver);
 			projectDao.delete(project);
 			return true;
 		}
@@ -181,7 +177,7 @@ public class ProjectService{
 		return projects;
 	}
 
-	
+
 	public long countProjects(Weaver weaver,List<String> tags,String sort){
 		if(sort.equals("join"))
 			return projectDao.countProjects(weaver.getJoinProjects(),tags,sort);
@@ -190,7 +186,7 @@ public class ProjectService{
 		else
 			return projectDao.countProjects(weaver.getProjects(),tags,sort);
 	}
-	
+
 	/** 회원을 기준으로 프로젝트를 검색함.
 	 * @param weaver
 	 * @param tags
@@ -236,7 +232,7 @@ public class ProjectService{
 		}catch(Exception e){
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -246,7 +242,9 @@ public class ProjectService{
 
 	public String fork(Project originProject, Project newProject, Weaver weaver){
 
-		
+		if(originProject.getCategory() != 0)
+			return null;
+
 		if(!originProject.getCreator().getId().equals(weaver.getId())){
 			if(this.get(newProject.getName())!=null){
 				while(true){

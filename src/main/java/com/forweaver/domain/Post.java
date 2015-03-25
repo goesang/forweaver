@@ -40,6 +40,7 @@ public class Post implements Serializable {
 		this.content = content;
 		this.created = new Date();
 		this.tags = tags;
+		this.kind = getKind(this.tags);
 	}
 	
 	public Post(Weaver weaver,
@@ -50,6 +51,7 @@ public class Post implements Serializable {
 		this.created = new Date();
 		this.tags = tags;
 		this.isNotice = isNotice;
+		this.kind = getKind(this.tags);
 	}
 
 	public int getPostID() {
@@ -211,5 +213,13 @@ public class Post implements Serializable {
 		this.isNotice = isNotice;
 	}
 	
-	
+	private int getKind(List<String> tags){
+		for (String tag :tags)
+			if (tag.startsWith("@"))
+				return 2;
+			else if (tag.startsWith("$")) 
+				return 3;
+		
+		return 1;
+	}
 }

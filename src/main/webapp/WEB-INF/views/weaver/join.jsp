@@ -110,7 +110,7 @@ $(document).ready(function() {
 			    data: "id="+$("#email").val(),
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
 				    if(msg=="true"){
-			    		$("#email").tooltip({title: "이메일이 중복됩니다!",trigger: 'manual',placement:"right"}).tooltip('show');
+				    	alert("이메일이 중복됩니다!");
 			    		check = false;
 					    }else{
 			    	check = true;

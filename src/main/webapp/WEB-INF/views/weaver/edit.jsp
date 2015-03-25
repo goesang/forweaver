@@ -6,8 +6,30 @@
 </head>
 <body>
 
-	<script>
+<script>
+
+editorMode = true;
+
+function checkWeaver(){
+	if($("input[name='tags']").val().length < 3){
+		alert("태그를 하나 이상 입력해주세요!");
+		return false;
+	}
+	
+	if($("input[name='tags']").val().length > 65){
+		alert("태그를 너무 많이 입력하셨습니다!");
+		return false;
+	}
+			
+	$("form:first").append($("input[name='tags']"));
+	return check;
+}
+
 $(document).ready(function() {
+	
+	$('#tags-input').textext()[0].tags().addTags(
+			getTagList("/tags:<c:forEach items='${weaver.tags}' var='tag'>	${tag},</c:forEach>"));
+	
 	$("#image").change(function(){
         readURL(this);
     });
@@ -16,81 +38,82 @@ $(document).ready(function() {
 
 
 </script>
-	<form enctype="multipart/form-data" onsubmit="return check" class="form-horizontal" action="" method="POST">
 
-		<ul class="nav nav-tabs">
-			<li class="active"><a href="#home" data-toggle="tab">기본정보</a></li>
-			<li><a href="#profile" data-toggle="tab">비밀번호</a></li>
-		</ul>
-		<div id="myTabContent" class="tab-content">
-			<div class="tab-pane active in" id="home" align="center">
-					<div class="control-group">
-						<img id="preview" style="height: 120px; width: 120px;" class="img-polaroid" src="/${weaver.id}/img">
-					</div>
+<div class="container">
+<%@ include file="/WEB-INF/common/nav.jsp"%>
+	
+			<div id="signupform" class="well-white">
+				<form onsubmit="return checkWeaver()"  enctype="multipart/form-data" class="form-horizontal" action="/${weaver.id}/edit" method="POST">
+					<fieldset >
+						<legend><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;정보수정</legend>
+						<div class="span6">
+						
+						<div class="control-group">
+							<label for="password" class="control-label">비밀번호</label>
+							<div class="controls">
+								<input id="password" name="password" class="input-large"
+									type="password" />
 
-					<div class="control-group">
-						<div id="file-div" style="padding-left: 10px;">
-							<div class='fileinput fileinput-new' data-provides='fileinput'>
-								<div class='input-group' style="width: 340px;">
-									<div class='form-control' data-trigger='fileinput'
-										style="width: 210px; text-align: left">
-										<i class='icon-file'></i> <span class='fileinput-filename'></span>
-									</div>
-									<span class='input-group-addon btn btn-primary btn-file'>
-										<span class='fileinput-new'> <i
-											class='fa fa-arrow-circle-o-up icon-white'></i>
-									</span> <span class='fileinput-exists'> <i
-											class='icon-repeat icon-white'></i>
-									</span> <input onchange='fileUploadChange(this);' type='file'
-										id='image' multiple='true' name='image'>
-									</span> <a href='#'
-										class='input-group-addon btn btn-primary fileinput-exists'
-										data-dismiss='fileinput'> <i
-										class='icon-remove icon-white'></i>
-									</a>
-								</div>
 							</div>
 						</div>
 						<div class="control-group">
-							<div style="margin-left: 0px;"class="controls">
-								<input value="${weaver.studentID}" name="studentID" id="studentID" class="input-large" type="text"/>
-							</div>						
-						</div>
-						<div class="control-group" style="padding-left: 7px;">
-							<textarea placeholder="자기소개를 다시 입력해주세요!" name="say" id="say"
-								style="width: 249px;" rows="3">${cov:htmlEscape(weaver.say)}</textarea>
-						</div>
+							<label for="rePassword" class="control-label">비밀번호 확인</label>
+							<div class="controls">
+								<input id="rePassword" name="newpassword" class="input-large"
+									type="password" />
 
-					<div class="control-group" style="padding-left: 6px;">
-						<button onclick="window.close();" style="width: 275px;" type="submit"
-							class="btn btn-block btn-inverse">
-							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기
-						</button>
-					</div>
-				</div>
-			</div>
+							</div>
+						</div>
+						
+						<div class="control-group">
+							<label for="studentID" class="control-label">학번</label>
+							<div class="controls">
+								<input value="${cov:htmlEscape(weaver.studentID)}" name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
 
-			<div class="tab-pane fade" id="profile">
-					<br/>
-					<div class="control-group" align="center">
-						<i style="font-size:100px;"class="fa fa-key"></i>
+							</div>
+						
+						</div>
+						</div>
+						<div class="span4">
+						
+						<div class ="control-group" style="text-align:center;">
+						<img id="preview" src="/${weaver.id}/img" style="height:130px;width:130px;" class="img-polaroid" src="">
+						</div>
+						
+						
+						<div class="control-group">
+							<div id="file-div" style="padding-left: 20px;">
+					<div class='fileinput fileinput-new' data-provides='fileinput'>
+					  <div class='input-group' style="width: 340px;">
+					    <div class='form-control' data-trigger='fileinput' style="width: 210px;" ><i class='icon-file '></i> <span class='fileinput-filename'></span></div>
+					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
+					    <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
+					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
+						<input onchange ='fileUploadChange(this);' type='file' id='image' multiple='true' name='image'></span>
+					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+					  </div>
 					</div>
-					<div align="center" class="control-group" style="padding-left: 7px;">
-						<label style="margin-right: 120px;" for="password">기존 비밀번호</label>
-						<input type="password" id="password" name="password" class="input-large"></input>
+						</div>
 					</div>
-					<div align="center" class="control-group" style="padding-left: 7px;">
-						<label style="margin-right: 130px;" for="newpassword">새 비밀번호</label>
-						<input type="password" id="newpassword" name="newpassword" class="input-large"></input>
-					</div>
-					<div align="center" style="padding-left: 6px;">
-						<button onclick="window.close();"style="width: 225px;" type="submit" class="btn btn-block btn-inverse">
-							<i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기
-						</button>
-					</div>
-			</div>
+						</div>
+						<div class="span11">
+						<div class="control-group">
+							<label for="say" class="control-label">자기소개</label>
+							<div class="controls">
+								<input name="say" value="${cov:htmlEscape(weaver.say)}" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
+
+							</div>
+						</div>
+						<div class="join-form-actions-white">
+
+							<button type="submit" class="btn btn-block btn-inverse"><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기</button>
+						</div>
+						</div>
+					</fieldset>
+				</form>
 		</div>
-	</form>
+				<%@ include file="/WEB-INF/common/footer.jsp"%>
+	</div>
 </body>
 
 

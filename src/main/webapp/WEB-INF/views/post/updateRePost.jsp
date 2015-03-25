@@ -7,59 +7,15 @@
 </head>
 <body>
 	<script type="text/javascript">
-	var fileCount = 1;
-	var comment = 0;
-	
-	
-	function fileUploadChange(fileUploader){
-		$(function (){
-		if($(fileUploader).val()!=""){ // 파일을 업로드하거나 수정함
-			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-		fileCount++;
-		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-					"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-				   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-				  "</div>"+
-				"</div>");
-			}
-		}else{
-			if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
-				
-			$("#file"+fileCount).parent().parent().remove();
 
-				--fileCount;
-		}}});
-	}
-	
 			$(function() {
 			
-			$( "#"+getSort(document.location.href) ).addClass( "active" );
-			
 			$("#repost-content").focus();
-			
-			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
-					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-					  "</div>"+
-					"</div>");
-
 			
 			$('#tags-input').textext()[0].tags().addTags(
 					getTagList("/tags:<c:forEach items='${post.tags}' var='tag'>	${tag},</c:forEach>"));
 
-			$('.tag-name').click(
-					function() {
-						var tagname = $(this).text();
-						movePage("[\"" + tagname + "\"]","");	
-			});
+
 		});
 	</script>
 	<div class="container">
@@ -111,7 +67,8 @@
 						<c:if test="${post.isLong()}">
 														
 							<tr>
-								<td colspan="5">${post.content}</td>
+								<td class="post-content post-content-max"colspan="5">
+								<s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(post.getContent())" /></td>
 							</tr>
 
 						</c:if>
@@ -137,7 +94,6 @@
 							</button>
 						</span>
 					</div>
-					<div class = "file-div"></div>
 				</form>			
 			</div>
 		</div>

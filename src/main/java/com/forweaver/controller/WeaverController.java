@@ -47,7 +47,7 @@ public class WeaverController {
 	public String login() {
 		return "/weaver/login";
 	}
-	
+
 	@RequestMapping(value = "/loginFail")
 	public String loginFail(Model model) {
 		model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
@@ -72,7 +72,13 @@ public class WeaverController {
 
 		if(!tagService.isPublicTags(tagList))
 			return "/weaver/join";
-		
+
+		if(id.length() < 4 || password.length()<3 || email.length()<6){
+			model.addAttribute("say", "잘못 입력하셨습니다!.");
+			model.addAttribute("url", "/join");
+			return "/alert";
+		}
+
 		if (weaverService.idCheck(id) || weaverService.idCheck(email)){
 			model.addAttribute("say", "이미 존재하는 아이디 혹은 이메일입니다.");
 			model.addAttribute("url", "/join");
@@ -467,20 +473,28 @@ public class WeaverController {
 			@RequestParam("tags") String tags,
 			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
-			@RequestParam("image") MultipartFile image) {
+			@RequestParam("image") MultipartFile image,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-
 		List<String> tagList = tagService.stringToTagList(tags);
 
-		if(!tagService.isPublicTags(tagList))
-			return "/weaver/edit";
-		
-		if (!weaver.getId().equals(id) ) // 본인이 아닐때
-			return "/exit";
+		if(!tagService.isPublicTags(tagList)){
+			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
+			model.addAttribute("url", "/"+id+"/edit");
+			return "/alert";
+		}
 
+
+		if (!weaver.getId().equals(id) ){ // 본인이 아닐때
+			model.addAttribute("say", "권한이 없습니다!");
+			model.addAttribute("url", "/");
+			return "/alert";
+		}
 		weaverService.update(weaver,password,newpassword,tagList,studentID,say,image);
 
-		return "/exit";
+		model.addAttribute("say", "정보를 수정하였습니다!");
+		model.addAttribute("url", "/"+id+"/edit");
+		return "/alert";
+
 	}
 
 	@RequestMapping(value = "/{id}/img")

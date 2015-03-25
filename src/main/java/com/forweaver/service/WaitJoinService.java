@@ -14,7 +14,6 @@ import com.forweaver.mongodb.dao.WaitJoinDao;
 public class WaitJoinService {
 
 	@Autowired private WaitJoinDao waitJoinDao;
-	@Autowired private PostDao postDao;
 
 	public boolean isCreateWaitJoin(Lecture lecture,Weaver waitingWeaver,Weaver proposer) {
 
@@ -54,8 +53,7 @@ public class WaitJoinService {
 		
 		if(project.getCreatorName().equals(currentWeaver.getId()) || //현재 위버가 프로젝트 관리자이거나
 				waitJoin.getWaitingWeaver().equals(currentWeaver.getId())){		//현재 위버가 대기중인 위버일때
-			waitJoinDao.delete(waitJoin);
-			postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
+			waitJoinDao.delete(waitJoin);			
 			return true;
 		}			
 		
@@ -69,7 +67,6 @@ public class WaitJoinService {
 		if(currentWeaver.isAdmin(lecture.getName()) || 
 				waitJoin.getWaitingWeaver().equals(currentWeaver.getId())){			
 			waitJoinDao.delete(waitJoin);
-			postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
 			return true;
 		}			
 		
@@ -92,19 +89,6 @@ public class WaitJoinService {
 		return false;
 	}
 
-	public boolean delete(Weaver weaver,String joinTeam){
-		if(weaver == null || joinTeam == null)
-			return false;
-
-		if(weaver.isAdmin())			
-			for(WaitJoin waitJoin:waitJoinDao.delete(joinTeam)){
-				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
-				return true;
-			}		
-
-		return false;
-
-	}
 
 	public WaitJoin get(String joinTeam,String waitingWeaver){
 		return waitJoinDao.get(joinTeam,waitingWeaver);

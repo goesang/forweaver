@@ -26,14 +26,24 @@ public class TagService {
 		return tags;
 	}
 	
+	public String getPrivateTag(List<String> tagList){
+		for (String tag : tagList) 
+			if (tag.startsWith("@"))
+					return tag;
+			
+		return null;
+	}
+	
 	public boolean validateTag(List<String> tagList,Weaver weaver) {
 
+		
 		List<String> publicTags = new ArrayList<String>();
 		List<String> privateTags = new ArrayList<String>();
 		List<String> massageTags = new ArrayList<String>();
 
 		if (tagList.size() == 0)
 			return false;
+
 		for (String tag : tagList) {
 			if (tag.startsWith("@")){
 					privateTags.add(tag);
@@ -44,28 +54,30 @@ public class TagService {
 				publicTags.add(tag);
 		}
 
-		if (privateTags.size() == 0) // 권한을 가진 태그가 없고
-			if ((massageTags.size() == 0 && publicTags.size() > 0) || 
-					// 개인 태그와 일반 태그 둘중 하나가 없을때
-					(massageTags.size() > 0 && publicTags.size() == 0 && weaver != null)) {
-				return true;
-			}
+		if(weaver!= null && weaver.isAdmin())
+			return true;
+		
+		if(this.isPublicTags(tagList))
+			return true;
+		
 		if (privateTags.size() >= 2) // 권한을 가진 태그가 2개일때
 			return false;
-
-		if (massageTags.size() >= 1) // 권한을 가진 태그가 있고 메세지 태그가 있을때
+		
+		if (privateTags.size() >0 && massageTags.size() > 0) // 권한을 가진 태그가 있고 메세지 태그가 있을때
 			return false;
-
+		
 		if (weaver == null) // 권한을 가진 태그가 있는데 로그인 안한 사람일때
 			return false;
-
-		for (Pass pass : weaver.getPasses()) { // 권한 검증
-			if (privateTags.get(0).
-					equals("@" + pass.getJoinName())) {
+	
+		
+		for (Pass pass : weaver.getPasses()) // 권한 검증
+			if (privateTags.size() > 0 && privateTags.get(0).equals("@" + pass.getJoinName())) 
 				return true;
-			}
-		}
-
+							
+		for (String tag : massageTags)  // 메세지 권한 검증
+			if (tag.equals("$" + weaver.getId())) 
+				return true;
+	
 		return false;
 	}
 
@@ -104,6 +116,7 @@ public class TagService {
 		}
 		return true;
 	}
+	
 
 
 }

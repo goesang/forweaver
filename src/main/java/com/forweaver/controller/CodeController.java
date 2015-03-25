@@ -214,9 +214,7 @@ public class CodeController {
 
 		RePost rePost = new RePost(code,
 				weaver,
-				content,
-				code.getTags(),
-				4);
+				content);
 		rePostService.add(rePost,datas);
 		code.setRePostCount(code.getRePostCount()+1);
 		codeService.update(code);

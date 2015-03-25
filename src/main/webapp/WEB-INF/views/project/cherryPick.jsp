@@ -46,7 +46,8 @@ $(document).ready(function() {
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);"
 						onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
-					<li><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<li><a href="/project/${project.name}/edit">관리</a></li>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					<li class="active"><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 				</ul>

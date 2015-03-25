@@ -361,7 +361,8 @@ public class Weaver implements UserDetails,Serializable {
 	}
 
 	public boolean equals(Weaver weaver) {
-
+		if(weaver == null)
+			return false;
 		return this.id.equals(weaver.getId());
 	}
 

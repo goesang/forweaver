@@ -49,6 +49,6 @@ public class CherryPickRequestDao {
 		Criteria criteria = new Criteria();
 		Query query = new Query(	criteria.orOperator(Criteria.where("cherryPickProject").is(project),
 				Criteria.where("orginalProject").is(project)));
-		mongoTemplate.remove(query);
+		mongoTemplate.remove(query,CherryPickRequest.class);
 	}
 }

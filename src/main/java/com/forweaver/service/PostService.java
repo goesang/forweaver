@@ -1,5 +1,6 @@
 package com.forweaver.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
@@ -44,17 +45,7 @@ public class PostService {
 		}
 		if (post.getTitle().length() <= 1)
 			return -1;
-		post.setKind(1);
-		for (String tag : post.getTags()) {
-			if (tag.startsWith("@")) {
-				post.setKind(2);
-				break;
-			} else if (tag.startsWith("$")) {
-				post.setKind(3);
-				break;
-			}
 
-		}
 		//만약 자료를 올렸다면.
 		if(datas != null && datas.size() >0)
 			for(Data data:datas){
@@ -106,14 +97,6 @@ public class PostService {
 		if (post.getTitle().length() <= 1)
 			return;
 
-		for (String tag : post.getTags()) {
-			if (tag.startsWith("@"))
-				post.setKind(2);
-			else if (tag.startsWith("$")) {
-				post.setKind(3);
-			}else
-				post.setKind(1);
-		}
 		if(removeDataList != null)
 			for(String dataName: removeDataList){
 				dataDao.delete(post.getData(dataName));
@@ -122,6 +105,15 @@ public class PostService {
 		postDao.update(post);
 	}
 
+	/** 다수의 글들을 한꺼번에 삭제함.
+	 * @param posts
+	 * @return
+	 */
+	public void delete(List<Post> posts){
+		for(Post post:posts)
+			this.delete(post);
+	}
+	
 	/** 실제 글을 삭제하는 메서드
 	 * @param post
 	 */
@@ -231,6 +223,40 @@ public class PostService {
 			return postDao.getPostsWithMassageTag(tags, null, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
 
 		return null;
+	}
+	
+	/** 프로젝트에 쓴 글들을 가져와서 수를 셈
+	 * @param projectName
+	 * @param tags
+	 * @param search
+	 * @param sort
+	 * @param writer
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public long countProjectPosts(String projectName,List<String> tags,String search,String sort,Weaver writer) {
+			if(tags == null)
+				tags = new ArrayList<String>();
+			tags.add("@"+projectName);
+			return postDao.countPosts(tags, search, writer, sort);
+	}
+	
+	/**  프로젝트에 쓴 가져옴.
+	 * @param projectName
+	 * @param tags
+	 * @param search
+	 * @param sort
+	 * @param writer
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Post> getProjectPosts(String projectName,List<String> tags,String search,String sort,Weaver writer, int page, int size,boolean limit) {
+		if(tags == null)
+			tags = new ArrayList<String>();
+		tags.add("@"+projectName);
+		return postDao.getPosts(tags,search,writer,sort, page, size,limit);
 	}
 
 	public long countPosts(Weaver weaver,

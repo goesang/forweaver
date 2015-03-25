@@ -18,11 +18,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Post;
+import com.forweaver.domain.Project;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.DataService;
 import com.forweaver.service.PostService;
+import com.forweaver.service.ProjectService;
 import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
@@ -34,6 +36,8 @@ import com.forweaver.util.WebUtil;
 public class PostController {
 	@Autowired 
 	private PostService postService;
+	@Autowired 
+	private ProjectService projectService;
 	@Autowired 
 	private RePostService rePostService;
 	@Autowired 
@@ -207,8 +211,19 @@ public class PostController {
 			@PathVariable("sort") String sort) {
 		Post post = postService.get(postID);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if(!tagService.validateTag(post.getTags(), weaver))
-			return "redirect:/community/";
+				
+		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(), weaver)){
+			if(post.getKind() == 2){
+				String projectName = tagService.getPrivateTag(post.getTags());
+				projectName = projectName.substring(1);
+				Project project = projectService.get(projectName);
+				
+				if(project == null || !project.isPublic())
+					return "redirect:/community/";
+			}else
+				return "redirect:/community/";
+		}
+			
 		model.addAttribute("post", post);
 		model.addAttribute("rePosts", rePostService.gets(postID,post.getKind(),sort));
 
@@ -227,7 +242,7 @@ public class PostController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 
 
-		if(!tagService.validateTag(post.getTags(),weaver) || 
+		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(),weaver) || 
 				weaver == null || post == null || content.equals("")) {
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
@@ -240,11 +255,7 @@ public class PostController {
 				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
 		}
 
-		RePost rePost = new RePost(post,
-				weaver,
-				content,
-				post.getTags(),
-				post.getKind());
+		RePost rePost = new RePost(post,weaver,content);
 		post.setRecentRePostDate(rePost.getCreated());
 		post.addRePostCount();	
 		postService.update(post, null);
@@ -263,7 +274,7 @@ public class PostController {
 		Post post = postService.get(postID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(!tagService.validateTag(post.getTags(),weaver)) {// 권한 검사.
+		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(),weaver)) {// 권한 검사.
 			model.addAttribute("say", "태그에 권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+rePost.getOriginalPost().getPostID());
 			return "/alert";
@@ -283,7 +294,7 @@ public class PostController {
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(!tagService.validateTag(post.getTags(),weaver)) {// 권한 검사.
+		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(),weaver)) {// 권한 검사.
 			model.addAttribute("say", "태그에 권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+rePost.getOriginalPost().getPostID());
 			return "/alert";
@@ -305,7 +316,7 @@ public class PostController {
 		return "redirect:/community/sort:age-desc/page:1";
 	}
 
-	@RequestMapping("/{postID}/repost-id:{repostID}/push")
+	@RequestMapping("/{postID}/{repostID}/push")
 	public String rePostPush(Model model, @PathVariable("postID") int postID, @PathVariable("repostID") int repostID) {
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(repostID);
@@ -340,15 +351,14 @@ public class PostController {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
-		//String[] fileRemoveList = request.getParameter("fileRemoveList").split("@#@");
-
-		if(post == null || tags == null || title == null || !post.getWriterName().equals(weaver.getId())){ // 태그가 없을 때
+		
+		if(post == null || tags == null || title == null || content == null || 
+				title.length() < 5 || content.length() < 5 ||
+				!post.getWriter().equals(weaver)){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
 		}
-		else if(content == null)
-			content = "";
 
 		List<String> tagList = tagService.stringToTagList(tags);
 
@@ -360,7 +370,6 @@ public class PostController {
 		}
 		post.setTitle(title);
 		post.setContent(content);
-		post.setTags(tagService.stringToTagList(tags));		
 
 		postService.update(post,null);
 
@@ -392,18 +401,19 @@ public class PostController {
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(rePost == null || content == null|| !rePost.getWriterName().equals(weaver.getId())){ // 태그가 없을 때
+		if(post == null || rePost == null || content == null|| !rePost.getWriter().equals(weaver)){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
 		}	
 
-		if(!tagService.validateTag(post.getTags(),weaver)){ // 태그에 권한이 없을때
+		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(),weaver)){ // 태그에 권한이 없을때
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
 		}	
-
+		
+		rePost.setContent(content);
 		rePostService.update(rePost,null);
 
 		return "redirect:/community/"+postID;	

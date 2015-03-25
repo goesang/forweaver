@@ -85,7 +85,7 @@ public class PostDao {
 	 * @return
 	 */
 	public List<Post> getPosts(List<String> tags, String search, Weaver writer, String sort,
-			int page, int size) {
+			int page, int size,boolean limit) {
 		Criteria criteria = new Criteria();
 
 		if (search != null)
@@ -97,12 +97,15 @@ public class PostDao {
 		if (writer != null)
 			criteria.and("writer").is(writer);
 
-		this.filter(criteria, sort);
+		if(limit)
+			this.filter(criteria, sort);
 
 		Query query = new Query(criteria);
-		query.with(new PageRequest(page - 1, size));
-
-		this.sorting(query, sort);
+		
+		if(limit){
+			query.with(new PageRequest(page - 1, size));
+			this.sorting(query, sort);
+		}
 		return mongoTemplate.find(query, Post.class);
 	}
 	

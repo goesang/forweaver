@@ -20,7 +20,7 @@ public class RePost implements Serializable {
 	private Date created;
 	private int push;
 	private Date recentReplyDate;
-	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변 , 4가 코드의 답변.
+	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변
 	
 	@DBRef
 	private Post originalPost;
@@ -38,24 +38,26 @@ public class RePost implements Serializable {
 	public RePost() {
 	}
 
-	public RePost(Post originalPost,Weaver writer, String content,List<String> tags,int kind) {
+	public RePost(Post originalPost,Weaver writer, String content) {
 		this.writer = writer;
 		this.origianlWriter = originalPost.getWriter();
 		this.content = content;
-		this.kind = kind;
+		this.tags = originalPost.getTags();
+		this.kind = this.getKind(this.tags);
 		this.created = new Date();
 		this.originalPost = originalPost;
-		this.tags = originalPost.getTags();
+		
 	}
 	
-	public RePost(Code originalCode,Weaver writer, String content,List<String> tags,int kind) {
+	public RePost(Code originalCode,Weaver writer, String content) {
 		this.writer = writer;
 		this.origianlWriter = originalCode.getWriter();
 		this.content = content;
-		this.kind = kind;
-		this.created = new Date();
 		this.originalCode = originalCode;
 		this.tags = originalCode.getTags();
+		this.kind = this.getKind(this.tags);
+		this.created = new Date();		
+		
 	}
 
 	public int getRePostID() {
@@ -140,11 +142,15 @@ public class RePost implements Serializable {
 	public boolean removeReply(Weaver weaver, int number) {
 		for (int i = 0; i < this.replys.size(); i++) {
 			if (this.replys.get(i).getNumber() == number
-					&& weaver.getId().equals(this.replys.get(i).getWriterName()))
+					&& (weaver.equals(this.replys.get(i).getWriter()) || weaver.isAdmin()))
 				this.replys.remove(i);
 			return true;
 		}
 		return false;
+	}
+	
+	public Weaver getReplyWriter(int number) {
+		return this.replys.get(number).getWriter();
 	}
 
 	public Date getRecentReplyDate() {
@@ -232,5 +238,17 @@ public class RePost implements Serializable {
 		this.tags = tags;
 	}	
 	
+	private int getKind(List<String> tags){
+		if(this.originalCode != null)
+			return 4;
+		
+		for (String tag :tags)
+			if (tag.startsWith("@")) 
+				return 2;
+			else if (tag.startsWith("$")) 
+				return 3;
+		
+		return 1;
+	}
 	
 }

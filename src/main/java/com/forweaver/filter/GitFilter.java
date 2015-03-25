@@ -42,9 +42,7 @@ public class GitFilter implements Filter {
 		String lectureName = requstUrlArray[2];
 		String repoName = requstUrlArray[3].substring(0,
 				requstUrlArray[3].indexOf(".git"));
-		System.out.println(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git");
-		System.out.println(lectureName);
-		System.out.println(repoName);
+
 		if (!new File(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git").exists()) // 저장소가 없는 경우
 			return;
 

@@ -304,5 +304,10 @@ public class Project implements Serializable {
 		this.commitCount = commitCount;
 	}
 	
+	public boolean isPublic(){
+		if(this.category == 0 || this.category ==2)
+			return true;
+		return false;
+	}
 	
 }

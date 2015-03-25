@@ -79,10 +79,15 @@ public class RePostService {
 	 * @return
 	 */
 	public boolean deleteReply(RePost rePost,Weaver weaver,int number) {
-		if(rePost == null || weaver == null || !rePost.removeReply(weaver, number))
+		
+		if(rePost == null || weaver == null)
+			return false;
+		Weaver replyWriter = rePost.getReplyWriter(number);
+		
+		if(replyWriter == null || !rePost.removeReply(weaver, number))
 			return false;
 		
-		weaverDao.updateInfo(weaver,"weaverInfo.myReplysCount",-1); //자신의 댓글 갯수 감소
+		weaverDao.updateInfo(replyWriter,"weaverInfo.myReplysCount",-1); //자신의 댓글 갯수 감소
 		weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",-1); //답변에 달린 댓글 갯수 감소
 		rePostDao.update(rePost);
 		return true;

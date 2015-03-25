@@ -96,7 +96,7 @@ public class RePostDao {
 	}
 
 	public void update(RePost rePost) {
-		Query query = new Query(Criteria.where("rePostID").is(
+		Query query = new Query(Criteria.where("_id").is(
 				rePost.getRePostID()));
 		Update update = new Update();
 		update.set("content", rePost.getContent());

@@ -102,7 +102,7 @@
 			$(".file-div").hide();
 			
 			$('#tags-input').textext()[0].tags().addTags(
-					getTagList("/tags:<c:forEach items='${post.tags}' var='tag'>	${tag},</c:forEach>"));
+					getTagList("/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>"));
 
 			$('.tag-name').click(
 					function() {

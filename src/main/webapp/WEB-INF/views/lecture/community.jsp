@@ -105,7 +105,7 @@ var editorMode = false;
 			<div style="margin-top:-10px" class="pull-right">
 
 				<button class="btn btn-warning">
-								<b>COUNT : ${postCount}</b>
+								<b><i class="fa fa-database"></i> ${postCount}</b>
 				</button>
 
 			</div>
