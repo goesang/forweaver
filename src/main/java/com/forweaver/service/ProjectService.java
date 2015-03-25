@@ -24,6 +24,9 @@ import com.forweaver.mongodb.dao.WaitJoinDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 
+/** 프로젝트 관리 서비스
+ *
+ */
 @Service
 public class ProjectService{
 
@@ -144,15 +147,23 @@ public class ProjectService{
 
 	}
 
-	public boolean push(Project project, Weaver weaver) {
-		if(project == null || weaver == null)
+	/** 프로젝트를 추천하면 캐시에 저장하고 24시간 제한을 둠.
+	 * @param project
+	 * @param weaver
+	 * @param ip
+	 * @return
+	 */
+	public boolean push(Project project, Weaver weaver,String ip) {
+		if(project == null || project.getCategory() > 0 || 
+				(weaver == null &&  project.isProjectWeaver(weaver)))
 			return false;
+		
 		Cache cache = cacheManager.getCache("push");
-		Element element = cache.get(project.getName());
+		Element element = cache.get(project.getName()+"@@"+ip);
 		if (element == null || (element != null && element.getValue() == null)) {
 			project.push();
 			projectDao.update(project);
-			Element newElement = new Element(project.getName(), weaver.getId());
+			Element newElement = new Element(project.getName()+"@@"+ip, ip);
 			cache.put(newElement);
 			return true;
 		}

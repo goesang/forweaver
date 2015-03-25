@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
 
-/** 커뮤니티 글과 관련된 DB빈
+/** 커뮤니티 글과 관련된 DAO
  * 
  */
 @Repository
@@ -180,7 +180,9 @@ public class PostDao {
 	 * @return
 	 */
 	public long countPostsWithPrivateTags(List<String> privateAndMassageTags, String search, Weaver writer,String sort) {
-		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
+		Criteria criteria = new Criteria();
+		
+		criteria.and("kind").is(2).and("tags")
 				.all(privateAndMassageTags); // 비밀 글 가져오기
 
 		if (writer != null)
@@ -207,7 +209,9 @@ public class PostDao {
 	public List<Post> getPostsWithPrivateTags(List<String> privateAndMassageTags, String search, Weaver writer,
 			String sort, int page, int size) {
 
-		Criteria criteria = new Criteria().and("kind").is(2).and("tags")
+		Criteria criteria = new Criteria();
+		
+		criteria.and("kind").is(2).and("tags")
 				.all(privateAndMassageTags); // 일반 공개글을 불러옴;
 
 		if (writer != null)
@@ -441,6 +445,7 @@ public class PostDao {
 	public long countMyPosts(List<String> publicTags,List<String> privateAndMassageTags, Weaver writer, 
 			String search, String sort) {
 		Criteria criteria = new Criteria();
+		
 		criteria.orOperator(Criteria.where("writer").is(writer),
 				Criteria.where("tags").in(privateAndMassageTags));
 
@@ -470,6 +475,7 @@ public class PostDao {
 	public List<Post> getMyPosts(List<String> publicTags,List<String> privateAndMassageTags,  Weaver writer, String search,
 			String sort, int page, int size) {
 		Criteria criteria = new Criteria();
+		
 		criteria.orOperator(Criteria.where("writer").is(writer),
 				Criteria.where("tags").in(privateAndMassageTags));
 
@@ -497,8 +503,10 @@ public class PostDao {
 	 * @return
 	 */
 	public long countMyProjectPosts(List<String> privateAndMassageTags, String search, String sort) {
-		Criteria criteria = new Criteria("tags").in(privateAndMassageTags);
+		Criteria criteria = new Criteria();
 
+		criteria.and("tags").in(privateAndMassageTags);
+		
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
 					Criteria.where("title").regex(search),
@@ -519,8 +527,10 @@ public class PostDao {
 	 */
 	public List<Post> getMyProjectPosts(List<String> privateAndMassageTags, String search, 
 			String sort, int page,int size) {
-		Criteria criteria = new Criteria("tags").in(privateAndMassageTags);
+		Criteria criteria = new Criteria();
 
+		criteria.and("tags").in(privateAndMassageTags);
+		
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
 					Criteria.where("title").regex(search),

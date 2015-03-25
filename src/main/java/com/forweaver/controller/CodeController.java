@@ -209,7 +209,7 @@ public class CodeController {
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (MultipartFile file : files.values()) {
 			if(!file.isEmpty())
-				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver.getId()));
+				datas.add(new Data(dataService.getObjectID(file.getOriginalFilename(), weaver),file,weaver));
 		}
 
 		RePost rePost = new RePost(code,

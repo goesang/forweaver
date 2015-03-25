@@ -10,6 +10,20 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**<pre>  코드 정보를 담는 클래스
+ * codeID 실제 코드 아이디
+ * writer 만든이
+ * downCount 다운로드 수
+ * openingDate 올린 날짜
+ * readme 설명서
+ * name 코드 이름
+ * content 코드 설명
+ * rePostCount 답변 수
+ * recentRePostDate 최신 답변 날짜
+ * codes 실제 코드들
+ * tags 태그들
+ * </pre>
+ */
 @Document
 public class Code implements Serializable  {
 	

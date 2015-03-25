@@ -6,6 +6,16 @@ import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+/**<pre>  채리픽 요청을 저장하는 클래스
+ * id 아이디
+ * orginalProject 원본 프로젝트
+ * cherryPickProject 체리픽 프로젝트
+ * commitID 커밋 아이디
+ * requestWeaver 요청자
+ * state 상태
+ * cherryPickDate 날짜
+ * </pre>
+ */
 public class CherryPickRequest {
 	static final long serialVersionUID = 541112234L;
 	@Id

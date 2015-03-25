@@ -11,12 +11,23 @@
 	var comment = 0;
 	var fileHash = {};
 	function fileUploadChange(fileUploader){
-		var fileName = $(fileUploader).val();			
+		var fileName = $(fileUploader).val();	
+		var blank_pattern = /[\s]/g;
 		$(function (){
+			if( blank_pattern.test(fileName)){
+				alert("파일 이름에 공백이 포함될 수 없습니다!");
+				return;
+			}
+			
+			if( fileName.length > 30 ){
+				alert("파일 이름이 너무 깁니다!");
+				return;
+			}
 		if(fileName !=""){ // 파일을 업로드하거나 수정함
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
 			fileHash[fileName] = mongoObjectId();
+			
 			$.ajax({
 			    url: '/data/tmp',
                 type: "POST",
@@ -29,20 +40,21 @@
                     return data;
                 }()
 			});	
-			$("#repost-content").val($("#repost-content").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+			
+			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 		
 			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-		fileCount++;
-		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-					"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-				   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-				  "</div>"+
-				"</div>");
-			}
+				fileCount++;
+				$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+						  "<div class='input-group'>"+
+						    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+						    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+						    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+							"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
+						   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+						  "</div>"+
+						"</div>");
+					}
 		}else{
 			if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
 				
@@ -150,17 +162,24 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
+								<c:if test="${post.getWriterName().equals(currentUser.username) }">
 								<div class="function-div pull-right">
-									<a href="javascript:deletePost(${post.postID})"> <span
+									<a href = "/community/${post.postID}/delete" onclick="return confirm('글을 정말로 삭제하시겠습니까?')"> <span
 										class="function-button">삭제</span></a>
-								</div></td>
+									<c:if test="${post.isLong()}">
+										<a href = "/community/${post.postID}/update" onclick="return confirm('글을 정말로 수정하시겠습니까?')"> <span
+										class="function-button">수정</span></a>	
+									</c:if>
+								</div>
+								</c:if>
+								</td>
 
 						</tr>
 						<c:if test="${post.datas.size() > 0}">
 							<tr>
 								<td colspan="5"><c:forEach var="index" begin="0"
 										end="${post.datas.size()-1}">
-										<a href='/data/${post.datas.get(index).getId()}'><span
+										<a href='/data/${post.datas.get(index).getId()}/${post.datas.get(index).getName()}'><span
 											class="function-button function-file" title='파일 다운로드'><i
 												class='icon-file icon-white'></i>
 												${post.datas.get(index).getName()}</span></a>

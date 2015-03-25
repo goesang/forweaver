@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-//파일 브라우져에서 볼 수 있도록 리스트에 담길 클래스
+
+/** 파일 브라우져에서 볼 수 있도록 리스트에 담길 클래스
+ * @author go
+ *
+ */
 public class GitSimpleFileInfo implements Serializable {
 
 	static final long serialVersionUID = 3333333333L;

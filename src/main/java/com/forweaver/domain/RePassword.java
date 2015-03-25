@@ -2,7 +2,7 @@ package com.forweaver.domain;
 
 import java.io.Serializable;
 
-/** <pre>재발급할 비밀번호와 키를 담는 클래스
+/** <pre> 재발급할 비밀번호와 키를 담는 클래스
  * key - 인증키
  * password - 새로운 비밀번호 
  * </pre>

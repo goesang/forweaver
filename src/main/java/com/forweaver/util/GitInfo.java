@@ -44,8 +44,11 @@ import org.gitective.core.stat.CommitterHistogramFilter;
 import org.gitective.core.stat.UserCommitActivity;
 
 
-//https://github.com/kevinsawicki/git-reports/blob/master/lib/src/main/java/com/github/kevinsawicki/git/reports/TotalHistoryReport.java
-//위에 주소에서 코드를 가져옴.
+
+/** GIT 저장소의 각종 통계를 내주는 클래스
+ * https://github.com/kevinsawicki/git-reports/blob/master/lib/src/main/java/com/github/kevinsawicki/git/reports/TotalHistoryReport.java
+ * 위에 주소에서 코드를 가져옴.
+ */
 public class GitInfo {
 	public static class LineStats implements Comparable<LineStats> {
 

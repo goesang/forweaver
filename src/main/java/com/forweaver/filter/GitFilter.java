@@ -25,8 +25,10 @@ import com.forweaver.service.ProjectService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.GitUtil;
 
-//git clone이나 그외 git 프로그램으로 접근시 먼저 접근을 막고 검사하는 필터
-//git에서 권한 설정 기능이 없어서 필터로 구현함.
+
+/**git clone이나 그외 git 프로그램으로 접근시 먼저 접근을 막고 검사하는 필터
+ *git에서 권한 설정 기능이 없어서 필터로 구현함.
+ */
 @Component("GitFilter")
 public class GitFilter implements Filter {
 	@Autowired private WeaverService weaverService;

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
+
 <!DOCTYPE html>
 <html><head>
 <title>Forweaver : 소통해보세요!</title>
@@ -18,20 +19,19 @@
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
 			
-			if(containsObject(fileArray,fileName)){
-				alert("중복되는 파일이 있습니다!");
-				return false;
-			}
-			else
-				fileArray[i] = fileName;
+			fileArray[i] = fileName;
 		}
 		
 		var tags = $("input[name='tags']").val();
 		
 		if(tags.length == 2){
+			alert("태그를 한개 이상 입력해주세요!");
 			return false;
-		}else if($('#post-title-input').val() == ""){
-			alert("아무것도 입력하시지 않았습니다!");
+		}else if($('#post-title-input').val().length <5){
+			alert("최소 5자 이상 입력해주세요!");
+			return false;
+		}else if($('#post-title-input').val().length > 144){
+			alert("최대 144까지만 입력해주세요!");
 			return false;
 		}else{
 			$("form:first").append($("input[name='tags']"));
@@ -143,8 +143,18 @@
 
 		function fileUploadChange(fileUploader){
 			var fileName = $(fileUploader).val();			
-			
+			var blank_pattern = /[\s]/g;
 			$(function (){
+			
+			if( blank_pattern.test(fileName)){
+				alert("파일 이름에 공백이 포함될 수 없습니다!");
+				return;
+			}
+			
+			if( fileName.length > 30 ){
+				alert("파일 이름이 너무 깁니다!");
+				return;
+			}
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
 					fileName = fileName.substring(12);
@@ -161,7 +171,7 @@
 	                    return data;
 	                }()
 				});	
-				$("#post-content-textarea").val($("#post-content-textarea").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+				$("#post-content-textarea").val($("#post-content-textarea").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 			
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 			fileCount++;
@@ -274,7 +284,7 @@
 										<c:if test="${post.isNotice()}">${post.title}</c:if>
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind == 3 && post.getWriterName().equals(currentUser.id)}">
+										test="${post.kind == 3 && post.getWriterName().equals(currentUser)}">
 										<a href="/community/${post.postID}"> <span
 											class="span-button"> <i class="fa fa-envelope-o"></i>
 												<p class="p-button">보냄</p>
@@ -282,7 +292,7 @@
 										</a>
 									</c:if> 
 									<c:if
-										test="${post.kind == 3 && !post.getWriterName().equals(currentUser.id)}">
+										test="${post.kind == 3 && !post.getWriterName().equals(currentUser)}">
 										<a href="/community/${post.postID}"> <span
 											class="span-button"> <i class="fa fa-envelope"></i>
 												<p class="p-button">받음</p>

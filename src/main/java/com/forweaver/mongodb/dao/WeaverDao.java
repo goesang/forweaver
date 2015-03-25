@@ -18,24 +18,37 @@ import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
 import com.mongodb.DBObject;
 
+/** 회원(Weaver) 관리를 위한 DAO
+ *
+ */
 @Repository
 public class WeaverDao {
 	
 	@Autowired 
 	private MongoTemplate mongoTemplate;
 	
-	public boolean existsWeaver() { // 회원 존재 여부
+	/**  회원 존재 여부
+	 * @return 존재 여부
+	 */
+	public boolean existsWeaver() {
 		return mongoTemplate.collectionExists(Weaver.class);
 	}
 	
-	public void insert(Weaver weaver) { // 회원 추가하기
+	/** 회원 추가하기
+	 * @param weaver
+	 */
+	public void insert(Weaver weaver) {
 		if (!mongoTemplate.collectionExists(Weaver.class)) {
 			mongoTemplate.createCollection(Weaver.class);
 		}       
 		mongoTemplate.insert(weaver);
 	}
 
-	public Weaver get(String id) { // 회원 정보 갖고오기
+	/** 회원 정보 갖고오기
+	 * @param id
+	 * @return 회원
+	 */
+	public Weaver get(String id) {
 		Query query = new Query(new Criteria()	.orOperator(Criteria.where("_id").is(id),
 				Criteria.where("email").is(id)));
 		return mongoTemplate.findOne(query,Weaver.class);
@@ -43,12 +56,20 @@ public class WeaverDao {
 
 
 	
+	/** 회원 정보 리스트를 가져옴
+	 * @param page
+	 * @param size
+	 * @return 회원 목록
+	 */
 	public List<Weaver> getWeavers(int page, int size) {
 		Query query = new Query();
 		query.with(new PageRequest(page - 1, size));
 		return mongoTemplate.find(query, Weaver.class);
 	}
 	
+	/** 회원 정보를 셈.
+	 * @return 회원수
+	 */
 	public long countWeavers() {
 		Criteria criteria = new Criteria();
 		return mongoTemplate.count(new Query(criteria), Weaver.class);
@@ -58,7 +79,7 @@ public class WeaverDao {
 	 * @param tags
 	 * @param page
 	 * @param size
-	 * @return
+	 * @return 회원 목록
 	 */
 	public List<Weaver> getWeavers(List<String> tags, int page,int size) {
 		Criteria criteria = new Criteria("tags").all(tags);
@@ -72,22 +93,32 @@ public class WeaverDao {
 	 * @param tags
 	 * @param page
 	 * @param size
-	 * @return
+	 * @return 회원수
 	 */
 	public long countWeavers(List<String> tags) {
 		Criteria criteria = new Criteria("tags").all(tags);
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 
+	/** 회원 삭제
+	 * @param weaver
+	 */
 	public void delete(Weaver weaver) {
 		mongoTemplate.remove(weaver);
 	}
 
+	/** 프로젝트에 가입한 회원들 가져오기
+	 * @param passName
+	 * @return 회원 목록
+	 */
 	public List<Weaver> searchPassName(String passName) { //특정 패스의 회원들을 검색
 		Query query = new Query(Criteria.where("passes").in(passName));
 		return mongoTemplate.find(query, Weaver.class);
 	}
 
+	/** 회원 정보 수정
+	 * @param weaver
+	 */
 	public void update(Weaver weaver) {
 		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
 		Update update = new Update();
@@ -99,6 +130,9 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 	
+	/** 회원 권한 수정
+	 * @param weaver
+	 */
 	public void updatePass(Weaver weaver) {
 		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
 		Update update = new Update();
@@ -119,6 +153,10 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}*/
 	
+	/** 회원의 게시글 정보를 aggregation을 활용하여 가져옴
+	 * @param weaver
+	 * @return 회원의 커뮤니티 활동 내역
+	 */
 	public DBObject getWeaverInfosInPost(Weaver weaver){
 		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
@@ -129,6 +167,10 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "post", DBObject.class).getUniqueMappedResult();
 	}
 	
+	/** 회원의 답변 정보를 aggregation을 활용하여 가져옴
+	 * @param weaver
+	 * @return 회원의 답변 활동 내역
+	 */
 	public DBObject getWeaverInfosInRePost(Weaver weaver){
 		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
@@ -139,6 +181,10 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "rePost", DBObject.class).getUniqueMappedResult();
 	}
 	
+	/** 회원의 프로젝트 정보를 aggregation을 활용하여 가져옴
+	 * @param weaver
+	 * @return 회원의 프로젝트 활동 내역
+	 */
 	public DBObject getWeaverInfosInProject(Weaver weaver){
 		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
@@ -149,6 +195,10 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "project", DBObject.class).getUniqueMappedResult();
 	}
 	
+	/** 회원의 강의 정보를 aggregation을 활용하여 가져옴
+	 * @param weaver
+	 * @return 회원의 강의 활동 내역
+	 */
 	public DBObject getWeaverInfosInLecture(Weaver weaver){
 		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
@@ -159,6 +209,10 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "lecture", DBObject.class).getUniqueMappedResult();
 	}
 	
+	/** 회원의 코드 정보를 aggregation을 활용하여 가져옴
+	 * @param weaver
+	 * @return 회원의 코드 활동 내역
+	 */
 	public DBObject getWeaverInfosInCode(Weaver weaver){
 		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);

@@ -44,12 +44,17 @@ public class DataService {
 		Cache tmpCache = cacheManager.getCache("tmp");
 		Cache tmpNameCache = cacheManager.getCache("tmpName");
 		tmpCache.put(new Element(data.getId(), data));
-		tmpNameCache.put(new Element(data.getWeaverID()+"/"+data.getName(), data.getId()));
+		tmpNameCache.put(new Element(data.getWeaver().getId()+"/"+data.getName(), data.getId()));
 	}
 	
 	public String getObjectID(String dataName,Weaver weaver){
 		Cache tmpNameCache = cacheManager.getCache("tmpName");
-		return (String)tmpNameCache.get(weaver.getId()+"/"+dataName).getValue();
+		Element element = tmpNameCache.get(weaver.getId()+"/"+dataName);
+		
+		if(element == null)
+			return "";
+		
+		return (String)element.getValue();
 	}
 
 }

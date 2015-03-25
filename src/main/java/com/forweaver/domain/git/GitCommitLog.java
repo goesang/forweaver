@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-// 커밋 로그 정보를 담기 위한 클래스
+/** 커밋 로그 정보를 담기 위한 클래스
+ *
+ */
 public class GitCommitLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;

@@ -26,7 +26,7 @@ public class DataController {
 	@Autowired 
 	private WeaverService weaverService;
 
-	@RequestMapping(value = "/{dataID}")
+	@RequestMapping(value = {"/{dataID}","/{dataID}/**"})
 	public void data(@PathVariable("dataID") String dataID, HttpServletResponse res)
 			throws IOException {
 		Data data = dataService.get(dataID);
@@ -49,7 +49,7 @@ public class DataController {
 	public void tmp(@RequestParam("objectID") String objectID,
 			@RequestParam("file") MultipartFile file){
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		Data data = new Data(objectID, file, currentWeaver.getId());
+		Data data = new Data(objectID, file, currentWeaver);
 		dataService.addTemp(data);
 	}
 }

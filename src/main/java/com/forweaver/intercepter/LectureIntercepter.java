@@ -15,7 +15,9 @@ import com.forweaver.service.LectureService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
-
+/** 강의와 관련하여 회원의 권한을 분석하여 제어하는 인터셉터
+*
+*/
 public class LectureIntercepter extends HandlerInterceptorAdapter {
 	@Autowired WeaverService weaverService;
 	@Autowired LectureService lectureService;

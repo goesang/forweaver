@@ -9,27 +9,65 @@
 <script>
 var communityOn = false;
 var editorMode = false;
-		function showPostContent() {
-			$('#post-pagination').hide();
-			$('#post-table').hide();
-			$('#post-content-textarea').fadeIn('slow');
-			$('#show-content-button').hide();
-			$('#hide-content-button').show();
-			editorMode = true;
-		}
+var fileCount = 1;
+var fileArray = [];
+var fileHash = {};
+function checkPost(){
+	for(var i=0;i<fileCount;i++){
+		var fileName = $("#file"+(i+1)).val();
+		
+		if(fileName.indexOf("C:\\fakepath\\") != -1)
+			fileName = fileName.substring(12);
+		
+		fileArray[i] = fileName;
+	}
+	
+	if($('#post-title-input').val().length <5){
+		alert("최소 5자 이상 입력해주세요!");
+		return false;
+	}else if($('#post-title-input').val().length > 144){
+		alert("최대 144까지만 입력해주세요!");
+		return false;
+	}else{
+		$("form:first").append($("input[name='tags']"));
+		return true;
+	}
+}
 
-		function hidePostContent() {
-			$('#post-pagination').show();
-			$('#post-table').show();
-			$('#post-content-textarea').hide();
-			$('#show-content-button').show();
-			$('#hide-content-button').hide();
-			editorMode = false;
-		}
+	function showPostContent() {
+		$('#page-pagination').hide();
+		$('#post-table').hide();
+		$('#post-content-textarea').fadeIn('slow');
+
+		$('#show-content-button').hide();
+		$('#hide-content-button').show();
+		$('.file-div').fadeIn('slow');
+		editorMode = true;
+	}
+
+	function hidePostContent() {
+		$('#page-pagination').show();
+		$('#post-table').show();
+		$('#post-content-textarea').hide();
+
+		$('#show-content-button').show();
+		$('#hide-content-button').hide();
+		$('.file-div').hide();
+		editorMode = false;
+	}
 		$(document).ready(function() {
-			
+			hidePostContent();
 		$( "#"+getSort(document.location.href) ).addClass( "active" );
-			
+		
+		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+				  "<div class='input-group'>"+
+				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+					"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+				  "</div>"+
+				"</div>");
 			
 			$('#showCommunity').click(function() {
 				if(communityOn){
@@ -62,22 +100,6 @@ var editorMode = false;
 									+ ",\"" + tagname + "\"]","");
 
 					});
-			$('#post-ok').click(function(){
-				var title = $('#post-title-input').val();
-				var content ="";
-				var tags = $("input[name='tags']").val();
-				tags = tagInputValueConverter(eval(tags));
-				if(editorMode)
-					content = $('#post-content-textarea').val();
-				$.ajax({
-		               type: "POST",
-		               url: "/project/${project.name}/community/add",
-		               data: 'title='+title+'&content='+content+' &tags='+tags,
-		               success: function(msg){
-		            	   window.location="/project/${project.name}/community/";
-		               }
-		         });
-			});
 			
 			var pageCount = ${postCount+1}/10;
 			if(pageCount < 1 ) 
@@ -95,6 +117,62 @@ var editorMode = false;
 
 		        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
 		});
+		
+		
+		function fileUploadChange(fileUploader){
+			var fileName = $(fileUploader).val();			
+			var blank_pattern = /[\s]/g;
+			$(function (){
+			
+			if( blank_pattern.test(fileName)){
+				alert("파일 이름에 공백이 포함될 수 없습니다!");
+				return;
+			}
+			
+			if( fileName.length > 30 ){
+				alert("파일 이름이 너무 깁니다!");
+				return;
+			}
+			
+			if(fileName !=""){ // 파일을 업로드하거나 수정함
+				if(fileName.indexOf("C:\\fakepath\\") != -1)
+					fileName = fileName.substring(12);
+				fileHash[fileName] = mongoObjectId();
+				$.ajax({
+				    url: '/data/tmp',
+	                type: "POST",
+	                contentType: false,
+	                processData: false,
+	                data: function() {
+	                    var data = new FormData();
+	                    data.append("objectID", fileHash[fileName]);
+	                    data.append("file", fileUploader.files[0]);
+	                    return data;
+	                }()
+				});	
+				$("#post-content-textarea").val($("#post-content-textarea").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
+			
+				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
+			fileCount++;
+			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+					  "<div class='input-group'>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+						"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
+					   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+					  "</div>"+
+					"</div>");
+				}
+			}else{
+				if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
+					
+				$("#file"+fileCount).parent().parent().remove();
+
+					--fileCount;
+			}}});
+		}
+		
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
@@ -155,7 +233,8 @@ var editorMode = false;
 						class="input-block-level">
 				</div>
 			</div>
-			
+			<form id="postForm" onsubmit="return checkPost()"
+				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
 				<div class="span10">
 					<input id="post-title-input" class="title span10" name="title"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
@@ -175,10 +254,13 @@ var editorMode = false;
 					</span>
 				</div>
 				<div class="span12">
-					<textarea style="display: none;" id="post-content-textarea"
+					<textarea name = content style="display: none;" id="post-content-textarea"
 						class="post-content span12" onkeyup="textAreaResize(this)"
 						placeholder="글 내용을 입력해주세요!"></textarea>
+						<div class="file-div"></div>
 				</div>
+				
+				</form>
 				<div class="span12">
 				
 					<table id="post-table" class="table table-hover">

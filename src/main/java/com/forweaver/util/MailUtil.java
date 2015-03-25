@@ -11,10 +11,18 @@ public class MailUtil {
 	private MailSender mailSender;
     private String from; 
     
+	/** 보내는 메일 설정
+	 * @param mailSender
+	 */
 	public void setMailSender(MailSender mailSender) {
 		this.mailSender = mailSender;
 	}
  
+	/** 메일로 메세지를 보냄.
+	 * @param to
+	 * @param subject
+	 * @param msg
+	 */
 	public void sendMail(String to, String subject, String msg) {
 		SimpleMailMessage message = new SimpleMailMessage();
  

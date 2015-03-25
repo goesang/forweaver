@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/** 채팅방 클래스
+ * chatMessages 메시지들.
+ */
 public class ChatRoom  implements Serializable{
 	
 	static final long serialVersionUID = 12233337L;

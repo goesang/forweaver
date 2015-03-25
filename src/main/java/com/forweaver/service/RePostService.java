@@ -21,6 +21,9 @@ import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RePostDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 
+/** 답변 관리 서비스
+ *
+ */
 @Service
 public class RePostService {
 	@Autowired private RePostDao rePostDao;
@@ -95,15 +98,21 @@ public class RePostService {
 		return rePostDao.get(rePostID);
 	}
 
-	public boolean push(RePost rePost, Weaver weaver) {
-		if(rePost == null || weaver == null)
+	/** 답변을 추천하면 캐시에 저장하고 24시간 제한을 둠.
+	 * @param rePost
+	 * @param weaver
+	 * @param ip
+	 * @return
+	 */
+	public boolean push(RePost rePost, Weaver weaver,String ip) {
+		if(rePost == null || (weaver != null && weaver.equals(rePost.getWriter())))
 			return false;
 		rePost.push();
 		Cache cache = cacheManager.getCache("push");
-		Element element = cache.get("re"+rePost.getRePostID());
+		Element element = cache.get("re"+rePost.getRePostID()+"@@"+ip);
 		if (element == null || (element != null && element.getValue() == null)) {
 			rePostDao.update(rePost);
-			Element newElement = new Element("re"+rePost.getRePostID(), weaver.getId());
+			Element newElement = new Element("re"+rePost.getRePostID()+"@@"+ip, ip);
 			cache.put(newElement);
 			weaverDao.update(rePost.getWriter());
 			return true;

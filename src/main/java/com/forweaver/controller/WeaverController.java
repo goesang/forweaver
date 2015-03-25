@@ -85,7 +85,7 @@ public class WeaverController {
 			return "/alert";
 		}
 
-		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image,id));
+		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
 		return "redirect:/";

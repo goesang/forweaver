@@ -16,6 +16,9 @@ import com.forweaver.service.ProjectService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
+/** 프로젝트와 관련하여 회원의 권한을 분석하여 제어하는 인터셉터
+*
+*/
 public class ProjectIntercepter extends HandlerInterceptorAdapter {
 	@Autowired WeaverService weaverService;
 

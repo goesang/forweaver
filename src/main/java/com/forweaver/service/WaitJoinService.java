@@ -10,11 +10,20 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.WaitJoinDao;
 
+/** 초대장 관리 서비스
+ *
+ */
 @Service
 public class WaitJoinService {
 
 	@Autowired private WaitJoinDao waitJoinDao;
 
+	/** 강의 서비스와 관련하여 초대장을 생성 가능한지 검증함.
+	 * @param lecture
+	 * @param waitingWeaver
+	 * @param proposer
+	 * @return
+	 */
 	public boolean isCreateWaitJoin(Lecture lecture,Weaver waitingWeaver,Weaver proposer) {
 
 		if(	lecture == null || waitingWeaver == null ||
@@ -22,36 +31,54 @@ public class WaitJoinService {
 			return false;
 		
 		if(proposer.isAdmin(lecture.getName())|| // 강의 관리자이거나
-				proposer.getId().equals(waitingWeaver.getId())|| // 아니면 본인이 신청해야함
+				proposer.equals(waitingWeaver)|| // 아니면 본인이 신청해야함
 				waitingWeaver.getPass(lecture.getName()) != null) // 그리고 가입자가 아니어야함.
 			return true;
 		
 		return false;
 	}
 
+	/** 프로젝트 서비스와 관련하여 초대장을 생성 가능한지 검증함.
+	 * @param project
+	 * @param waitingWeaver
+	 * @param proposer
+	 * @return
+	 */
 	public boolean isCreateWaitJoin(Project project,Weaver waitingWeaver,Weaver proposer) {
 		if(		project == null || waitingWeaver == null ||
 				waitJoinDao.get(project.getName(),waitingWeaver.getId()) != null)
 			return false;
 		
 		if(proposer.isAdmin(project.getName())|| // 강의 관리자이거나
-				proposer.getId().equals(waitingWeaver.getId())|| // 아니면 본인이 신청해야함
+				proposer.equals(waitingWeaver)|| // 아니면 본인이 신청해야함
 				waitingWeaver.getPass(project.getName()) != null) // 그리고 가입자가 아니어야함.
 			return true;
 		
 		 return false;
 	}
 
+	/** 초대장 만듬.
+	 * @param joinTeam
+	 * @param proposer
+	 * @param waitingWaver
+	 * @param postID
+	 */
 	public void createWaitJoin(String joinTeam,String proposer,String waitingWaver,int postID){
 		waitJoinDao.add(new WaitJoin(joinTeam, proposer, waitingWaver,postID));
 	}
 
 
+	/** 프로젝트의 초대장 삭제
+	 * @param waitJoin
+	 * @param project
+	 * @param currentWeaver
+	 * @return
+	 */
 	public boolean deleteWaitJoin(WaitJoin waitJoin,Project project,Weaver currentWeaver){
 		if(waitJoin == null || project == null)
 			return false;
 		
-		if(project.getCreatorName().equals(currentWeaver.getId()) || //현재 위버가 프로젝트 관리자이거나
+		if(project.getCreator().equals(currentWeaver) || //현재 위버가 프로젝트 관리자이거나
 				waitJoin.getWaitingWeaver().equals(currentWeaver.getId())){		//현재 위버가 대기중인 위버일때
 			waitJoinDao.delete(waitJoin);			
 			return true;
@@ -60,6 +87,12 @@ public class WaitJoinService {
 		return false;
 	}
 
+	/** 강의의 초대장 삭제
+	 * @param waitJoin
+	 * @param lecture
+	 * @param currentWeaver
+	 * @return
+	 */
 	public boolean deleteWaitJoin(WaitJoin waitJoin,Lecture lecture,Weaver currentWeaver){
 		if(waitJoin == null || lecture == null)
 			return false;
@@ -73,6 +106,12 @@ public class WaitJoinService {
 		return false;
 	}
 
+	/** 초대장 수락 가능한지 여부 검증
+	 * @param waitJoin
+	 * @param adminWeaverName
+	 * @param currentWeaver
+	 * @return
+	 */
 	public boolean isOkJoin(WaitJoin waitJoin,String adminWeaverName,Weaver currentWeaver){
 		if(waitJoin == null)
 			return false;
@@ -90,6 +129,11 @@ public class WaitJoinService {
 	}
 
 
+	/** 초대장 가져오기
+	 * @param joinTeam
+	 * @param waitingWeaver
+	 * @return
+	 */
 	public WaitJoin get(String joinTeam,String waitingWeaver){
 		return waitJoinDao.get(joinTeam,waitingWeaver);
 	}

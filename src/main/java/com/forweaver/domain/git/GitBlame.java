@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
-//git blame 정보를 담기 위한 클래스
+/** git blame 정보를 담기 위한 클래스
+ *
+ */
 public class GitBlame  implements Serializable {
 
 	static final long serialVersionUID = 12224423434L;

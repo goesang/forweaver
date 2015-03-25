@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -75,6 +76,12 @@ public class WeaverService implements UserDetailsService {
 			return null;
 		return (Weaver) auth.getPrincipal();
 	}
+	
+	public String getUserIP() {
+		// TODO Auto-generated method stub
+		WebAuthenticationDetails details = (WebAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return details.getRemoteAddress();
+	}
 
 	public void add(Weaver weaver) { // 회원 추가 서비스
 		Pass pass;
@@ -92,7 +99,7 @@ public class WeaverService implements UserDetailsService {
 	public void update(Weaver weaver,String password,String newpassword,List<String> tags,String studentID,String say,MultipartFile image) { // 회원 수정
 		// TODO Auto-generated method stub
 		if(image != null && image.getSize() > 0)
-			weaver.setImage(new Data(image, weaver.getId()));
+			weaver.setImage(new Data(image));
 
 		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
 			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));

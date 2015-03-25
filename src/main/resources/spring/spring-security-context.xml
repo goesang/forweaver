@@ -39,7 +39,7 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/community/*/update"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/community/*/repost-add"
+		<security:intercept-url pattern="/community/*/add-repost"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/community/*/edit"
 			access="isAuthenticated()" />
@@ -52,7 +52,7 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/code/*/update"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/code/*/repost-add"
+		<security:intercept-url pattern="/code/*/add-repost"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/code/*/edit"
 			access="isAuthenticated()" />
@@ -68,8 +68,6 @@
 			access="isAuthenticated()" />	
 		<security:intercept-url pattern="/project/*/*/community/add"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/push"
-			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/*/*/fork"
 			access="isAuthenticated()" />
 
@@ -80,21 +78,9 @@
 		<security:intercept-url pattern="/lecture/tags**"
 			access="isAnonymous() or isAuthenticated()" />
 
-		<security:intercept-url pattern='/lecture/*'
+		<security:intercept-url pattern='/lecture/**'
 			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/delete'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/coummunity**'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/example**'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/weaver**'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/join'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/*/*/**'
-			access="isAuthenticated()" />	
-
+			
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />
 

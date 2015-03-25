@@ -2,6 +2,7 @@ package com.forweaver.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.CherryPickRequest;
+import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
@@ -340,18 +343,23 @@ public class ProjectController {
 	public String addPost(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			HttpServletRequest request,Model model) {
+		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+		ArrayList<Data> datas = new ArrayList<Data>();
+		
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-		if(tags == null || title == null){ // 태그가 없을 때
+		if(tags == null || title == null || title.length() < 5 || title.length() > 144
+				|| (content !=  null && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
 			return "/alert";
 		}
-
-		else if(content == null)
+		else if(content == null || content.length() == 0)
 			content = "";
+		
 		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+creatorName+"/"+projectName));
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -361,10 +369,17 @@ public class ProjectController {
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
 			return "/alert";
 		}
-
+		
+		for (MultipartFile file : files.values())
+			if(!file.isEmpty()){
+				String fileID= dataService.getObjectID(file.getOriginalFilename(), weaver);
+				if(!fileID.equals(""))
+					datas.add(new Data(fileID,file,weaver));
+			}
+		
 		Post post = new Post(weaver,title,content,tagList);
 
-		postService.add(post,null);
+		postService.add(post,datas);
 		return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
 	}
 
@@ -730,9 +745,7 @@ public class ProjectController {
 	public String push(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName) {
 		Project project = projectService.get(creatorName+"/"+projectName);
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
-		projectService.push(project, currentWeaver);
+		projectService.push(project, weaverService.getCurrentWeaver(),weaverService.getUserIP());
 
 		return "redirect:/project/";
 	}

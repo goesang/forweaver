@@ -54,7 +54,9 @@ import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 
-//git과 관련된 모든 기능 구현.
+/** git과 관련된 모든 기능 구현.
+ *
+ */
 @Component
 public class GitUtil {
 
@@ -74,6 +76,9 @@ public class GitUtil {
 		this.gitPath = gitPath;
 	}
 
+	/** 과제 저장소용 초기화 메서드
+	 * @param repo
+	 */
 	public void Init(Repo repo) {
 		try {
 			this.path = gitPath + repo.getLectureName() + "/" + repo.getName()
@@ -87,6 +92,9 @@ public class GitUtil {
 		}
 	}
 
+	/** 프로젝트 초기화 메서드
+	 * @param pro
+	 */
 	public void Init(Project pro) {
 		try {
 			this.path = gitPath + pro.getName() + ".git";
@@ -99,6 +107,10 @@ public class GitUtil {
 		}
 	}
 
+	/** 초기화 메서드
+	 * @param creatorName
+	 * @param repositoryName
+	 */
 	public void Init(String creatorName, String repositoryName) {
 		try {
 			this.path = gitPath + creatorName + "/" + repositoryName
@@ -111,6 +123,9 @@ public class GitUtil {
 		}
 	}
 
+	/** 저장소 생성함.
+	 * @throws Exception
+	 */
 	public void createRepository() throws Exception {
 		git.init().setBare(true).setDirectory(new File(this.path)).call();
 		StoredConfig config = localRepo.getConfig();
@@ -123,11 +138,19 @@ public class GitUtil {
 		}
 	}
 
-	//git 디렉토리 삭제
+	
+	/** git 디렉토리 삭제
+	 * @throws Exception
+	 */
 	public void deleteRepository() throws Exception {
 		FileUtils.deleteDirectory(new File(this.path));
 	}
 
+	/** 파일주소와 커밋아이디를 바탕으로 디렉토리인지 검사함.
+	 * @param commitID
+	 * @param filePath
+	 * @return
+	 */
 	public boolean isDirectory(String commitID, String filePath){
 		if(filePath.length() == 0)
 			return true;
@@ -153,7 +176,12 @@ public class GitUtil {
 		return false;
 	}
 
-	//프로젝트의 파일 정보를 가져옴
+	
+	/** 프로젝트의 파일 정보를 가져옴
+	 * @param commitID
+	 * @param filePath
+	 * @return
+	 */
 	public GitFileInfo getFileInfo(String commitID, String filePath) {
 		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 		RevCommit selectCommit = this.getCommit(commitID);
@@ -184,11 +212,18 @@ public class GitUtil {
 
 		}
 	}
-	// 저장소에서 커밋을 갖고 옴
+	
+	/** 저장소에서 커밋을 갖고 옴
+	 * @param refName
+	 * @return
+	 */
 	public RevCommit getCommit(String refName) {
 		return CommitUtils.getCommit(this.localRepo, refName);
 	}
-	// 커밋 갯수를 가져옴
+	/** 커밋 갯수를 가져옴
+	 * @param refName
+	 * @return
+	 */
 	public int getCommitListCount(String refName) {
 		try {
 			Iterable<RevCommit> gitLogIterable = this.git
@@ -207,7 +242,12 @@ public class GitUtil {
 		}
 
 	}
-	// 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
+	
+	/** 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
+	 * @param commitID
+	 * @param filePath
+	 * @return
+	 */
 	public List<GitSimpleFileInfo> getGitFileInfoList(String commitID,String filePath) {
 		List<GitSimpleFileInfo> gitFileInfoList = new ArrayList<GitSimpleFileInfo>();
 		List<String> fileList = this.getGitFileList(commitID);
@@ -230,7 +270,10 @@ public class GitUtil {
 		return gitFileInfoList;
 	}
 
-	// 프로젝트의 파일 목록을 커밋 아이디를 가지고 가져옴.
+	/** 프로젝트의 파일 목록을 커밋 아이디를 가지고 가져옴.
+	 * @param commitID
+	 * @return
+	 */
 	public List<String> getGitFileList(String commitID) {
 		List<String> fileList = new ArrayList<String>();
 		try{
@@ -247,7 +290,10 @@ public class GitUtil {
 		return fileList;
 	}
 
-	// 저장소에서 GIT 로그 정보를 가져옴
+	/** 저장소에서 GIT 로그 정보를 가져옴
+	 * @param commitID
+	 * @return
+	 */
 	public GitCommitLog getCommitLog(String commitID) {
 		GitCommitLog gitCommitLog = null;
 		String diffs = new String();
@@ -281,7 +327,10 @@ public class GitUtil {
 		}
 	}
 
-	//단순하게 커밋을 트리워크를 이용하여 당시 파일 내역을 출력.
+	/** 단순하게 커밋을 트리워크를 이용하여 당시 파일 내역을 출력.
+	 * @param commit
+	 * @return
+	 */
 	public String simpleFileBrowser(RevCommit commit){
 		String out = new String();
 		try
@@ -325,7 +374,9 @@ public class GitUtil {
 		}
 	}
 
-	// 저장소에서 브랜치 정보를 가져옴
+	/** 저장소에서 브랜치 정보를 가져옴
+	 * @return
+	 */
 	public List<String> getBranchList() {
 		ArrayList<String> branchList = new ArrayList<String>();
 
@@ -341,7 +392,10 @@ public class GitUtil {
 
 	}
 
-	// 브랜치 목록과 태그 목록을 가져옴
+
+	/** 브랜치 목록과 태그 목록을 가져옴
+	 * @return
+	 */
 	public List<String> getSimpleBranchAndTagNameList() {
 		String branchName = "";
 		List<String> branchList = new ArrayList<String>();
@@ -371,7 +425,12 @@ public class GitUtil {
 		}
 	}
 
-	// 커밋을 입력받으면 당시 파일들을 압축하여 사용자에게 보내줌.
+
+	/** 커밋을 입력받으면 당시 파일들을 압축하여 사용자에게 보내줌.
+	 * @param commitName
+	 * @param format
+	 * @param response
+	 */
 	public void getProjectZip(String commitName,String format, HttpServletResponse response) {
 
 		try {
@@ -392,7 +451,9 @@ public class GitUtil {
 
 	}
 
-	// 숙제 저장소의 경우 권한이 없는 브랜치에 접근하지 못하도록 숨김.
+	/** 숙제 저장소의 경우 권한이 없는 브랜치에 접근하지 못하도록 숨김.
+	 * @param userName
+	 */
 	public void hideNotUserBranches(String userName){
 
 		File currentDirectory = new File(path+"/refs/heads");
@@ -406,7 +467,10 @@ public class GitUtil {
 		hideDirectory.setReadable(false);
 
 	}
-	// 예제 저장소의 경우 학생이 접근하면 원래 브랜치에 푸시 못하게 막음
+
+	/** 예제 저장소의 경우 학생이 접근하면 원래 브랜치에 푸시 못하게 막음
+	 * 
+	 */
 	public void notWriteBranches(){
 		File currentDirectory = new File(path+"/refs/heads");
 		for(File file:currentDirectory.listFiles()){
@@ -415,7 +479,10 @@ public class GitUtil {
 		new File(path+"/refs/heads").setWritable(false);		
 	}
 
-	//예제 저장소에서 학생이 접근하고 난 후 원래대로 복구함.
+
+	/** 예제 저장소에서 학생이 접근하고 난 후 원래대로 복구함.
+	 * 
+	 */
 	public void writeBranches(){
 		File currentDirectory = new File(path+"/refs/heads");
 		for(File file:currentDirectory.listFiles()){
@@ -424,7 +491,10 @@ public class GitUtil {
 		new File(path+"/refs/heads").setWritable(true);		
 	}
 
-	// 숙제 저장소에서 학생이 접근하고 원래대로 복구함.
+
+	/** 숙제 저장소에서 학생이 접근하고 원래대로 복구함.
+	 * 
+	 */
 	public void showBranches(){
 		File hideDirectory = new File(path+"/refs/heads/edih");
 		hideDirectory.setWritable(true);
@@ -435,9 +505,11 @@ public class GitUtil {
 
 	}
 
-	// 학생의 경우 숙제 저장소에 접근하면 자신의 브랜치만 읽을 수 있도록 함.
+	/** 학생의 경우 숙제 저장소에 접근하면 자신의 브랜치만 읽을 수 있도록 함.
+	 * @param weaverName
+	 */
 	public void checkOutBranch(String weaverName){
-
+		
 		try{
 			for(String branchName : this.getBranchList()){
 				if(branchName.endsWith("-"+weaverName)){
@@ -450,7 +522,10 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-	// 학생이 숙제 저장소에 접근하고 나서 원래대로 복구함.
+
+	/** 학생이 숙제 저장소에 접근하고 나서 원래대로 복구함.
+	 * 
+	 */
 	public void checkOutMasterBranch(){
 		try{
 			for(String branchName : this.getBranchList()){
@@ -464,9 +539,13 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
-	// 강사가 숙제 저장소에 최초로 푸시하면 브랜치를 학생들 이름으로 복사함.
-	// 예를 들어 처음 그냥 푸시하면 master가 푸시되는데 이때 root라는 아이디의 학생이 있으면 
-	// master-root 브랜치가 파생되고 이 브랜치는 강사와 root라는 학생만 접근 가능.
+
+	/** 강사가 숙제 저장소에 최초로 푸시하면 브랜치를 학생들 이름으로 복사함.
+	 * 예를 들어 처음 그냥 푸시하면 master가 푸시되는데 이때 root라는 아이디의 학생이 있으면 
+	 * master-root 브랜치가 파생되고 이 브랜치는 강사와 root라는 학생만 접근 가능.
+	 * @param beforeBranchList
+	 * @param lecture
+	 */
 	public void createStudentBranch(List<String> beforeBranchList,
 			Lecture lecture) {
 		List<String> createBranch = getBranchList();
@@ -557,7 +636,10 @@ public class GitUtil {
 
 	}
 
-	// 프로젝트를 포크함.
+	/** 프로젝트를 포크함.
+	 * @param originRepo
+	 * @param newRepo
+	 */
 	public void forkRepository(String originRepo, String newRepo){
 		try{
 			FileUtils.copyDirectory(new File(gitPath+originRepo+".git"),  new File(gitPath+newRepo+".git"));
@@ -566,7 +648,10 @@ public class GitUtil {
 		}
 	}
 
-	// 일주일 24시간별로 커밋의 갯수를 측정하는 코드 빈도수 시각화에 쓰임
+
+	/** 일주일 24시간별로 커밋의 갯수를 측정하는 코드 빈도수 시각화에 쓰임
+	 * @return
+	 */
 	public int[][] getDayAndHour(){
 
 		int[][] array = new int[7][24];
@@ -581,7 +666,10 @@ public class GitUtil {
 		}
 		return array;
 	}
-	// 각 유저가 날짜별로 커밋을 한 정보를 취합함.
+
+	/** 각 유저가 날짜별로 커밋을 한 정보를 취합함.
+	 * @return
+	 */
 	public GitParentStatistics getCommitStatistics(){
 		GitParentStatistics gitParentStatistics = new GitParentStatistics();
 		try{
@@ -618,7 +706,11 @@ public class GitUtil {
 		return gitParentStatistics;
 	}
 
-	//git blame기능을 구현함.
+	/** git blame기능을 구현함.
+	 * @param filePath
+	 * @param commitID
+	 * @return
+	 */
 	public List<GitBlame> getBlame(String filePath, String commitID){
 		List<GitBlame> gitBlames = new ArrayList<GitBlame>();
 		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
@@ -635,7 +727,11 @@ public class GitUtil {
 		return gitBlames;
 	}
 
-	// 프로젝트 정보를 가져옴
+
+	/** 프로젝트 정보를 가져옴
+	 * @param branchName
+	 * @return
+	 */
 	public GitInfo getGitInfo(String branchName){
 		GitInfo gitInfo = new GitInfo();
 		try{
@@ -645,7 +741,11 @@ public class GitUtil {
 		}
 		return gitInfo;
 	}
-	// 커밋에 붙어있는 GIT 노트를 가져옴
+
+	/**  커밋에 붙어있는 GIT 노트를 가져옴
+	 * @param commit
+	 * @return
+	 */
 	public String getNote(String commit){
 		String str = new String();
 		try{
@@ -656,7 +756,13 @@ public class GitUtil {
 			return str;
 		}
 	}
-	// 브랜치 대 브랜치 병합이 아닌 커밋 대 브랜치 병합인 채리픽 방식으로 통합하는 기능
+
+	/** 브랜치 대 브랜치 병합이 아닌 커밋 대 브랜치 병합인 채리픽 방식으로 통합하는 기능
+	 * @param cherryPickRepo
+	 * @param cherryPickCommit
+	 * @param originalRepoBranch
+	 * @return
+	 */
 	public String cherryPick(String cherryPickRepo,String cherryPickCommit,String originalRepoBranch){
 		String returnState = new String();
 		cherryPickRepo = gitPath+cherryPickRepo+".git";

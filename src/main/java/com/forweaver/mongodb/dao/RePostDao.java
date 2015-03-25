@@ -14,12 +14,18 @@ import com.forweaver.domain.Code;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 
+/** 답변 관리를 위한 DAO
+ *
+ */
 @Repository
 public class RePostDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 
-	public void insert(RePost rePost) { // 글 추가하기
+	/** 답변 추가하기
+	 * @param rePost
+	 */
+	public void insert(RePost rePost) {
 		if (!mongoTemplate.collectionExists(RePost.class)) {
 			mongoTemplate.createCollection(RePost.class);
 			rePost.setRePostID(1);
@@ -34,7 +40,13 @@ public class RePostDao {
 		mongoTemplate.insert(rePost);
 	}
 
-	public List<RePost> gets(int ID,int kind, String sort) { // 글 가져오기
+	/** 답변 가져오기
+	 * @param ID
+	 * @param kind
+	 * @param sort
+	 * @return
+	 */
+	public List<RePost> gets(int ID,int kind, String sort) {
 
 		Criteria criteria = new Criteria().orOperator(
 				new Criteria().where("originalPost.$id").is(ID).and("kind").is(kind),
@@ -111,6 +123,10 @@ public class RePostDao {
 		return mongoTemplate.findOne(query, RePost.class);
 	}
 
+	/** 필터링 메서드
+	 * @param criteria
+	 * @param sort
+	 */
 	public void filter(Criteria criteria, String sort) {
 		if (sort.equals("push-desc")) {
 			criteria.and("push").gt(0);
@@ -121,6 +137,10 @@ public class RePostDao {
 		}
 	}
 
+	/** 정렬하기 메서드
+	 * @param query
+	 * @param sort
+	 */
 	public void sorting(Query query, String sort) {
 		if (sort.equals("age-asc")) {
 			query.with(new Sort(Sort.Direction.ASC, "_id"));

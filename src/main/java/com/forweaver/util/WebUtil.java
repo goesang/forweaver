@@ -1,25 +1,25 @@
 package com.forweaver.util;
 
 import java.io.IOException;
-import java.util.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
-import com.coverity.security.Escape;
-//각종 웹 유틸 클래스
+/** 각종 웹 유틸 클래스
+ * @author go
+ *
+ */
 public class WebUtil {
-	/** @getDeadLine 
-	 * 제출날짜 가져오기
-	 * 
+	/** 제출날짜 가져오기
 	 * @param pageUrl
-	 * @return
+	 * @return 제출 날짜
 	 */
 public static Date getDeadLine(int day){
 		

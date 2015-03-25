@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Lecture;
 
+/** 강의 관리를 위한 DAO
+ *
+ */
 @Repository
 public class LectureDao {
 	

@@ -56,28 +56,31 @@ public class PostService {
 
 	}
 
+	/** 글 하나를 가져옴.
+	 * @param postID
+	 * @return
+	 */
 	public Post get(int postID) {
 		return postDao.get(postID);
 	}
 
-	/** 글 추천함.
+	/** 글 추천하면 캐시에 저장하고 24시간 제한을 둠.
 	 * @param post
 	 * @param weaver
 	 * @return
 	 */
-	public boolean push(Post post, Weaver weaver) {
-		if (weaver == null || weaver.equals(post.getWriter()))
+	public boolean push(Post post, Weaver weaver,String ip) {
+		if (weaver != null && weaver.equals(post.getWriter()))
 			return false;
 		
 		Cache cache = cacheManager.getCache("push"); // 중복 추천 방지!
-		Element element = cache.get(post.getPostID());
+		Element element = cache.get(post.getPostID()+"@@"+ip);
 
 		if (element == null || (element != null && element.getValue() == null)) {
 			post.push();
 			postDao.update(post);
-			Element newElement = new Element(post.getPostID(), weaver.getId());
+			Element newElement = new Element(post.getPostID()+"@@"+ip, ip);
 			cache.put(newElement);
-			weaverDao.update(post.getWriter());
 			return true;
 		}
 		return false;
@@ -165,6 +168,11 @@ public class PostService {
 			return false;
 	}
 
+	/** 글의 수를 셈.
+	 * @param weaver
+	 * @param sort
+	 * @return
+	 */
 	public long countPosts(Weaver weaver,String sort) {
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(null, null, null, sort);
@@ -173,6 +181,13 @@ public class PostService {
 
 	}
 
+	/** 글을 가져옴.
+	 * @param weaver
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Post> getPosts(Weaver weaver,String sort, int page, int size) {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
@@ -181,6 +196,12 @@ public class PostService {
 		return postDao.getPostsWhenLogin(null,weaver.getPrivateAndMassageTags(),null,null, sort, page, size);
 	}
 
+	/** 태그와 정렬을 이용하여  글의 수를 셈
+	 * @param weaver
+	 * @param tags
+	 * @param sort
+	 * @return
+	 */
 	public long countPosts(Weaver weaver,List<String> tags,String sort) {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
@@ -196,6 +217,14 @@ public class PostService {
 		return 0;
 	}
 
+	/** 태그와 정렬을 이용하여 글을 가져옴
+	 * @param weaver
+	 * @param tags
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Post> getPosts(Weaver weaver,List<String> tags,String sort, int page, int size) {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
@@ -244,6 +273,13 @@ public class PostService {
 		return postDao.getPosts(tags,search,writer,sort, page, size,limit);
 	}
 
+	/** 태그와 정렬 그리고 검색어를 이용하여 글을 수를 셈
+	 * @param weaver
+	 * @param tags
+	 * @param search
+	 * @param sort
+	 * @return
+	 */
 	public long countPosts(Weaver weaver,
 			List<String> tags,String search,String sort) {
 
@@ -259,6 +295,15 @@ public class PostService {
 		return 0;
 	}
 
+	/** 태그와 정렬 그리고 검색어를 이용하여  글들을 가져옴.
+	 * @param weaver
+	 * @param tags
+	 * @param search
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Post> getPosts(Weaver weaver,
 			List<String> tags,String search,String sort, int page, int size) {
 
@@ -274,6 +319,12 @@ public class PostService {
 
 	}
 
+	/** 다른 회원의 글의 수를 셈.
+	 * @param loginWeaver
+	 * @param writer
+	 * @param sort
+	 * @return
+	 */
 	public long countPosts(Weaver loginWeaver,Weaver writer,String sort) {
 
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
@@ -287,6 +338,14 @@ public class PostService {
 					writer, loginWeaver, null, sort);
 	}
 
+	/** 다른 회원의 글 목록을 가져옴.
+	 * @param loginWeaver
+	 * @param writer
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Post> getPosts(Weaver loginWeaver,
 			Weaver writer,String sort, int page, int size) {
 
@@ -302,6 +361,13 @@ public class PostService {
 	}
 
 
+	/** 다른 회원의 글을 태그와 정렬을 조합하여 가져오고 수를 셈.
+	 * @param loginWeaver
+	 * @param tags
+	 * @param writer
+	 * @param sort
+	 * @return
+	 */
 	public long countPosts(Weaver loginWeaver,List<String> tags,Weaver writer,String sort) {
 
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
@@ -316,6 +382,15 @@ public class PostService {
 	}
 
 
+	/** 다른 회원의 글을 태그와 정렬을 조합하여 글을 가져옴.
+	 * @param loginWeaver
+	 * @param tags
+	 * @param writer
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Post> getPosts(Weaver loginWeaver,List<String> tags,
 			Weaver writer,String sort, int page, int size) {
 
@@ -330,6 +405,14 @@ public class PostService {
 					writer, loginWeaver, null, sort, page, size);
 	}
 
+	/** 다른 회원이 쓴 글의 수를 셈.
+	 * @param loginWeaver
+	 * @param tags
+	 * @param writer
+	 * @param search
+	 * @param sort
+	 * @return
+	 */
 	public long countPosts(Weaver loginWeaver,List<String> tags,Weaver writer,String search,String sort) {
 
 		if(loginWeaver == null) //로그인하지 않은 회원의 경우
@@ -344,6 +427,16 @@ public class PostService {
 	}
 
 
+	/**  다른 회원이 쓴 글의 목록을 가져옴.
+	 * @param loginWeaver
+	 * @param tags
+	 * @param writer
+	 * @param search
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	public List<Post> getPosts(Weaver loginWeaver,List<String> tags,
 			Weaver writer,String search,String sort, int page, int size) {
 
@@ -359,10 +452,18 @@ public class PostService {
 	}
 
 
+	/** 메세지 태그인지 확인함.
+	 * @param tags
+	 * @return
+	 */
 	public boolean isMassageTags(List<String> tags) {
 		return tags.get(0).startsWith("$") && !tags.get(0).contains("/");
 	}
 
+	/** 프로젝트 태그인지 확인함.
+	 * @param tags
+	 * @return
+	 */
 	public boolean isPrivateTags(List<String> tags) {
 		for (String tag : tags) 
 			if (tag.startsWith("@"))
@@ -370,6 +471,10 @@ public class PostService {
 		return false;
 	}
 
+	/** 일반 공개 태그인지 확인함.
+	 * @param tags
+	 * @return
+	 */
 	public boolean isPublicTags(List<String> tags) {
 
 		for (String tag : tags)
@@ -379,6 +484,11 @@ public class PostService {
 		return true;
 	}
 
+	/** 자신의 메세지 태그가 붙어 있는지 확인함.
+	 * @param nickName
+	 * @param tags
+	 * @return
+	 */
 	public boolean isMassageTagsWithWriterTag(String nickName, List<String> tags) {
 		for (String tag : tags)
 			if (tag.equals("$" + nickName)) 

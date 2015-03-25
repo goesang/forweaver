@@ -13,6 +13,9 @@ import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Project;
 
+/** 프로젝트 관리를 위한 DAO
+ *
+ */
 @Repository
 public class ProjectDao {
 	
