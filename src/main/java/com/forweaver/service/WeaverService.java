@@ -120,8 +120,6 @@ public class WeaverService implements UserDetailsService {
 		return weaver;
 	}
 
-
-
 	public Weaver getLoginWeaver(String id) {
 
 		for (Object object : sessionRegistry.getAllPrincipals()) {
@@ -144,12 +142,6 @@ public class WeaverService implements UserDetailsService {
 				currentWeaver.deletePass(passName);
 		}
 
-	}
-
-
-	public List<Weaver> weavers(int page,int size) {
-		// TODO Auto-generated method stub
-		return weaverDao.getWeavers(page,size);
 	}
 
 	public boolean delete(String password,Weaver weaver) { //위버 삭제
@@ -257,11 +249,11 @@ public class WeaverService implements UserDetailsService {
 		return false;
 	}
 
-	/*
+	
 	public void getWeaverInfos(Weaver weaver){
 		BasicDBObject basicDB = new BasicDBObject();
 		DBObject tempDB = weaverDao.getWeaverInfosInPost(weaver);
-
+		System.out.println(weaver.getId());
 		tempDB = weaverDao.getWeaverInfosInPost(weaver);
 		if(tempDB != null){
 			basicDB.put("postCount", tempDB.get("postCount"));
@@ -290,15 +282,15 @@ public class WeaverService implements UserDetailsService {
 		}
 		weaver.setWeaverInfo(basicDB);
 	}
-	*/
+	
 	public long countWeavers(){
 		return weaverDao.countWeavers();
 	}
 	
 	public List<Weaver> getWeavers(int page, int size) {
 		List<Weaver> weavers = weaverDao.getWeavers(page, size);
-		//for(Weaver weaver : weavers)
-			//this.getWeaverInfos(weaver);
+		for(Weaver weaver : weavers)
+			this.getWeaverInfos(weaver);
 		return weavers;
 	}
 	
@@ -310,8 +302,8 @@ public class WeaverService implements UserDetailsService {
 	 */
 	public List<Weaver> getWeavers(List<String> tags,int page, int size ){
 		List<Weaver> weavers = weaverDao.getWeavers(tags,page, size);
-		//for(Weaver weaver : weavers)
-		//	this.getWeaverInfos(weaver);
+		for(Weaver weaver : weavers)
+			this.getWeaverInfos(weaver);
 		return weavers;
 	}
 	

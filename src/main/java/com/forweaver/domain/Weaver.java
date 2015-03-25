@@ -47,11 +47,11 @@ public class Weaver implements UserDetails,Serializable {
 	private Date joinDate;
 	private List<Pass> passes = new ArrayList<Pass>();
 	private List<String> tags = new ArrayList<String>();
-/*
+
 	@Transient
 	private DBObject weaverInfo;
-*/
-	private WeaverInfo weaverInfo;
+
+	//private WeaverInfo weaverInfo;
 	
 	public Weaver(){}
 
@@ -78,7 +78,7 @@ public class Weaver implements UserDetails,Serializable {
 		this.say = say;
 		this.image = image;
 		this.joinDate = new Date();
-		this.weaverInfo = new WeaverInfo();
+		//this.weaverInfo = new WeaverInfo();
 	}
 
 	public String getPassword() {
@@ -225,13 +225,13 @@ public class Weaver implements UserDetails,Serializable {
 		}
 		return passNames;
 	}
-/*
+
 	public DBObject getWeaverInfo() {
 		return weaverInfo;
 	}
 	
 	public String getInfo(String field) {
-		Object value = weaverInfo.get(field);
+		Object value = this.weaverInfo.get(field);
 		if(value == null)
 			value = "0";
 		return value.toString();
@@ -246,7 +246,7 @@ public class Weaver implements UserDetails,Serializable {
 
 	public void setWeaverInfo(DBObject weaverInfo) {
 		this.weaverInfo = weaverInfo;
-	}*/
+	}
 	
 	
 
@@ -258,14 +258,14 @@ public class Weaver implements UserDetails,Serializable {
 		return false;
 	}
 
-	public WeaverInfo getWeaverInfo() {
+	/*public WeaverInfo getWeaverInfo() {
 		return weaverInfo;
 	}
 
 
 	public void setWeaverInfo(WeaverInfo weaverInfo) {
 		this.weaverInfo = weaverInfo;
-	}
+	}*/
 
 
 	public boolean isJoinWeaver(String joinName){

@@ -310,4 +310,14 @@ public class Project implements Serializable {
 		return false;
 	}
 	
+	public boolean isProjectWeaver(Weaver weaver){
+		if(this.creator.equals(weaver))
+			return true;
+		for(Weaver joinWeaver:this.joinWeavers)
+			if(joinWeaver.equals(weaver))
+				return true;
+		return false;
+				
+	}
+	
 }

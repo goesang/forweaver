@@ -92,7 +92,6 @@ public class WeaverDao {
 		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
 		Update update = new Update();
 		update.set("password", weaver.getPassword());
-		update.set("passes", weaver.getPasses());
 		update.set("image", weaver.getImage());
 		update.set("imgSrc", weaver.getImgSrc());
 		update.set("say", weaver.getSay());
@@ -100,6 +99,13 @@ public class WeaverDao {
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 	
+	public void updatePass(Weaver weaver) {
+		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
+		Update update = new Update();
+		update.set("passes", weaver.getPasses());
+		mongoTemplate.updateFirst(query, update, Weaver.class);     
+	}
+	/*
 	public void updateInfo(Weaver weaver,String field,long value) {
 		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
 		Update update = new Update();
@@ -111,7 +117,7 @@ public class WeaverDao {
 		update = new Update();
 		update.set("weaverInfo", weaver.getWeaverInfo());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
-	}
+	}*/
 	
 	public DBObject getWeaverInfosInPost(Weaver weaver){
 		Criteria criteria = 	Criteria.where("writer.$id").is(weaver.getId());

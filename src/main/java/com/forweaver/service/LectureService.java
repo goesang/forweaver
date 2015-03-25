@@ -44,7 +44,7 @@ public class LectureService {
 
 		Pass pass = new Pass(lecture.getName(), 2); // 강의의 생성자 권한을 부여
 		currentWeaver.addPass(pass);
-		weaverDao.update(currentWeaver);
+		weaverDao.updatePass(currentWeaver);
 
 
 		File file = new File(gitUtil.getGitPath() + lecture.getName());
@@ -69,9 +69,8 @@ public class LectureService {
 		Pass pass = new Pass(lecture.getName(), 1);
 		lecture.addJoinWeaver(joinWeaver); //프로젝트 목록에 추가
 		joinWeaver.addPass(pass);
-		weaverDao.update(joinWeaver);
+		weaverDao.updatePass(joinWeaver);
 		this.update(lecture);
-		weaverDao.updateInfo(joinWeaver,"weaverInfo.joinLectureCount",1); //프로젝트 갯수 올림.
 		return true;
 	}
 	public void addRepo(Lecture lecture,Repo repo){
@@ -113,7 +112,7 @@ public class LectureService {
 			deleteWeaver.deletePass(lecture.getName());
 			lecture.removeJoinWeaver(deleteWeaver);
 
-			weaverDao.update(deleteWeaver);
+			weaverDao.updatePass(deleteWeaver);
 			lectureDao.update(lecture);
 
 			return true;
@@ -133,7 +132,7 @@ public class LectureService {
 			deleteWeaver.deletePass(lecture.getName());
 			lecture.removeJoinWeaver(deleteWeaver);
 
-			weaverDao.update(deleteWeaver);
+			weaverDao.updatePass(deleteWeaver);
 			lectureDao.update(lecture);
 
 			return true;
@@ -158,11 +157,11 @@ public class LectureService {
 				weaver.getId().equals(lecture.getCreatorName())){
 			for(Weaver adminWeaver:lecture.getAdminWeavers()){
 				adminWeaver.deletePass(lecture.getName());
-				weaverDao.update(adminWeaver);
+				weaverDao.updatePass(adminWeaver);
 			}
 			for(Weaver joinWeaver:lecture.getJoinWeavers()){
 				joinWeaver.deletePass(lecture.getName());
-				weaverDao.update(joinWeaver);
+				weaverDao.updatePass(joinWeaver);
 			}
 			for(WaitJoin waitJoin:waitJoinDao.delete(lecture.getName())){ // 대기 중인 초대장 삭제.
 				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제.

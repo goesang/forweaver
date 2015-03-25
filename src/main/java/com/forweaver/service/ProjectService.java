@@ -8,7 +8,8 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,8 @@ public class ProjectService{
 	@Autowired private CherryPickRequestDao cherryPickRequestDao;
 	@Autowired private GitUtil gitUtil;
 
+	@Autowired @Qualifier("sessionRegistry")
+	private SessionRegistry sessionRegistry;
 	/** 프로젝트 추가하는 메서드
 	 * @param project
 	 * @param currentWeaver
@@ -51,8 +54,7 @@ public class ProjectService{
 		projectDao.insert(project);
 		Pass pass = new Pass(project.getName(),2);
 		currentWeaver.addPass(pass);
-		weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectCount",1); //프로젝트 갯수 올림.
-		weaverDao.update(currentWeaver);
+		weaverDao.updatePass(currentWeaver);
 	}
 
 	/** 회원 추가함.
@@ -64,13 +66,13 @@ public class ProjectService{
 		// TODO Auto-generated method stub
 		if(project == null || joinWeaver == null)
 			return false;
+		
 		Pass pass = new Pass(project.getName(), 1);
 		project.addJoinWeaver(joinWeaver); //프로젝트 목록에 추가
 		joinWeaver.addPass(pass);
-		weaverDao.update(joinWeaver);
+		weaverDao.updatePass(joinWeaver);
 		this.update(project);
-		System.out.println("addWeaver");
-		weaverDao.updateInfo(joinWeaver,"weaverInfo.joinProjectCount",1); //프로젝트 갯수 올림.
+
 		return true;
 	}
 
@@ -89,8 +91,8 @@ public class ProjectService{
 		// TODO Auto-generated method stub
 		if(weaver == null || project == null)
 			return false;
-
 		if(weaver.isAdmin() || weaver.equals(project.getCreator())){
+
 			try{
 				gitUtil.Init(project);
 				gitUtil.deleteRepository();
@@ -99,8 +101,13 @@ public class ProjectService{
 			}
 			for(Weaver joinWeaver:project.getJoinWeavers()){
 				joinWeaver.deletePass(project.getName());
-				weaverDao.updateInfo(joinWeaver,"weaverInfo.joinProjectCount",-1); //가입 프로젝트 갯수 줄임.
-				weaverDao.update(joinWeaver);
+				weaverDao.updatePass(joinWeaver);
+				
+				for (Object object : sessionRegistry.getAllPrincipals()) { //현재 로그인 중인 회원의 권한 삭제.
+					Weaver tmpWeaver = ((Weaver) object);
+					if (tmpWeaver.equals(joinWeaver))
+						joinWeaver.deletePass(project.getName());
+				}
 			}
 			for(WaitJoin waitJoin:waitJoinDao.delete(project.getName())){ // 대기 중인 초대장 삭제.
 				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제.
@@ -108,11 +115,8 @@ public class ProjectService{
 			}
 			cherryPickRequestDao.delete(project);
 			
-			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectCount",-1); //프로젝트 갯수 줄임.
-			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectPush",-project.getPush()); //프로젝트 추천수 모두 줄임.
-
-			weaver.deletePass(project.getName());
-			weaverDao.update(weaver);
+			project.getCreator().deletePass(project.getName());
+			weaverDao.updatePass(project.getCreator());
 			projectDao.delete(project);
 			return true;
 		}
@@ -123,15 +127,14 @@ public class ProjectService{
 
 	public boolean deleteWeaver(Project project, Weaver currentWeaver,Weaver deleteWeaver) {
 		// 프로젝트에 동료를 탈퇴시킴
-		if(project == null || deleteWeaver == null || deleteWeaver.getPass(project.getName()) == null){
-		}
+		if(project == null || deleteWeaver == null || deleteWeaver.getPass(project.getName()) == null)
+			return false;
 
-		else if(project.getCreatorName().equals(currentWeaver.getId()) ||  //관리자가 탈퇴시키거나
-				currentWeaver.getId().equals(deleteWeaver.getId())){ //본인이 나가거나
+		if(project.getCreator().equals(currentWeaver) ||  //관리자가 탈퇴시키거나
+				currentWeaver.equals(deleteWeaver)){ //본인이 나가거나
 			deleteWeaver.deletePass(project.getName());
 			project.removeJoinWeaver(deleteWeaver);
-			weaverDao.updateInfo(deleteWeaver,"weaverInfo.joinProjectCount",-1); //가입 프로젝트 갯수 줄임.
-			weaverDao.update(deleteWeaver);
+			weaverDao.updatePass(deleteWeaver);
 			projectDao.update(project);
 
 			return true;
@@ -151,8 +154,6 @@ public class ProjectService{
 			projectDao.update(project);
 			Element newElement = new Element(project.getName(), weaver.getId());
 			cache.put(newElement);
-			weaverDao.updateInfo(project.getCreator(),"weaverInfo.projectPush",1); //프로젝트 추천수 증가.
-			weaverDao.update(project.getCreator());
 			return true;
 		}
 		return false;
@@ -265,7 +266,7 @@ public class ProjectService{
 			Pass pass = new Pass(newProject.getName(), 2);
 			weaver.addPass(pass);
 
-			weaverDao.update(weaver);
+			weaverDao.updatePass(weaver);
 
 			return newProject.getName();
 		}

@@ -43,15 +43,7 @@ public class RePostService {
 				dataDao.insert(data);
 				rePost.addData(dataDao.getLast());
 			}
-		
-		
-		if(rePost.getOriginalCode() != null)
-			weaverDao.updateInfo(rePost.getOrigianlWriter(),"weaverInfo.codeRePostCount",1); //코드의 답변 갯수 추가
 
-		if(rePost.getOriginalPost() != null)
-			weaverDao.updateInfo(rePost.getOrigianlWriter(),"weaverInfo.rePostCount",1); //글의 답변 갯수 추가
-		
-		weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostCount",1); //자신의 답변 갯수 추가
 		weaverDao.update(rePost.getWriter());
 		rePostDao.insert(rePost);
 		return true;
@@ -67,8 +59,6 @@ public class RePostService {
 		if(rePost == null || reply == null || reply.getContent() == null)
 			return false;
 		rePost.addReply(reply);
-		weaverDao.updateInfo(reply.getWriter(),"weaverInfo.myReplysCount",1); //자신의 댓글 갯수 증가
-		weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",1); //답변에 달린 댓글 갯수 증가
 		rePostDao.update(rePost);
 		return true;
 	}
@@ -87,8 +77,6 @@ public class RePostService {
 		if(replyWriter == null || !rePost.removeReply(weaver, number))
 			return false;
 		
-		weaverDao.updateInfo(replyWriter,"weaverInfo.myReplysCount",-1); //자신의 댓글 갯수 감소
-		weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",-1); //답변에 달린 댓글 갯수 감소
 		rePostDao.update(rePost);
 		return true;
 	}
@@ -117,7 +105,6 @@ public class RePostService {
 			rePostDao.update(rePost);
 			Element newElement = new Element("re"+rePost.getRePostID(), weaver.getId());
 			cache.put(newElement);
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostPush",1); //자신의 답변 추천수 늘림
 			weaverDao.update(rePost.getWriter());
 			return true;
 		}
@@ -150,15 +137,8 @@ public class RePostService {
 		if(rePost.getWriterName().equals(weaver.getId()) 
 				||  weaver.isAdmin()){
 			
-			for(Reply reply : rePost.getReplys()){ // 댓글들을 가져옴.
-				weaverDao.updateInfo(reply.getWriter(),"weaverInfo.myReplysCount",-1); //댓글단 사람들의 댓글 갯수 삭제.
-				weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",-1); //답변에 댓글 점수 삭감.
-			}
-			weaverDao.updateInfo(post.getWriter(),"weaverInfo.rePostCount",-1); //글에 달린 답변갯수 삭감.
 			post.rePostCountDown();
 			postDao.update(post);
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostCount",-1); //내가 단 답변갯수 삭감.
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostPush",-rePost.getPush());  //내가 단 답변 추천 삭감.
 			rePostDao.delete(rePost);
 			return true;
 		}
@@ -176,19 +156,10 @@ public class RePostService {
 		if(code == null ||rePost == null || weaver == null)
 			return false;
 		
-		if(rePost.getWriterName().equals(weaver.getId()) 
-				||  weaver.isAdmin()){
-			
-			for(Reply reply : rePost.getReplys()){ // 댓글들을 가져옴.
-				weaverDao.updateInfo(reply.getWriter(),"weaverInfo.myReplysCount",-1); //댓글단 사람들의 댓글 갯수 삭제.
-				weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",-1); //답변에 댓글 점수 삭감.
-			}
-			
-			weaverDao.updateInfo(code.getWriter(),"weaverInfo.codeRePostCount",-1); //글에 달린 답변갯수 삭감.
+		if(rePost.getWriterName().equals(weaver.getId()) ||  weaver.isAdmin()){
+
 			code.rePostCountDown();
 			codeDao.update(code);
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePost",-1); //내가 단 답변갯수 삭감.
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostPush",-rePost.getPush());  //내가 단 답변 추천 삭감.
 			rePostDao.delete(rePost);
 			return true;
 		}

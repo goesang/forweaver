@@ -52,8 +52,6 @@ public class PostService {
 				dataDao.insert(data);
 				post.addData(dataDao.getLast());
 			}
-		//사용자가 글을 추가하여 갯수를 올림.
-		weaverDao.updateInfo(post.getWriter(),"weaverInfo.postCount",1);
 		return postDao.insert(post);
 
 	}
@@ -79,8 +77,6 @@ public class PostService {
 			postDao.update(post);
 			Element newElement = new Element(post.getPostID(), weaver.getId());
 			cache.put(newElement);
-			
-			weaverDao.updateInfo(post.getWriter(),"weaverInfo.postPush",1); //추천을 하면 글쓴이의 추천수가 올라감.
 			weaverDao.update(post.getWriter());
 			return true;
 		}
@@ -118,18 +114,7 @@ public class PostService {
 	 * @param post
 	 */
 	private void delete(Post post){
-		for(RePost rePost : rePostDao.gets(post)){ //답변들을 가져옴.
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostCount",-1); // 답변을 단 사람들의 점수를 삭감
-			weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.myRePostPush",-rePost.getPush()); // 답변을 단 사람들의 추천 삭감.
-			weaverDao.updateInfo(post.getWriter(),"weaverInfo.rePostCount",-1); // 글을 쓴 사람의 답변 점수 삭제
-			for(Reply reply : rePost.getReplys()){ // 댓글들을 가져옴.
-				weaverDao.updateInfo(reply.getWriter(),"weaverInfo.myReplysCount",-1);// 답변에 댓글을 단 사람들의 점수를 삭감
-				weaverDao.updateInfo(rePost.getWriter(),"weaverInfo.replysCount",-1);// 답변에 댓글 점수를 삭감
-			}
-		}
 		rePostDao.deleteAll(post); // 답변 전부 삭제.
-		weaverDao.updateInfo(post.getWriter(),"weaverInfo.postCount",-1); // 글을 쓴 사람 갯수 삭감.
-		weaverDao.updateInfo(post.getWriter(),"weaverInfo.postPush",-post.getPush()); // 글을 쓴 사람의 추천수 삭감.
 		postDao.delete(post); //댓글 전부 삭제.
 	}
 	

@@ -527,7 +527,7 @@ public class ProjectController {
 
 		if(projectService.deleteWeaver(project, currentWeaver,deleteWeaver)){
 			Post post;
-			if(currentWeaver.getId().equals(project.getCreatorName())){//관리자가 탈퇴시킬시에 메세지
+			if(currentWeaver.equals(project.getCreator())){//관리자가 탈퇴시킬시에 메세지
 				post = new Post(currentWeaver, 
 						deleteWeaver.getId()+"님을 탈퇴 처리하였습니다.", "", 
 						tagService.stringToTagList("@"+project.getName()+",탈퇴"));//프로젝트에 메세지 보냄
@@ -625,16 +625,12 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver waitingWeaver = weaverService.get(weaver);
 		WaitJoin waitJoin = waitJoinService.get(creatorName+"/"+projectName, weaver);
-		Pass pass = new Pass(creatorName+"/"+projectName, 1);
 
 		if(waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, waitingWeaver)){
 			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
-			project.addJoinWeaver(waitingWeaver); //프로젝트 목록에 추가
-			waitingWeaver.addPass(pass);
-			weaverService.update(waitingWeaver);
-			projectService.update(project);
+			projectService.addWeaver(project, waitingWeaver);
 			Post post = new Post(waitingWeaver, 
 					"관리자 "+project.getCreatorName()+"님의 승인으로 프로젝트명:"+
 							creatorName+"/"+projectName+
@@ -651,10 +647,7 @@ public class ProjectController {
 				&& !project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
 			postService.delete(postService.get(waitJoin.getPostID()), project.getCreator());	
-			project.addJoinWeaver(currentWeaver); //프로젝트 목록에 추가
-			currentWeaver.addPass(pass);
-			weaverService.update(currentWeaver);
-			projectService.update(project);
+			projectService.addWeaver(project, waitingWeaver);
 
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
@@ -713,7 +706,7 @@ public class ProjectController {
 		}
 
 		model.addAttribute("url", "/");
-		model.addAttribute("say", "가입 부탁 메시지를 보내지 못했습니다!");
+		model.addAttribute("say", "권한이 없습니다!");
 		return "/alert";		
 	}
 
