@@ -109,7 +109,7 @@ $(document).ready(function() {
 			    url: "/check",
 			    data: "id="+$("#email").val(),
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
-				    if(msg=="true"){
+				    if(msg){
 				    	alert("이메일이 중복됩니다!");
 			    		check = false;
 					    }else{

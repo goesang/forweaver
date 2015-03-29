@@ -138,10 +138,11 @@
 								href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>">
 									<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
 										<c:if test="${post.isNotice()}">${post.title}</c:if></a></td>
-							<td class="td-button none-top-border" rowspan="2"><span
-								class="span-button">${post.push}
-									<p class="p-button">추천</p>
-							</span></td>
+							<td class="td-button none-top-border" rowspan="2">
+							<a onclick="return confirm('정말로 추천하시겠습니까?');" href="/community/${post.postID}/push">
+							<span class="span-button">${post.push}
+										<p class="p-button">추천</p>
+								</span></a></td>
 							<td class="td-button none-top-border" rowspan="2"><span
 								class="span-button">${rePosts.size()}
 									<p class="p-button">답변</p>
@@ -162,16 +163,21 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
-								<c:if test="${post.getWriterName().equals(currentUser.username) }">
-								<div class="function-div pull-right">
-									<a href = "/community/${post.postID}/delete" onclick="return confirm('글을 정말로 삭제하시겠습니까?')"> <span
-										class="function-button">삭제</span></a>
-									<c:if test="${post.isLong()}">
-										<a href = "/community/${post.postID}/update" onclick="return confirm('글을 정말로 수정하시겠습니까?')"> <span
-										class="function-button">수정</span></a>	
+								<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+									<c:if
+										test="${post.getWriterName().equals(currentUser.username) }">
+										<div class="function-div pull-right">
+											<a href="/community/${post.postID}/delete"
+												onclick="return confirm('글을 정말로 삭제하시겠습니까?')"> <span
+												class="function-button">삭제</span></a>
+											<c:if test="${post.isLong()}">
+												<a href="/community/${post.postID}/update"
+													onclick="return confirm('글을 정말로 수정하시겠습니까?')"> <span
+													class="function-button">수정</span></a>
+											</c:if>
+										</div>
 									</c:if>
-								</div>
-								</c:if>
+								</sec:authorize>
 								</td>
 
 						</tr>
@@ -253,9 +259,9 @@
 										</a>
 									</div>
 								</td>
-								<td class="td-button"><span class="span-button">${rePost.push}
+								<td class="td-button"><a href="/community/${rePost.rePostID}/push"><span class="span-button">${rePost.push}
 										<p class="p-button">추천</p>
-								</span></td>
+								</span></a></td>
 								<td class="td-button"><span class="span-button">${rePost.replys.size()}
 										<p class="p-button">댓글</p>
 								</span></td>

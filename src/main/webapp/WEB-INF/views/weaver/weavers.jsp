@@ -89,7 +89,7 @@
 										<p title="강의 갯수/수강중인 학생수" class="p-button-mini">${weaver.getInfo('lectureCount')}/${weaver.getInfo('joinWeavers','weaverID')}</p> </span></td>	
 								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
-										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.getInfo('projectCount')}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
+										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.countProject()}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
 							</tr>
 							<tr>
 							<td class="post-bottom-tag"><c:forEach items="${weaver.tags}"

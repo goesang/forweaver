@@ -166,13 +166,11 @@ public class PostController {
 		String content = request.getParameter("content");
 
 		if(tags == null || title == null || title.length() < 5 || title.length() > 144
-				|| (content !=  null && content.length() < 5)){ // 검증함
+				|| (content.length() >0 && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/");
 			return "/alert";
 		}
-		else if(content == null || content.length() == 0)
-			content = "";
 		List<String> tagList = tagService.stringToTagList(tags);
 		Weaver weaver = weaverService.getCurrentWeaver();
 
@@ -368,7 +366,7 @@ public class PostController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
 		if(post == null || tags == null || title == null || content == null || 
-				title.length() < 5 || title.length() > 144|| content.length() < 5 ||
+				title.length() < 5 || title.length() > 200|| content.length() < 5 ||
 				!post.getWriter().equals(weaver)){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);

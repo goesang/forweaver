@@ -57,12 +57,12 @@ public class Weaver implements UserDetails,Serializable {
 
 
 	public Weaver(String id,String email){
-		this.id = id;
+		this.id = id.toLowerCase();;
 		this.email = email;
 	}
 
 	public Weaver(String id,String email,Data image){
-		this.id = id;
+		this.id = id.toLowerCase();;
 		this.email = email;
 		this.image = image;
 	}
@@ -70,7 +70,7 @@ public class Weaver implements UserDetails,Serializable {
 
 
 	public Weaver(String id,String password,String email,List<String> tags,String studentID,String say,Data image){
-		this.id = id;
+		this.id = id.toLowerCase();
 		this.password = password;
 		this.email = email;
 		this.tags = tags;

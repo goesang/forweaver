@@ -60,7 +60,6 @@ import com.forweaver.domain.git.statistics.GitParentStatistics;
 @Component
 public class GitUtil {
 
-	@Value("/home/git/")
 	private String gitPath;
 	private String path;
 	private Repository localRepo;
@@ -75,7 +74,9 @@ public class GitUtil {
 	public void setGitPath(String gitPath) {
 		this.gitPath = gitPath;
 	}
-
+	public GitUtil(){
+		this.gitPath = "/home/git/";
+	}
 	/** 과제 저장소용 초기화 메서드
 	 * @param repo
 	 */
@@ -137,7 +138,6 @@ public class GitUtil {
 			hide.mkdir();
 		}
 	}
-
 	
 	/** git 디렉토리 삭제
 	 * @throws Exception

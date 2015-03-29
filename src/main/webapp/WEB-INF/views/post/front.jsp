@@ -300,7 +300,7 @@
 										</a>
 									</c:if> 
 									<c:if test="${post.kind <= 2}">
-										<a href="/community/${post.postID}/push"> <span
+										<a href="/community/${post.postID}"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>
 										</span>

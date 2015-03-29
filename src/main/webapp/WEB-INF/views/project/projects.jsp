@@ -15,29 +15,17 @@
 		var tags = $("input[name='tags']").val();
 		tags = tagInputValueConverter(eval(tags));
 		if(tags.length == 0){
-			$("alert").append("<div class='alert alert-error'>"+
-					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!"+
-					"</div>");
+			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return false;
 		}else if(!objPattern.test(name)){
-			$("alert").append("<div class='alert alert-error'>"+
-					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 프로젝트명은 영문 숙자 조합이어야 합니다. 다시 입력해주세요!"+
-					"</div>");
+			alert("프로젝트명은 영문 숫자 조합이어야 합니다. 다시 입력해주세요!");
 			return false;
 		}
 		else if(name.length == 0){
-			$("alert").append("<div class='alert alert-error'>"+
-					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 프로젝트명을 입력하시지 않았습니다. 프로젝트명을 입력해주세요!"+
-					"</div>");
+			alert("프로젝트명을 입력하시지 않았습니다. 프로젝트명을 입력해주세요!");
 			return false;
 		}else if(description.lenght == 0){
-			$("alert").append("<div class='alert alert-error'>"+
-					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 프로젝트 소개를 입력하시지 않았습니다. 프로젝트 소개를 입력해주세요!"+
-					"</div>");
+			alert("프로젝트 소개를 입력하시지 않았습니다. 프로젝트 소개를 입력해주세요!");
 			return false;
 		}else{
 			$("form:first").append($("input[name='tags']"));
@@ -112,7 +100,7 @@
 							});
 					
 							
-						var pageCount = ${projectCount}/10;
+						var pageCount = ${projectCount+1}/${number};
 						pageCount = Math.ceil(pageCount);
 						var options = {
 					            currentPage: ${pageIndex},

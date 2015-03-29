@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html><head>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
-<title>Forweaver : 에러!</title>
+<title>Forweaver : 비밀번호 변경 페이지!</title>
 </head>
 <body>
 	<div class="container">

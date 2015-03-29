@@ -163,8 +163,8 @@ font.link{
 
 @font-face {
 	font-family: NG;
-	src: url(../font/NanumGothic.eot);
-	src: local(※), url(../font/NanumGothic.woff) format('woff')
+	src: url(../fonts/NanumGothic.eot);
+	src: local(※), url(../fonts/NanumGothic.woff) format('woff')
 }
 
 body,table,input,textarea,select,button {

@@ -18,10 +18,8 @@
 					window.location = $("#selectBranch option:selected").val();
 			});
 		
-			var pageCount = ${gitCommitListCount}/10;
-			if(pageCount < 1 ) 
-				pageCount = 1;
-			
+			var pageCount = ${gitCommitListCount}/15;
+			pageCount = Math.ceil(pageCount);
 			var options = {
 		            currentPage: ${pageIndex},
 		            totalPages: pageCount,

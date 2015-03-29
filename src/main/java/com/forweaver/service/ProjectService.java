@@ -257,7 +257,7 @@ public class ProjectService{
 		if(originProject.getCategory() != 0)
 			return null;
 
-		if(!originProject.getCreator().getId().equals(weaver.getId())){
+		if(!originProject.getCreator().equals(weaver)){
 			if(this.get(newProject.getName())!=null){
 				while(true){
 					int cnt=1;

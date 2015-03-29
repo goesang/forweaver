@@ -5,7 +5,7 @@
 	<a href="/">ForWeaver</a> <small>학생들을 위한 소셜 코딩!</small>
 </h1>
 
-<div class="navbar navbar-inverse">
+<div id="forweaver-nav"class="navbar navbar-inverse">
 	<div class="navbar-inner">
 		<div class="container-fluid">
 			<div class="nav-collapse collapse">
@@ -54,6 +54,14 @@
 						class="tagarea tagarea-full" id="tags-input" rows="1"></textarea>
 					<script>
 					
+					if (ieVersion() && ieVersion()<10) {	
+						$(function() {$("#forweaver-nav").after(
+								"<div class='alert'>이 사이트는 인터넷 익스플로러 10 버젼 부터 지원합니다! "+
+								"<a href='http://windows.microsoft.com/ko-kr/internet-explorer/download-ie'>최신버젼</a>으로 업그레이드 "+
+								"하시거나 <a href='http://www.google.co.kr/chrome/browser/desktop/'>크롬</a>"+
+								"이나 <a href='http://www.mozilla.or.kr/ko/firefox/new/'>파이어폭스</a>로 이용해주세요!</div>");
+					});
+						}
 					
 						$('#tags-input').textext({
 							plugins : 'tags',
@@ -92,6 +100,8 @@
 										movePage($("input[name='tags']").val(),"");
 									}
 								});
+											
+						
 					</script>
 				</div>
 			</div>

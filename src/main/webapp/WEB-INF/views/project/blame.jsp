@@ -44,7 +44,7 @@
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
 	SyntaxHighlighter.all();
 	
-	 setTimeout(function(){ // 0.5초 뒤에 실행
+	 setTimeout(function(){ // 에러가 있어서 0.3초 뒤에 실행
 		 for(var i=1;i<=blameArray.length;i++)
 			 if(blameArray[i-1][1] != blameArray[i][1])
 		 	$('td.gutter > div.line.number'+i).html(
@@ -52,7 +52,7 @@
 		 			"</a>  <a href='/project/${project.name}/commitlog-viewer/commit:"+blameArray[i][1]+"'>"+
 		 			blameArray[i][1]+"</a>  "+blameArray[i][2]+"</span>  "+i
 		 	);
-	}, 500);
+	}, 300);
 });
 
 </script>
@@ -77,7 +77,11 @@
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
+					</c:if>
+					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
 					<c:if test="${project.getCategory() == 0}">

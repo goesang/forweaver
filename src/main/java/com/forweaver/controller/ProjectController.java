@@ -167,7 +167,7 @@ public class ProjectController {
 		if(params.get("category") != null)
 			categoryInt = Integer.parseInt(params.get("category"));
 
-		if(params.get("name") == null || params.get("description") == null || !tagService.isPublicTags(tagList)){
+		if(params.get("name").length() <5 || params.get("description").length() <5  || !tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/");
 			return "/alert";
@@ -351,14 +351,12 @@ public class ProjectController {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-		if(tags == null || title == null || title.length() < 5 || title.length() > 144
-				|| (content !=  null && content.length() < 5)){ // 검증함
+		if(title.length() < 5 || title.length() > 200
+				|| (content.length() >0 && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
 			return "/alert";
 		}
-		else if(content == null || content.length() == 0)
-			content = "";
 		
 		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+creatorName+"/"+projectName));
@@ -453,6 +451,9 @@ public class ProjectController {
 	public String edit(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		if(!project.getCreator().equals(currentWeaver))
+			return "redirect:/project/"+project.getName()+"/";
 		model.addAttribute("project", project);
 		return "/project/edit";
 	}

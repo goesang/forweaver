@@ -213,11 +213,14 @@ public class WeaverService implements UserDetailsService {
 
 		if(object != null ||  weaverDao.get(email) == null) //등록된 이메일이 없을 경우.
 			return false;
-		String password = KeyGenerators.string().generateKey();
+		String password = KeyGenerators.string().generateKey().substring(0, 7);
 		String key = passwordEncoder.encodePassword(password, null);
 		RePassword rePassword = new RePassword(key, password);
 
-		//mailUtil.sendMail(email,"",""); 미구현.
+		mailUtil.sendMail(email,"[forweaver] 비밀번호 재발급",
+				"링크 - http://forweaver.com/repassword/"+email+"/"+key+"\n"+
+				"변경된 비밀번호 - "+password+"\n"+		
+				"\n링크에 5분이내에 접속하시고 나서 변경된 비밀번호로 로그인해주세요!");
 		Element newElement = new Element(email, rePassword);
 		rePasswordCache.put(newElement);
 

@@ -1,6 +1,12 @@
 
 var editorMode = false; 
 
+function ieVersion () {
+	  var myNav = navigator.userAgent.toLowerCase();
+	  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+	}
+
+
 function mongoObjectId () {
 	var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
 	return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
