@@ -7,7 +7,7 @@
 </head>
 <body>
 	<script>
-	editorMode = false;
+	editorMode = true;
 	function checkProject(){
 		var objPattern = /^[a-zA-Z0-9]+$/;
 		var name = $('#project-name').val();
@@ -35,7 +35,7 @@
 		changeValue(${project.category});
 		
 		$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>${tag},</c:forEach>"));
+			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'><c:if test='${!tag.startsWith("@")}'>${tag},</c:if></c:forEach>"));
 	});
 	</script>
 	<div class="container">
@@ -65,7 +65,7 @@
 					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() == 0}">
+					<c:if test="${project.getCategory() <= 0}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
@@ -84,19 +84,19 @@
 					<input id ="project-name" class="title span5" value="${project.name}"
 						placeholder="프로젝트명을 입력해주세요!" type="text" readonly="readonly"/> 
 					
-					
+					<c:if test="${!project.isForked()}">
 					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 
 					<input type="radio" name="group"data-toggle="radio" <c:if test = "${project.category == 0}">checked="checked"</c:if>>
 					</label> 
 					
 					<label onclick="changeValue(1);" class="radio radio-period"> 
-					<input type="radio" name="group" data-toggle="radio" <c:if test = "${project.category == 1}">checked="checked"</c:if>> 비공개
+					<input type="radio" name="group" data-toggle="radio" <c:if test = "${project.category == 1 }">checked="checked"</c:if>> 비공개
 					</label> 
 					
 					<label onclick="changeValue(3);" class="radio radio-period"> 
 					<input type="radio" name="group"  data-toggle="radio" <c:if test = "${project.category == 3}">checked="checked"</c:if>> 과제
 					</label> 
-					
+					</c:if>
 						<input value="${project.description}" name ="description"class="title span12" type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요!"></input>
 				</div>

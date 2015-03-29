@@ -219,7 +219,7 @@
 											class="span-button"><i class="fa fa-lock"></i>
 												<p class="p-button">비공개</p> </span>
 									</c:if>
-								<c:if test="${project.category == 2}">
+								<c:if test="${project.category == -1}">
 										<a href="/project/${project.name}"> <span
 											class="span-button"><i class="fa fa-code-fork"></i>
 												<p class="p-button">파생</p> </span>

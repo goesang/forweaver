@@ -198,7 +198,7 @@ public class ProjectController {
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";
 		}
-		
+
 		return "redirect:/project/";
 	}
 
@@ -299,7 +299,7 @@ public class ProjectController {
 		int size = WebUtil.getPageSize(page);
 
 		Project project = projectService.get(creatorName+"/"+projectName);
-		
+
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
 				postService.getProjectPosts(creatorName+"/"+projectName, null, null, sort, null, pageNum, size,true));
@@ -326,7 +326,7 @@ public class ProjectController {
 
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
-		
+
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
 				postService.getProjectPosts(creatorName+"/"+projectName, tagList, null, sort, null, pageNum, size,true));
@@ -346,7 +346,7 @@ public class ProjectController {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 		final Map<String, MultipartFile> files = multiRequest.getFileMap();
 		ArrayList<Data> datas = new ArrayList<Data>();
-		
+
 		String tags = request.getParameter("tags");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
@@ -357,7 +357,7 @@ public class ProjectController {
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
 			return "/alert";
 		}
-		
+
 		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+creatorName+"/"+projectName));
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -367,14 +367,14 @@ public class ProjectController {
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
 			return "/alert";
 		}
-		
+
 		for (MultipartFile file : files.values())
 			if(!file.isEmpty()){
 				String fileID= dataService.getObjectID(file.getOriginalFilename(), weaver);
 				if(!fileID.equals(""))
 					datas.add(new Data(fileID,file,weaver));
 			}
-		
+
 		Post post = new Post(weaver,title,content,tagList);
 
 		postService.add(post,datas);
@@ -446,7 +446,7 @@ public class ProjectController {
 				gitService.getGitCommitLogList(creatorName, projectName,commit,1,15));
 		return "/project/commitLog";
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/edit")
 	public String edit(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model) {
@@ -457,7 +457,7 @@ public class ProjectController {
 		model.addAttribute("project", project);
 		return "/project/edit";
 	}
-	
+
 	@RequestMapping(value = "/{creatorName}/{projectName}/edit", method = RequestMethod.POST)
 	public String edit(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,@RequestParam Map<String, String> params,Model model) {
@@ -476,7 +476,14 @@ public class ProjectController {
 		}
 
 		project.setDescription(params.get("description"));
-		project.setCategory(categoryInt);
+
+		if(project.isForked())
+			tagList.add("@"+project.getName());	
+		else
+			project.setCategory(categoryInt);
+		
+		project.setTags(tagList);
+
 		projectService.update(project);
 		return "redirect:/project/"+project.getName()+"/edit";
 	}
@@ -688,7 +695,7 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		WaitJoin waitJoin = waitJoinService.get(project.getName(), weaver);
 		Weaver waitingWeaver = weaverService.get(weaver);
-		
+
 		if(project != null //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& project.getCreator().equals(currentWeaver)
@@ -810,7 +817,7 @@ public class ProjectController {
 								currentWeaver);
 
 		if(newProjectName==null){
-			model.addAttribute("url", "/project/"+project);
+			model.addAttribute("url", "/project/"+project.getName());
 			model.addAttribute("say", "포크하지 못했습니다!");
 			return "/alert";
 		}else{

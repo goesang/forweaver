@@ -179,11 +179,11 @@ public class ProjectDao {
 		if (sort.equals("push-many")) {
 			criteria.and("push").gt(0);
 		}else if (sort.equals("homework")) {
-			criteria.and("kind").gt(3);
+			criteria.and("category").is(3);
 		}else if (sort.equals("private")) {
-			criteria.and("kind").is(1);
+			criteria.and("category").is(1);
 		} else if (sort.equals("fork")) {
-			criteria.and("kind").is(2);
+			criteria.and("category").is(-1);
 		}
 	}
 	
@@ -192,11 +192,13 @@ public class ProjectDao {
 	 * @param sort
 	 */
 	public void sorting(Query query,String sort){
-		if (sort.equals("opendate-asc")) {
+		if (sort.equals("age-asc")) {
 			query.with(new Sort(Sort.Direction.ASC, "openingDate"));
 		} else if (sort.equals("active")) {
 			query.with(new Sort(Sort.Direction.ASC, "activeDate"));
 		} else if (sort.equals("push-many")) {
+			query.with(new Sort(Sort.Direction.DESC, "push"));
+		}else if (sort.equals("push-many")) {
 			query.with(new Sort(Sort.Direction.DESC, "push"));
 		} else
 			query.with(new Sort(Sort.Direction.DESC, "openingDate"));

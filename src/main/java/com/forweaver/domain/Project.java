@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 /**<pre> 프로젝트 정보를 담은 클래스. 
  * name 프로젝트 이름 이게 기본 키
- * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, 2면 파생 프로젝트, 3이면 과제 프로젝트
+ * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, -1이면 파생 프로젝트, 3이면 과제 프로젝트
  * description  프로젝트 소개
  * openingDate 프로젝트 시작일
  * endDate  프로젝트 종료일
@@ -89,16 +89,16 @@ public class Project implements Serializable {
 	public Project(String name,Weaver weaver,Project originalProject) { //포크할 때 생성자
 		super();
 		this.name = weaver.getId()+"/"+name;
-		this.category = 2;
+		this.category = -1;
 		this.description = originalProject.getDescription();
 		this.openingDate = new Date();
 		this.activeDate = this.openingDate;
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
-		if(originalProject.getOriginalProjectName() != null 
+		if(originalProject.getOriginalProjectName() != null //이미 파생한 프로젝트를 또 파생할때
 				&& originalProject.getOriginalProjectName().length() >0){
 			this.tags.addAll(originalProject.getTags());
-		}else{
+		}else{ // 원본 프로젝트를 파생할 때
 			this.tags.add("@"+originalProject.getName());
 			this.tags.addAll(originalProject.getTags());
 		}
@@ -306,7 +306,7 @@ public class Project implements Serializable {
 	}
 	
 	public boolean isPublic(){
-		if(this.category == 0 || this.category ==2)
+		if(this.category == 0 || this.category ==-1)
 			return true;
 		return false;
 	}
@@ -319,6 +319,18 @@ public class Project implements Serializable {
 				return true;
 		return false;
 				
+	}
+	
+	
+	public boolean isForked(){
+		if(this.category == -1)
+			return true;
+		
+		if(this.originalProjectName == null || this.originalProjectName.length()  == 0)
+			if(this.childProjects == null || this.childProjects.size() == 0)
+				return false;
+		
+		return true;
 	}
 	
 }
