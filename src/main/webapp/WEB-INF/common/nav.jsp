@@ -50,9 +50,14 @@
 			<div class="span11">
 				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
 				<div class="span10 tag-span">
-					<textarea title="태그를 입력하시고 나서 엔터키나 스페이스키를 누르시면 추가가 됩니다." placeholder="태그를 입력해 보세요!" name="tags"
-						class="tagarea tagarea-full" id="tags-input" rows="1"></textarea>
+					<input title="태그를 입력하시고 나서 엔터키나 스페이스키를 누르시면 추가가 됩니다." placeholder="태그를 입력해 보세요!" 
+						class="tagarea tagarea-full" id="tags-input" />
+					<input name="tags" type="hidden" id="tag-hidden"/>
+
+						
 					<script>
+					
+					var move = true;
 					
 					if (ieVersion() && ieVersion()<10) {	
 						$(function() {$("#forweaver-nav").after(
@@ -62,46 +67,26 @@
 								"이나 <a href='http://www.mozilla.or.kr/ko/firefox/new/'>파이어폭스</a>로 이용해주세요!</div>");
 					});
 						}
+					$('#tags-input').tagsinput({
+						  confirmKeys: [13, 32],
+						  maxTags: 6,
+						  maxChars: 10
+					});
+					$("#tag-hidden").val(getTagList(document.location.href));
 					
-						$('#tags-input').textext({
-							plugins : 'tags',
+					$.each(getTagList(document.location.href).split(","), function(index, value) { 
+						  $('#tags-input').tagsinput('add',value);
+					});
+					
+					$('#tags-input').on('itemAdded', function(event) {
+						if(move)
+							movePage($("#tags-input").val(),"");
 						});
-						
-						$('#tags-input').textext()[0].tags().addTags(
-								getTagList(document.location.href));
-
-
-						$('#tag-addon').click(function(){
-							movePage($("input[name='tags']").val(),"");
+					
+					$('#tags-input').on('itemRemoved', function(event) {
+						movePage($("#tags-input").val(),"");
 						});
-
-						$('#tags-input').keydown(
-								function(e) {
-									if (e.keyCode == 13) {
-										$('#tags-input').textext()[0].tags().removeTag($('#tags-input').val());
-									}
-								});
-						$('#tags-input').keyup(
-								function(e) {
-									if(e.keyCode == 32){
-										var tagArray = new Array();
-										var taginput = $('#tags-input').val();
-										taginput = taginput.substring(0,taginput.length-1);
-										
-										tagArray.push(taginput);
-										$('#tags-input').textext()[0].tags().removeTag(taginput);
-										$('#tags-input').textext()[0].tags().addTags(tagArray);
-										$('#tags-input').val('');
-										
-										movePage($("input[name='tags']").val(),"");
-										
-									}
-									else if (e.keyCode == 13) {
-										movePage($("input[name='tags']").val(),"");
-									}
-								});
-											
-						
+					$('#tags-input').tagsinput('focus');
 					</script>
 				</div>
 			</div>

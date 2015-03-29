@@ -242,6 +242,7 @@ public class ProjectService{
 		try{
 			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
 		}catch(Exception e){
+			System.err.print(e.getLocalizedMessage());
 			return false;
 		}
 

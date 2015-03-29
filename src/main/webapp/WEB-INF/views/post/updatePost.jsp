@@ -12,8 +12,8 @@
 
 	function checkPost(){
 
-		var tags = $("input[name='tags']").val();
-		if(tags.length == 2){
+		var tags = $("#tags-input").val();
+		if(tags.length == 0){
 			return false;
 		}else if($('#post-title-input').val().length < 5){
 			alert("제목을 최소 5글자 이상 입력해주세요!");
@@ -30,8 +30,11 @@
 		
 		$(document).ready(function() {
 
-			$('#tags-input').textext()[0].tags().addTags(
-					getTagList("/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>"));
+			move = false;
+			<c:forEach items='${post.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 				});
 	</script>
 	<div class="container">

@@ -113,15 +113,12 @@
 			
 			$(".file-div").hide();
 			
-			$('#tags-input').textext()[0].tags().addTags(
-					getTagList("/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>"));
-
-			$('.tag-name').click(
-					function() {
-						var tagname = $(this).text();
-						movePage("[\"" + tagname + "\"]","");	
-			});
-		});
+			move = false;
+			<c:forEach items='${post.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
+				});
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>

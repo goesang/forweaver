@@ -22,9 +22,9 @@
 			fileArray[i] = fileName;
 		}
 		
-		var tags = $("input[name='tags']").val();
+		var tags = $("#tags-input").val();
 		
-		if(tags.length == 2){
+		if(tags.length == 0){
 			alert("태그를 한개 이상 입력해주세요!");
 			return false;
 		}else if($('#post-title-input').val().length <5){
@@ -40,8 +40,8 @@
 	}
 	
 		function showPostContent() {
-			var tags = $("input[name='tags']").val();
-			if(tags.length == 2){
+			var tags = $("#tags-input").val();
+			if(tags.length == 0){
 				alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 				return;
 			}
@@ -81,8 +81,8 @@
 					"</div>");
 			
 			$( "#post-title-input" ).keypress(function() {
-				var tags = $("input[name='tags']").val();
-				if(tags.length == 2){
+				var tags = $("#tags-input").val();
+				if(tags.length == 0){
 					$( "#post-title-input" ).val('');
 					alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 					return;
@@ -96,24 +96,23 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
-								if (tagNames.length == 2)
-									movePage("[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								var tagNames = $("#tags-input").val();
+								
+								if (tagNames.length == 0 || tagNames == "")
+									movePage(tagname,"");
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									movePage(tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									movePage(tagNames+ ","+ tagname+" ","");
 								}
 							});
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									movePage(tagNames,$('#post-title-input').val());							
 							});
 					
@@ -122,7 +121,7 @@
 					$('#post-title-input').keyup(
 							function(e) {
 								if(!editorMode && e.keyCode == 13){
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									movePage(tagNames,$('#post-title-input').val());
 								}
 							});
@@ -247,10 +246,10 @@
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="show-content-button" title="글 내용 작성하기"
 						href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
 						<button id='post-ok' title="글 올리기" class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>

@@ -14,7 +14,7 @@
 					function() {
 						var tagname = $(this).text();
 						var exist = false;
-						var tagNames = $("input[name='tags']").val();
+						var tagNames = $("#tags-input").val();
 						if (tagNames.length == 2)
 							movePage("[\"" + tagname + "\"]","");
 						var tagArray = eval(tagNames);
@@ -23,9 +23,7 @@
 								exist = true;
 						});
 						if (!exist){
-							movePage(tagNames.substring(0,
-									tagNames.length - 1)
-									+ ",\"" + tagname + "\"]","");
+							movePage(tagNames+ ","+ tagname+" ","");
 						}
 					});
 					

@@ -12,8 +12,8 @@
 		var objPattern = /^[a-zA-Z0-9]+$/;
 		var name = $('#project-name').val();
 		var description = $('#project-description').val();
-		var tags = $("input[name='tags']").val();
-		tags = tagInputValueConverter(eval(tags));
+		var tags = $("#tags-input").val();
+		
 		if(tags.length == 0){
 			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return false;
@@ -31,11 +31,12 @@
 			$("form:first").append($("input[name='tags']"));
 			return true;
 		}
+		return false;
 	}
 	
 	function showProjectContent() {
-		var tags = $("input[name='tags']").val();
-		if(tags.length == 2){
+		var tags = $("#tags-input").val();
+		if(tags.length == 0){
 			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return;
 		}
@@ -78,24 +79,22 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
-								if (tagNames.length == 2)
-									movePage("[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								var tagNames = $("#tags-input").val();
+								if (tagNames.length == 0 || tagNames == "")
+									movePage(tagname,"");
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist)
-									movePage(tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									movePage(tagNames+ ","+ tagname+" ","");
 
 							});
 
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									movePage(tagNames,$('#post-search-input').val());							
 							});
 					
@@ -177,10 +176,10 @@
 				<div class="span2">
 					<span> <a id="show-content-button"
 						href="javascript:showProjectContent();"
-						class="post-button btn btn-primary" title="프로젝트 개설하기"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary" title="프로젝트 개설하기"> <i class="fa fa-pencil"></i>
 					</a> <a id='search-button' class="post-button btn btn-primary" title="프로젝트 검색하기"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hideProjectContent();"
-						class="post-button btn btn-primary"  title="개설 취소하기"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"  title="개설 취소하기"> <i class="fa fa-pencil"></i>
 					</a>
 						<button id='project-ok' class="post-button btn btn-primary" title="프로젝트 올리기">
 							<i class="fa fa-check"></i>
@@ -189,6 +188,7 @@
 					</span>
 				</div>
 				<input value="0" id ="category" name="category" type="hidden"/> 	
+				<input name="tags" type="hidden" id="tag-hidden"/>
 			</form>
 
 				<table id="project-table" class="table table-hover">

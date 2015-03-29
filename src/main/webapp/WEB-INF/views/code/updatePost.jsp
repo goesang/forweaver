@@ -31,8 +31,8 @@
 			
 		}
 		
-		var tags = $("input[name='tags']").val();
-		if(tags.length == 2){
+		var tags = $("#tags-input").val();
+		if(tags.length == 0){
 			return false;
 		}else if($('#post-title-input').val() == ""){
 			alert("아무것도 입력하시지 않았습니다!");

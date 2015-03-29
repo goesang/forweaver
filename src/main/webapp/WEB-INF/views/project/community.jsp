@@ -86,19 +86,18 @@ function checkPost(){
 					function() {
 						var tagname = $(this).text();
 						var exist = false;
-						var tagNames = $("input[name='tags']").val();
-						if (tagNames.length == 2)
-							movePage("[\"" + tagname + "\"]","");
-						var tagArray = eval(tagNames);
-						$.each(tagArray, function(index, value) {
+						var tagNames = $("#tags-input").val();
+						
+						if (tagNames.length == 0 || tagNames == "")
+							movePage(tagname,"");
+						
+						$.each(tagNames.split(","), function(index, value) {
 							if (value == tagname)
 								exist = true;
 						});
-						if (!exist)
-							movePage(tagNames.substring(0,
-									tagNames.length - 1)
-									+ ",\"" + tagname + "\"]","");
-
+						if (!exist){
+							movePage(tagNames+ ","+ tagname+" ","");
+						}
 					});
 			
 			var pageCount = ${postCount+1}/10;
@@ -246,10 +245,10 @@ function checkPost(){
 				</div>
 				<div class="span2">
 					<span> <a id="show-content-button" href="javascript:showPostContent();" title="글 내용 작성하기"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary" title="글 올리기">
 							<i class="fa fa-check"></i>

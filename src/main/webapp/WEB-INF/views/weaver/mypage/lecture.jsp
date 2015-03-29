@@ -14,11 +14,11 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
+								var tagNames = $("#tags-input").val();
 								if (tagNames.length == 2)
 									moveUserPage("/${weaver.getId()}/lecture/","[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
@@ -31,7 +31,7 @@
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									if(tagNames.length == 2){
 										alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 										return;

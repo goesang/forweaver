@@ -90,9 +90,9 @@ public class TagService {
 		if(tagNames == null)
 			return tags;	
 
-		if(tagNames.startsWith("[")){
-			tagNames = tagNames.substring(1, tagNames.length()-1);
-		}
+		if(tagNames.startsWith(","))
+			tagNames = tagNames.substring(1);
+		
 
 		for (String tagName : tagNames.split(",")) {
 

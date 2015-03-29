@@ -13,8 +13,11 @@
 	<script>
 
 $(document).ready(function() {
-	$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+	move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
 	
 	$("#selectCommit").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});

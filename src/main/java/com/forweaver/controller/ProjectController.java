@@ -163,7 +163,6 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
 		int categoryInt = 0;
-
 		if(params.get("category") != null)
 			categoryInt = Integer.parseInt(params.get("category"));
 

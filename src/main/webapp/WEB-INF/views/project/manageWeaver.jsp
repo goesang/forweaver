@@ -57,8 +57,11 @@ $(document).ready(function() {
 			window.location = "/project/${project.name}/weaver/"+weaverName+"/add-weaver";
 	});
 	
-	$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+	move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
 	makeNavigationInManageWeaver(weaverList.length,10);
 	showWeaverList(1);

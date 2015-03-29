@@ -48,7 +48,7 @@ var editorMode = false;
 					function() {
 						var tagname = $(this).text();
 						var exist = false;
-						var tagNames = $("input[name='tags']").val();
+						var tagNames = $("#tags-input").val();
 						if (tagNames.length == 2)
 							movePage("[\"" + tagname + "\"]","");
 						var tagArray = eval(tagNames);
@@ -57,16 +57,14 @@ var editorMode = false;
 								exist = true;
 						});
 						if (!exist)
-							movePage(tagNames.substring(0,
-									tagNames.length - 1)
-									+ ",\"" + tagname + "\"]","");
+							movePage(tagNames+ ","+ tagname+" ","");
 
 					});
 			$('#post-ok').click(function(){
 				var title = $('#post-title-input').val();
 				var content ="";
-				var tags = $("input[name='tags']").val();
-				tags = tagInputValueConverter(eval(tags));
+				var tags = $("#tags-input").val();
+				
 				if(editorMode)
 					content = $('#post-content-textarea').val();
 				$.ajax({
@@ -152,10 +150,10 @@ var editorMode = false;
 				</div>
 				<div class="span2">
 					<span> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>

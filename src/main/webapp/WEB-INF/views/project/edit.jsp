@@ -12,8 +12,8 @@
 		var objPattern = /^[a-zA-Z0-9]+$/;
 		var name = $('#project-name').val();
 		var description = $('#project-description').val();
-		var tags = $("input[name='tags']").val();
-		tags = tagInputValueConverter(eval(tags));
+		var tags = $("#tags-input").val();
+		
 		if(tags.length == 0){
 			$("alert").append("<div class='alert alert-error'>"+
 					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+

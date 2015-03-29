@@ -3,6 +3,7 @@ package com.forweaver.service;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -35,7 +36,7 @@ public class CodeService {
 					file.getContentType().equals("application/x-zip-compressed")) && 
 					file.getOriginalFilename().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
-				ZipInputStream in = new ZipInputStream(file.getInputStream());
+				ZipInputStream in = new ZipInputStream(file.getInputStream(),Charset.forName("CP949"));
 				ZipEntry entry = in.getNextEntry();
 				while (entry != null) {
 					if (!entry.isDirectory()) { // 만약 파일의 경우

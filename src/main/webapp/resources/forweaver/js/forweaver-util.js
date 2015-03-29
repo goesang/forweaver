@@ -103,19 +103,16 @@ function getSearchWord(url){
 
 function getTagList(url){
 	if(url.indexOf("/tags:")==-1)
-		return [];
+		return "";
 	url =  decodeURI(url);
-	var tagList = new Array();
+	var tagList = "";
 	var realURL = true;
 	if(url.indexOf("/tags:") == 0)
 		realURL = false;
 	url = url.substring(url.indexOf("tags:")+5);
 	if(realURL && url.indexOf("/")!=-1)
 		url = url.substring(0,url.indexOf("/"));
-	$.each(url.split(","), function(index, value) {
-		value = value.replace('>', '/');
-		tagList.push(value);
-	});
+	tagList = url.replace('>', '/');
 	return tagList;
 }
 
@@ -166,7 +163,7 @@ function extensionSeach(url){
 function movePage(tagArrayString,searchWord){
 	if(editorMode)
 		return;
-	var tagArray = eval(tagArrayString);
+	
 	var url = document.location.href;
 
 	if(url.indexOf("/tags:") != -1)
@@ -183,12 +180,17 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
 	else	
 		url = "/community/";
-	if(tagArray.length == 0){
+	
+	if(tagArrayString.length == 0){
 		window.location = url;
 		return;
 	}
-	url = url + "tags:"+	tagInputValueConverter(tagArray);
-	url = url.substring(0,url.length-1);
+	if(tagArrayString.indexOf(",") === 0)
+		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
+	
+	tagArrayString = tagArrayString.replace('/', '>');
+	
+	url = url + "tags:"+	tagArrayString;
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
@@ -198,29 +200,25 @@ function movePage(tagArrayString,searchWord){
 function moveUserPage(path,tagArrayString,searchWord){
 	if(editorMode)
 		return;
-	var tagArray = eval(tagArrayString);
+	
 	var url = document.location.href;
 
-	if(tagArray.length == 0){
+	if(tagArrayString.length == 0 || tagArrayString==""){
 		window.location = url;
 		return;
 	}
-	url = path + "tags:"+	tagInputValueConverter(tagArray);
-	url = url.substring(0,url.length-1);
+	
+	if(tagArrayString.indexOf(",") === 0)
+		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
+	
+	tagArrayString = tagArrayString.replace('/', '>');
+	
+	url = path + "tags:"+	tagArrayString;
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
 
 	window.location = url;
-}
-
-
-function tagInputValueConverter(tagArray){
-	var simpleArray="";
-	$.each(tagArray, function(index, value) {
-		simpleArray = simpleArray+ value.replace('/', '>')+",";
-	});
-	return simpleArray;
 }
 
 function textAreaResize(obj) {

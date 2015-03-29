@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -38,7 +39,6 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -597,9 +597,8 @@ public class GitUtil {
 
 			//압축파일을 품.
 			byte[] buffer = new byte[1024];
-
 			ZipInputStream zis = 
-					new ZipInputStream(zip);	    	
+					new ZipInputStream(zip,Charset.forName("CP949"));	    	
 			ZipEntry ze = zis.getNextEntry();
 
 			while(ze!=null){

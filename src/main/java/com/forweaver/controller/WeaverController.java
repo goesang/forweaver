@@ -73,7 +73,7 @@ public class WeaverController {
 		if(!tagService.isPublicTags(tagList))
 			return "/weaver/join";
 
-		if(id.length() < 4 || password.length()<3 || email.length()<6){
+		if(id.length() < 5 || password.length()<4 || email.length()<6){
 			model.addAttribute("say", "잘못 입력하셨습니다!.");
 			model.addAttribute("url", "/join");
 			return "/alert";
