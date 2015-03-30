@@ -10,13 +10,8 @@ editorMode = true;
 var check = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 function checkWeaver(){
-		if($("input[name='tags']").val().length < 3){
+		if($("#tags-input").val().length < 1){
 			alert("태그를 하나 이상 입력해주세요!");
-			return false;
-		}
-		
-		if($("input[name='tags']").val().length > 65){
-			alert("태그를 너무 많이 입력하셨습니다!");
 			return false;
 		}
 		

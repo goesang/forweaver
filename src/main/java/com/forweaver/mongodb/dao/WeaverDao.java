@@ -124,9 +124,10 @@ public class WeaverDao {
 		Update update = new Update();
 		update.set("password", weaver.getPassword());
 		update.set("image", weaver.getImage());
-		update.set("imgSrc", weaver.getImgSrc());
+		update.set("data", weaver.getImgSrc());
 		update.set("say", weaver.getSay());
 		update.set("studentID", weaver.getStudentID());
+		update.set("tags", weaver.getTags());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 	

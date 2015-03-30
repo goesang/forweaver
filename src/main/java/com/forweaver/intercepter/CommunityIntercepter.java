@@ -32,7 +32,7 @@ public class CommunityIntercepter extends HandlerInterceptorAdapter {
 			tags = URLDecoder.decode(tags, "UTF-8");
 			List<String> tagList = tagService.stringToTagList(tags);
 			if(!tagService.validateTag(tagList, weaver)){
-				response.sendError(400);
+				response.sendError(400);				
 				return false;
 			}
 

@@ -50,8 +50,8 @@ public class WaitJoinService {
 			return false;
 		
 		if(proposer.isAdmin(project.getName())|| // 강의 관리자이거나
-				proposer.equals(waitingWeaver)|| // 아니면 본인이 신청해야함
-				waitingWeaver.getPass(project.getName()) != null) // 그리고 가입자가 아니어야함.
+				(proposer.equals(waitingWeaver)&& // 아니면 본인이 신청해야함
+				!project.isProjectWeaver(waitingWeaver)) ) // 그리고 가입자가 아니어야함.
 			return true;
 		
 		 return false;

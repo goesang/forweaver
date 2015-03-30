@@ -49,7 +49,7 @@ $(document).ready(function() {
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}/${repo.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}/${repo.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>

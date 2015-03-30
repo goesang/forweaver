@@ -598,7 +598,7 @@ public class GitUtil {
 			//압축파일을 품.
 			byte[] buffer = new byte[1024];
 			ZipInputStream zis = 
-					new ZipInputStream(zip,Charset.forName("CP949"));	    	
+					new ZipInputStream(zip,Charset.forName("EUC-KR"));	    	
 			ZipEntry ze = zis.getNextEntry();
 
 			while(ze!=null){
@@ -611,10 +611,12 @@ public class GitUtil {
 					FileOutputStream fos = new FileOutputStream(newFile);             
 
 					int len;
-					while ((len = zis.read(buffer)) > 0) {
-						fos.write(buffer, 0, len);
+					String content = "";
+					while ((len = zis.read(buffer)) != -1)
+					{
+						content += new String(buffer, 0, len,Charset.forName("EUC-KR"));
 					}
-
+					fos.write(content.getBytes());
 					fos.close();   
 				}
 				ze = zis.getNextEntry();

@@ -61,11 +61,14 @@ public class WeaverService implements UserDetailsService {
 	}
 
 	public boolean idCheck(String id) { // 이름 중복 체크
-
-		if (weaverDao.get(id) != null)
+		id = id.toLowerCase();
+		if(id.equals("project") || id.equals("lecture") || id.equals("repassword") || id.equals("community") ||
+				id.equals("forweaver") || id.equals("weaver") || id.startsWith("rule_") || id.equals("resources") ||
+				id.startsWith("error") || id.equals("login") || id.equals("admin") || id.equals("check") || id.equals("chat") || 
+				weaverDao.get(id) != null)
 			return true;
-		else
-			return false;
+
+		return false;
 	}
 
 	public Weaver getCurrentWeaver() {
@@ -76,7 +79,7 @@ public class WeaverService implements UserDetailsService {
 			return null;
 		return (Weaver) auth.getPrincipal();
 	}
-	
+
 	public String getUserIP() {
 		// TODO Auto-generated method stub
 		WebAuthenticationDetails details = (WebAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -103,20 +106,20 @@ public class WeaverService implements UserDetailsService {
 
 		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
 			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));
-		
+
 		if(studentID != null && !studentID.equals(""))
 			weaver.setStudentID(studentID);
-		
+
 		if(say != null && !say.equals(""))
 			weaver.setSay(say);
-		
+
 		weaver.setTags(tags);
 		weaverDao.update(weaver);
 	}
-	
+
 	public void update(Weaver weaver) { // 회원 수정
 		// TODO Auto-generated method stub
-				
+
 		weaverDao.update(weaver);
 	}
 
@@ -219,7 +222,7 @@ public class WeaverService implements UserDetailsService {
 
 		mailUtil.sendMail(email,"[forweaver] 비밀번호 재발급",
 				"링크 - http://forweaver.com/repassword/"+email+"/"+key+"\n"+
-				"변경된 비밀번호 - "+password+"\n"+		
+						"변경된 비밀번호 - "+password+"\n"+		
 				"\n링크에 5분이내에 접속하시고 나서 변경된 비밀번호로 로그인해주세요!");
 		Element newElement = new Element(email, rePassword);
 		rePasswordCache.put(newElement);
@@ -259,7 +262,7 @@ public class WeaverService implements UserDetailsService {
 		return false;
 	}
 
-	
+
 	public void getWeaverInfos(Weaver weaver){
 		BasicDBObject basicDB = new BasicDBObject();
 		DBObject tempDB = weaverDao.getWeaverInfosInPost(weaver);
@@ -292,18 +295,18 @@ public class WeaverService implements UserDetailsService {
 		}
 		weaver.setWeaverInfo(basicDB);
 	}
-	
+
 	public long countWeavers(){
 		return weaverDao.countWeavers();
 	}
-	
+
 	public List<Weaver> getWeavers(int page, int size) {
 		List<Weaver> weavers = weaverDao.getWeavers(page, size);
 		for(Weaver weaver : weavers)
 			this.getWeaverInfos(weaver);
 		return weavers;
 	}
-	
+
 	/** 태그를 가지고 위버를 검색하고 활동내역도 검색함.
 	 * @param tags
 	 * @param page
@@ -316,7 +319,7 @@ public class WeaverService implements UserDetailsService {
 			this.getWeaverInfos(weaver);
 		return weavers;
 	}
-	
+
 
 	/** 태그를 가지고 위버를 검색하고 숫자를 셈.
 	 * @param tags

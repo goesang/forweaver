@@ -1,7 +1,10 @@
 package com.forweaver.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +15,7 @@ import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
+
 /** 각종 웹 유틸 클래스
  * @author go
  *
@@ -21,35 +25,35 @@ public class WebUtil {
 	 * @param pageUrl
 	 * @return 제출 날짜
 	 */
-public static Date getDeadLine(int day){
-		
+	public static Date getDeadLine(int day){
+
 		Date time = new Date();
 		Calendar cal = Calendar.getInstance();
-		 cal.setTime(time);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.add(Calendar.DATE, day+1);
-        return cal.getTime();
+		cal.setTime(time);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.add(Calendar.DATE, day+1);
+		return cal.getTime();
 	}
-	
 
-/** page url 부분을 해석하여 페이지 사이즈를 가져오는 메서드.
- * @param pageUrl
- * @return 페이지 사이즈
- */
+
+	/** page url 부분을 해석하여 페이지 사이즈를 가져오는 메서드.
+	 * @param pageUrl
+	 * @return 페이지 사이즈
+	 */
 	public static int getPageSize(String pageUrl){  
 		int size = 15;
-		
+
 		try{
 			if(pageUrl.contains(",")){
 				size = Integer.parseInt(pageUrl.split(",")[1]);
 			}
 		}catch(Exception e){}
-		
+
 		return size;
 	}
-	
+
 	/** page url 부분을 해석하여 페이지 번호를 가져오는 메서드.
 	 * @param pageUrl
 	 * @return 페이지의 번호
@@ -63,7 +67,7 @@ public static Date getDeadLine(int day){
 				page =Integer.parseInt(pageUrl);
 			}
 		}catch(Exception e){}
-		
+
 		return page;
 	}
 
@@ -86,7 +90,7 @@ public static Date getDeadLine(int day){
 
 	}
 
-	
+
 	/** 마크다운 문자열을 해석하여 html화된 문자열 변환하는 메서드.
 	 * @param str
 	 * @return html화된 문자열.
@@ -101,7 +105,7 @@ public static Date getDeadLine(int day){
 			return "";
 		}
 	}
-	
+
 	/**	이전시간과 현재시간과의 차이를 계산하여 지난시간 반환
 	 * @param date 날짜를 문자열로 받는다.
 	 * @return 지난시간을 문자열로 반환한다. (Ex] 1초전, 1시간, 1년)
@@ -165,7 +169,7 @@ public static Date getDeadLine(int day){
 		}
 		return str;
 	}
-	
+
 	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
 	 * @param List<String> 파일리스트 문자열
 	 * @return 해당 경로의 파일리스트를 반환
@@ -215,4 +219,5 @@ public static Date getDeadLine(int day){
 		}
 		return returnList;
 	}
+
 }

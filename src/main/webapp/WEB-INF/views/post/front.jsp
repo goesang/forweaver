@@ -170,6 +170,7 @@
 	                    return data;
 	                }()
 				});	
+				if(filename(fileName))
 				$("#post-content-textarea").val($("#post-content-textarea").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 			
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
@@ -238,7 +239,7 @@
 
 				<div class="span9">
 					<input id="post-title-input" class="title span9" name="title"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
+						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 144자 입력)" type="text"
 						value="" />
 				</div>
 				<div class="span3">

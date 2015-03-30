@@ -326,10 +326,12 @@ a.post-button {
 
 .td-post-writer-img{
 	width:46px;
+	height:46px;
 }
 .td-post-writer-img img{
 	padding-right: 0px;
 	width:46px;
+	height:46px;
 }
 
 .none-top-border {

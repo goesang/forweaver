@@ -363,22 +363,28 @@ public class LectureController {
 		return "redirect:/";
 	}
 	
-	@RequestMapping("/{lectureName}/weaver/{weaver}/add-weaver")
+	@RequestMapping("/{lectureName}/weaver/{weaverName}/add-weaver")
 	public String addWeaver(	@PathVariable("lectureName") String lectureName,
-			@PathVariable("weaver") String weaver) {
+			@PathVariable("weaverName") String weaverName,Model model) {
 		Lecture lecture = lectureService.get(lectureName);
-		Weaver waitingWeaver = weaverService.get(weaver);
+		Weaver waitingWeaver = weaverService.get(weaverName);
 		Weaver proposer = weaverService.getCurrentWeaver();
 
-		if(waitJoinService.isCreateWaitJoin(lecture, waitingWeaver, proposer)){
+		if(weaverService.get(weaverName) == null){
+			model.addAttribute("url", "/lecture/"+ lectureName+"/weaver");
+			model.addAttribute("say", "회원이 존재하지 않습니다!");
+			return "/alert";		
+		}
+		
+		if(!waitingWeaver.equals(proposer) && waitJoinService.isCreateWaitJoin(lecture, waitingWeaver, proposer)){
 			Weaver lectureCreator = weaverService.get(lecture.getCreatorName());
-			String title ="강의명:"+lectureName+"에 가입 초대를 <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/cancel'>거절하시겠습니까?</a>";
+			String title ="강의명:"+lectureName+"에 가입 초대를 <a href='/lecture/"+lectureName+"/weaver/"+weaverName+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+weaverName+"/cancel'>거절하시겠습니까?</a>";
 			
 			Post post = new Post(lectureCreator,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+weaver));
+					tagService.stringToTagList("$"+weaverName));
 			waitJoinService.createWaitJoin(
 					lecture.getName(), 
 					proposer.getId(), 

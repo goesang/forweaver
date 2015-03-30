@@ -64,7 +64,23 @@
 			
 		<security:intercept-url pattern="/project/*/*/delete"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/update"
+		<security:intercept-url pattern="/project/*/*/*/update"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/weaver/*/add-weaver"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/weaver/*/join-ok"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/weaver/*/join-cancel"
+			access="isAuthenticated()" />		
+		<security:intercept-url pattern="/project/*/*/weaver/*/delete"
+			access="isAuthenticated()" />		
+		<security:intercept-url pattern="/project/*/*/cherry-pick/*/add"
+			access="isAuthenticated()" />	
+		<security:intercept-url pattern="/project/*/*/cherry-pick/*/delete"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/cherry-pick/*/*/accept"
+			access="isAuthenticated()" />		
+		<security:intercept-url pattern="/project/*/*/join"
 			access="isAuthenticated()" />	
 		<security:intercept-url pattern="/project/*/*/community/add"
 			access="isAuthenticated()" />

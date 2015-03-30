@@ -17,6 +17,7 @@ import com.forweaver.domain.Code;
 import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.CodeDao;
+import com.forweaver.util.WebUtil;
 
 /** 코드 서비스
  *
@@ -36,7 +37,7 @@ public class CodeService {
 					file.getContentType().equals("application/x-zip-compressed")) && 
 					file.getOriginalFilename().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
-				ZipInputStream in = new ZipInputStream(file.getInputStream(),Charset.forName("CP949"));
+				ZipInputStream in = new ZipInputStream(file.getInputStream(),Charset.forName("EUC-KR"));
 				ZipEntry entry = in.getNextEntry();
 				while (entry != null) {
 					if (!entry.isDirectory()) { // 만약 파일의 경우
@@ -45,7 +46,7 @@ public class CodeService {
 						String content = "";
 						while ((len = in.read(buf)) != -1)
 						{
-							content += new String(buf, 0, len);
+							content += new String(buf, 0, len,Charset.forName("EUC-KR"));
 						}
 
 						if (entry.getName().toUpperCase().endsWith("README.MD")){ // 리드미파일의 경우

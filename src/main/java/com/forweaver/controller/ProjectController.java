@@ -2,6 +2,7 @@ package com.forweaver.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -247,7 +248,7 @@ public class ProjectController {
 		}else{ // 파일이라면
 			model.addAttribute("project", project);
 			model.addAttribute("fileName", gitFileInfo.getName());
-			model.addAttribute("fileContent", gitFileInfo.getContent());
+			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
 			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
 			model.addAttribute("gitCommitLog", 
@@ -350,7 +351,7 @@ public class ProjectController {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-		if(title.length() < 5 || title.length() > 200
+		if(title.length() < 5 || title.length() > 144
 				|| (content.length() >0 && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
@@ -480,7 +481,7 @@ public class ProjectController {
 			tagList.add("@"+project.getName());	
 		else
 			project.setCategory(categoryInt);
-		
+
 		project.setTags(tagList);
 
 		projectService.update(project);
@@ -586,7 +587,15 @@ public class ProjectController {
 		Weaver waitingWeaver = weaverService.get(weaverName);
 		Weaver proposer = weaverService.getCurrentWeaver();
 
-		if(waitJoinService.isCreateWaitJoin(project, waitingWeaver, proposer)){
+
+		if(weaverService.get(weaverName) == null){
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/weaver/");
+			model.addAttribute("say", "회원이 존재하지 않습니다!");
+			return "/alert";		
+		}
+
+
+		if(!waitingWeaver.equals(proposer) && waitJoinService.isCreateWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
 			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaverName+"/join-ok'>승락하시겠습니까?</a> "
 					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaverName+"/join-cancel'>거절하시겠습니까?</a><a>";

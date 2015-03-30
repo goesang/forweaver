@@ -49,8 +49,8 @@
 			</div>
 			<div class="span11">
 				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
-				<div class="span10 tag-span">
-					<input title="태그를 입력하시고 나서 엔터키나 스페이스키를 누르시면 추가가 됩니다." placeholder="태그를 입력해 보세요!" 
+				<div title="태그를 입력하시고 나서 엔터키나 스페이스키를 누르시면 추가가 됩니다."  class="span10 tag-span">
+					<input placeholder="태그를 입력해 보세요!" 
 						class="tagarea tagarea-full" id="tags-input" />
 					<input name="tags" type="hidden" id="tag-hidden"/>
 
@@ -58,6 +58,10 @@
 					<script>
 					
 					var move = true;
+					function ieVersion () {
+						  var myNav = navigator.userAgent.toLowerCase();
+						  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+						}
 					
 					if (ieVersion() && ieVersion()<10) {	
 						$(function() {$("#forweaver-nav").after(
@@ -79,13 +83,16 @@
 					});
 					
 					$('#tags-input').on('itemAdded', function(event) {
+						$("#tag-hidden").val($("#tags-input").val());
 						if(move)
 							movePage($("#tags-input").val(),"");
 						});
 					
 					$('#tags-input').on('itemRemoved', function(event) {
+						$("#tag-hidden").val($("#tags-input").val());
 						movePage($("#tags-input").val(),"");
 						});
+					
 					$('#tags-input').tagsinput('focus');
 					</script>
 				</div>

@@ -69,18 +69,16 @@ public class TagService {
 		if (privateTags.size() >0 && massageTags.size() > 0) // 권한을 가진 태그가 있고 메세지 태그가 있을때
 			return false;
 		
+		if(massageTags.size() > 0 && weaver != null)  // 메시지 태그가 있고 로그인한 사람의 경우
+			return true;
+		
 		if (weaver == null) // 권한을 가진 태그가 있는데 로그인 안한 사람일때
 			return false;
-	
 		
 		for (Pass pass : weaver.getPasses()) // 권한 검증
 			if (privateTags.size() > 0 && privateTags.get(0).equals("@" + pass.getJoinName())) 
 				return true;
-							
-		for (String tag : massageTags)  // 메세지 권한 검증
-			if (tag.equals("$" + weaver.getId())) 
-				return true;
-	
+		
 		return false;
 	}
 

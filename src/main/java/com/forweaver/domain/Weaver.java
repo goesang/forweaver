@@ -42,7 +42,6 @@ public class Weaver implements UserDetails,Serializable {
 	private String email;
 	private String say;
 	private String studentID;
-	private String imgSrc;
 	private Data image;
 	private Date joinDate;
 	private List<Pass> passes = new ArrayList<Pass>();
@@ -183,14 +182,6 @@ public class Weaver implements UserDetails,Serializable {
 
 	public void setImage(Data image) {
 		this.image = image;
-	}
-
-	public void setImgSrc(String imgSrc) {
-		this.imgSrc = imgSrc;
-	}
-
-	public String getRealImgSrc() {
-		return this.imgSrc;
 	}
 
 	public String getImgSrc() {

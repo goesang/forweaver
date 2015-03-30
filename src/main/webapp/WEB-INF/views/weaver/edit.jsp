@@ -11,15 +11,11 @@
 editorMode = true;
 
 function checkWeaver(){
-	if($("input[name='tags']").val().length < 3){
+	if($("#tags-input").val().length < 1){
 		alert("태그를 하나 이상 입력해주세요!");
 		return false;
 	}
-	
-	if($("input[name='tags']").val().length > 65){
-		alert("태그를 너무 많이 입력하셨습니다!");
-		return false;
-	}
+
 			
 	$("form:first").append($("input[name='tags']"));
 	return check;
@@ -27,8 +23,12 @@ function checkWeaver(){
 
 $(document).ready(function() {
 	
-	$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${weaver.tags}' var='tag'>	${tag},</c:forEach>"));
+	move = false;
+	<c:forEach items='${weaver.tags}' var='tag'>
+	$('#tags-input').tagsinput('add',"${tag}");
+	</c:forEach>
+	move = true;
+
 	
 	$("#image").change(function(){
         readURL(this);

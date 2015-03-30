@@ -40,7 +40,7 @@
                     return data;
                 }()
 			});	
-			
+			if(filename(fileName))
 			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 		
 			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함

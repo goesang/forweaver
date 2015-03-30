@@ -40,7 +40,8 @@
                     return data;
                 }()
 			});	
-			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+')');
+			if(filename(fileName))
+			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 		
 			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 		fileCount++;
@@ -112,14 +113,12 @@
 			
 			$(".file-div").hide();
 			
-			$('#tags-input').textext()[0].tags().addTags(
-					getTagList("/tags:<c:forEach items='${code.tags}' var='tag'>	${tag},</c:forEach>"));
+			move = false;
+			<c:forEach items='${code.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
-			$('.tag-name').click(
-					function() {
-						var tagname = $(this).text();
-						movePage("[\"" + tagname + "\"]","");	
-			});
 			
 			<c:forEach	items="${code.codes}" var="simpleCode" varStatus="status">	
 			$("#code-${status.count}").addClass("brush: "+extensionSeach('${simpleCode.fileName}')+";");
