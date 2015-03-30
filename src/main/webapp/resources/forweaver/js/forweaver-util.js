@@ -1,12 +1,6 @@
 
 var editorMode = false; 
 
-function ieVersion () {
-	  var myNav = navigator.userAgent.toLowerCase();
-	  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
-	}
-
-
 function mongoObjectId () {
 	var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
 	return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
@@ -34,61 +28,22 @@ function imgCheck(fileName) {
 	return true; 
 }
 
-function deleteReply(postID,rePostID,number){
-	if (confirm("정말 댓글을 삭제하시겠습니까?")){
-		window.location =	"/community/"+postID+"/"+rePostID+"/"+number+"/delete";
-	}else{
-		return;
-	}
+function spacialSignEncoder(str) {
+	str = str.split(" ").join("@$@");
+	str = str.split("+").join("@#@");
+	str = str.split("%").join("@!@");
+	str = str.split("&").join("@4@");
+	return str;
 }
 
-function deleteCodeReply(postID,rePostID,number){
-	if (confirm("정말 댓글을 삭제하시겠습니까?")){
-		window.location =	"/code/"+postID+"/"+rePostID+"/"+number+"/delete";
-	}else{
-		return;
-	}
+function specialSignDecoder(str) {
+	str = str.split("@$@").join(" ");
+	str = str.split("@#@").join("+");
+	str = str.split("@!@").join("%");
+	str = str.split("@4@").join("&");
+	return str;
 }
 
-function pushPost(postID){
-	if (confirm("정말 추천하시겠습니까?")){
-		window.location =	"/community/"+postID+"/push";
-	}else{
-		return;
-	}
-}
-
-function deletePost(postID){
-	if (confirm("정말 삭제하시겠습니까?")){
-		window.location =	"/community/"+postID+"/delete";
-	}else{
-		return;
-	}
-}
-
-function deleteCode(codeID){
-	if (confirm("정말로 코드를 삭제하시겠습니까?")){
-		window.location =	"/code/"+codeID+"/delete";
-	}else{
-		return;
-	}
-}
-
-function pushRePost(postID,rePostID){
-	if (confirm("정말 추천하시겠습니까?")){
-		window.location =	"/community/"+postID+"/"+rePostID+"/push";
-	}else{
-		return;
-	}
-}
-
-function deleteRePost(postID,rePostID){
-	if (confirm("답글을 삭제하시겠습니까?")){
-		window.location =	"/community/"+postID+"/"+rePostID+"/delete";
-	}else{
-		return;
-	}
-}
 
 function getSearchWord(url){
 	if(url.indexOf("/search:")==-1)
@@ -103,16 +58,19 @@ function getSearchWord(url){
 
 function getTagList(url){
 	if(url.indexOf("/tags:")==-1)
-		return "";
+		return [];
 	url =  decodeURI(url);
-	var tagList = "";
+	var tagList = new Array();
 	var realURL = true;
 	if(url.indexOf("/tags:") == 0)
 		realURL = false;
 	url = url.substring(url.indexOf("tags:")+5);
 	if(realURL && url.indexOf("/")!=-1)
 		url = url.substring(0,url.indexOf("/"));
-	tagList = url.replace('>', '/');
+	$.each(url.split(","), function(index, value) {
+		value = value.replace('>', '/');
+		tagList.push(value);
+	});
 	return tagList;
 }
 
@@ -163,7 +121,7 @@ function extensionSeach(url){
 function movePage(tagArrayString,searchWord){
 	if(editorMode)
 		return;
-	
+	var tagArray = eval(tagArrayString);
 	var url = document.location.href;
 
 	if(url.indexOf("/tags:") != -1)
@@ -180,45 +138,44 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
 	else	
 		url = "/community/";
-	
-	if(tagArrayString.length == 0){
+	if(tagArray.length == 0){
 		window.location = url;
 		return;
 	}
-	if(tagArrayString.indexOf(",") === 0)
-		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
-	
-	tagArrayString = tagArrayString.replace('/', '>');
-	
-	url = url + "tags:"+	tagArrayString;
+	url = url + "tags:"+	tagInputValueConverter(tagArray);
+	url = url.substring(0,url.length-1);
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
 	window.location = url;
 }
 
-function moveUserPage(path,tagArrayString,searchWord){
+function moveUserPage(userName,tagArrayString,searchWord){
 	if(editorMode)
 		return;
-	
+	var tagArray = eval(tagArrayString);
 	var url = document.location.href;
 
-	if(tagArrayString.length == 0 || tagArrayString==""){
+	if(tagArray.length == 0){
 		window.location = url;
 		return;
 	}
-	
-	if(tagArrayString.indexOf(",") === 0)
-		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
-	
-	tagArrayString = tagArrayString.replace('/', '>');
-	
-	url = path + "tags:"+	tagArrayString;
+	url = "/"+userName +"/"+ "tags:"+	tagInputValueConverter(tagArray);
+	url = url.substring(0,url.length-1);
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
 
 	window.location = url;
+}
+
+
+function tagInputValueConverter(tagArray){
+	var simpleArray="";
+	$.each(tagArray, function(index, value) {
+		simpleArray = simpleArray+ value.replace('/', '>')+",";
+	});
+	return simpleArray;
 }
 
 function textAreaResize(obj) {
@@ -242,4 +199,19 @@ function openWindow(url, width, height){
 	window.open(url,'','width='+width+',height='+height+',top='+((screen.height-height)/2)+',left='+((screen.width-width)/2)+',location =no,scrollbars=no, status=no;');
 }
 
+function filename(filename) { // 파일이 이미지 파일인지 검사
+	filename = filename.substring(filename.lastIndexOf(".") + 1,filename.length).toUpperCase();
+		if(filename.search("ANI")!=-1 || filename.search("BMP")!=-1 || filename.search("CAL")!=-1
+			|| filename.search("CAL")!=-1 || filename.search("FAX")!=-1 || filename.search("GIF")!=-1
+			|| filename.search("IMG")!=-1 || filename.search("JPE")!=-1 || filename.search("JPEG")!=-1
+			|| filename.search("JPG")!=-1 || filename.search("MAC")!=-1 || filename.search("PBM")!=-1
+			|| filename.search("PCD")!=-1 || filename.search("PCX")!=-1 || filename.search("PCT")!=-1
+			|| filename.search("PGM")!=-1 || filename.search("PNG")!=-1 || filename.search("PPM")!=-1
+			|| filename.search("PSD")!=-1 || filename.search("RAS")!=-1 || filename.search("TGA")!=-1
+			|| filename.search("TIF")!=-1 || filename.search("TIFF")!=-1 || filename.search("WMF")!=-1){
+		return true;
+	}
+	else return false;
+
+}
 
