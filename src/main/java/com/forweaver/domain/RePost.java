@@ -142,7 +142,7 @@ public class RePost implements Serializable {
 	public boolean removeReply(Weaver weaver, int number) {
 		for (int i = 0; i < this.replys.size(); i++) {
 			if (this.replys.get(i).getNumber() == number
-					&& (weaver.equals(this.replys.get(i).getWriter()) || weaver.isAdmin()))
+					&& weaver.equals(this.replys.get(i).getWriter()))
 				this.replys.remove(i);
 			return true;
 		}
@@ -150,7 +150,9 @@ public class RePost implements Serializable {
 	}
 	
 	public Weaver getReplyWriter(int number) {
-		return this.replys.get(number).getWriter();
+		if(number == 0)
+			return null;
+		return this.replys.get(number-1).getWriter();
 	}
 
 	public Date getRecentReplyDate() {

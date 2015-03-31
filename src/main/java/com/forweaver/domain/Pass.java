@@ -29,7 +29,7 @@ public class Pass implements GrantedAuthority, Serializable {
 	
 	public Pass(String joinName,int permission) {
 		this.permission = permission;
-		this.joinName = joinName.toLowerCase();
+		this.joinName = joinName;
 		this.joinDate = new Date();
 	}
 	

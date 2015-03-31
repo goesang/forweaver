@@ -98,7 +98,7 @@ public class CodeService {
 	 */
 	public void dowloadCode(Code code, OutputStream os){
 		try {
-			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os));
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os),Charset.forName("EUC-KR"));
 			for(SimpleCode simpleCode :code.getCodes()){
 				zip.putNextEntry(new ZipEntry(simpleCode.getFileName()));
 				zip.write(simpleCode.getContent().getBytes());

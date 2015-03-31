@@ -24,6 +24,10 @@
 		use-expressions="true">
 		<security:intercept-url pattern="/login"
 			access="isAnonymous()" />
+			<security:intercept-url pattern="/loginRequest"
+			access="isAnonymous()" />
+			<security:intercept-url pattern="/loginFail"
+			access="isAnonymous()" />
 		<security:intercept-url pattern="/repassword**"
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/join" access="isAnonymous()" />
@@ -87,24 +91,19 @@
 		<security:intercept-url pattern="/project/*/*/fork"
 			access="isAuthenticated()" />
 
-		<security:intercept-url pattern="/lecture/"
-			access="isAnonymous() or isAuthenticated()" />
-		<security:intercept-url pattern="/lecture/page**"
-			access="isAnonymous() or isAuthenticated()" />
-		<security:intercept-url pattern="/lecture/tags**"
-			access="isAnonymous() or isAuthenticated()" />
-
 		<security:intercept-url pattern='/lecture/**'
-			access="isAuthenticated()" />
-			
+			access="denyAll" />
+		<security:intercept-url pattern='/admin/**'
+			access="denyAll" />
+				
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />
 
-		<security:form-login login-page='/login' 
+		<security:form-login login-page="/login"
 			default-target-url='/' authentication-failure-url="/loginFail"/>
 		<security:session-management
 			session-authentication-strategy-ref="sas" />
-		<security:logout />
+		<security:logout logout-success-url="/login"/>
 	</security:http>
 
 	<bean id="sas"

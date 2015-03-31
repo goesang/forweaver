@@ -75,9 +75,13 @@ public class RePostService {
 		
 		if(rePost == null || weaver == null)
 			return false;
+		
 		Weaver replyWriter = rePost.getReplyWriter(number);
 		
-		if(replyWriter == null || !rePost.removeReply(weaver, number))
+		if(replyWriter == null || !replyWriter.equals(weaver))
+			return false;
+		
+		if(!rePost.removeReply(weaver, number))
 			return false;
 		
 		rePostDao.update(rePost);

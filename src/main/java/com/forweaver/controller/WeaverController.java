@@ -3,6 +3,7 @@ package com.forweaver.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,7 +74,8 @@ public class WeaverController {
 		if(!tagService.isPublicTags(tagList))
 			return "/weaver/join";
 
-		if(id.length() < 5 || password.length()<4 || email.length()<6){
+		if(!Pattern.matches("(^[A-Za-z0-9]{5,14}$)", id) || password.length()<4 || 
+				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
 			model.addAttribute("say", "잘못 입력하셨습니다!.");
 			model.addAttribute("url", "/join");
 			return "/alert";

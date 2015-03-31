@@ -1,6 +1,7 @@
 package com.forweaver.mongodb.dao;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +38,7 @@ public class ProjectDao {
 	 * @return
 	 */
 	public Project get(String projectName) {
-		Query query = new Query(Criteria.where("_id").is(projectName));
+		Query query = new Query(Criteria.where("_id").regex(Pattern.compile(projectName, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
 		return mongoTemplate.findOne(query, Project.class);
 	}
 	

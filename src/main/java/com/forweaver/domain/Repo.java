@@ -38,7 +38,7 @@ public class Repo implements Serializable {
 	
 	public Repo(String name, int category, String description,int deadLine,Lecture lecture,Weaver creator) {
 		this.name = name;
-		this.name = this.name.toLowerCase();
+		this.name = this.name;
 		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();

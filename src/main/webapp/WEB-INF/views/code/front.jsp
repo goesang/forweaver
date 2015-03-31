@@ -9,18 +9,23 @@
 	<script type="text/javascript">
 	
 	function checkCode(){
+		var objPattern = /^[a-zA-Z0-9]+$/;
 		var fileName = $("#file").val();
 		var tags = $("#tags-input").val();
 		
 		if(fileName == ""){
 			alert("파일을 업로드해 주세요!");
 			return false;
-		}else if(tags.length == 0){
+		}else if(!objPattern.test($('#code-name').val())){
+			alert("코드명은 영문 숫자 조합이어야 합니다. 다시 입력해주세요!");
 			return false;
-		}else if($('#post-name').val() == "" ){
+		}else if(tags.length == 0){
+			alert("태그를 하나라도 입력해주세요!");
+			return false;
+		}else if($('#code-name').val() == "" ){
 			alert("코드명을 입력하지 않았습니다!");
 			return false;
-		}else if($('#post-content').val() == "" ){
+		}else if($('#code-content').val() == "" ){
 			alert("코드 설명을 입력하지 않았습니다!");
 			return false;
 		}else{
@@ -37,7 +42,7 @@
 			}
 			$('#page-pagination').hide();
 			$('#post-table').hide();
-			$('#post-content-textarea').fadeIn('slow');
+			$('#code-content-textarea').fadeIn('slow');
 			$('#post-ok').show();
 			$('#search-button').hide();
 			$('#search-div').hide();
@@ -53,7 +58,7 @@
 			$('#post-table').show();
 			$('#search-div').show();
 			$('#post-div').hide();
-			$('#post-content-textarea').hide();
+			$('#code-content-textarea').hide();
 			$('#post-ok').hide();
 			$('#search-button').show();
 			$('#show-content-button').show();
@@ -170,9 +175,9 @@
 				enctype="multipart/form-data" method="post">
 
 				<div id="post-div" class="span10">
-					<input name="name" id="post-name" class="title span3"
-						placeholder="코드명을 입력해주세요!" type="text" /> <input name="content"
-						id="post-content" class="title span7"
+					<input maxlength="15" name="name" id="code-name" class="title span3"
+						placeholder="코드명 (영문 숫자 조합)" type="text" /> <input name="content"
+						id="code-content" class="title span7" maxlength="144"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
 				</div>
 
@@ -213,8 +218,8 @@
 					<i class="fa fa-pencil"></i> 코드 직접 입력하기</a></div>
 				</div>
 				  <div class="span12">
-					<textarea name="content" id="post-content-textarea"
-						class="post-content span12" onkeyup="textAreaResize(this)"
+					<textarea name="content" id="code-content-textarea"
+						class="code-content span12" onkeyup="textAreaResize(this)"
 						placeholder="여기에 글을 작성하시면 파일 배포시 자동으로 readme.md 파일이 생성됩니다. 만약 코드 소개에 충분히 설명하셨다면 이부분을 비워두셔도 상관없습니다!"></textarea>
 					<div class="file-div"></div>
 
@@ -224,8 +229,8 @@
 				<input id="post-search-input" class="title span6"
 						placeholder="파일명을 입력해주세요. 예시 hello.java 또는 folder/hello.java" type="text" />
 
-					<textarea name="content" id="post-content-textarea"
-						class="post-content span12" onkeyup="textAreaResize(this)"
+					<textarea name="content" id="code-content-textarea"
+						class="code-content span12" onkeyup="textAreaResize(this)"
 						placeholder="소스 코드를 입력해주세요!"></textarea>
 					<div class="file-div"></div>
 

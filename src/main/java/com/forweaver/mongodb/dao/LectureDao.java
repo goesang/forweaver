@@ -1,6 +1,7 @@
 package com.forweaver.mongodb.dao;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +37,7 @@ public class LectureDao {
 	 * @return
 	 */
 	public Lecture get(String lectureName) {
-		Query query = new Query(Criteria.where("_id").is(lectureName));
+		Query query = new Query(Criteria.where("_id").regex(Pattern.compile(lectureName, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
 		return mongoTemplate.findOne(query, Lecture.class);
 	}
 

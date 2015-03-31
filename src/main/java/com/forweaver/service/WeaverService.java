@@ -61,7 +61,7 @@ public class WeaverService implements UserDetailsService {
 	}
 
 	public boolean idCheck(String id) { // 이름 중복 체크
-		id = id.toLowerCase();
+		id = id;
 		if(id.equals("project") || id.equals("lecture") || id.equals("repassword") || id.equals("community") ||
 				id.equals("forweaver") || id.equals("weaver") || id.startsWith("rule_") || id.equals("resources") ||
 				id.startsWith("error") || id.equals("login") || id.equals("admin") || id.equals("check") || id.equals("chat") || 

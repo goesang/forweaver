@@ -564,7 +564,6 @@ public class PostDao {
 		update.set("rePostCount", post.getRePostCount());
 		update.set("recentRePostDate", post.getRecentRePostDate());
 		update.set("tags", post.getTags());
-		update.set("kind", post.getKind());
 		mongoTemplate.updateFirst(query, update, Post.class);
 	}
 

@@ -76,7 +76,7 @@ public class Project implements Serializable {
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
-		this.name = this.name.toLowerCase();
+		this.name = this.name;
 		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();

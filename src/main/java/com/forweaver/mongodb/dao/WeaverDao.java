@@ -3,6 +3,7 @@ package com.forweaver.mongodb.dao;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -49,7 +50,7 @@ public class WeaverDao {
 	 * @return 회원
 	 */
 	public Weaver get(String id) {
-		Query query = new Query(new Criteria()	.orOperator(Criteria.where("_id").is(id),
+		Query query = new Query(new Criteria()	.orOperator(Criteria.where("_id").regex(Pattern.compile(id, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)),
 				Criteria.where("email").is(id)));
 		return mongoTemplate.findOne(query,Weaver.class);
 	}

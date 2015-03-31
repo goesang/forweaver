@@ -52,7 +52,7 @@ public class Lecture implements Serializable {
 	public Lecture(String name, String description,
 			Weaver weaver,List<String> tagList) {
 		super();
-		this.name = name.toLowerCase();
+		this.name = name;
 		this.description = description;
 		this.openingDate = new Date();
 		this.creator = weaver;

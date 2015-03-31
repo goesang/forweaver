@@ -15,10 +15,11 @@
 						var tagname = $(this).text();
 						var exist = false;
 						var tagNames = $("#tags-input").val();
-						if (tagNames.length == 2)
-							movePage("[\"" + tagname + "\"]","");
-						var tagArray = eval(tagNames);
-						$.each(tagArray, function(index, value) {
+						
+						if (tagNames.length == 0 || tagNames == "")
+							movePage(tagname,"");
+						
+						$.each(tagNames.split(","), function(index, value) {
 							if (value == tagname)
 								exist = true;
 						});

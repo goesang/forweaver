@@ -18,9 +18,9 @@ public class WaitJoin implements Serializable {
 	public WaitJoin(){}
 
 	public WaitJoin(String joinTeam, String proposer, String waitingWeaver,int postID) {
-		this.joinTeam = joinTeam.toLowerCase();
-		this.proposer = proposer.toLowerCase();
-		this.waitingWeaver = waitingWeaver.toLowerCase();
+		this.joinTeam = joinTeam;
+		this.proposer = proposer;
+		this.waitingWeaver = waitingWeaver;
 		this.created = new Date();
 		this.postID = postID;
 	}

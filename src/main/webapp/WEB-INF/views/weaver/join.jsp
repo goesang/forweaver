@@ -7,7 +7,9 @@
 <body>
 <script>
 editorMode = true;
-var check = false;
+var idCheck = false;
+var passwordCheck = false;
+var emailCheck = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 function checkWeaver(){
 		if($("#tags-input").val().length < 1){
@@ -15,11 +17,15 @@ function checkWeaver(){
 			return false;
 		}
 		
-		if(!check)
+		if(!idCheck || !passwordCheck || !emailCheck){
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
-				
+			alert(idCheck);
+			alert(passwordCheck);
+			alert(emailCheck);
+			return false;
+		}
 		$("form:first").append($("input[name='tags']"));
-		return check;
+		return idCheck&&passwordCheck&&emailCheck;
 	}
 
 $(document).ready(function() {
@@ -39,14 +45,14 @@ $(document).ready(function() {
 		
 		if(t.length <5){
 			alert("아이디를 최소 5자 이상 입력해주세요!");
-  			check = false;
+			idCheck = false;
   			return;
 		}
 		var objPattern =  /[~!@\#$%^&*\()\=+_']/gi;
 		  
 		if(objPattern.test(t)){
   		alert("특수문자를 입력할수 없습니다!");
-  		check = false;
+  		idCheck = false;
   	    }
 			
 		  $.ajax({                         
@@ -54,11 +60,11 @@ $(document).ready(function() {
 			    url: "/check",
 			    data: "id="+$("#id").val(),
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
-				    if(msg==true){
+				    if(msg){
 				    	alert("닉네임이 중복됩니다!");
-			    		check = false;
+				    	idCheck = false;
 					    }else{
-			    	check = true;
+					    idCheck = true;
 				 }
 			   }
 			});
@@ -70,9 +76,9 @@ $(document).ready(function() {
 		
 	    if($("#password").val().length<=3){
 	    	alert("비밀번호를 4자리 이상 입력해주세요!");
-    		check = false;
+	    	passwordCheck = false;
     	    }else{
-	    	check = true;
+    	    	passwordCheck = true;
 		 }
 	});
 	$("#rePassword").focusout(function() {
@@ -82,10 +88,7 @@ $(document).ready(function() {
 		
 		if($("#password").val()!=$("#rePassword").val()){
 			alert("비밀번호가 일치하지 않습니다!");
-    		check = false;
-    	    }else{
-	    	check = true;
-		 }
+    	 }
 	});
 	$("#email").focusout(function() {
 		var t = escape($("#email").val());
@@ -95,9 +98,9 @@ $(document).ready(function() {
 		
 		  if(t.match(/^(\w+)@(\w+)[.](\w+)$/ig) == null && t.match(/^(\w+)@(\w+)[.](\w+)[.](\w+)$/ig) == null){
 			  alert("올바른 이메일 주소를 입력해주세요!");
-    		check = false;
+			  emailCheck = false;
     	    }else{
-	    	check = true;
+    	    	emailCheck = true;
 		 }
 		  $.ajax({                         
 			    type: "POST",
@@ -106,9 +109,9 @@ $(document).ready(function() {
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
 				    if(msg){
 				    	alert("이메일이 중복됩니다!");
-			    		check = false;
+				    	emailCheck = false;
 					    }else{
-			    	check = true;
+					    	emailCheck = true;
 				 }
 			   }
 			});

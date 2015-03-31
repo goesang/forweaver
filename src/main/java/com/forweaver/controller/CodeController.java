@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -138,7 +139,7 @@ public class CodeController {
 		String name = request.getParameter("name");
 		String content = request.getParameter("content");
 
-		if(tags == null || name == null || content == null || file == null){ // 태그가 없을 때
+		if(tags == null || name == null || content == null || file == null || !Pattern.matches("(^[A-Za-z0-9]{5,15}$)", name)){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/");
 			return "/alert";

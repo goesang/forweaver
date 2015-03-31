@@ -237,11 +237,11 @@ function checkPost(){
 						class="input-block-level">
 				</div>
 			</div>
-			<form id="postForm" onsubmit="return checkPost()"
+			<form id="postForm" onkeypress="return event.keyCode != 13;" onsubmit="return checkPost()"
 				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
 				<div class="span10">
-					<input id="post-title-input" class="title span10" name="title"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
+					<input maxlength="144"  id="post-title-input" class="title span10" name="title"
+						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 144자 입력)" type="text"
 						value="" />
 				</div>
 				<div class="span2">

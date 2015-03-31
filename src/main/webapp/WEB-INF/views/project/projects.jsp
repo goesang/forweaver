@@ -158,8 +158,8 @@
 			<form onsubmit="return checkProject()" action="/project/add" method="post">
 
 				<div id="project-div" class="span10">
-					<input id ="project-name" class="title span5"
-						placeholder="프로젝트명을 입력해주세요!" name="name" type="text" /> 
+					<input maxlength="15" id ="project-name" class="title span5"
+						placeholder="프로젝트명을 입력해주세요! (영문 숫자 조합)" name="name" type="text" /> 
 					
 					
 					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 <input type="radio"
@@ -169,7 +169,7 @@
 					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
 						name="group"  data-toggle="radio"> 과제
 					</label> 
-						<input name ="description"class="title span12" type="text" id="project-description"
+						<input maxlength="144" name ="description"class="title span12" type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요!"></input>
 				</div>
 
