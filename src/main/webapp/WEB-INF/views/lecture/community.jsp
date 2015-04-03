@@ -163,8 +163,8 @@ var editorMode = false;
 				</div>
 				<div class="span12">
 					<textarea style="display: none;" id="post-content-textarea"
-						class="post-content span12" onkeyup="textAreaResize(this)"
-						placeholder="글 내용을 입력해주세요!"></textarea>
+						class="post-content span12" 
+						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 				</div>
 				<div class="span12">
 					<table id="post-table" class="table table-hover">

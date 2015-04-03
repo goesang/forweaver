@@ -1,11 +1,14 @@
 package com.forweaver.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -167,7 +170,7 @@ public class ProjectController {
 		if(params.get("category") != null)
 			categoryInt = Integer.parseInt(params.get("category"));
 
-		if(params.get("name").length() <5 || params.get("description").length() <5  || !tagService.isPublicTags(tagList)){
+		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", params.get("name")) || params.get("name").length() <5 || params.get("description").length() <5  || !tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/");
 			return "/alert";
@@ -202,6 +205,43 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 
+	
+	@RequestMapping(value = {"/{creatorName}/{projectName}/data/commit:{commit}/**"})
+	public void data(HttpServletRequest request,@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commit") String commit,HttpServletResponse res) throws IOException {
+		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
+		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+		filePath = filePath.replace(",jsp", ".jsp");
+
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
+		
+		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
+
+		if (gitFileInfo.getContent() == null) {
+			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
+			return;
+		} else {
+			
+			byte[] imgData;
+			
+				imgData = gitFileInfo.getContent().getBytes();
+			
+			res.reset();
+			res.setContentType("application/octet-stream");
+			String Encoding = new String(gitFileInfo.getName().getBytes("UTF-8"), "8859_1");
+			res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
+			res.setContentType(WebUtil.getFileExtension(gitFileInfo.getName()));
+			OutputStream o = res.getOutputStream();
+			o.write(imgData);
+			o.flush();
+			o.close();
+			return;
+		} 
+
+	}
+	
 	@RequestMapping(value=
 		{	"/{creatorName}/{projectName}", 
 		"/{creatorName}/{projectName}/browser"}
@@ -248,6 +288,8 @@ public class ProjectController {
 		}else{ // 파일이라면
 			model.addAttribute("project", project);
 			model.addAttribute("fileName", gitFileInfo.getName());
+			if(!WebUtil.isCodeName(gitFileInfo.getName()))
+				gitFileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
 			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
 			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
@@ -277,6 +319,8 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("fileName", gitFileInfo.getName());
+		if(!WebUtil.isCodeName(gitFileInfo.getName()))
+			gitFileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
 		model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
@@ -351,7 +395,7 @@ public class ProjectController {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-		if(title.length() < 5 || title.length() > 144
+		if(title.length() < 5 || title.length() > 200
 				|| (content.length() >0 && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
@@ -557,7 +601,7 @@ public class ProjectController {
 				postService.add(post,null);
 				post = new Post(currentWeaver, 
 						deleteWeaver.getId()+"님이 프로젝트명:"+project.getName()+"에서 탈퇴 당하셨습니다.", "", 
-						tagService.stringToTagList("$"+deleteWeaver.getId()+",탈퇴"));//프로젝트에 메세지 보냄
+						tagService.stringToTagList("$"+deleteWeaver.getId()));//프로젝트에 메세지 보냄
 				postService.add(post, null);
 				model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/weaver/");
 
@@ -603,7 +647,7 @@ public class ProjectController {
 			Post post = new Post(projectCreator,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+weaverName+",가입초대"),true);
+					tagService.stringToTagList("$"+weaverName),true);
 			waitJoinService.createWaitJoin(
 					project.getName(), 
 					proposer.getId(), 
@@ -632,7 +676,7 @@ public class ProjectController {
 			Post post = new Post(waitingWeaver,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+project.getCreatorName()+",가입요청"),true);
+					tagService.stringToTagList("$"+project.getCreatorName()),true);
 			waitJoinService.createWaitJoin(
 					project.getName(), 
 					waitingWeaver.getId(), 
@@ -750,7 +794,7 @@ public class ProjectController {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		if(!projectService.uploadZip(project, currentWeaver,branchName, message, zip)){
-			model.addAttribute("say", "업로드 실패! 압축파일을 다시 확인해주세요!");
+			model.addAttribute("say", "업로드 실패! 프로젝트에 가입되어 있는지 혹은 압축파일을 다시 확인해주세요!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";
 		}
@@ -810,7 +854,7 @@ public class ProjectController {
 
 		return "/project/chat";
 	}
-
+/*
 	@RequestMapping("/{creatorName}/{projectName}/fork") // 포크
 	public String fork(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model){
@@ -832,7 +876,7 @@ public class ProjectController {
 			return "redirect:/project/"+newProjectName;
 		}
 	}
-
+/*
 	@RequestMapping("/{creatorName}/{projectName}/cherry-pick") // 채리픽 요청 목록
 	public String cherryPickRequests(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model){

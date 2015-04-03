@@ -35,6 +35,10 @@ public class DataController {
 			return;
 		} else {
 			byte[] imgData = data.getContent();
+			res.reset();
+			res.setContentType("application/octet-stream");
+			String Encoding = new String(data.getName().getBytes("UTF-8"), "8859_1");
+			res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
 			res.setContentType(data.getType());
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);

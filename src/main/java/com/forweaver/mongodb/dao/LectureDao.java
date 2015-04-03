@@ -37,7 +37,7 @@ public class LectureDao {
 	 * @return
 	 */
 	public Lecture get(String lectureName) {
-		Query query = new Query(Criteria.where("_id").regex(Pattern.compile(lectureName, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
+		Query query = new Query(Criteria.where("_id").is(lectureName));
 		return mongoTemplate.findOne(query, Lecture.class);
 	}
 

@@ -53,6 +53,7 @@ public class Lecture implements Serializable {
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = name;
+		this.name = this.name.toLowerCase();
 		this.description = description;
 		this.openingDate = new Date();
 		this.creator = weaver;

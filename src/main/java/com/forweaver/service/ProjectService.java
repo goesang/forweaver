@@ -236,7 +236,7 @@ public class ProjectService{
 	 * @param zip
 	 */
 	public boolean uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
-		if(message==null || message.length() == 0 || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
+		if(message==null || message.length() < 5 ||weaver  == null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return false;
 		gitUtil.Init(project);
 		try{

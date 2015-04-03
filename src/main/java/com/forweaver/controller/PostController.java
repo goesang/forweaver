@@ -165,7 +165,7 @@ public class PostController {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-		if(tags == null || title == null || title.length() < 5 || title.length() > 144
+		if(tags == null || title == null || title.length() < 5 || title.length() > 200
 				|| (content.length() >0 && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/");
@@ -283,7 +283,7 @@ public class PostController {
 			return "/alert";
 		}
 		
-		if(post ==  null || rePost == null || content.length() < 5) {// 입력을 제대로 했는지 검사
+		if(post ==  null || rePost == null || content.length() < 5 || content.length() > 200) {// 입력을 제대로 했는지 검사
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+rePost.getOriginalPost().getPostID());
 			return "/alert";
@@ -383,9 +383,9 @@ public class PostController {
 		}
 		post.setTitle(title);
 		post.setContent(content);
-
+		post.setTags(tagList);
 		postService.update(post,null);
-
+		
 		return "redirect:/community/"+postID;	
 	}
 
@@ -395,7 +395,7 @@ public class PostController {
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if(post == null || rePost == null || weaver == null || !rePost.getWriterName().equals(weaver.getId())){
+		if(post == null || rePost == null || weaver == null || !rePost.getWriter().equals(weaver)){
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";

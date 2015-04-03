@@ -22,9 +22,14 @@
 	}
 	
 	function fileUploadChange(fileUploader){
-		var fileName = $(fileUploader).val();			
+		var fileName = $(fileUploader).val();	
+		fileName = replaceAll(fileName,"?","_");
+		fileName = replaceAll(fileName,"#","_");
+		fileName = replaceAll(fileName," ","_");			
 		$(function (){
 		if(fileName !=""){ // 파일을 업로드하거나 수정함
+			
+			
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
 			fileHash[fileName] = mongoObjectId();
@@ -90,6 +95,8 @@
 					$(".file-div").fadeIn();
 					$("#repost-table").hide();
 					$("#myTab").hide();
+					if($("#repost-content").val().length == 0)
+						$("#repost-content").css('height','200px');
 			});
 			
 			$("#repost-content").focusout(function(){	
@@ -99,6 +106,8 @@
 					$("#repost-table").fadeIn();
 					$("#myTab").fadeIn();
 		      }
+				if($("#repost-content").val().length == 0)
+					$("#repost-content").css('height','auto');
 		});
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
@@ -168,20 +177,28 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
+								<c:if test="${code.writerName==currentUser}">	
 								<div class="function-div pull-right">
 									<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 										href="/code/${code.codeID}/delete"> <span
 										class="function-button">삭제</span></a>
-								</div></td>
+								</div>
+								</c:if>
+								</td>
 
 						</tr>
 						<c:forEach items="${code.codes}" var="simpleCode" varStatus="status">
 							<tr>
 								<td colspan="5"><span
 									onclick="javascript:hideAndShowSourceCode(${status.count})"
-									class="function-button function-file" title='코드 다운로드'> <i
+									class="function-button function-file"> <i
 										class='icon-file icon-white'></i> ${simpleCode.fileName}
-								</span></td>
+								</span>
+								<a href="${simpleCode.fileName}">
+									<span class="function-button" title='파일 다운로드'> <i class='icon-file icon-white'></i> 다운로드
+									</span>
+								</a>
+								</td>
 							</tr>
 							
 							<tr>
@@ -191,7 +208,14 @@
 									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
 									
 									<c:if test="${!simpleCode.fileName.endsWith('.md')}">
-										<pre id="code-${status.count}">${cov:htmlEscape(simpleCode.getContent())}</pre>
+									
+										<c:if test="${!simpleCode.isImgFile()}">
+											<pre id="code-${status.count}">${cov:htmlEscape(simpleCode.getContent())}</pre>
+										</c:if>
+										<c:if test="${simpleCode.isImgFile()}">
+											<img src="/code/${code.codeID}/${simpleCode.fileName}">
+										</c:if>
+										
 									</c:if>
 									
 									<c:if test="${simpleCode.fileName.endsWith('.md')}">
@@ -214,14 +238,21 @@
 
 					<div style="margin-left: 0px" class="span11">
 						<textarea name="content" id="repost-content"
-							class="post-content span10" onkeyup="textAreaResize(this)"
-							placeholder="답변할 내용을 입력해주세요!"></textarea>
+							class="post-content span10" 
+							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>
-							<button type="submit" class="post-button btn btn-primary" title='답변 올리기'>
+							<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
 								<i class="fa fa-check"></i>
 							</button>
+					</sec:authorize>
+					<sec:authorize access="isAuthenticated()">
+						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
+								<i class="fa fa-check"></i>
+							</button>
+					</sec:authorize>
 						</span>
 					</div>
 					<div class="file-div"></div>
@@ -254,14 +285,16 @@
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
 									<div class="pull-right">
+									<sec:authorize access="isAuthenticated()">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
-										<!-- <a href="/code/${code.codeID}/${rePost.rePostID}/update"> <span
-											class="function-button">수정</span></a>-->
+									</sec:authorize>	
+									<c:if test="${rePost.writerName==currentUser}">	
 										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 											href='/code/${code.codeID}/${rePost.rePostID}/delete'> <span
 											class="function-button">삭제</span>
 										</a>
+									</c:if>
 									</div>
 								</td>
 								<td class="td-button"><span class="span-button">${rePost.push}
@@ -297,12 +330,13 @@
 									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
 										${reply.content} - <b>${reply.writerName}</b>
 										${reply.getFormatCreated()}
+										<c:if test="${reply.writerName==currentUser}">
 										<div class="function-div pull-right">
-											<a onclick="return confirm('정말로 삭제하시겠습니까?');"
-												href='/code/${code.codeID}/${rePost.rePostID}/${reply.number}/delete'>
+											<a
+												href="javascript:deleteReply(${post.postID},${rePost.rePostID},${reply.number})">
 												<i class='icon-remove'></i>
 											</a>
-										</div></td>
+										</div></c:if></td>
 								</tr>
 							</c:forEach>
 						</c:forEach>

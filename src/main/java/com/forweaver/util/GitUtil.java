@@ -203,6 +203,7 @@ public class GitUtil {
 					index++;
 				}
 			}
+			
 
 		} finally {
 
@@ -614,9 +615,15 @@ public class GitUtil {
 					String content = "";
 					while ((len = zis.read(buffer)) != -1)
 					{
-						content += new String(buffer, 0, len,Charset.forName("EUC-KR"));
+						if(WebUtil.isCodeName(ze.getName()))
+							content += new String(buffer, 0, len,Charset.forName("EUC-KR"));
+						else
+							content += new String(buffer, 0, len,Charset.forName("8859_1"));
 					}
-					fos.write(content.getBytes());
+					if(WebUtil.isCodeName(ze.getName()))
+						fos.write(content.getBytes());
+					else
+						fos.write(content.getBytes("8859_1"));
 					fos.close();   
 				}
 				ze = zis.getNextEntry();

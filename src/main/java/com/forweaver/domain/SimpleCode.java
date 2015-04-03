@@ -28,4 +28,8 @@ public class SimpleCode  implements Serializable {
 		this.content = content;
 	}
 	
+	public boolean isImgFile(){
+		return WebUtil.isImageName(this.fileName);
+	}
+	
 }

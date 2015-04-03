@@ -15,10 +15,7 @@
 		var tags = $("#tags-input").val();
 		
 		if(tags.length == 0){
-			$("alert").append("<div class='alert alert-error'>"+
-					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!"+
-					"</div>");
+			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return false;
 		}else{
 			$("form:first").append($("input[name='tags']"));
@@ -34,8 +31,11 @@
 	$(function() {
 		changeValue(${project.category});
 		
-		$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'><c:if test='${!tag.startsWith("@")}'>${tag},</c:if></c:forEach>"));
+		move = false;
+		<c:forEach items='${project.tags}' var='tag'>
+		$('#tags-input').tagsinput('add',"${tag}");
+		</c:forEach>
+		move = true;
 	});
 	</script>
 	<div class="container">
@@ -58,14 +58,14 @@
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li class="active"><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() <= 0}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
@@ -106,7 +106,7 @@
 					<a  href="/project/${project.name}/delete" onclick="return confirm('정말로 프로젝트를 삭제하시겠습니까?')"
 						class="post-button btn btn-danger"  title="프로젝트를 삭제합니다!"> <i class="fa fa-remove"></i>
 					</a>
-						<button id='project-ok' class="post-button btn btn-primary" title="프로젝트 올리기">
+						<button onclick="confirm('정말 이대로 수정하시겠습니까?')" id='project-ok' class="post-button btn btn-primary" title="프로젝트 올리기">
 							<i class="fa fa-check"></i>
 						</button>
 

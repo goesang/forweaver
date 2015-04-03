@@ -18,7 +18,10 @@
 			
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
-			
+
+			fileName = replaceAll(fileName,"?","_");
+			fileName = replaceAll(fileName,"#","_");
+			fileName = replaceAll(fileName," ","_");
 			fileArray[i] = fileName;
 		}
 		
@@ -30,10 +33,11 @@
 		}else if($('#post-title-input').val().length <5){
 			alert("최소 5자 이상 입력해주세요!");
 			return false;
-		}else if($('#post-title-input').val().length > 144){
-			alert("최대 144까지만 입력해주세요!");
+		}else if($('#post-title-input').val().length > 200){
+			alert("최대 200까지만 입력해주세요!");
 			return false;
 		}else{
+			$("form:first").append($("#post-title-input"));
 			$("form:first").append($("input[name='tags']"));
 			return true;
 		}
@@ -80,6 +84,15 @@
 					  "</div>"+
 					"</div>");
 			
+			$( "#post-title-input" ).focus(function() {
+				var tags = $("#tags-input").val();
+				if(tags.length == 0){
+					$( "#post-title-input" ).val('');
+					alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
+					return;
+				}
+			});
+			
 			$( "#post-title-input" ).keypress(function() {
 				var tags = $("#tags-input").val();
 				if(tags.length == 0){
@@ -125,6 +138,8 @@
 									movePage(tagNames,$('#post-title-input').val());
 								}
 							});
+					
+					
 					var pageCount = ${postCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
@@ -138,25 +153,34 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+				        
+				        $("#post-content-textarea").focus(function(){	
+							if($("#post-content-textarea").val().length == 0)
+								$("#post-content-textarea").css('height','200px');
+						});
+						
+						$("#post-content-textarea").focusout(function(){	
+							if($("#post-content-textarea").val().length == 0)
+								$("#post-content-textarea").css('height','auto');
+						});
 		});
 
 		function fileUploadChange(fileUploader){
 			var fileName = $(fileUploader).val();			
-			var blank_pattern = /[\s]/g;
+
 			$(function (){
 			
-			if( blank_pattern.test(fileName)){
-				alert("파일 이름에 공백이 포함될 수 없습니다!");
-				return;
-			}
-			
-			if( fileName.length > 30 ){
+			if( fileName.length > 70 ){
 				alert("파일 이름이 너무 깁니다!");
 				return;
 			}
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
 					fileName = fileName.substring(12);
+				fileName = replaceAll(fileName,"?","_");
+				fileName = replaceAll(fileName,"#","_");
+				fileName = replaceAll(fileName," ","_");
+				
 				fileHash[fileName] = mongoObjectId();
 				$.ajax({
 				    url: '/data/tmp',
@@ -193,6 +217,8 @@
 					--fileCount;
 			}}});
 		}
+		
+		
 		
 	</script>
 	<div class="container">
@@ -234,34 +260,48 @@
 				</ul>
 			</div>
 
-			<form onkeypress="return event.keyCode != 13;"  id="postForm" onsubmit="return checkPost()"
-				action="/community/add" enctype="multipart/form-data" METHOD="POST">
-
-				<div class="span9">
-					<input maxlength="144"  id="post-title-input" class="title span9" name="title"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 144자 입력)" type="text"
+		<div class="span9">
+					<input maxlength="200"  id="post-title-input" class="title span9" name="title"
+					title="이곳에 내용 입력하시고 오른쪽의 검색버튼을 누르면 검색이! 맨 오른쪽의 체크 버튼을 누르면 트위터 처럼 글을 쓸 수 있습니다."
+						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 200자 입력)" type="text"
 						value="" />
 				</div>
+
+			<form id="postForm" onsubmit="return checkPost()"
+				action="/community/add" enctype="multipart/form-data" METHOD="POST">
+
 				<div class="span3">
 					<span> <a id='search-button' title="글 검색하기"
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="show-content-button" title="글 내용 작성하기"
+					</a> 
+					<sec:authorize access="isAuthenticated()">
+					<a id="show-content-button" title="글 내용 작성하기"
 						href="javascript:showPostContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
 						href="javascript:hidePostContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
-						<button id='post-ok' title="글 올리기" class="post-button btn btn-primary">
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+					<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+					</button> 
+						<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!" class="post-button btn btn-primary">
+							<i class="fa fa-times"></i>
+						</button>
+					</sec:authorize>
+					<sec:authorize access="isAuthenticated()">
+						<button  id='post-ok' title="글 올리기" class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
-
+					</sec:authorize>
 					</span>
 				</div>
 				<div class="span12">
 					<textarea style="display: none;" id="post-content-textarea" name="content"
-						class="post-content span12" onkeyup="textAreaResize(this)"
-						placeholder="글 내용을 입력해주세요!"></textarea>
+						class="post-content span12" 
+						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 						<div class="file-div"></div>
 				</div>
 			</form>
@@ -284,7 +324,7 @@
 										<c:if test="${post.isNotice()}">${post.title}</c:if>
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind == 3 && post.getWriterName().equals(currentUser)}">
+										test="${post.kind == 3 && post.getWriterName().equals(currentUser.id)}">
 										<a href="/community/${post.postID}"> <span
 											class="span-button"> <i class="fa fa-envelope-o"></i>
 												<p class="p-button">보냄</p>
@@ -292,7 +332,7 @@
 										</a>
 									</c:if> 
 									<c:if
-										test="${post.kind == 3 && !post.getWriterName().equals(currentUser)}">
+										test="${post.kind == 3 && !post.getWriterName().equals(currentUser.id)}">
 										<a href="/community/${post.postID}"> <span
 											class="span-button"> <i class="fa fa-envelope"></i>
 												<p class="p-button">받음</p>
@@ -316,7 +356,7 @@
 									${post.getFormatCreated()}</td>
 								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
 										var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private

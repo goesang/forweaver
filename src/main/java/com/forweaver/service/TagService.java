@@ -38,19 +38,26 @@ public class TagService {
 	}
 	
 	public boolean validateTag(List<String> tagList,Weaver weaver) {
-
-		
+		System.out.println("validateTag");
+		System.out.println(tagList);
 		List<String> publicTags = new ArrayList<String>();
 		List<String> privateTags = new ArrayList<String>();
 		List<String> massageTags = new ArrayList<String>();
-
+		boolean myTag = false;
 		if (tagList.size() == 0)
 			return false;
 
 		for (String tag : tagList) {
+			if(tag.equals("$")||tag.equals("@")||tag.contains(".")||tag.contains("?") || tag.contains("#"))
+				return false;
+			
 			if (tag.startsWith("@")){
 					privateTags.add(tag);
 			}else if(tag.startsWith("$")){
+				if(weaver == null) return false;
+				
+				if(tag.equals("$"+weaver.getId()))
+					myTag = true;
 				massageTags.add(tag);
 			}
 			else
@@ -64,6 +71,12 @@ public class TagService {
 			return true;
 		
 		if (privateTags.size() >= 2) // 권한을 가진 태그가 2개일때
+			return false;
+		
+		if(massageTags.size() >= 3) //메세지 태그가 세개 이상일 때
+			return false;
+		
+		if(!myTag && massageTags.size() == 2) //자신의 태그가 없고 메세지 태그가 두개 아닐 때
 			return false;
 		
 		if (privateTags.size() >0 && massageTags.size() > 0) // 권한을 가진 태그가 있고 메세지 태그가 있을때
@@ -112,7 +125,7 @@ public class TagService {
 			return false; 
 		
 		for (String tag : tags) {
-			if (tag.startsWith("@") || tag.startsWith("$"))
+			if (tag.startsWith("@") || tag.startsWith("$") || tag.contains(".")||tag.contains("?") || tag.contains("#"))
 				return false;
 		}
 		return true;

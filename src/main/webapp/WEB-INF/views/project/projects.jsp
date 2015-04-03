@@ -9,7 +9,7 @@
 	<script>
 	
 	function checkProject(){
-		var objPattern = /^[a-zA-Z0-9]+$/;
+		var objPattern = /^[a-z0-9_]+$/;
 		var name = $('#project-name').val();
 		var description = $('#project-description').val();
 		var tags = $("#tags-input").val();
@@ -18,13 +18,13 @@
 			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return false;
 		}else if(!objPattern.test(name)){
-			alert("프로젝트명은 영문 숫자 조합이어야 합니다. 다시 입력해주세요!");
+			alert("프로젝트명은 영문 숫자 언더바 조합이어야 합니다. 다시 입력해주세요!");
 			return false;
 		}
-		else if(name.length == 0){
-			alert("프로젝트명을 입력하시지 않았습니다. 프로젝트명을 입력해주세요!");
+		else if(name.length <4){
+			alert("프로젝트명은 5자 이상이어야 합니다!");
 			return false;
-		}else if(description.lenght == 0){
+		}else if(description.lenght <5){
 			alert("프로젝트 소개를 입력하시지 않았습니다. 프로젝트 소개를 입력해주세요!");
 			return false;
 		}else{
@@ -92,6 +92,16 @@
 
 							});
 
+					$( "#post-search-input" ).focus(function() {
+						var tags = $("#tags-input").val();
+						if(tags.length == 0){
+							$( "#post-search-input" ).val('');
+							alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
+							return;
+						}
+					});
+					
+					
 					$('#search-button').click(
 							function() {
 									var tagNames = $("#tags-input").val();
@@ -169,22 +179,35 @@
 					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
 						name="group"  data-toggle="radio"> 과제
 					</label> 
-						<input maxlength="144" name ="description"class="title span12" type="text" id="project-description"
+						<input maxlength="200" name ="description"class="title span12" type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요!"></input>
 				</div>
 
 				<div class="span2">
-					<span> <a id="show-content-button"
+					<span> 
+					<sec:authorize access="isAuthenticated()">
+					<a id="show-content-button"
 						href="javascript:showProjectContent();"
 						class="post-button btn btn-primary" title="프로젝트 개설하기"> <i class="fa fa-pencil"></i>
-					</a> <a id='search-button' class="post-button btn btn-primary" title="프로젝트 검색하기"> <i class="fa fa-search"></i>
-					</a> <a id="hide-content-button" href="javascript:hideProjectContent();"
+					</a> 
+					</sec:authorize>
+					
+					<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" title="로그인을 하셔야 프로젝트를 업로드 할 수 있습니다!" class="post-button btn btn-primary">
+							<i class="fa fa-times"></i>
+						</button>
+					</sec:authorize>
+					
+					<a id='search-button' class="post-button btn btn-primary" title="프로젝트 검색하기"> <i class="fa fa-search"></i>
+					</a> 
+					
+					<a id="hide-content-button" href="javascript:hideProjectContent();"
 						class="post-button btn btn-primary"  title="개설 취소하기"> <i class="fa fa-pencil"></i>
 					</a>
-						<button id='project-ok' class="post-button btn btn-primary" title="프로젝트 올리기">
+
+						<button id='project-ok' title='프로젝트 올리기' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
-
 					</span>
 				</div>
 				<input value="0" id ="category" name="category" type="hidden"/> 	
@@ -209,10 +232,9 @@
 								</a></td>
 								<td class="td-button" rowspan="2">
 								 <c:if test="${project.category == 0}">
-										<a href="/project/${project.name}/push"> <span
+										<span
 											class="span-button">${project.push}<p class="p-button">추천</p>
 										</span>
-										</a>
 									</c:if>
 								<c:if test="${project.category == 1}">
 										<span
@@ -233,16 +255,16 @@
 									</td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
-										<a href="/project/${project.name}/join"> <span
-											class="span-button"><i class="fa fa-times"></i>
+										<a href="/login"> <span
+											class="span-button"><i class="fa fa-hand-o-up"></i>
 												<p class="p-button">가입</p></span>
-										</a>
+										</a>      
 									</sec:authorize> <sec:authorize access="isAuthenticated()">
 										<c:if
 											test="${project.isJoin() == 0}">
-											<a href="/project/${project.name}/join"> <span
-												class="span-button"><i class="fa fa-times"></i>
-													<p class="p-button">미가입</p></span>
+											<a onclick="return confirm('정말로 가입 요청을 보내시겠습니까?')" href="/project/${project.name}/join"> <span
+												class="span-button"><i class="fa fa-hand-o-up"></i>
+													<p class="p-button">가입</p></span>
 											</a>
 										</c:if>
 										<c:if
@@ -264,7 +286,7 @@
 									${project.getOpeningDateFormat()}</td>
 								<td class="post-bottom-tag"><c:forEach
 										items="${project.tags}" var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private

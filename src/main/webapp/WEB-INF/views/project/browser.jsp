@@ -24,6 +24,22 @@ function hideUploadContent() {
 	$('#fileBrowserTable').show('slow');
 }
 
+function checkZipUpload(){
+	var fileName = $("#file").val();
+	fileName = fileName.toUpperCase();
+	if(fileName.indexOf(".ZIP", fileName.length - 4) == -1){
+		alert("반드신 zip형태의 파일로 업로드 하셔야 합니다!");
+		return false;
+	}
+	
+	if($("#commit-message").val() < 5){
+		alert("커밋 메세지는 꼭 5자 이상 입력하셔야 합니다!");
+		return false;
+	}
+	
+	return true;
+}
+
 
 $(document).ready(function() {
 	
@@ -83,14 +99,14 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() <= 0}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
@@ -108,13 +124,23 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<label id="labelPath"></label>
 				</div>
 				<div style="width: 140px;" class="span3">
+				
+					<sec:authorize access="isAuthenticated()">
+					
 					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
 						href="javascript:showUploadContent();"> <i
-						class="fa fa-arrow-circle-o-up"> </i></a> <a
+						class="fa fa-arrow-circle-o-up"> </i></a> 
+						
+					<a
 						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"
 						href="javascript:hideUploadContent();"> <i
 						class="fa fa-arrow-circle-o-up"> </i></a> 
-						
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" title="로그인을 하셔야 업로드가 가능합니다!"
+						class="btn btn-primary"> <i class="fa fa-times"></i>
+					</button> 
+					</sec:authorize>
 					<a style="font-size:11px"
 						class="btn btn-primary" title="프로젝트 .zip파일로 다운로드"
 						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
@@ -136,11 +162,11 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 							value="/project/${project.name}/browser/commit:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
-				<form id="upload-form" enctype="multipart/form-data" 
+				<form onsubmit="return checkZipUpload();" id="upload-form" enctype="multipart/form-data" 
 				action="/project/${project.name}/${selectBranch}/upload" method="post">
 					<div class="span12">
-						<input class="title span10" type="text" name="message"
-							placeholder="커밋을 입력해주세요!"></input>
+						<input class="title span10" type="text" id = "commit-message" name="message"
+							placeholder="프로젝트의 각종 변경사항을 입력해주세요!"></input>
 						<button type="submit" class="post-button btn btn-primary" title="프로젝트 등록"
 							style="margin-top: -10px; display: inline-block;">
 							<i class="fa fa-check"></i>
@@ -153,13 +179,17 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 								<div class='form-control' data-trigger='fileinput' title="업로드할 파일을 선택하세요">
 									<i class='icon-file '></i> <span class='fileinput-filename'></span>
 								</div>
+								
+								
 								<span class='input-group-addon btn btn-primary btn-file'><span
-									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
+									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i> ZIP으로 업로드</span>
 									<span class='fileinput-exists'><i
 										class='icon-repeat icon-white'></i></span> <input type='file'
-									id='file' multiple='true' name='zip'></span> <a href='#'
+									id='file' multiple='true' name='zip'></span> 
+									<a href='#'
 									class='input-group-addon btn btn-primary fileinput-exists' title="업로드 취소"
 									data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+									
 							</div>
 						</div>
 					</div>

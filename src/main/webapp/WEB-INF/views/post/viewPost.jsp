@@ -12,17 +12,11 @@
 	var fileHash = {};
 	function fileUploadChange(fileUploader){
 		var fileName = $(fileUploader).val();	
-		var blank_pattern = /[\s]/g;
+		fileName = replaceAll(fileName,"?","_");
+		fileName = replaceAll(fileName,"#","_");
+		fileName = replaceAll(fileName," ","_");
 		$(function (){
-			if( blank_pattern.test(fileName)){
-				alert("파일 이름에 공백이 포함될 수 없습니다!");
-				return;
-			}
-			
-			if( fileName.length > 30 ){
-				alert("파일 이름이 너무 깁니다!");
-				return;
-			}
+		
 		if(fileName !=""){ // 파일을 업로드하거나 수정함
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
@@ -69,7 +63,7 @@
 			if(comment != rePostID){
 			$("#comment-form-td-"+rePostID).append("<form class='comment-form' action='/community/${post.postID}/"+rePostID+"/add-reply' method='POST'>"+
 			"<div style='padding-left:20px;' class='span10'>"+
-			"<input id='reply-input'  type ='text' name='content' class='reply-input span10'  placeholder='답변할 내용을 입력해주세요!'></input></div>"+
+			"<input id='reply-input'  type ='text' name='content' class='reply-input span10'  maxlength='200' placeholder='답변할 내용을 입력해주세요!'></input></div>"+
 			"<div class='span1'><span><button type='submit' class='post-button btn btn-primary'>"+
 			"<i class='icon-ok icon-white'></i></button></span></div></form>");
 			comment = rePostID;
@@ -90,6 +84,8 @@
 					$(".file-div").fadeIn();
 					$("#repost-table").hide();
 					$("#myTab").hide();
+					if($("#repost-content").val().length == 0)
+						$("#repost-content").css('height','200px');
 			});
 			
 			$("#repost-content").focusout(function(){	
@@ -99,6 +95,8 @@
 					$("#repost-table").fadeIn();
 					$("#myTab").fadeIn();
 		      }
+				if($("#repost-content").val().length == 0)
+					$("#repost-content").css('height','auto');
 		});
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
@@ -130,11 +128,13 @@
 							<td class="td-post-writer-img none-top-border" rowspan="2">
 								<a href="/${post.writerName}"><img src="${post.getImgSrc()}"></a>
 							</td>
-							<td colspan="2" class="post-top-title none-top-border"><a
-								rel="external" class="a-post-title"
-								href="/community/tags:<c:forEach items='${post.tags}' var='tag'>${tag},</c:forEach>">
-									<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
-										<c:if test="${post.isNotice()}">${post.title}</c:if></a></td>
+							<td colspan="2" class="post-top-title none-top-border">
+									<c:if test="${!post.isNotice()}">
+									<s:eval expression="T(com.forweaver.util.WebUtil).addLink(T(com.coverity.security.Escape).html(post.title))" /></td>
+									</c:if>
+									<c:if test="${post.isNotice()}">
+									${post.title}
+									</c:if></td>
 							<td class="td-button none-top-border" rowspan="2">
 							<a onclick="return confirm('정말로 추천하시겠습니까?');" href="/community/${post.postID}/push">
 							<span class="span-button">${post.push}
@@ -160,9 +160,8 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
-								<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
-									<c:if
-										test="${post.getWriterName().equals(currentUser.username) }">
+								
+							<c:if test="${post.getWriterName()==currentUser}">
 										<div class="function-div pull-right">
 											<a href="/community/${post.postID}/delete"
 												onclick="return confirm('글을 정말로 삭제하시겠습니까?')"> <span
@@ -173,8 +172,7 @@
 													class="function-button">수정</span></a>
 											</c:if>
 										</div>
-									</c:if>
-								</sec:authorize>
+								</c:if>		
 								</td>
 
 						</tr>
@@ -208,14 +206,21 @@
 
 					<div style="margin-left: 0px" class="span11">
 						<textarea name="content" id="repost-content"
-							class="post-content span10" onkeyup="textAreaResize(this)"
-							placeholder="답변할 내용을 입력해주세요!"></textarea>
+							class="post-content span10" 
+							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>
-							<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
+							<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
+								<i class="fa fa-times"></i>
+							</button>
+					</sec:authorize>
+					<sec:authorize access="isAuthenticated()">
+						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
 								<i class="fa fa-check"></i>
 							</button>
+					</sec:authorize>
 						</span>
 					</div>
 					<div class="file-div"></div>
@@ -249,11 +254,16 @@
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
 									<div class="pull-right">
+										<sec:authorize access="isAuthenticated()">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
+										</sec:authorize>	
+											
+										<c:if test="${rePost.writerName==currentUser}">	
 										<a href='javascript:deleteRePost(${post.postID},${rePost.rePostID})'>
 											<span class="function-button">삭제</span>
 										</a>
+										</c:if>
 									</div>
 								</td>
 								<td class="td-button"><a href="/community/${rePost.rePostID}/push"><span class="span-button">${rePost.push}
@@ -275,7 +285,7 @@
 								</tr>
 							</c:if>
 							<tr>
-								<td class="none-top-border post-content-max" colspan="5">
+								<td class="post-content none-top-border post-content-max" colspan="5">
 								<s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(rePost.getContent())" /></td>
 							</tr>
 
@@ -290,12 +300,13 @@
 									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
 										${reply.content} - <b>${reply.writerName}</b>
 										${reply.getFormatCreated()}
+										<c:if test="${reply.writerName==currentUser}">
 										<div class="function-div pull-right">
 											<a
 												href="javascript:deleteReply(${post.postID},${rePost.rePostID},${reply.number})">
 												<i class='icon-remove'></i>
 											</a>
-										</div></td>
+										</div></c:if></td>
 								</tr>
 							</c:forEach>
 						</c:forEach>

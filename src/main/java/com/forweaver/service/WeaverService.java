@@ -54,14 +54,18 @@ public class WeaverService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
+		System.out.println(id);
+		System.out.println("rrrrrrrrrrrr");
 		Weaver weaver = weaverDao.get(id);
+		System.out.println(weaver.getId());
+		System.out.println("rrrrrrrrrrrr");
 		if (weaver == null)
 			return null;
 		return weaver;
 	}
 
 	public boolean idCheck(String id) { // 이름 중복 체크
-		id = id;
+		id = id.toLowerCase();
 		if(id.equals("project") || id.equals("lecture") || id.equals("repassword") || id.equals("community") ||
 				id.equals("forweaver") || id.equals("weaver") || id.startsWith("rule_") || id.equals("resources") ||
 				id.startsWith("error") || id.equals("login") || id.equals("admin") || id.equals("check") || id.equals("chat") || 

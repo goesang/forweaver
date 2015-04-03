@@ -10,6 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.forweaver.util.WebUtil;
+
 /**<pre>  코드 정보를 담는 클래스
  * codeID 실제 코드 아이디
  * writer 만든이
@@ -178,5 +180,25 @@ public class Code implements Serializable  {
 	
 	public void rePostCountDown() {
 		this.rePostCount -=1;
+	}
+	
+	public SimpleCode getSimpleCode(String fileName){
+		if(fileName == "/")
+			return null;
+		
+		if(fileName.startsWith("/"))
+			fileName = fileName.substring(1);
+		
+		for(SimpleCode simpleCode : this.codes)
+			if(simpleCode.getFileName().equals(fileName))
+				return simpleCode; 
+		return null;		
+	}
+	
+	public void onlyViewCode(){		
+		for(SimpleCode simpleCode : this.codes){
+			if(!WebUtil.isCodeName(simpleCode.getFileName()))
+					simpleCode.setContent("이것은 볼 수 없는 소스 코드입니다!");
+		}
 	}
 }

@@ -49,7 +49,7 @@
 								</td>	
 								<td class="post-bottom-tag">
 									<c:forEach	items="${post.tags}" var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private
@@ -85,7 +85,7 @@
 					<div style ="margin-left:0px" class="span11">
 						<textarea name="content"
 							id="repost-content" class="post-content span10"
-							onkeyup="textAreaResize(this)" placeholder="답변할 내용을 입력해주세요!">${rePost.content}</textarea>
+							 placeholder="답변할 내용을 입력해주세요!">${rePost.content}</textarea>
 					</div>
 					<div class="span1">
 						<span>

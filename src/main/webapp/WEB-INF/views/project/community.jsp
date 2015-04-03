@@ -15,7 +15,9 @@ var fileHash = {};
 function checkPost(){
 	for(var i=0;i<fileCount;i++){
 		var fileName = $("#file"+(i+1)).val();
-		
+		fileName = replaceAll(fileName,"?","_");
+		fileName = replaceAll(fileName,"#","_");
+		fileName = replaceAll(fileName," ","_");
 		if(fileName.indexOf("C:\\fakepath\\") != -1)
 			fileName = fileName.substring(12);
 		
@@ -25,10 +27,11 @@ function checkPost(){
 	if($('#post-title-input').val().length <5){
 		alert("최소 5자 이상 입력해주세요!");
 		return false;
-	}else if($('#post-title-input').val().length > 144){
-		alert("최대 144까지만 입력해주세요!");
+	}else if($('#post-title-input').val().length > 200){
+		alert("최대 200까지만 입력해주세요!");
 		return false;
 	}else{
+		$("form:first").append($("#post-title-input"));
 		$("form:first").append($("input[name='tags']"));
 		return true;
 	}
@@ -113,6 +116,15 @@ function checkPost(){
 
 		            }
 		        }
+			$("#post-content-textarea").focus(function(){	
+				if($("#post-content-textarea").val().length == 0)
+					$("#post-content-textarea").css('height','200px');
+			});
+			
+			$("#post-content-textarea").focusout(function(){	
+				if($("#post-content-textarea").val().length == 0)
+					$("#post-content-textarea").css('height','auto');
+			});
 
 		        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
 		});
@@ -120,18 +132,10 @@ function checkPost(){
 		
 		function fileUploadChange(fileUploader){
 			var fileName = $(fileUploader).val();			
-			var blank_pattern = /[\s]/g;
+			fileName = replaceAll(fileName,"?","_");
+			fileName = replaceAll(fileName,"#","_");
+			fileName = replaceAll(fileName," ","_");
 			$(function (){
-			
-			if( blank_pattern.test(fileName)){
-				alert("파일 이름에 공백이 포함될 수 없습니다!");
-				return;
-			}
-			
-			if( fileName.length > 30 ){
-				alert("파일 이름이 너무 깁니다!");
-				return;
-			}
 			
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
@@ -203,14 +207,14 @@ function checkPost(){
 					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() <= 0}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
@@ -237,13 +241,15 @@ function checkPost(){
 						class="input-block-level">
 				</div>
 			</div>
-			<form id="postForm" onkeypress="return event.keyCode != 13;" onsubmit="return checkPost()"
-				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
-				<div class="span10">
-					<input maxlength="144"  id="post-title-input" class="title span10" name="title"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 144자 입력)" type="text"
+			<div class="span10">
+					<input maxlength="200"  id="post-title-input" class="title span10" name="title"
+						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 200자 입력)" type="text"
 						value="" />
 				</div>
+			
+			<form id="postForm" onkeypress="return event.keyCode != 13;" onsubmit="return checkPost()"
+				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
+				
 				<div class="span2">
 					<span> <a id="show-content-button" href="javascript:showPostContent();" title="글 내용 작성하기"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
@@ -251,16 +257,23 @@ function checkPost(){
 						href="javascript:hidePostContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
-						<button id='post-ok' class="post-button btn btn-primary" title="글 올리기">
+					<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!" class="post-button btn btn-primary">
+							<i class="fa fa-times"></i>
+						</button>
+					</sec:authorize>
+					<sec:authorize access="isAuthenticated()">
+						<button  id='post-ok' title="글 올리기" class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
+					</sec:authorize>
 
 					</span>
 				</div>
 				<div class="span12">
 					<textarea name = content style="display: none;" id="post-content-textarea"
-						class="post-content span12" onkeyup="textAreaResize(this)"
-						placeholder="글 내용을 입력해주세요!"></textarea>
+						class="post-content span12" 
+						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 						<div class="file-div"></div>
 				</div>
 				

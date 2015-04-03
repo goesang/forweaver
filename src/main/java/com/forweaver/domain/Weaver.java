@@ -27,6 +27,7 @@ import com.mongodb.DBObject;
  * joinDate 가입일
  * passes 권한 : 일반 회원의 경우 RULE_USER, 관리자의 경우 RULE_ADMIN 그외 프로젝트의 회원은 1, 관리자는 2
  * tags 태그
+ * isLeave 탈퇴 여부
  * weaverInfo 각종 회원 정보
  * </pre>
  */
@@ -44,6 +45,7 @@ public class Weaver implements UserDetails,Serializable {
 	private String studentID;
 	private Data image;
 	private Date joinDate;
+	private boolean isLeave;
 	private List<Pass> passes = new ArrayList<Pass>();
 	private List<String> tags = new ArrayList<String>();
 
@@ -57,11 +59,13 @@ public class Weaver implements UserDetails,Serializable {
 
 	public Weaver(String id,String email){
 		this.id = id;
+		this.id = this.id.toLowerCase();
 		this.email = email;
 	}
 
 	public Weaver(String id,String email,Data image){
 		this.id = id;
+		this.id = this.id.toLowerCase();
 		this.email = email;
 		this.image = image;
 	}
@@ -70,6 +74,7 @@ public class Weaver implements UserDetails,Serializable {
 
 	public Weaver(String id,String password,String email,List<String> tags,String studentID,String say,Data image){
 		this.id = id;
+		this.id = this.id.toLowerCase();
 		this.password = password;
 		this.email = email;
 		this.tags = tags;
@@ -373,5 +378,22 @@ public class Weaver implements UserDetails,Serializable {
 	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
+
+
+	public boolean isLeave() {
+		return isLeave;
+	}
+
+
+	public void setLeave(boolean isLeave) {
+		this.isLeave = isLeave;
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.id;
+	}
+	
 
 }

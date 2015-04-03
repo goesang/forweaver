@@ -1,6 +1,9 @@
 
 var editorMode = false; 
+function replaceAll(str, searchStr, replaceStr) {
 
+    return str.split(searchStr).join(replaceStr);
+}
 
 function mongoObjectId () {
 	var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
@@ -216,10 +219,6 @@ function moveUserPage(path,tagArrayString,searchWord){
 	window.location = url;
 }
 
-function textAreaResize(obj) {
-	obj.style.height = "1px";
-	obj.style.height = (20+obj.scrollHeight)+"px";
-}
 
 function readURL(input) {
 	if (input.files && input.files[0]) {

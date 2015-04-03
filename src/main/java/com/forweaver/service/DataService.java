@@ -49,6 +49,11 @@ public class DataService {
 	
 	public String getObjectID(String dataName,Weaver weaver){
 		Cache tmpNameCache = cacheManager.getCache("tmpName");
+		dataName = dataName.replace(" ", "_");
+		dataName = dataName.replace("?", "_");
+		dataName = dataName.replace("#", "_");
+		dataName = dataName.trim();
+		
 		Element element = tmpNameCache.get(weaver.getId()+"/"+dataName);
 		
 		if(element == null)

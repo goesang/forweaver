@@ -76,7 +76,7 @@ public class Project implements Serializable {
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
-		this.name = this.name;
+		this.name = this.name.toLowerCase();
 		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();
@@ -89,6 +89,7 @@ public class Project implements Serializable {
 	public Project(String name,Weaver weaver,Project originalProject) { //포크할 때 생성자
 		super();
 		this.name = weaver.getId()+"/"+name;
+		this.name = this.name.toLowerCase();
 		this.category = -1;
 		this.description = originalProject.getDescription();
 		this.openingDate = new Date();

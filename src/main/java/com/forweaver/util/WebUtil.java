@@ -1,10 +1,7 @@
 package com.forweaver.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.markdown4j.Markdown4jProcessor;
 
@@ -21,6 +20,60 @@ import org.markdown4j.Markdown4jProcessor;
  *
  */
 public class WebUtil {
+	
+
+
+	public static String getFileExtension(String fileName) {
+	    int lastIndexOf = fileName.lastIndexOf(".");
+	    if (lastIndexOf == -1) {
+	        return ""; // empty extension
+	    }
+	    return fileName.substring(lastIndexOf);
+	}
+
+
+	
+	/** 특수문자 제거
+	 * @param str
+	 * @return
+	 */
+	public static boolean isCodeName(String str){     
+		str = str.toLowerCase();
+		if(str.endsWith(".c") || str.endsWith(".h")|| str.endsWith(".ino")
+		|| str.endsWith(".java")|| str.endsWith(".py")|| str.endsWith(".cpp") || str.endsWith(".hpp")
+		|| str.endsWith(".html")|| str.endsWith(".css")|| str.endsWith(".pl")
+		|| str.endsWith(".sql")|| str.endsWith(".php")|| str.endsWith(".cs")
+		|| str.endsWith(".rb")|| str.endsWith(".txt")|| str.endsWith(".js") || str.endsWith(".properties")
+		|| str.endsWith(".xml")|| str.endsWith(".md") || str.endsWith(".log")|| str.endsWith(".pom"))
+			return true;
+		return false;
+	   }
+	
+	public static boolean isImageName(String filename){ 
+		filename = filename.toUpperCase();
+		
+        if(filename.endsWith(".ANI") || filename.endsWith(".BMP") || filename.endsWith(".CAL")
+				|| filename.endsWith(".CAL") || filename.endsWith(".FAX") || filename.endsWith(".GIF")
+				|| filename.endsWith(".IMG") || filename.endsWith(".JPE") || filename.endsWith(".JPEG")
+				|| filename.endsWith(".JPG") || filename.endsWith(".MAC") || filename.endsWith(".PBM")
+				|| filename.endsWith(".PCD") || filename.endsWith(".PCX") || filename.endsWith(".PCT")
+				|| filename.endsWith(".PGM") || filename.endsWith(".PNG") || filename.endsWith(".PPM")
+				|| filename.endsWith(".PSD") || filename.endsWith(".RAS") || filename.endsWith(".TGA")
+				|| filename.endsWith(".TIF") || filename.endsWith(".TIFF") || filename.endsWith(".WMF")){
+			return true;
+		}
+        return false;
+	   }
+	
+	/** 글의 http 주소가 있으면 링크로 바꿔줌.
+	 * @param plain
+	 * @return
+	 */
+	public static String addLink(String plain){
+		
+		return plain;
+	}
+	
 	/** 제출날짜 가져오기
 	 * @param pageUrl
 	 * @return 제출 날짜

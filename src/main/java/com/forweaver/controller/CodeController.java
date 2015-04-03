@@ -1,7 +1,9 @@
 package com.forweaver.controller;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
+import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
 import com.forweaver.service.DataService;
@@ -139,7 +142,7 @@ public class CodeController {
 		String name = request.getParameter("name");
 		String content = request.getParameter("content");
 
-		if(tags == null || name == null || content == null || file == null || !Pattern.matches("(^[A-Za-z0-9]{5,15}$)", name)){ // 태그가 없을 때
+		if(tags == null || name.length() < 5 || content.length() < 5 || file == null || !Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", name)){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/");
 			return "/alert";
@@ -159,7 +162,7 @@ public class CodeController {
 	@RequestMapping("/{codeID}/delete")
 	public String delete(@PathVariable("codeID") int codeID,Model model){
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		Code code = codeService.get(codeID);
+		Code code = codeService.get(codeID,true);
 
 		if(!codeService.delete(currentWeaver,code)){
 			model.addAttribute("say", "코드를 삭제하지 못했습니다. 권한을 확인해보세요!");
@@ -172,19 +175,58 @@ public class CodeController {
 	@RequestMapping("/{codeID}/sort:{sort}")
 	public String view(Model model, @PathVariable("codeID") int codeID,
 			@PathVariable("sort") String sort) {
-		Code code = codeService.get(codeID);
-
+		Code code = codeService.get(codeID,true);
+		
 		model.addAttribute("code", code);
 		model.addAttribute("rePosts", rePostService.gets(codeID,4,sort));
 
 		return "/code/viewCode";
+	}
+	
+	@RequestMapping("/{codeID}/**")
+	public void viewFile(@PathVariable("codeID") int codeID, 
+			HttpServletRequest request,HttpServletResponse res) throws IOException {
+		Code code = codeService.get(codeID,false);
+		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
+		String filePath = uri.substring(6+(""+codeID).length());		
+		SimpleCode simpleCode = code.getSimpleCode(filePath);
+
+		if (simpleCode == null) {
+			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
+			return;
+		}
+			byte[] imgData;
+			
+			
+			if(WebUtil.isCodeName(filePath))
+				imgData = simpleCode.getContent().getBytes("EUC-KR");
+			else
+				imgData = simpleCode.getContent().getBytes("8859_1");
+
+			res.reset();
+			res.setContentType("application/octet-stream");
+			String Encoding = new String(simpleCode.getFileName().getBytes("UTF-8"), "8859_1");
+			res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
+			res.setContentType(WebUtil.getFileExtension(simpleCode.getFileName()));
+			
+			OutputStream o = res.getOutputStream();
+			o.write(imgData);
+			o.flush();
+			o.close();
+			return;
+
 	}
 
 	@RequestMapping("/{codeID}/{codeName}.zip")
 	public void download(HttpServletResponse res, 
 			@PathVariable("codeID") int codeID,
 			@PathVariable("codeName") String codeName) throws IOException {
-		Code code = codeService.get(codeID);
+		Code code = codeService.get(codeID,false);
+		res.reset();
+		res.setContentType("application/octet-stream");
+		String Encoding = new String((codeName+".zip").getBytes("UTF-8"), "8859_1");
+		res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
+		res.setContentType(WebUtil.getFileExtension(codeName+".zip"));
 		codeService.dowloadCode(code, res.getOutputStream());
 	}
 
@@ -199,7 +241,7 @@ public class CodeController {
 
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
-		Code code = codeService.get(codeID);
+		Code code = codeService.get(codeID,true);
 
 		if(code == null || weaver == null || content.equals("")) {
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
@@ -258,7 +300,7 @@ public class CodeController {
 
 	@RequestMapping("/{codeID}/{rePostID}/delete")
 	public String deleteRePost(Model model, @PathVariable("codeID") int codeID, @PathVariable("rePostID") int rePostID) {
-		Code code = codeService.get(codeID);
+		Code code = codeService.get(codeID,true);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver =weaverService.getCurrentWeaver();
 

@@ -16,7 +16,7 @@ var fileHash = {};
 function fileUploadChange(fileUploader){
 	var fileName = $(fileUploader).val();			
 	$(function (){
-	if(fileName !=""){ // 파일을 업로드하거나 수정함
+	if(fileName !="" || !blank_pattern.test(fileName)  || fileName.length < 70){ // 파일을 업로드하거나 수정함
 		if(fileName.indexOf("C:\\fakepath\\") != -1)
 			fileName = fileName.substring(12);
 		fileHash[fileName] = mongoObjectId();
@@ -78,6 +78,8 @@ function fileUploadChange(fileUploader){
 		$("#repost-content").focus(function(){				
 				$(".file-div").fadeIn();
 				$("#repost-table").hide();
+				if($("#repost-content").val().length == 0)
+					$("#repost-content").css('height','200px');
 		});
 		
 		$("#repost-content").focusout(function(){	
@@ -129,14 +131,14 @@ function fileUploadChange(fileUploader){
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() <= 0}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
@@ -214,8 +216,8 @@ function fileUploadChange(fileUploader){
 
 					<div style="margin-left: 0px" class="span11">
 						<textarea name="content" id="repost-content"
-							class="post-content span10" onkeyup="textAreaResize(this)"
-							placeholder="답변할 내용을 입력해주세요!"></textarea>
+							class="post-content span10" 
+							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>

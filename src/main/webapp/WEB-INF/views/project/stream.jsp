@@ -38,14 +38,14 @@ $(document).ready(function() {
 					<li><a href="javascript:void(0);"
 						onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
 					<li class="active"><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() <= 0}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>

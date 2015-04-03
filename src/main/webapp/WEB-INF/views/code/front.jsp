@@ -9,7 +9,7 @@
 	<script type="text/javascript">
 	
 	function checkCode(){
-		var objPattern = /^[a-zA-Z0-9]+$/;
+		var objPattern = /^[a-z0-9_]+$/;
 		var fileName = $("#file").val();
 		var tags = $("#tags-input").val();
 		
@@ -22,11 +22,11 @@
 		}else if(tags.length == 0){
 			alert("태그를 하나라도 입력해주세요!");
 			return false;
-		}else if($('#code-name').val() == "" ){
-			alert("코드명을 입력하지 않았습니다!");
+		}else if($('#code-name').val().length <5 ){
+			alert("코드명을 5자 이상 입력하지 않았습니다!");
 			return false;
-		}else if($('#code-content').val() == "" ){
-			alert("코드 설명을 입력하지 않았습니다!");
+		}else if($('#code-content').val().length <5 ){
+			alert("코드 설명을 5자 이상 입력하지 않았습니다!");
 			return false;
 		}else{
 			$("form:first").append($("input[name='tags']"));
@@ -71,7 +71,7 @@
 			
 			hideCodeContent();
 			
-			$( "#post-search-input" ).keypress(function() {
+			$( "#post-search-input" ).focus(function() {
 				var tags = $("#tags-input").val();
 				if(tags.length == 0){
 					$( "#post-search-input" ).val('');
@@ -177,21 +177,34 @@
 				<div id="post-div" class="span10">
 					<input maxlength="15" name="name" id="code-name" class="title span3"
 						placeholder="코드명 (영문 숫자 조합)" type="text" /> <input name="content"
-						id="code-content" class="title span7" maxlength="144"
+						id="code-content" class="title span7" maxlength="200"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
 				</div>
 
 				<div class="span2">
 
 
-					<span> <a id="show-content-button" title='코드 게시하기'
+					<span> 
+					<sec:authorize access="isAuthenticated()">
+					<a id="show-content-button" title='코드 게시하기'
 						href="javascript:showCodeContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
-					</a> <a id='search-button' title='코드 검색하기' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="hide-content-button" title='작성 취소하기'
+					</a> 
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" title="로그인을 하셔야 코드를 업로드 할 수 있습니다!" class="post-button btn btn-primary">
+							<i class="fa fa-times"></i>
+						</button>
+					</sec:authorize>
+					
+					<a id='search-button' title='코드 검색하기' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
+					</a> 
+					
+					<a id="hide-content-button" title='작성 취소하기'
 						href="javascript:hideCodeContent();"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
+						
 						<button id='post-ok' title='코드 올리기' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
@@ -219,7 +232,7 @@
 				</div>
 				  <div class="span12">
 					<textarea name="content" id="code-content-textarea"
-						class="code-content span12" onkeyup="textAreaResize(this)"
+						class="code-content span12" 
 						placeholder="여기에 글을 작성하시면 파일 배포시 자동으로 readme.md 파일이 생성됩니다. 만약 코드 소개에 충분히 설명하셨다면 이부분을 비워두셔도 상관없습니다!"></textarea>
 					<div class="file-div"></div>
 
@@ -230,7 +243,7 @@
 						placeholder="파일명을 입력해주세요. 예시 hello.java 또는 folder/hello.java" type="text" />
 
 					<textarea name="content" id="code-content-textarea"
-						class="code-content span12" onkeyup="textAreaResize(this)"
+						class="code-content span12" 
 						placeholder="소스 코드를 입력해주세요!"></textarea>
 					<div class="file-div"></div>
 

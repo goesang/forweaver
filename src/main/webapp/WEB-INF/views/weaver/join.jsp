@@ -19,9 +19,6 @@ function checkWeaver(){
 		
 		if(!idCheck || !passwordCheck || !emailCheck){
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
-			alert(idCheck);
-			alert(passwordCheck);
-			alert(emailCheck);
 			return false;
 		}
 		$("form:first").append($("input[name='tags']"));
@@ -29,6 +26,8 @@ function checkWeaver(){
 	}
 
 $(document).ready(function() {
+	
+	 $('#tags-input').tagsinput('add',"한신대");
 	
 	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!");
 
@@ -48,10 +47,10 @@ $(document).ready(function() {
 			idCheck = false;
   			return;
 		}
-		var objPattern =  /[~!@\#$%^&*\()\=+_']/gi;
+		var objPattern = /^[a-z0-9_]+$/;
 		  
-		if(objPattern.test(t)){
-  		alert("특수문자를 입력할수 없습니다!");
+		if(!objPattern.test(t)){
+  		alert("아이디는 소문자와 숫자 그리고 언더바 조합입니다!");
   		idCheck = false;
   	    }
 			
@@ -133,15 +132,15 @@ $(document).ready(function() {
 							
 							<label  for="id" class="control-label">닉네임</label>
 							<div class="controls">
-								<input id="id" name="id" class="input-large"
-									type="text" placeholder="영문 숫자를 조합하여 5자 이상" value="" />
+								<input maxlength="15" id="id" name="id" class="input-large"
+									type="text" placeholder="영문,숫자,언더바 5자 이상" value="" />
 							</div>
 						</div>
 						
 						<div class="control-group">
 							<label for="email" class="control-label">이메일</label>
 							<div class="controls">
-								<input id="email" name="email" class="input-large" type="text"
+								<input maxlength="30" id="email" name="email" class="input-large" type="text"
 									value="" placeholder="프로젝트 진행시 사용할 이메일" />
 							</div>
 						</div>
@@ -149,7 +148,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="password" class="control-label">비밀번호</label>
 							<div class="controls">
-								<input id="password" name="password" class="input-large"
+								<input maxlength="30"  id="password" name="password" class="input-large"
 									type="password" />
 
 							</div>
@@ -157,7 +156,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="rePassword" class="control-label">비밀번호 확인</label>
 							<div class="controls">
-								<input id="rePassword" class="input-large"
+								<input maxlength="30"  id="rePassword" class="input-large"
 									type="password" />
 
 							</div>
@@ -166,7 +165,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="studentID" class="control-label">학번</label>
 							<div class="controls">
-								<input name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
+								<input maxlength="30"  name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
 
 							</div>
 						
@@ -198,7 +197,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="say" class="control-label">자기소개</label>
 							<div class="controls">
-								<input name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
+								<input maxlength="70"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 
 							</div>
 						</div>

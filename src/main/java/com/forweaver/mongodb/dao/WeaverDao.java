@@ -50,7 +50,7 @@ public class WeaverDao {
 	 * @return 회원
 	 */
 	public Weaver get(String id) {
-		Query query = new Query(new Criteria()	.orOperator(Criteria.where("_id").regex(Pattern.compile(id, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)),
+		Query query = new Query(new Criteria()	.orOperator(Criteria.where("_id").is(id),
 				Criteria.where("email").is(id)));
 		return mongoTemplate.findOne(query,Weaver.class);
 	}
@@ -63,7 +63,8 @@ public class WeaverDao {
 	 * @return 회원 목록
 	 */
 	public List<Weaver> getWeavers(int page, int size) {
-		Query query = new Query();
+		Criteria criteria = new Criteria().and("isLeave").is(false);
+		Query query = new Query(criteria);
 		query.with(new PageRequest(page - 1, size));
 		return mongoTemplate.find(query, Weaver.class);
 	}
@@ -72,7 +73,7 @@ public class WeaverDao {
 	 * @return 회원수
 	 */
 	public long countWeavers() {
-		Criteria criteria = new Criteria();
+		Criteria criteria = new Criteria().and("isLeave").is(false);
 		return mongoTemplate.count(new Query(criteria), Weaver.class);
 	}
 	
@@ -83,7 +84,7 @@ public class WeaverDao {
 	 * @return 회원 목록
 	 */
 	public List<Weaver> getWeavers(List<String> tags, int page,int size) {
-		Criteria criteria = new Criteria("tags").all(tags);
+		Criteria criteria = new Criteria("tags").all(tags).and("isLeave").is(false);
 
 		Query query = new Query(criteria);
 		query.with(new PageRequest(page - 1, size));
@@ -97,7 +98,7 @@ public class WeaverDao {
 	 * @return 회원수
 	 */
 	public long countWeavers(List<String> tags) {
-		Criteria criteria = new Criteria("tags").all(tags);
+		Criteria criteria = new Criteria("tags").all(tags).and("isLeave").is(false);
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 
@@ -113,7 +114,7 @@ public class WeaverDao {
 	 * @return 회원 목록
 	 */
 	public List<Weaver> searchPassName(String passName) { //특정 패스의 회원들을 검색
-		Query query = new Query(Criteria.where("passes").in(passName));
+		Query query = new Query(Criteria.where("passes").in(passName).and("isLeave").is(false));
 		return mongoTemplate.find(query, Weaver.class);
 	}
 
@@ -129,6 +130,7 @@ public class WeaverDao {
 		update.set("say", weaver.getSay());
 		update.set("studentID", weaver.getStudentID());
 		update.set("tags", weaver.getTags());
+		update.set("isLeave", weaver.isLeave());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
 	

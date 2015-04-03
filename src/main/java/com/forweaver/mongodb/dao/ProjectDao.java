@@ -38,7 +38,7 @@ public class ProjectDao {
 	 * @return
 	 */
 	public Project get(String projectName) {
-		Query query = new Query(Criteria.where("_id").regex(Pattern.compile(projectName, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
+		Query query = new Query(Criteria.where("_id").is(projectName));
 		return mongoTemplate.findOne(query, Project.class);
 	}
 	

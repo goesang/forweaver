@@ -62,7 +62,10 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 				return false;
 			}
 			if(weaver.getPass(projectName) != null){
-				System.out.println("1111111");
+				return true;
+			}
+			
+			if(project.getCategory() ==3 && weaver.getPass("ROLE_PROF") != null){
 				return true;
 			}
 			else{

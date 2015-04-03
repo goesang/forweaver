@@ -68,7 +68,7 @@
 					<div class="span11">
 						<textarea
 							id="post-content-textarea" name ="content" class="span11 post-content"
-							onkeyup="textAreaResize(this)" placeholder="글 내용을 입력해주세요!">${post.content}</textarea>
+							 placeholder="글 내용을 입력해주세요!">${post.content}</textarea>
 					</div>
 					</form>
 				<div id="page-pagination" class="text-center pagination"></div>

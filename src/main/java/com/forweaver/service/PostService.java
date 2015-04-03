@@ -211,9 +211,13 @@ public class PostService {
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort);
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.countPostsWithPrivateTags(tags, null, null, sort);
-		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
-			return postDao.countPostsWithMassageTag(tags, null, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort);
+		if(this.isMassageTags(tags)) {// 태그가 메세지 태그의 경우.
+			System.out.println(tags);
+			System.out.println(this.getOneMassageTag(weaver.getId(),tags));
+			return postDao.countPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), null, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort);
 
+		
+		}
 		return 0;
 	}
 
@@ -233,9 +237,9 @@ public class PostService {
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort, page, size);
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.getPostsWithPrivateTags(tags, null, null, sort, page, size);
-		if(this.isMassageTags(tags))// 태그가 메세지 태그의 경우.
-			return postDao.getPostsWithMassageTag(tags, null, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
-
+		if(this.isMassageTags(tags)) {// 태그가 메세지 태그의 경우.
+			return postDao.getPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), null, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort, page, size);
+		}
 		return null;
 	}
 	
@@ -290,8 +294,7 @@ public class PostService {
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.countPostsWithPrivateTags(tags, search, null, sort);
 		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
-			return postDao.countPostsWithMassageTag(tags, search, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort);
-
+			return postDao.countPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), search, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort);
 		return 0;
 	}
 
@@ -314,7 +317,8 @@ public class PostService {
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.getPostsWithPrivateTags(tags, search, null, sort, page, size);
 		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
-			return postDao.getPostsWithMassageTag(tags, search, weaver, this.isMassageTagsWithWriterTag(weaver.getId(),tags), sort, page, size);
+			return postDao.getPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), search, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort, page, size);
+				
 		return null;
 
 	}
@@ -489,12 +493,15 @@ public class PostService {
 	 * @param tags
 	 * @return
 	 */
-	public boolean isMassageTagsWithWriterTag(String nickName, List<String> tags) {
-		for (String tag : tags)
-			if (tag.equals("$" + nickName)) 
-				return true;
+	public String getOneMassageTag(String nickName, List<String> tags) {
 
-		return false;
+		if(tags.size() == 1)
+			return tags.get(0);
+		
+			if (tags.get(0).equals("$" + nickName)) 
+				return tags.get(1);
+			else 
+				return "$" + nickName;
 	}
 
 

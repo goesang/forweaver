@@ -34,6 +34,7 @@ public class LectureService {
 
 		if(lecture.getName().toUpperCase().equals("ROLE_ADMIN")||
 				lecture.getName().toUpperCase().equals("ROLE_USER")||	
+				lecture.getName().toUpperCase().equals("ROLE_PROF")||
 				weaverDao.get(lecture.getName()) != null || 
 				lectureDao.get(lecture.getName()) != null)
 			return; // 중복 검사

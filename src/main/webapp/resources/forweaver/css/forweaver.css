@@ -12,6 +12,7 @@
 	padding-top:4px;
 }
 
+
 .readme {
 	border-color: #AAA;
 	border-width: 1px;
@@ -170,6 +171,7 @@ font.link{
 body,table,input,textarea,select,button {
 	font-family: 나눔고딕, NG, sans-serif !important;
 }
+
 
 .full-button{
 	margin-top:10px;

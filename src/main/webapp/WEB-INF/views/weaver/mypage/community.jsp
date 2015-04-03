@@ -183,7 +183,7 @@
 									${post.getFormatCreated()}</td>
 								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
 										var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private

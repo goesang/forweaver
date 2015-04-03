@@ -45,6 +45,10 @@ public class Data implements Serializable {
 		try{
 			this.content= data.getBytes();
 			this.name = data.getOriginalFilename();
+			this.name = this.name.replace(" ", "_");
+			this.name = this.name.replace("#", "_");
+			this.name = this.name.replace("?", "_");	
+			this.name = this.name.trim();
 			this.type = data.getContentType();
 		}catch(Exception e){
 			
@@ -58,6 +62,10 @@ public class Data implements Serializable {
 		try{
 			this.content= data.getBytes();
 			this.name = data.getOriginalFilename();
+			this.name = this.name.replace(" ", "_");
+			this.name = this.name.replace("#", "_");
+			this.name = this.name.replace("?", "_");	
+			this.name = this.name.trim();
 			this.type = data.getContentType();
 		}catch(Exception e){
 			
@@ -101,8 +109,7 @@ public class Data implements Serializable {
 	public Weaver getWeaver() {
 		return weaver;
 	}
-
-	public void setWeaver(Weaver weaver) {
+    public void setWeaver(Weaver weaver) {
 		this.weaver = weaver;
 	}
 
