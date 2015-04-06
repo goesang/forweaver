@@ -17,6 +17,7 @@ import com.forweaver.domain.Code;
 import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.CodeDao;
+import com.forweaver.mongodb.dao.RePostDao;
 import com.forweaver.util.WebUtil;
 
 /** 코드 서비스
@@ -26,6 +27,7 @@ import com.forweaver.util.WebUtil;
 public class CodeService {
 
 	@Autowired CodeDao codeDao;
+	@Autowired RePostDao rePostDao;
 
 	/** 코드를 추가함.
 	 * @param code
@@ -40,7 +42,9 @@ public class CodeService {
 				ZipInputStream in = new ZipInputStream(file.getInputStream(),Charset.forName("8859_1"));
 				ZipEntry entry = in.getNextEntry();
 				while (entry != null) {
-					if (!entry.isDirectory()) { // 만약 파일의 경우
+					if (!entry.isDirectory() && (!entry.getName().endsWith(".class") || 
+							!entry.getName().endsWith(".bak") ||
+							!entry.getName().endsWith(".log"))) { // 만약 파일의 경우
 						byte[] buf = new byte[1024];
 						int len;
 						String content = "";
@@ -153,9 +157,8 @@ public class CodeService {
 		if(weaver == null || code == null)
 			return false;
 
-		if(weaver.isAdmin() || 
-				weaver.getId().equals(code.getWriterName())){
-
+		if(weaver.isAdmin() || weaver.getId().equals(code.getWriterName())){
+			rePostDao.deleteAll(code);
 			codeDao.delete(code);
 			return true;
 		}

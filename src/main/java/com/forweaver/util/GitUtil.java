@@ -28,6 +28,7 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryCache;
@@ -603,7 +604,12 @@ public class GitUtil {
 					new ZipInputStream(zip,Charset.forName("EUC-KR"));	    	
 			ZipEntry ze = zis.getNextEntry();
 			while(ze!=null){
-				if (!ze.isDirectory() && !ze.getName().contains(".git/")) { // 만약 파일의 경우
+				if (!ze.isDirectory() && (!ze.getName().contains(".git/") 
+						|| !ze.getName().endsWith(".exe") || 
+						!ze.getName().endsWith(".class") || 
+						!ze.getName().endsWith(".bak") ||
+						!ze.getName().endsWith(".log") || 
+						!ze.getName().endsWith(".apk"))) { // 만약 파일의 경우
 					String fileName = ze.getName();
 					
 					File newFile = new File(localPath + File.separator + fileName);
@@ -636,7 +642,7 @@ public class GitUtil {
 
 
 			git.add().addFilepattern(".").call();		
-			git.commit().setAuthor(name, email).setMessage(message).call();
+			git.commit().setCommitter(new PersonIdent(name, email)).setAuthor(new PersonIdent(name, email)).setMessage(message).call();
 			git.push().setRemote("origin").call();
 
 		} catch (Exception e) {
