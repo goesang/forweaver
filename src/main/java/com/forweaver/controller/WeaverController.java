@@ -74,7 +74,8 @@ public class WeaverController {
 		if(!tagService.isPublicTags(tagList))
 			return "/weaver/join";
 
-		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 || 
+		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
+				say.length()>50 || studentID.length()>30 || 
 				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
 			model.addAttribute("say", "잘못 입력하셨습니다!.");
 			model.addAttribute("url", "/join");

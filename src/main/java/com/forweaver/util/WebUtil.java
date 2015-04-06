@@ -1,7 +1,11 @@
 package com.forweaver.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,10 +13,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.markdown4j.Markdown4jProcessor;
+import org.springframework.web.util.HtmlUtils;
 
 
 /** 각종 웹 유틸 클래스
@@ -21,12 +26,36 @@ import org.markdown4j.Markdown4jProcessor;
  */
 public class WebUtil {
 	
+	/** 압축파일을 열었을 때 모든 파일들이 한 디렉토리에 담겨있는지 검사함.
+	 * @param file
+	 * @return
+	 */
+	public static boolean isFirstDirectory(ZipInputStream zis){
+		boolean firstDirectory = true;
+		try{
+			//압축파일을 품.  
+			ZipEntry ze = zis.getNextEntry();
+			while(ze!=null){
+				if (!ze.isDirectory() && !ze.getName().contains("/"))
+						firstDirectory = false;
+				ze = zis.getNextEntry();
+			}
+			zis.closeEntry();
+			zis.close();
+		}catch(Exception e){
+			
+		}
+		return firstDirectory;
+	}
 
-
+	/** 파일명에서 확장자 가져오기
+	 * @param fileName
+	 * @return
+	 */
 	public static String getFileExtension(String fileName) {
 	    int lastIndexOf = fileName.lastIndexOf(".");
 	    if (lastIndexOf == -1) {
-	        return ""; // empty extension
+	        return "";
 	    }
 	    return fileName.substring(lastIndexOf);
 	}
@@ -69,9 +98,15 @@ public class WebUtil {
 	 * @param plain
 	 * @return
 	 */
-	public static String addLink(String plain){
-		
-		return plain;
+	public static String addLink(String text){
+		if (text == null) {
+	        return text;
+	    }
+
+	    String escapedText = HtmlUtils.htmlEscape(text);
+
+	    return escapedText.replaceAll("(\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)",
+	        "$1<a href=\"$2\">$2</a>$4");
 	}
 	
 	/** 제출날짜 가져오기
@@ -150,10 +185,13 @@ public class WebUtil {
 	 */
 	public static String markDownEncoder(String str) {
 		str = str.replace("<", "&lt;");
-		str = str.replace(">", "&gt;");
 		try {
+			str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)",
+			        "$1<a href=\"$2\">$2</a>$4");
 			str = new Markdown4jProcessor().process(str);
-			return str.replace("&amp;", "&");
+			str = str.replace("&amp;", "&");
+			
+			return str;
 		} catch (IOException e) {
 			return "";
 		}

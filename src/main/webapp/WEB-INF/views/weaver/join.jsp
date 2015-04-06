@@ -197,7 +197,7 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="say" class="control-label">자기소개</label>
 							<div class="controls">
-								<input maxlength="70"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
+								<input maxlength="50"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 
 							</div>
 						</div>

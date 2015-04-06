@@ -142,7 +142,7 @@ public class CodeController {
 		String name = request.getParameter("name");
 		String content = request.getParameter("content");
 
-		if(tags == null || name.length() < 5 || content.length() < 5 || file == null || !Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", name)){ // 태그가 없을 때
+		if(tags == null || name.length() < 5 || content.length() < 5 || content.length() >50 || file == null || !Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", name)){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/");
 			return "/alert";

@@ -170,7 +170,11 @@ public class ProjectController {
 		if(params.get("category") != null)
 			categoryInt = Integer.parseInt(params.get("category"));
 
-		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", params.get("name")) || params.get("name").length() <5 || params.get("description").length() <5  || !tagService.isPublicTags(tagList)){
+		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", params.get("name")) || 
+				params.get("name").length() <5 || 
+				params.get("description").length() <5 || 
+				params.get("description").length() > 50 || 
+				!tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/project/");
 			return "/alert";

@@ -596,15 +596,16 @@ public class GitUtil {
 				git.rm().addFilepattern(fileName.substring(1)).call();	
 
 
+			
 			//압축파일을 품.
 			byte[] buffer = new byte[1024];
 			ZipInputStream zis = 
 					new ZipInputStream(zip,Charset.forName("EUC-KR"));	    	
 			ZipEntry ze = zis.getNextEntry();
-
 			while(ze!=null){
 				if (!ze.isDirectory() && !ze.getName().contains(".git/")) { // 만약 파일의 경우
 					String fileName = ze.getName();
+					
 					File newFile = new File(localPath + File.separator + fileName);
 
 					new File(newFile.getParent()).mkdirs();

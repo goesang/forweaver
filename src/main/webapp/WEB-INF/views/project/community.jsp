@@ -251,18 +251,23 @@ function checkPost(){
 				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
 				
 				<div class="span2">
-					<span> <a id="show-content-button" href="javascript:showPostContent();" title="글 내용 작성하기"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
-					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
-						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
-					</a>
+					<span> 
 					<sec:authorize access="isAnonymous()">
+					<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+					</button> 
 						<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!" class="post-button btn btn-primary">
 							<i class="fa fa-times"></i>
 						</button>
 					</sec:authorize>
 					<sec:authorize access="isAuthenticated()">
+					
+						<a id="show-content-button" href="javascript:showPostContent();" title="글 내용 작성하기"
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
+						href="javascript:hidePostContent();"
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+					</a>
 						<button  id='post-ok' title="글 올리기" class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>

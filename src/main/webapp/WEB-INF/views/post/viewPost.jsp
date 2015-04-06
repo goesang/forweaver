@@ -130,7 +130,7 @@
 							</td>
 							<td colspan="2" class="post-top-title none-top-border">
 									<c:if test="${!post.isNotice()}">
-									<s:eval expression="T(com.forweaver.util.WebUtil).addLink(T(com.coverity.security.Escape).html(post.title))" /></td>
+									<s:eval expression="T(com.forweaver.util.WebUtil).addLink(post.title)" /></td>
 									</c:if>
 									<c:if test="${post.isNotice()}">
 									${post.title}
@@ -223,6 +223,7 @@
 					</sec:authorize>
 						</span>
 					</div>
+					
 					<div class="file-div"></div>
 				</form>
 
@@ -250,7 +251,7 @@
 								<td class=" td-post-writer-img "><img
 									src="${rePost.getImgSrc()}"></td>
 
-								<td class="font-middle"><b>${rePost.writerName}</b>
+								<td class="font-middle"><a href="/${rePost.writerName}"><b>${rePost.writerName}</b></a>
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
 									<div class="pull-right">
@@ -298,7 +299,7 @@
 								<tr>
 									<td class="none-top-border"></td>
 									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
-										${reply.content} - <b>${reply.writerName}</b>
+										${reply.content} - <a href="/${reply.writerName}"><b>${reply.writerName}</b></a>
 										${reply.getFormatCreated()}
 										<c:if test="${reply.writerName==currentUser}">
 										<div class="function-div pull-right">

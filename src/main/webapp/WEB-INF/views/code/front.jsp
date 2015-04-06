@@ -136,8 +136,7 @@
 		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
-				<big><big><i class="fa fa-rocket"></i> 공유해보세요!</big></big> <small>자신의
-					소스코드를 다른 사람들에게 배포해보세요!</small>
+				<big><big><i class="fa fa-rocket"></i> 공유해보세요!</big></big> <small>자신의 코드를 압축파일 혹은 소스파일로 다른 사람들에게 배포해보세요!</small>
 				<div style="margin-top: -10px" class="pull-right" title='전체 코드 갯수&#13;${codeCount}개'>
 
 					<button class="btn btn-warning">
@@ -177,7 +176,7 @@
 				<div id="post-div" class="span10">
 					<input maxlength="15" name="name" id="code-name" class="title span3"
 						placeholder="코드명 (영문 숫자 조합)" type="text" /> <input name="content"
-						id="code-content" class="title span7" maxlength="200"
+						id="code-content" class="title span7" maxlength="50"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
 				</div>
 
@@ -218,9 +217,9 @@
 								<i class='icon-file '></i> <span class='fileinput-filename'></span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span
-								class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
+								class='fileinput-new'><i class='fa fa-arrow-circle-o-up icon-white'></i> ZIP파일 혹은 소스코드</span>
 								<span class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input pl type='file'
+									class='icon-repeat icon-white'></i></span><input  type='file'
 								id='file' multiple='true' name='file'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
 								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>

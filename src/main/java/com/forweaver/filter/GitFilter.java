@@ -2,7 +2,6 @@ package com.forweaver.filter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,14 +10,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Project;
-import com.forweaver.domain.Repo;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.LectureService;
 import com.forweaver.service.ProjectService;
@@ -42,15 +40,44 @@ public class GitFilter implements Filter {
 		String requestUrl = ((HttpServletRequest) req).getRequestURI();
 		String[] requstUrlArray = requestUrl.split("/");
 		String lectureName = requstUrlArray[2];
-		String repoName = requstUrlArray[3].substring(0,
-				requstUrlArray[3].indexOf(".git"));
+		String repoName = requstUrlArray[3].substring(0, requstUrlArray[3].indexOf(".git"));
 
 		if (!new File(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git").exists()) // 저장소가 없는 경우
 			return;
 
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Pass pass = weaver.getPass(lectureName + "/" + repoName);
+		Project project = projectService.get(lectureName + "/" + repoName);
 
+		if(project == null){ // 프로젝트가 없을 때
+			((HttpServletResponse) res).sendError(500);
+			return;
+		}
+
+		if(project.getCategory()<=0){ // 프로젝트가 공개 프로젝트일때
+			if(pass == null && requestUrl.endsWith("/git-receive-pack")){ //권한 없는 사람이 올릴려고 할 때
+				((HttpServletResponse) res).sendError(403);
+				return;
+			}
+			filterchain.doFilter(req, res);
+			return;
+		}
+
+		if(project.getCategory()>0 && pass != null){ // 프로젝트가 비공개이고 권한이 있을 때
+			filterchain.doFilter(req, res);
+			return;
+		}
+
+		if(project.getCategory() == 3 && 
+				weaver.getPass("ROLE_PROF") != null &&
+				!requestUrl.endsWith("/git-receive-pack")){ // 프로젝트가 과제 프로젝트인데 회원이 교수 권한일 때 읽기만 가능
+			filterchain.doFilter(req, res);
+			return;
+		}
+
+		((HttpServletResponse) res).sendError(403);
+
+		/*
 		if (pass == null)
 			pass = weaver.getPass(lectureName);
 
@@ -58,7 +85,6 @@ public class GitFilter implements Filter {
 			return;
 
 		if (pass.getJoinName().contains("/")) { // 프로젝트에 권한이 있는 경우
-			System.out.println("ssssssssssssssssssssssssqqqqq");
 			filterchain.doFilter(req, res);
 			return;
 		}
@@ -95,7 +121,8 @@ public class GitFilter implements Filter {
 				gitUtil.checkOutMasterBranch();
 
 			}
-		} 
+
+		} */
 	}
 
 	public void destroy() {

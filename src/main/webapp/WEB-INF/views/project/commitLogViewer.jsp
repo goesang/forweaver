@@ -237,7 +237,7 @@ function fileUploadChange(fileUploader){
 								<td class=" td-post-writer-img "><img
 									src="${rePost.getImgSrc()}"></td>
 
-								<td class="font-middle"><b>${rePost.writerName}</b>
+								<td class="font-middle"><a href="/${rePost.writerName}"><b>${rePost.writerName}</b></a>
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
 									<div class="pull-right">
@@ -281,7 +281,7 @@ function fileUploadChange(fileUploader){
 								<tr>
 									<td class="none-top-border"></td>
 									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
-										${reply.content} - <b>${reply.writerName}</b>
+										${reply.content} - <a href="/${reply.writerName}"><b>${reply.writerName}</b></a>
 										${reply.getFormatCreated()}
 										<div class="function-div pull-right">
 											<a onclick="return confirm('정말로 삭제하시겠습니까?');"

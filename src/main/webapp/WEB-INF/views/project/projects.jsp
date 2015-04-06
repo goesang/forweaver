@@ -146,11 +146,7 @@
 					<li id="age-desc"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
 					<li id="active"><a
-							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:active/page:1">활동순</a></li>
-					<li id="push-many"><a
-						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-many/page:1">추천순</a></li>
-					<li id="fork"><a
-							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:fork/page:1">포크</a></li>
+							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">공개</a></li>
 					<li id="homework"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:homework/page:1">과제</a></li>
 					<li id="private"><a
@@ -169,7 +165,7 @@
 
 				<div id="project-div" class="span10">
 					<input maxlength="15" id ="project-name" class="title span5"
-						placeholder="프로젝트명을 입력해주세요! (영문 숫자 조합)" name="name" type="text" /> 
+						placeholder="프로젝트명을 입력해주세요! (영문 숫자 언더바 조합 15자)" name="name" type="text" /> 
 					
 					
 					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 <input type="radio"
@@ -179,8 +175,8 @@
 					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
 						name="group"  data-toggle="radio"> 과제
 					</label> 
-						<input maxlength="200" name ="description"class="title span12" type="text" id="project-description"
-						placeholder="프로젝트에 대해 설명해주세요!"></input>
+						<input maxlength="50" name ="description"class="title span12" type="text" id="project-description"
+						placeholder="프로젝트에 대해 설명해주세요! (최대 50자까지)"></input>
 				</div>
 
 				<div class="span2">
@@ -233,7 +229,7 @@
 								<td class="td-button" rowspan="2">
 								 <c:if test="${project.category == 0}">
 										<span
-											class="span-button">${project.push}<p class="p-button">추천</p>
+											class="span-button"><i class="fa fa-share-alt"></i><p class="p-button">공개</p>
 										</span>
 									</c:if>
 								<c:if test="${project.category == 1}">

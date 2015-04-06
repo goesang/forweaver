@@ -92,9 +92,6 @@ tr:first-child>td {
 						<li id="join"><a
 							href="/${weaver.getId()}/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:join/page:1">참여중인
 								프로젝트</a></li>
-						<li id="fork"><a
-							href="/${weaver.getId()}/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:fork/page:1">파생한
-								프로젝트</a></li>
 					</ul>
 
 					<div class="navbar navbar-inverse">
@@ -133,22 +130,15 @@ tr:first-child>td {
 									</a></td>
 									<td class="td-button" rowspan="2">
 								 <c:if test="${project.category == 0}">
-										<a href="/project/${project.name}/push"> <span
-											class="span-button">${project.push}<p class="p-button">추천</p>
+										<span
+											class="span-button"><i class="fa fa-share-alt"></i><p class="p-button">공개</p>
 										</span>
-										</a>
 									</c:if>
 								<c:if test="${project.category == 1}">
 										<span
 											class="span-button"><i class="fa fa-lock"></i>
 												<p class="p-button">비공개</p> </span>
 									</c:if>
-								<c:if test="${project.category == -1}">
-										<a href="/project/${project.name}"> <span
-											class="span-button"><i class="fa fa-code-fork"></i>
-												<p class="p-button">파생</p> </span>
-										</a>
-									</c:if>	
 								<c:if test="${project.category == 3}">
 										<span
 											class="span-button"><i class="fa fa-university"></i>
