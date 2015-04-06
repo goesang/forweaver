@@ -226,8 +226,7 @@
 		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
-				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> <small>프로젝트
-					진행사항이나 궁금한 점들을 올려보세요!</small>
+				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big>  <small><a href="/intro/community">아직 커뮤니티를 이용하는 방법을 모르신다면 사용법을 읽어주세요!</a></small>
 				<div style="margin-top: -10px" class="pull-right" title='전체 커뮤니티 글 수&#13;${postCount}개'>
 
 					<button class="btn btn-warning">

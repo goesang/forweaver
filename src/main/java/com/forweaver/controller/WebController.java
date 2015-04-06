@@ -16,8 +16,20 @@ public class WebController {
 	@Autowired 
 	private WeaverService weaverService;
 	
-	@RequestMapping("/forweaver")
+	@RequestMapping("intro/forweaver")
 	public void forweaver() {}
+	
+	@RequestMapping("intro/community")
+	public void community() {}
+	
+	@RequestMapping("intro/project")
+	public void project() {}
+	
+	@RequestMapping("intro/code")
+	public void code() {}
+	
+	@RequestMapping("intro/membertool")
+	public void membertool() {}
 	
 	@RequestMapping("/error500")
 	public void error500() {}

@@ -14,7 +14,7 @@
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
-					<li><a href="/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
+					<li><a href="/intro/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
 					
 				</ul>
 

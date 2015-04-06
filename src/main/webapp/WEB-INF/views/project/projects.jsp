@@ -129,8 +129,7 @@
 		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
-				<big><big><i class=" fa fa-bookmark"></i> 참여해보세요!</big></big> <small>같이
-					진행할 동료를 구하거나 흥미로운 프로젝트에 참여해보세요!</small>
+				<big><big><i class=" fa fa-bookmark"></i> 참여해보세요!</big></big> <small><a href="/intro/project">아직 프로젝트를 개설하고 이용하는 방법을 모르신다면 사용법을 읽어주세요!</a></small>
 				<div style="margin-top: -10px" class="pull-right"  title='전체 프로젝트 갯수&#13;${projectCount}개'>
 
 					<button class="btn btn-warning">

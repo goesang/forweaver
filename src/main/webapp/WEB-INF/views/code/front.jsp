@@ -136,7 +136,8 @@
 		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
-				<big><big><i class="fa fa-rocket"></i> 공유해보세요!</big></big> <small>자신의 코드를 압축파일 혹은 소스파일로 다른 사람들에게 배포해보세요!</small>
+				<big><big><i class="fa fa-rocket"></i> 공유해보세요!</big></big> 
+				 <small><a href="/intro/code">아직 코드 공유 방법을 모르신다면 사용법을 읽어주세요!</a></small>
 				<div style="margin-top: -10px" class="pull-right" title='전체 코드 갯수&#13;${codeCount}개'>
 
 					<button class="btn btn-warning">
