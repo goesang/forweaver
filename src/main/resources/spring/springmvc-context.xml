@@ -42,7 +42,7 @@
 	<!-- Multipart post handing -->
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="15728640" />
+		<property name="maxUploadSize" value="104857600000" />
 	</bean>
 
 	<bean

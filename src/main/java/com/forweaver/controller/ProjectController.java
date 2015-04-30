@@ -135,7 +135,7 @@ public class ProjectController {
 		model.addAttribute("projectCount", projectService.countProjects(tagList, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"sort:"+sort+"/page:");
+		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/sort:"+sort+"/page:");
 		return "/project/projects";
 	}
 
@@ -645,13 +645,13 @@ public class ProjectController {
 
 		if(!waitingWeaver.equals(proposer) && waitJoinService.isCreateWaitJoin(project, waitingWeaver, proposer)){
 			Weaver projectCreator = weaverService.get(project.getCreatorName());
-			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaverName+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+weaverName+"/join-cancel'>거절하시겠습니까?</a><a>";
+			String title ="프로젝트명:"+creatorName+"/"+projectName+"에 가입 초대를 </a><a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/project/"+creatorName+"/"+projectName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a><a>";
 
 			Post post = new Post(projectCreator,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+weaverName),true);
+					tagService.stringToTagList("$"+waitingWeaver.getId()),true);
 			waitJoinService.createWaitJoin(
 					project.getName(), 
 					proposer.getId(), 
@@ -762,7 +762,7 @@ public class ProjectController {
 					creatorName+"/"+projectName+
 					"에 가입이 거절되었습니다.", 
 					"", 
-					tagService.stringToTagList("$"+weaver),true);
+					tagService.stringToTagList("$"+waitingWeaver.getId()),true);
 
 			postService.add(post,null);
 
@@ -794,10 +794,11 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("branchName") String branchName,
 			@RequestParam("message") String message,
+			@RequestParam("path") String path,
 			@RequestParam("zip") MultipartFile zip,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		if(!projectService.uploadZip(project, currentWeaver,branchName, message, zip)){
+		if(!projectService.uploadFiles(project, currentWeaver,branchName, message,path, zip)){
 			model.addAttribute("say", "업로드 실패! 프로젝트에 가입되어 있는지 혹은 압축파일을 다시 확인해주세요!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";

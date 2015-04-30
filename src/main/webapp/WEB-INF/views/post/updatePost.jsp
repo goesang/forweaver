@@ -66,7 +66,7 @@
 					</div>
 					
 					<div class="span11">
-						<textarea
+						<textarea style="height:250px"
 							id="post-content-textarea" name ="content" class="span11 post-content"
 							 placeholder="글 내용을 입력해주세요!">${post.content}</textarea>
 					</div>

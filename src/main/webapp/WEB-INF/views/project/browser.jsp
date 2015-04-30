@@ -5,6 +5,7 @@
 <title>${project.name}-forWeaver</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
+<script src="/resources/forweaver/js/spin.min.js"></script>
 </head>
 <body>
 	<script>
@@ -27,15 +28,31 @@ function hideUploadContent() {
 function checkZipUpload(){
 	var fileName = $("#file").val();
 	fileName = fileName.toUpperCase();
-	if(fileName.indexOf(".ZIP", fileName.length - 4) == -1){
-		alert("반드신 zip형태의 파일로 업로드 하셔야 합니다!");
-		return false;
-	}
-	
-	if($("#commit-message").val() < 5){
+
+	if($("#commit-message").val().length < 5){
 		alert("커밋 메세지는 꼭 5자 이상 입력하셔야 합니다!");
 		return false;
 	}
+	
+	var opts = {
+			  lines: 13, // The number of lines to draw
+			  length: 20, // The length of each line
+			  width: 10, // The line thickness
+			  radius: 30, // The radius of the inner circle
+			  corners: 1, // Corner roundness (0..1)
+			  rotate: 0, // The rotation offset
+			  direction: 1, // 1: clockwise, -1: counterclockwise
+			  color: '#000', // #rgb or #rrggbb or array of colors
+			  speed: 1, // Rounds per second
+			  trail: 60, // Afterglow percentage
+			  shadow: false, // Whether to render a shadow
+			  hwaccel: false, // Whether to use hardware acceleration
+			  className: 'spinner', // The CSS class to assign to the spinner
+			  zIndex: 2e9, // The z-index (defaults to 2000000000)
+			  top: '50%', // Top position relative to parent
+			  left: '50%' // Left position relative to parent
+			};
+			var spinner = new Spinner(opts).spin(document.getElementById('upload-form'));
 	
 	return true;
 }
@@ -120,21 +137,19 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 			</div>
 
 			<div class="span12 row">
-				<div class="span7">
+				<div class="span6">
 					<label id="labelPath"></label>
 				</div>
-				<div style="width: 140px;" class="span3">
+				<div class="span3">
 				
 					<sec:authorize access="isAuthenticated()">
 					
 					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
-						href="javascript:showUploadContent();"> <i
-						class="fa fa-arrow-circle-o-up"> </i></a> 
+						href="javascript:showUploadContent();">프로젝트 업로드</a> 
 						
 					<a
 						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"
-						href="javascript:hideUploadContent();"> <i
-						class="fa fa-arrow-circle-o-up"> </i></a> 
+						href="javascript:hideUploadContent();">업로드 취소</a> 
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
 						<button disabled="disabled" title="로그인을 하셔야 업로드가 가능합니다!"
@@ -165,8 +180,9 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 				<form onsubmit="return checkZipUpload();" id="upload-form" enctype="multipart/form-data" 
 				action="/project/${project.name}/${selectBranch}/upload" method="post">
 					<div class="span12">
-						<input class="title span10" type="text" id = "commit-message" name="message"
-							placeholder="프로젝트의 각종 변경사항을 입력해주세요!"></input>
+					<input id="path" type="hidden" name="path" value="${filePath}"></input>
+						<input maxlength="50" class="title span10" type="text" id = "commit-message" name="message"
+							placeholder="프로젝트의 각종 변경사항을 입력해주세요! (최소 5자 이상 입력!)"></input>
 						<button type="submit" class="post-button btn btn-primary" title="프로젝트 등록"
 							style="margin-top: -10px; display: inline-block;">
 							<i class="fa fa-check"></i>
@@ -182,7 +198,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 								
 								
 								<span class='input-group-addon btn btn-primary btn-file'><span
-									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i> ZIP으로 업로드</span>
+									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i> 파일 업로드</span>
 									<span class='fileinput-exists'><i
 										class='icon-repeat icon-white'></i></span> <input type='file'
 									id='file' multiple='true' name='zip'></span> 

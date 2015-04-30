@@ -23,7 +23,7 @@
 		}else if(!objPattern.test(name)){
 			$("alert").append("<div class='alert alert-error'>"+
 					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 강의명은 영문 숙자 조합이어야 합니다. 다시 입력해주세요!"+
+					  "<strong>경고!</strong> 강의명은 영문-소문자 숙자 조합이어야 합니다. 다시 입력해주세요!"+
 					"</div>");
 			return false;
 		}

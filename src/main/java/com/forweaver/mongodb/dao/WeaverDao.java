@@ -99,7 +99,7 @@ public class WeaverDao {
 	 */
 	public long countWeavers(List<String> tags) {
 		Criteria criteria = new Criteria("tags").all(tags).and("isLeave").is(false);
-		return mongoTemplate.count(new Query(criteria), Post.class);
+		return mongoTemplate.count(new Query(criteria), Weaver.class);
 	}
 
 	/** 회원 삭제

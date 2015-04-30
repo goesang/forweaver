@@ -256,18 +256,20 @@
 			<artifactId>org.eclipse.jgit.archive</artifactId>
 			<version>${org.eclipse.jgit-version}</version>
 		</dependency>
-		<!-- markdown -->
-		<dependency>
-			<groupId>org.commonjava.googlecode.markdown4j</groupId>
-			<artifactId>markdown4j</artifactId>
-			<version>2.2-cj-1.0</version>
-		</dependency>
+
 		<!-- coverity-escapers -->
 		<dependency>
 			<groupId>com.coverity.security</groupId>
 			<artifactId>coverity-escapers</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		<!-- pegdown -->
+		<dependency>
+			<groupId>com.github.rjeschke</groupId>
+			<artifactId>txtmark</artifactId>
+			<version>0.13</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>

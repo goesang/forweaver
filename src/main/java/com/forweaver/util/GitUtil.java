@@ -5,15 +5,10 @@ package com.forweaver.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +37,7 @@ import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Project;
@@ -125,6 +121,23 @@ public class GitUtil {
 		}
 	}
 
+	
+
+	/** 초기화 메서드
+	 * @param creatorName
+	 * @param repositoryName
+	 */
+	public void Init(String path) {
+		try {
+			this.path = path+ "/.git";
+			this.localRepo = RepositoryCache.open(RepositoryCache.FileKey
+					.lenient(new File(this.path), FS.DETECTED), true);
+			this.git = new Git(localRepo);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+
 	/** 저장소 생성함.
 	 * @throws Exception
 	 */
@@ -139,7 +152,7 @@ public class GitUtil {
 			hide.mkdir();
 		}
 	}
-	
+
 	/** git 디렉토리 삭제
 	 * @throws Exception
 	 */
@@ -177,7 +190,7 @@ public class GitUtil {
 		return false;
 	}
 
-	
+
 	/** 프로젝트의 파일 정보를 가져옴
 	 * @param commitID
 	 * @param filePath
@@ -204,7 +217,7 @@ public class GitUtil {
 					index++;
 				}
 			}
-			
+
 
 		} finally {
 
@@ -214,7 +227,7 @@ public class GitUtil {
 
 		}
 	}
-	
+
 	/** 저장소에서 커밋을 갖고 옴
 	 * @param refName
 	 * @return
@@ -244,7 +257,7 @@ public class GitUtil {
 		}
 
 	}
-	
+
 	/** 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
 	 * @param commitID
 	 * @param filePath
@@ -511,7 +524,7 @@ public class GitUtil {
 	 * @param weaverName
 	 */
 	public void checkOutBranch(String weaverName){
-		
+
 		try{
 			for(String branchName : this.getBranchList()){
 				if(branchName.endsWith("-"+weaverName)){
@@ -576,11 +589,15 @@ public class GitUtil {
 	 * @param message
 	 * @param zip
 	 */
-	public void uploadZip(String name,String email,String branchName,String message,InputStream zip){
+	public void uploadZip(String name,String email,String branchName,String message,MultipartFile zip){
+		String directoryPath = "/tmp/"+new org.bson.types.ObjectId().toString();
+		
+		WebUtil.multipartFileToTempFile(directoryPath+".zip", zip);
+		
+		PersonIdent personIdent = new PersonIdent(name, email);
 		try {
 			// 임시 git 저장소 생성하고 클론.
-			File localPath = File.createTempFile("git", "");
-			localPath.delete();
+			File localPath = new File(directoryPath);
 			Git.cloneRepository()
 			.setURI(this.path)
 			.setDirectory(localPath)
@@ -588,67 +605,33 @@ public class GitUtil {
 			// .git을 제외한 파일 모두 삭제.
 
 			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
-
+						
+			boolean existBranch = false; // 브랜치가 존재하는지 여부
+			
+			for(String brench:this.localRepo.getAllRefs().keySet())
+				if(brench.equals("refs/heads/"+branchName))
+					existBranch = true;
+			
+			if(!existBranch && !branchName.equals("empty_Branch")) // 브랜치가 존재하지 않는다면 새로 만듬.
+				git.branchCreate().setName(branchName).call();
+			
 			if(!branchName.equals("empty_Branch"))
 				git.checkout().setName(branchName).call();
-
-
+			
 			for(String fileName:getGitFileList(branchName))
 				git.rm().addFilepattern(fileName.substring(1)).call();	
 
-
+			WebUtil.unZip(directoryPath+".zip", directoryPath,WebUtil.isOneDirectory(directoryPath+".zip"));
 			
-			//압축파일을 품.
-			byte[] buffer = new byte[1024];
-			ZipInputStream zis = 
-					new ZipInputStream(zip,Charset.forName("EUC-KR"));	    	
-			ZipEntry ze = zis.getNextEntry();
-			while(ze!=null){
-				if (!ze.isDirectory() && (!ze.getName().contains(".git/") 
-						|| !ze.getName().endsWith(".exe") || 
-						!ze.getName().endsWith(".class") || 
-						!ze.getName().endsWith(".bak") ||
-						!ze.getName().endsWith(".log") || 
-						!ze.getName().endsWith(".apk"))) { // 만약 파일의 경우
-					String fileName = ze.getName();
-					
-					File newFile = new File(localPath + File.separator + fileName);
-
-					new File(newFile.getParent()).mkdirs();
-
-					FileOutputStream fos = new FileOutputStream(newFile);             
-
-					int len;
-					String content = "";
-					while ((len = zis.read(buffer)) != -1)
-					{
-						if(WebUtil.isCodeName(ze.getName()))
-							content += new String(buffer, 0, len,Charset.forName("EUC-KR"));
-						else
-							content += new String(buffer, 0, len,Charset.forName("8859_1"));
-					}
-					if(WebUtil.isCodeName(ze.getName()))
-						fos.write(content.getBytes());
-					else
-						fos.write(content.getBytes("8859_1"));
-					fos.close();   
-				}
-				ze = zis.getNextEntry();
-			}
-
-			zis.closeEntry();
-			zis.close();
-			//이제 파일들을 모조리 추가시키고 커밋한 후에 푸시함.
-
-
 			git.add().addFilepattern(".").call();		
-			git.commit().setCommitter(new PersonIdent(name, email)).setAuthor(new PersonIdent(name, email)).setMessage(message).call();
+			git.commit().setCommitter(personIdent).setAuthor(personIdent).setMessage(message).call();
 			git.push().setRemote("origin").call();
-
+			
+			FileUtils.deleteDirectory(new File(directoryPath));
+			new File(directoryPath+".zip").delete();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-
 	}
 
 	/** 프로젝트를 포크함.
@@ -662,7 +645,43 @@ public class GitUtil {
 			System.err.println(e.getMessage());
 		}
 	}
+	
+	
+	/** GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
+	 * @param name
+	 * @param email
+	 * @param branchName
+	 * @param message
+	 * @param zip
+	 */
+	public void uploadFile(String name,String email,String branchName,String message,String path,MultipartFile file){
+		String directoryPath = "/tmp/"+new org.bson.types.ObjectId().toString();
+		
+		PersonIdent personIdent = new PersonIdent(name, email);
+		try {
+			// 임시 git 저장소 생성하고 클론.
+			File localPath = new File(directoryPath);
+			Git.cloneRepository()
+			.setURI(this.path)
+			.setDirectory(localPath)
+			.call();
+			// .git을 제외한 파일 모두 삭제.
 
+			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
+
+			if(!branchName.equals("empty_Branch"))
+				git.checkout().setName(branchName).call();
+			WebUtil.multipartFileToTempFile(directoryPath+path+"/"+file.getOriginalFilename(), file);
+			
+			git.add().addFilepattern(".").call();		
+			git.commit().setCommitter(personIdent).setAuthor(personIdent).setMessage(message).call();
+			git.push().setRemote("origin").call();
+			
+			FileUtils.deleteDirectory(new File(directoryPath));
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
 
 	/** 일주일 24시간별로 커밋의 갯수를 측정하는 코드 빈도수 시각화에 쓰임
 	 * @return

@@ -2,8 +2,8 @@ package com.forweaver.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.markdown4j.Markdown4jProcessor;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
+
+import com.github.rjeschke.txtmark.Processor;
 
 
 /** 각종 웹 유틸 클래스
@@ -25,27 +27,29 @@ import org.springframework.web.util.HtmlUtils;
  *
  */
 public class WebUtil {
-	
+
 	/** 압축파일을 열었을 때 모든 파일들이 한 디렉토리에 담겨있는지 검사함.
 	 * @param file
 	 * @return
 	 */
-	public static boolean isFirstDirectory(ZipInputStream zis){
-		boolean firstDirectory = true;
+	public static boolean isOneDirectory(String zipFile){
+		boolean oneDirectory = true;
 		try{
 			//압축파일을 품.  
+			ZipInputStream zis = 
+					new ZipInputStream(new FileInputStream(zipFile));
 			ZipEntry ze = zis.getNextEntry();
 			while(ze!=null){
 				if (!ze.isDirectory() && !ze.getName().contains("/"))
-						firstDirectory = false;
+					oneDirectory = false;
 				ze = zis.getNextEntry();
 			}
 			zis.closeEntry();
 			zis.close();
 		}catch(Exception e){
-			
+
 		}
-		return firstDirectory;
+		return oneDirectory;
 	}
 
 	/** 파일명에서 확장자 가져오기
@@ -53,15 +57,15 @@ public class WebUtil {
 	 * @return
 	 */
 	public static String getFileExtension(String fileName) {
-	    int lastIndexOf = fileName.lastIndexOf(".");
-	    if (lastIndexOf == -1) {
-	        return "";
-	    }
-	    return fileName.substring(lastIndexOf);
+		int lastIndexOf = fileName.lastIndexOf(".");
+		if (lastIndexOf == -1) {
+			return "";
+		}
+		return fileName.substring(lastIndexOf);
 	}
 
 
-	
+
 	/** 특수문자 제거
 	 * @param str
 	 * @return
@@ -69,19 +73,41 @@ public class WebUtil {
 	public static boolean isCodeName(String str){     
 		str = str.toLowerCase();
 		if(str.endsWith(".c") || str.endsWith(".h")|| str.endsWith(".ino")
-		|| str.endsWith(".java")|| str.endsWith(".py")|| str.endsWith(".cpp") || str.endsWith(".hpp")
-		|| str.endsWith(".html")|| str.endsWith(".css")|| str.endsWith(".pl")
-		|| str.endsWith(".sql")|| str.endsWith(".php")|| str.endsWith(".cs")
-		|| str.endsWith(".rb")|| str.endsWith(".txt")|| str.endsWith(".js") || str.endsWith(".properties")
-		|| str.endsWith(".xml")|| str.endsWith(".md") || str.endsWith(".log")|| str.endsWith(".pom"))
+				|| str.endsWith(".java")|| str.endsWith(".py")|| str.endsWith(".cpp") || str.endsWith(".hpp")
+				|| str.endsWith(".html")|| str.endsWith(".css")|| str.endsWith(".pl") || str.endsWith(".r")
+				|| str.endsWith(".sql")|| str.endsWith(".php")|| str.endsWith(".cs") || str.endsWith(".r")
+				|| str.endsWith(".rb")|| str.endsWith(".txt")|| str.endsWith(".js") || str.endsWith(".properties")
+				|| str.endsWith(".xml")|| str.endsWith(".md") || str.endsWith(".log")|| str.endsWith(".pom"))
 			return true;
 		return false;
-	   }
-	
+	}
+
+	public static boolean isAllowedFileName(String fileName){     
+		fileName = fileName.toLowerCase();
+
+		if (fileName.contains(".git/") 	|| fileName.contains("debug/") 	||
+				fileName.contains("classes/") || fileName.contains("gen-external-apklibs/") ||  
+				fileName.contains("release/") || fileName.endsWith(".exe") || 
+				fileName.endsWith(".ipch") || fileName.endsWith(".sdf") || 
+				fileName.endsWith(".bak") || fileName.endsWith(".log") || 
+				fileName.endsWith(".pyc") || fileName.endsWith(".pyd") || 
+				fileName.endsWith(".opensdf") || fileName.endsWith(".ilk") || 	
+				fileName.endsWith(".pyo") || fileName.endsWith(".lib") ||
+				fileName.endsWith(".class") || fileName.endsWith(".dex") ||
+				fileName.endsWith(".bak") || fileName.endsWith(".tlb") ||
+				fileName.endsWith(".class") || fileName.endsWith(".dex") ||
+				fileName.endsWith(".ap_") || fileName.endsWith(".apk"))
+			return false;
+
+		return true;
+	}
+
+
+
 	public static boolean isImageName(String filename){ 
 		filename = filename.toUpperCase();
-		
-        if(filename.endsWith(".ANI") || filename.endsWith(".BMP") || filename.endsWith(".CAL")
+
+		if(filename.endsWith(".ANI") || filename.endsWith(".BMP") || filename.endsWith(".CAL")
 				|| filename.endsWith(".CAL") || filename.endsWith(".FAX") || filename.endsWith(".GIF")
 				|| filename.endsWith(".IMG") || filename.endsWith(".JPE") || filename.endsWith(".JPEG")
 				|| filename.endsWith(".JPG") || filename.endsWith(".MAC") || filename.endsWith(".PBM")
@@ -91,24 +117,23 @@ public class WebUtil {
 				|| filename.endsWith(".TIF") || filename.endsWith(".TIFF") || filename.endsWith(".WMF")){
 			return true;
 		}
-        return false;
-	   }
-	
+		return false;
+	}
+
 	/** 글의 http 주소가 있으면 링크로 바꿔줌.
 	 * @param plain
 	 * @return
 	 */
 	public static String addLink(String text){
 		if (text == null) {
-	        return text;
-	    }
+			return text;
+		}
 
-	    String escapedText = HtmlUtils.htmlEscape(text);
+		String escapedText = HtmlUtils.htmlEscape(text);
 
-	    return escapedText.replaceAll("(\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)",
-	        "$1<a href=\"$2\">$2</a>$4");
+		return escapedText;
 	}
-	
+
 	/** 제출날짜 가져오기
 	 * @param pageUrl
 	 * @return 제출 날짜
@@ -184,17 +209,8 @@ public class WebUtil {
 	 * @return html화된 문자열.
 	 */
 	public static String markDownEncoder(String str) {
-		str = str.replace("<", "&lt;");
-		try {
-			str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)",
-			        "$1<a href=\"$2\">$2</a>$4");
-			str = new Markdown4jProcessor().process(str);
-			str = str.replace("&amp;", "&");
-			
-			return str;
-		} catch (IOException e) {
-			return "";
-		}
+		str = str.replace("\n", "\n\n");
+		return Processor.process(str,true);
 	}
 
 	/**	이전시간과 현재시간과의 차이를 계산하여 지난시간 반환
@@ -311,4 +327,67 @@ public class WebUtil {
 		return returnList;
 	}
 
+
+	public static boolean multipartFileToTempFile(String fileName,MultipartFile multipartFile){
+		String destination = fileName;
+		File file = new File(destination);
+		try{
+			multipartFile.transferTo(file);
+		}catch(Exception e){
+			return false;
+		}
+
+		return true;
+	}
+	public static void unZip(String zipFile, String outputFolder,boolean skipDirectory){
+
+		byte[] buffer = new byte[1024];
+
+		try{
+			ZipInputStream zis = 
+					new ZipInputStream(new FileInputStream(zipFile),Charset.forName("EUC-KR"));
+			ZipEntry ze = zis.getNextEntry();
+
+			while(ze!=null){
+
+				String fileName = ze.getName();
+				if (!ze.isDirectory() && isAllowedFileName(fileName)) { 
+					String path = "";
+					
+					if(skipDirectory)
+						path = outputFolder + File.separator + fileName.substring(fileName.indexOf("/"));
+					else
+						path = outputFolder + File.separator + fileName;
+					
+					File newFile = new File(path);
+
+					new File(newFile.getParent()).mkdirs();
+
+					FileOutputStream fos = new FileOutputStream(newFile);             
+
+					int len;
+					while ((len = zis.read(buffer)) > 0) {
+						fos.write(buffer, 0, len);
+					}
+
+					fos.close();   
+				}
+				ze = zis.getNextEntry();
+			}
+
+			zis.closeEntry();
+			zis.close();
+
+		}catch(IOException ex){
+			ex.printStackTrace(); 
+		}
+	}    
+	
+	public static byte[] concatenateByteArrays(byte[] a, byte[] b) {
+	    byte[] result = new byte[a.length + b.length]; 
+	    System.arraycopy(a, 0, result, 0, a.length); 
+	    System.arraycopy(b, 0, result, a.length, b.length); 
+	    return result;
+	} 
+	
 }

@@ -54,12 +54,8 @@ public class WeaverService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String id)
 			throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		System.out.println(id);
-		System.out.println("rrrrrrrrrrrr");
 		Weaver weaver = weaverDao.get(id);
-		System.out.println(weaver.getId());
-		System.out.println("rrrrrrrrrrrr");
-		if (weaver == null)
+		if(weaver.isLeave())
 			return null;
 		return weaver;
 	}

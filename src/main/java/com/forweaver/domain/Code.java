@@ -57,6 +57,7 @@ public class Code implements Serializable  {
 		this.tags = tags;
 		this.openingDate = new Date();
 	}
+	
 
 	public int getCodeID() {
 		return codeID;
@@ -201,4 +202,7 @@ public class Code implements Serializable  {
 					simpleCode.setContent("이것은 볼 수 없는 소스 코드입니다!");
 		}
 	}
+
+	
+	
 }

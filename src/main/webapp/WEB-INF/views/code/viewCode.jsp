@@ -96,7 +96,7 @@
 					$("#repost-table").hide();
 					$("#myTab").hide();
 					if($("#repost-content").val().length == 0)
-						$("#repost-content").css('height','200px');
+						$("#repost-content").css('height','300px');
 			});
 			
 			$("#repost-content").focusout(function(){	
@@ -267,9 +267,9 @@
 						<li id="push-desc"><a
 							href="/code/${code.codeID}/sort:push-desc">추천순</a></li>
 						<li id="reply-desc"><a
-							href="/code/${code.codeID}/sort:reply-desc">최신 답변순</a></li>
+							href="/code/${code.codeID}/sort:reply-desc">최신 댓글순</a></li>
 						<li id="reply-many"><a
-							href="/code/${code.codeID}/sort:reply-many">많은 답변순</a></li>
+							href="/code/${code.codeID}/sort:reply-many">많은 댓글순</a></li>
 						<li id="age-asc"><a href="/code/${code.codeID}/sort:age-asc">오래된순</a></li>
 					</ul>
 
@@ -289,7 +289,10 @@
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
 									</sec:authorize>	
-									<c:if test="${rePost.writerName==currentUser}">	
+									<c:if test="${rePost.writerName==currentUser}">
+										<a onclick="return confirm('정말로 답변을 수정하시겠습니까?');" href='/code/${code.codeID}/${rePost.rePostID}/update#repost-content'>
+											<span class="function-button">수정</span>
+										</a>
 										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 											href='/code/${code.codeID}/${rePost.rePostID}/delete'> <span
 											class="function-button">삭제</span>
@@ -297,16 +300,20 @@
 									</c:if>
 									</div>
 								</td>
-								<td class="td-button"><span class="span-button">${rePost.push}
+								<td class="td-button">
+								<a onclick="return confirm('정말로 추천하시겠습니까?');" href="/code/${code.codeID}/${rePost.rePostID}/push">
+								<span class="span-button">${rePost.push}
 										<p class="p-button">추천</p>
-								</span></td>
+								</span>
+								</a>
+								</td>
 								<td class="td-button"><span class="span-button">${rePost.replys.size()}
 										<p class="p-button">댓글</p>
 								</span></td>
 							</tr>
 							<c:if test="${rePost.datas.size() > 0}">
 								<tr>
-									<td colspan="5"><c:forEach var="index" begin="0"
+									<td class ="none-top-border"colspan="5"><c:forEach var="index" begin="0"
 											end="${rePost.datas.size()-1}">
 											<a href='/data/${rePost.datas.get(index).getId()}'><span
 												class="function-button function-file"><i

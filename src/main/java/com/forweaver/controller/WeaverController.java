@@ -148,7 +148,7 @@ public class WeaverController {
 	@RequestMapping({"/{id}","/{id}/code","/{id}/project","/{id}/lecture"})
 	public String home(@PathVariable("id") String id,HttpServletRequest request) {
 		Weaver weaver = weaverService.get(id);
-		if(weaver == null)
+		if(weaver == null || weaver.isLeave())
 			return "/error404";
 		else
 			return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
@@ -163,7 +163,7 @@ public class WeaverController {
 		int size = WebUtil.getPageSize(page);
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -189,7 +189,7 @@ public class WeaverController {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
@@ -210,7 +210,7 @@ public class WeaverController {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
@@ -231,7 +231,7 @@ public class WeaverController {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
-		if (weaver == null) 
+		if (weaver == null || weaver.isLeave()) 
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
@@ -264,7 +264,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -298,7 +298,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -331,7 +331,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -363,7 +363,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -401,7 +401,7 @@ public class WeaverController {
 		int size = WebUtil.getPageSize(page);
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -437,7 +437,7 @@ public class WeaverController {
 		int size = WebUtil.getPageSize(page);
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -463,7 +463,7 @@ public class WeaverController {
 	@RequestMapping(value = "/{id}/edit")
 	public String editWeaver(@PathVariable("id") String id,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if (!weaver.getId().equals(id)) // 본인이 아닐 경우
+		if (weaver == null || !weaver.getId().equals(id)) // 본인이 아닐 경우
 			return "redirect:/";
 		model.addAttribute("weaver", weaver);
 		return "/weaver/edit";
@@ -492,6 +492,7 @@ public class WeaverController {
 			model.addAttribute("url", "/");
 			return "/alert";
 		}
+		
 		weaverService.update(weaver,password,newpassword,tagList,studentID,say,image);
 
 		model.addAttribute("say", "정보를 수정하였습니다!");
@@ -504,14 +505,14 @@ public class WeaverController {
 	public void img(@PathVariable("id") String id, HttpServletResponse res)
 			throws IOException {
 		Weaver weaver = weaverService.get(id);
-		if (weaver == null) {
+		if (weaver == null || weaver.isLeave()) {
 			if(id.contains("@") && id.contains("."))
 				res.sendRedirect("http://www.gravatar.com/avatar/"
 						+ WebUtil.convertMD5(id) + ".jpg");
 			else
 				res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
 			return;
-		}else if (weaver.getImage().getName().length() ==0) {
+		}else if (weaver.getImage().getContent().length  == 0) {
 			res.sendRedirect("http://www.gravatar.com/avatar/"
 					+ WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
 		} else {

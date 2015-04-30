@@ -331,7 +331,7 @@ public class PostController {
 		RePost rePost = rePostService.get(repostID);
 		rePostService.push(rePost,weaverService.getCurrentWeaver(),weaverService.getUserIP());
 
-		return "redirect:/community/sort:age-desc/page:1";
+		return "redirect:/community/"+postID+"/";
 	}
 
 	@RequestMapping("/{postID}/update")
@@ -395,7 +395,8 @@ public class PostController {
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if(post == null || rePost == null || weaver == null || !rePost.getWriter().equals(weaver)){
+		if(post == null || rePost == null || weaver == null || !rePost.getWriter().equals(weaver) ||
+				rePost.getOriginalPost().getPostID() != post.getPostID()){
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
@@ -414,13 +415,15 @@ public class PostController {
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
 
-		if(post == null || rePost == null || content == null|| content.length() < 5 ||  !rePost.getWriter().equals(weaver)){ // 태그가 없을 때
+		if(post == null || rePost == null || content.length() < 5 ||  !rePost.getWriter().equals(weaver) ||
+				rePost.getOriginalPost().getPostID() != post.getPostID()){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
 		}	
 
-		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(),weaver)){ // 태그에 권한이 없을때
+		if(!post.getWriter().equals(weaver) && 
+				!tagService.validateTag(post.getTags(),weaver)){ // 태그에 권한이 없을때
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";

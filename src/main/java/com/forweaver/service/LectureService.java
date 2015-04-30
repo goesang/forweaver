@@ -263,7 +263,7 @@ public class LectureService {
 		gitUtil.Init(repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
 		try{
-			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
+			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip);
 			if (lecture.getCreatorName().equals(weaver.getId())) { // 강의 개설자의 경우
 				if (repo.getCategory() == 1) {
 					gitUtil.createStudentBranch(beforeBranchList,	lecture);
@@ -275,7 +275,7 @@ public class LectureService {
 				if (repo.getCategory() == 0) { // 예제 저장소의 경우
 
 					gitUtil.notWriteBranches();
-					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
+					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip);
 					gitUtil.writeBranches();
 				} else{ // 숙제 저장소의 경우
 
@@ -285,7 +285,7 @@ public class LectureService {
 					}
 					gitUtil.hideNotUserBranches(weaver.getId());
 					gitUtil.checkOutBranch(weaver.getId());
-					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
+					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip);
 					gitUtil.showBranches();
 					gitUtil.checkOutMasterBranch();
 

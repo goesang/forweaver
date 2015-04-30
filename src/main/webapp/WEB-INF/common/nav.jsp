@@ -15,7 +15,7 @@
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
 					<li><a href="/intro/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
-					
+					<li><a href="/contactUs"><i class="fa fa-phone-square"></i>&nbsp;고객센터</a></li>
 				</ul>
 
 				<ul class="nav pull-right">
@@ -49,7 +49,7 @@
 			<div class="span11">
 				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
 				<div title="태그를 입력하시고 나서 꼭 엔터키나 스페이스키를 누르시면 추가가 됩니다."  class="span10 tag-span">
-					<input placeholder="태그를 입력하고 꼭 엔터!" 
+					<input placeholder="여기에 태그를 입력하고 꼭 엔터!" 
 						class="tagarea tagarea-full" id="tags-input" />
 					<input name="tags" type="hidden" id="tag-hidden"/>
 

@@ -127,16 +127,10 @@ public class RePost implements Serializable {
 			reply.setNumber(1);
 		else
 			reply.setNumber(this.replys.get(0).getNumber() + 1);
+		
 		this.replys.add(0, reply);
-	}
-
-	public void updateReply(Reply reply, Weaver weaver, int number) {
-		for (Reply tmpReply : this.replys) {
-			if (tmpReply.getNumber() == number
-					&& weaver.getId().equals(tmpReply.getWriterName()))
-				tmpReply = reply;
-
-		}
+		
+		this.recentReplyDate = reply.getCreated();
 	}
 
 	public boolean removeReply(Weaver weaver, int number) {

@@ -37,13 +37,13 @@ public class PostService {
 	 */
 	public int add(Post post,List<Data> datas) {
 
-		if (post.getContent().length() >= 10)
+		if (post.getContent().length() > 4)
 			post.setLong(true);
 		else {
 			post.setLong(false);
 			post.setContent("");
 		}
-		if (post.getTitle().length() <= 1)
+		if (post.getTitle().length() < 5)
 			return -1;
 
 		//만약 자료를 올렸다면.

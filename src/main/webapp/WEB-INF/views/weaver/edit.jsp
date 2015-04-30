@@ -48,16 +48,16 @@ $(document).ready(function() {
 						<legend><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;정보수정</legend>
 						<div class="span6">
 						
-						<div class="control-group">
-							<label for="password" class="control-label">비밀번호</label>
+						<div title ="비밀번호를 변경하시려면 여기에 먼저 기존 비밀번호를 입력하세요!" class="control-group">
+							<label for="password" class="control-label">기존 비밀번호</label>
 							<div class="controls">
 								<input id="password" name="password" class="input-large"
 									type="password" />
 
 							</div>
 						</div>
-						<div class="control-group">
-							<label for="rePassword" class="control-label">비밀번호 확인</label>
+						<div title ="새로운 비밀번호를 입력하세요!" class="control-group">
+							<label for="rePassword" class="control-label">변경할 비밀번호</label>
 							<div class="controls">
 								<input id="rePassword" name="newpassword" class="input-large"
 									type="password" />

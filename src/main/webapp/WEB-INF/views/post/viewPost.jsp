@@ -85,7 +85,7 @@
 					$("#repost-table").hide();
 					$("#myTab").hide();
 					if($("#repost-content").val().length == 0)
-						$("#repost-content").css('height','200px');
+						$("#repost-content").css('height','300px');
 			});
 			
 			$("#repost-content").focusout(function(){	
@@ -178,7 +178,7 @@
 						</tr>
 						<c:if test="${post.datas.size() > 0}">
 							<tr>
-								<td colspan="5"><c:forEach var="index" begin="0"
+								<td class ="none-top-border" colspan="5"><c:forEach var="index" begin="0"
 										end="${post.datas.size()-1}">
 										<a href='/data/${post.datas.get(index).getId()}/${post.datas.get(index).getName()}'><span
 											class="function-button function-file" title='파일 다운로드'><i
@@ -207,7 +207,7 @@
 					<div style="margin-left: 0px" class="span11">
 						<textarea name="content" id="repost-content"
 							class="post-content span10" 
-							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
+							placeholder="답변할 내용을 입력해주세요!(최소 5자 이상 직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>
@@ -236,9 +236,9 @@
 						<li id="push-desc"><a
 							href="/community/${post.postID}/sort:push-desc">추천순</a></li>
 						<li id="reply-desc"><a
-							href="/community/${post.postID}/sort:reply-desc">최신 답변순</a></li>
+							href="/community/${post.postID}/sort:reply-desc">최신 댓글순</a></li>
 						<li id="reply-many"><a
-							href="/community/${post.postID}/sort:reply-many">많은 답변순</a></li>
+							href="/community/${post.postID}/sort:reply-many">많은 댓글순</a></li>
 						<li id="age-asc"><a
 							href="/community/${post.postID}/sort:age-asc">오래된순</a></li>
 					</ul>
@@ -261,13 +261,16 @@
 										</sec:authorize>	
 											
 										<c:if test="${rePost.writerName==currentUser}">	
-										<a href='javascript:deleteRePost(${post.postID},${rePost.rePostID})'>
+										<a onclick="return confirm('정말로 답변을 수정하시겠습니까?');" href='/community/${post.postID}/${rePost.rePostID}/update#repost-content'>
+											<span class="function-button">수정</span>
+										</a>
+										<a onclick="return confirm('정말로 답변을 삭제하시겠습니까?');" href='/community/${post.postID}/${rePost.rePostID}/delete'>
 											<span class="function-button">삭제</span>
 										</a>
 										</c:if>
 									</div>
 								</td>
-								<td class="td-button"><a href="/community/${rePost.rePostID}/push"><span class="span-button">${rePost.push}
+								<td class="td-button"><a onclick="return confirm('정말로 추천하시겠습니까?');" href="/community/${post.postID}/${rePost.rePostID}/push"><span class="span-button">${rePost.push}
 										<p class="p-button">추천</p>
 								</span></a></td>
 								<td class="td-button"><span class="span-button">${rePost.replys.size()}

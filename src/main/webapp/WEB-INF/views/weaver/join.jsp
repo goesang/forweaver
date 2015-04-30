@@ -133,7 +133,7 @@ $(document).ready(function() {
 							<label  for="id" class="control-label">닉네임</label>
 							<div class="controls">
 								<input maxlength="15" id="id" name="id" class="input-large"
-									type="text" placeholder="영문,숫자,언더바 5자 이상" value="" />
+									type="text" placeholder="영문-소문자,숫자,언더바 5자 이상" value="" />
 							</div>
 						</div>
 						
@@ -163,7 +163,7 @@ $(document).ready(function() {
 						</div>
 						
 						<div class="control-group">
-							<label for="studentID" class="control-label">학번</label>
+							<label for="studentID" class="control-label">학번 (선택)</label>
 							<div class="controls">
 								<input maxlength="30"  name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
 
@@ -195,7 +195,7 @@ $(document).ready(function() {
 						</div>
 						<div class="span11">
 						<div class="control-group">
-							<label for="say" class="control-label">자기소개</label>
+							<label for="say" class="control-label">자기소개 (선택)</label>
 							<div class="controls">
 								<input maxlength="50"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 

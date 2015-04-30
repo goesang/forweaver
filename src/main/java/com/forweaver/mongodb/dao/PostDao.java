@@ -606,7 +606,7 @@ public class PostDao {
 		} else if (sort.equals("repost-desc")) {
 			query.with(new Sort(Sort.Direction.DESC, "recentRePostDate"));
 		} else if (sort.equals("repost-many")) {
-			query.with(new Sort(Sort.Direction.DESC, "respostCount"));
+			query.with(new Sort(Sort.Direction.DESC, "rePostCount"));
 		} else
 			query.with(new Sort(Sort.Direction.DESC, "_id"));
 	}

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
+import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
 import com.forweaver.domain.SimpleCode;
@@ -195,19 +196,18 @@ public class CodeController {
 			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
 			return;
 		}
-			byte[] imgData;
-			
-			
-			if(WebUtil.isCodeName(filePath))
-				imgData = simpleCode.getContent().getBytes("EUC-KR");
-			else
-				imgData = simpleCode.getContent().getBytes("8859_1");
-
+		byte[] imgData;
+		
+		
+		if(WebUtil.isCodeName(filePath))
+			imgData = simpleCode.getContent().getBytes("EUC-KR");
+		else
+			imgData = simpleCode.getContent().getBytes("8859_1");
+		
 			res.reset();
 			res.setContentType("application/octet-stream");
-			String Encoding = new String(simpleCode.getFileName().getBytes("UTF-8"), "8859_1");
-			res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
-			res.setContentType(WebUtil.getFileExtension(simpleCode.getFileName()));
+			String filename = new String(simpleCode.getFileName().getBytes("UTF-8"), "8859_1");
+			res.setHeader("Content-Disposition", "attachment; filename = " + filename);
 			
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);
@@ -224,8 +224,7 @@ public class CodeController {
 		Code code = codeService.get(codeID,false);
 		res.reset();
 		res.setContentType("application/octet-stream");
-		String Encoding = new String((codeName+".zip").getBytes("UTF-8"), "8859_1");
-		res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
+		res.setHeader("Content-Disposition", "attachment; filename = " + codeName+".zip");
 		res.setContentType(WebUtil.getFileExtension(codeName+".zip"));
 		codeService.dowloadCode(code, res.getOutputStream());
 	}
@@ -260,7 +259,53 @@ public class CodeController {
 				content);
 		rePostService.add(rePost,datas);
 		code.setRePostCount(code.getRePostCount()+1);
+		code.setRecentRePostDate(rePost.getCreated());
 		codeService.update(code);
+
+		return "redirect:/code/"+codeID;
+	}
+	
+	@RequestMapping("/{codeID}/{rePostID}/update")
+	public String update(Model model, @PathVariable("codeID") int codeID, @PathVariable("rePostID") int rePostID) {		
+		Code code = codeService.get(codeID,true);
+		RePost rePost = rePostService.get(rePostID);
+		Weaver weaver = weaverService.getCurrentWeaver();
+		if(code == null || rePost == null || weaver == null || !rePost.getWriter().equals(weaver) ||
+				rePost.getOriginalCode().getCodeID() != code.getCodeID()){
+			model.addAttribute("say", "권한이 없습니다!!!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}
+		model.addAttribute("code", code);
+		model.addAttribute("rePost", rePost);
+
+		return "/code/updateRePost";
+	}
+
+	@RequestMapping(value="/{codeID}/{rePostID}/update", method = RequestMethod.POST)
+	public String update(@PathVariable("codeID") int codeID, @PathVariable("rePostID") int rePostID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
+
+		Code code = codeService.get(codeID,true);
+		RePost rePost = rePostService.get(rePostID);
+		String content = request.getParameter("content");
+		Weaver weaver = weaverService.getCurrentWeaver();
+
+		if(code == null || rePost == null || content.length() < 5 ||  !rePost.getWriter().equals(weaver) ||
+				rePost.getOriginalCode().getCodeID() != code.getCodeID()){ // 태그가 없을 때
+			model.addAttribute("say", "잘못 입력하셨습니다!!!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}	
+
+		if(!code.getWriter().equals(weaver) && 
+				!tagService.validateTag(code.getTags(),weaver)){ // 태그에 권한이 없을때
+			model.addAttribute("say", "권한이 없습니다!!!");
+			model.addAttribute("url", "/code/"+codeID);
+			return "/alert";
+		}	
+		
+		rePost.setContent(content);
+		rePostService.update(rePost,null);
 
 		return "redirect:/code/"+codeID;
 	}
@@ -297,7 +342,14 @@ public class CodeController {
 		}
 		return "redirect:/code/"+codeID;	
 	}
+	
+	@RequestMapping("/{codeID}/{repostID}/push")
+	public String rePostPush(Model model, @PathVariable("codeID") int codeID, @PathVariable("repostID") int repostID) {
+		RePost rePost = rePostService.get(repostID);
+		rePostService.push(rePost,weaverService.getCurrentWeaver(),weaverService.getUserIP());
 
+		return "redirect:/code/"+codeID+"/";
+	}
 	@RequestMapping("/{codeID}/{rePostID}/delete")
 	public String deleteRePost(Model model, @PathVariable("codeID") int codeID, @PathVariable("rePostID") int rePostID) {
 		Code code = codeService.get(codeID,true);

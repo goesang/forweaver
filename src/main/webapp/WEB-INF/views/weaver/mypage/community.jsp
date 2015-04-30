@@ -113,8 +113,8 @@
 							<ul class="dropdown-menu">
 								<li><a href="/${weaver.getId()}/project"><i
 										class=" fa fa-bookmark"></i>&nbsp;&nbsp;프로젝트</a></li>
-								<li><a href="/${weaver.getId()}/lecture"><i
-										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+								<!-- <li><a href="/${weaver.getId()}/lecture"><i
+										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li> -->
 								<li><a href="/${weaver.getId()}/code"><i
 										class=" fa fa-rocket"></i>&nbsp;&nbsp;코드</a></li>
 							</ul>

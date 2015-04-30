@@ -30,9 +30,9 @@ public class GitCommitLog implements Serializable {
 		this.commiterEmail = commiterEmail;
 		this.note = note;
 		this.diff = diff;
-		if(diff.length() >10000)
-			diff = diff.substring(0, 9999)+"\n\n /////////////내용이 길어서 생략////////////////////";
-		
+		if(diff.length() >20000)
+			this.diff = diff.substring(0, 19999)+"\n\n /////////////내용이 길어서 생략////////////////////";
+
 		this.commitDate = new Date(commitDate*1000L);
 	}
 	

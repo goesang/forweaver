@@ -156,7 +156,7 @@
 				        
 				        $("#post-content-textarea").focus(function(){	
 							if($("#post-content-textarea").val().length == 0)
-								$("#post-content-textarea").css('height','200px');
+								$("#post-content-textarea").css('height','300px');
 						});
 						
 						$("#post-content-textarea").focusout(function(){	

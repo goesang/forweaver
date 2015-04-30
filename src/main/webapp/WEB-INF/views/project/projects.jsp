@@ -18,10 +18,10 @@
 			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return false;
 		}else if(!objPattern.test(name)){
-			alert("프로젝트명은 영문 숫자 언더바 조합이어야 합니다. 다시 입력해주세요!");
+			alert("프로젝트명은 영문-소문자 숫자 언더바 조합이어야 합니다. 다시 입력해주세요!");
 			return false;
 		}
-		else if(name.length <4){
+		else if(name.length <5){
 			alert("프로젝트명은 5자 이상이어야 합니다!");
 			return false;
 		}else if(description.lenght <5){
@@ -164,7 +164,7 @@
 
 				<div id="project-div" class="span10">
 					<input maxlength="15" id ="project-name" class="title span5"
-						placeholder="프로젝트명을 입력해주세요! (영문 숫자 언더바 조합 15자)" name="name" type="text" /> 
+						placeholder="프로젝트명 (영문-소문자 숫자 언더바 조합 최소 5자)" name="name" type="text" /> 
 					
 					
 					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 <input type="radio"

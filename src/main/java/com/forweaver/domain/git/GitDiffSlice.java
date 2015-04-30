@@ -1,8 +1,5 @@
 package com.forweaver.domain.git;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +21,6 @@ class GitDiffSlice{
 
 	public GitDiffSlice(String diff){
 		String[] temp = diff.split("\n");
-		String slice = "";
-		String Filetotal="";	
 		int checkdiff = 1;
 		try {        
 			GitDiffFileInfo loadfile = new GitDiffFileInfo();
@@ -47,12 +42,6 @@ class GitDiffSlice{
 						}
 						
 						loadfile = new GitDiffFileInfo();
-						int langs = temp[checkdiff].lastIndexOf("b/");
-						int ext = temp[checkdiff].lastIndexOf(".");
-						int length = temp[checkdiff].length();
-						String filename = temp[checkdiff].substring(langs+1,ext);
-						String extname = temp[checkdiff].substring(ext+1,length);
-
 					}
 					else{
 						loadfile.setFilecontent(temp[checkdiff]+"\n");

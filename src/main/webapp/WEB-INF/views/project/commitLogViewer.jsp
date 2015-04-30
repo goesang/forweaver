@@ -79,7 +79,7 @@ function fileUploadChange(fileUploader){
 				$(".file-div").fadeIn();
 				$("#repost-table").hide();
 				if($("#repost-content").val().length == 0)
-					$("#repost-content").css('height','200px');
+					$("#repost-content").css('height','300px');
 		});
 		
 		$("#repost-content").focusout(function(){	
@@ -217,7 +217,7 @@ function fileUploadChange(fileUploader){
 					<div style="margin-left: 0px" class="span11">
 						<textarea name="content" id="repost-content"
 							class="post-content span10" 
-							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
+							placeholder="답변할 내용을 입력해주세요!(최소 5자 이상 직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>

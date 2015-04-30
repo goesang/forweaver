@@ -11,7 +11,7 @@
 
 	<!-- Stateless RESTful service using Basic authentication -->
 	<security:http pattern="/g/*/*.git/**">
-		<security:intercept-url pattern='/g/*/*.git/**' access="ROLE_ADMIN, ROLE_USER,ROLE_PROF"/>
+		<security:intercept-url pattern='/g/*/*.git/**' access="ROLE_ADMIN, ROLE_USER"/>
 		<security:http-basic />
 		<security:session-management
 			session-authentication-strategy-ref="sas" />
@@ -36,7 +36,8 @@
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/"
 			access="isAuthenticated()" />
-
+			
+		
 		<security:intercept-url pattern="/community/add"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/community/*/delete"
@@ -98,11 +99,22 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/*/*/fork"
 			access="isAuthenticated()" />
-
+		<security:intercept-url pattern="/project/**"
+			access="isAnonymous() or isAuthenticated()" />
 		<security:intercept-url pattern='/lecture/**'
 			access="denyAll" />
 		<security:intercept-url pattern='/admin/**'
 			access="denyAll" />
+		
+		<security:intercept-url pattern="/weaver/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/*/project/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/*/code/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/*/sort:*/page:*"
+			access="isAuthenticated()" />	
+		
 				
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />

@@ -28,7 +28,7 @@
 						}
 					});
 					
-					var pageCount = ${weaverCount+1}/${number};
+					var pageCount = ${weaverCount}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},

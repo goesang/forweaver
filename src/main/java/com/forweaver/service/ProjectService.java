@@ -7,6 +7,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.session.SessionRegistry;
@@ -23,6 +24,7 @@ import com.forweaver.mongodb.dao.ProjectDao;
 import com.forweaver.mongodb.dao.WaitJoinDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
+import com.forweaver.util.WebUtil;
 
 /** 프로젝트 관리 서비스
  *
@@ -69,7 +71,7 @@ public class ProjectService{
 		// TODO Auto-generated method stub
 		if(project == null || joinWeaver == null)
 			return false;
-		
+
 		Pass pass = new Pass(project.getName(), 1);
 		project.addJoinWeaver(joinWeaver); //프로젝트 목록에 추가
 		joinWeaver.addPass(pass);
@@ -105,7 +107,7 @@ public class ProjectService{
 			for(Weaver joinWeaver:project.getJoinWeavers()){
 				joinWeaver.deletePass(project.getName());
 				weaverDao.updatePass(joinWeaver);
-				
+
 				for (Object object : sessionRegistry.getAllPrincipals()) { //현재 로그인 중인 회원의 권한 삭제.
 					Weaver tmpWeaver = ((Weaver) object);
 					if (tmpWeaver.equals(joinWeaver))
@@ -117,7 +119,7 @@ public class ProjectService{
 				return true;
 			}
 			cherryPickRequestDao.delete(project);
-			
+
 			project.getCreator().deletePass(project.getName());
 			weaverDao.updatePass(project.getCreator());
 			projectDao.delete(project);
@@ -157,7 +159,7 @@ public class ProjectService{
 		if(project == null || project.getCategory() > 0 || 
 				(weaver == null &&  project.isProjectWeaver(weaver)))
 			return false;
-		
+
 		Cache cache = cacheManager.getCache("push");
 		Element element = cache.get(project.getName()+"@@"+ip);
 		if (element == null || (element != null && element.getValue() == null)) {
@@ -235,17 +237,19 @@ public class ProjectService{
 	 * @param message
 	 * @param zip
 	 */
-	public boolean uploadZip(Project project,Weaver weaver,String branchName,String message,MultipartFile zip){
-		if(message==null || message.length() < 5 ||weaver  == null || weaver.getPass(project.getName()) == null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
+	public boolean uploadFiles(Project project,Weaver weaver,String branchName,String message,String path,MultipartFile file){
+		if(message==null || message.length() < 5 ||weaver  == null || 
+				weaver.getPass(project.getName()) == null)
 			return false;
+		
 		gitUtil.Init(project);
-		try{
-			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
-		}catch(Exception e){
-			System.err.print(e.getLocalizedMessage());
-			return false;
-		}
-
+		
+		if(file.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
+			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), branchName, message, file);
+		else
+			gitUtil.uploadFile(weaver.getId(), weaver.getEmail(), branchName, message, path, file);
+		
+		
 		return true;
 	}
 

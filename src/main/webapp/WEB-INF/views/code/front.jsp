@@ -4,6 +4,7 @@
 <html><head>
 <title>Forweaver : 공유해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<script src="/resources/forweaver/js/spin.min.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -17,7 +18,7 @@
 			alert("파일을 업로드해 주세요!");
 			return false;
 		}else if(!objPattern.test($('#code-name').val())){
-			alert("코드명은 영문 숫자 조합이어야 합니다. 다시 입력해주세요!");
+			alert("코드명은 영문-소문자 숫자 조합이어야 합니다. 다시 입력해주세요!");
 			return false;
 		}else if(tags.length == 0){
 			alert("태그를 하나라도 입력해주세요!");
@@ -30,6 +31,27 @@
 			return false;
 		}else{
 			$("form:first").append($("input[name='tags']"));
+			
+			var opts = {
+					  lines: 13, // The number of lines to draw
+					  length: 20, // The length of each line
+					  width: 10, // The line thickness
+					  radius: 30, // The radius of the inner circle
+					  corners: 1, // Corner roundness (0..1)
+					  rotate: 0, // The rotation offset
+					  direction: 1, // 1: clockwise, -1: counterclockwise
+					  color: '#000', // #rgb or #rrggbb or array of colors
+					  speed: 1, // Rounds per second
+					  trail: 60, // Afterglow percentage
+					  shadow: false, // Whether to render a shadow
+					  hwaccel: false, // Whether to use hardware acceleration
+					  className: 'spinner', // The CSS class to assign to the spinner
+					  zIndex: 2e9, // The z-index (defaults to 2000000000)
+					  top: '50%', // Top position relative to parent
+					  left: '50%' // Left position relative to parent
+					};
+					var spinner = new Spinner(opts).spin(document.getElementById('codeForm'));
+			
 			return true;
 		}
 	}
@@ -176,7 +198,7 @@
 
 				<div id="post-div" class="span10">
 					<input maxlength="15" name="name" id="code-name" class="title span3"
-						placeholder="코드명 (영문 숫자 조합)" type="text" /> <input name="content"
+						placeholder="코드명 (소문자 숫자 최소 5자)" type="text" /> <input name="content"
 						id="code-content" class="title span7" maxlength="50"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
 				</div>

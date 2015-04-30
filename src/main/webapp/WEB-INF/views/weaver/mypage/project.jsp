@@ -106,8 +106,8 @@ tr:first-child>td {
 								<ul class="dropdown-menu">
 									<li><a href="/${weaver.getId()}/"><i
 											class=" fa fa-comments"></i>&nbsp;&nbsp;커뮤니티</a></li>
-									<li><a href="/${weaver.getId()}/lecture"><i
-											class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+									 <!--  <li><a href="/${weaver.getId()}/lecture"><i
+											class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>-->
 									<li><a href="/${weaver.getId()}/code"><i
 											class=" fa fa-rocket"></i>&nbsp;&nbsp;코드</a></li>
 								</ul>

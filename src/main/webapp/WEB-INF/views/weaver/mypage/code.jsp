@@ -109,8 +109,8 @@
 										class=" fa fa-comments"></i>&nbsp;&nbsp;커뮤니티</a></li>
 								<li><a href="/${weaver.getId()}/project"><i
 										class=" fa fa-bookmark"></i>&nbsp;&nbsp;프로젝트</a></li>
-								<li><a href="/${weaver.getId()}/lecture"><i
-										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+								<!-- <li><a href="/${weaver.getId()}/lecture"><i
+										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>-->
 							</ul>
 						</li>
 					</ul>
