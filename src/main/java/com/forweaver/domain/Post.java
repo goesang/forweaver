@@ -10,6 +10,22 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**<pre> 글 정보를 담는 클래스. 
+ * postID 글 아이디
+ * title 글 제목
+ * content 글 내용
+ * isLong 단문인지 장문인지 여부
+ * kind 글 종류 1이면 공개 2이면 프로젝트 글 3이면 메시지 글
+ * created 생성일
+ * recentRePostDate 최근 답변일
+ * isNotice 시스템에서 자동으로 생성하는 알림 글 여부
+ * writer 글쓴이
+ * push 추천수
+ * rePostCount 답변수
+ * tags 태그들
+ * datas 자료들
+ *</pre>
+ */
 @Document
 public class Post implements Serializable {
 
@@ -22,6 +38,7 @@ public class Post implements Serializable {
 	private int kind;
 	private Date created;
 	private Date recentRePostDate;
+	private boolean isNotice;
 	@DBRef
 	private Weaver writer;
 	private int push;
@@ -39,6 +56,18 @@ public class Post implements Serializable {
 		this.content = content;
 		this.created = new Date();
 		this.tags = tags;
+		this.kind = getKind(this.tags);
+	}
+	
+	public Post(Weaver weaver,
+			String title, String content,List<String> tags,boolean isNotice) {
+		this.writer = weaver;
+		this.title = title;
+		this.content = content;
+		this.created = new Date();
+		this.tags = tags;
+		this.isNotice = isNotice;
+		this.kind = getKind(this.tags);
 	}
 
 	public int getPostID() {
@@ -191,5 +220,22 @@ public class Post implements Serializable {
 	public void setDatas(List<Data> datas) {
 		this.datas = datas;
 	}
+
+	public boolean isNotice() {
+		return isNotice;
+	}
+
+	public void setNotice(boolean isNotice) {
+		this.isNotice = isNotice;
+	}
 	
+	private int getKind(List<String> tags){
+		for (String tag :tags)
+			if (tag.startsWith("@"))
+				return 2;
+			else if (tag.startsWith("$")) 
+				return 3;
+		
+		return 1;
+	}
 }

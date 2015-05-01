@@ -10,94 +10,130 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.WaitJoinDao;
 
+/** 초대장 관리 서비스
+ *
+ */
 @Service
 public class WaitJoinService {
-	
+
 	@Autowired private WaitJoinDao waitJoinDao;
-	@Autowired private PostDao postDao;
-	
-	public boolean isCreateLectureWaitJoin(Lecture lecture,Weaver waitingWeaver,Weaver proposer) {
+
+	/** 강의 서비스와 관련하여 초대장을 생성 가능한지 검증함.
+	 * @param lecture
+	 * @param waitingWeaver
+	 * @param proposer
+	 * @return
+	 */
+	public boolean isCreateWaitJoin(Lecture lecture,Weaver waitingWeaver,Weaver proposer) {
 
 		if(	lecture == null || waitingWeaver == null ||
-				waitJoinDao.get(lecture.getName(),waitingWeaver.getId()) != null){
-		}
-		else if(lecture.getCreatorName().equals(proposer.getId())|| // 강의 생성자이거나
-				proposer.getId().equals(waitingWeaver.getId())) // 아니면 본인이 신청해야함
-		{
+				waitJoinDao.get(lecture.getName(),waitingWeaver.getId()) != null)
+			return false;
+		
+		if(proposer.isAdmin(lecture.getName())|| // 강의 관리자이거나
+				proposer.equals(waitingWeaver)|| // 아니면 본인이 신청해야함
+				waitingWeaver.getPass(lecture.getName()) != null) // 그리고 가입자가 아니어야함.
 			return true;
-		}
+		
 		return false;
 	}
-	
-	public boolean isCreateProjectWaitJoin(Project project,Weaver waitingWeaver,Weaver proposer) {
+
+	/** 프로젝트 서비스와 관련하여 초대장을 생성 가능한지 검증함.
+	 * @param project
+	 * @param waitingWeaver
+	 * @param proposer
+	 * @return
+	 */
+	public boolean isCreateWaitJoin(Project project,Weaver waitingWeaver,Weaver proposer) {
 		if(		project == null || waitingWeaver == null ||
-				waitJoinDao.get(project.getName(),waitingWeaver.getId()) != null){
-			
-		}
-		else if(project.getCreatorName().equals(proposer.getId())|| // 강의 생성자이거나
-				proposer.getId().equals(waitingWeaver.getId())) // 아니면 본인이 신청해야함
-		{
+				waitJoinDao.get(project.getName(),waitingWeaver.getId()) != null)
+			return false;
+		
+		if(proposer.isAdmin(project.getName())|| // 강의 관리자이거나
+				(proposer.equals(waitingWeaver)&& // 아니면 본인이 신청해야함
+				!project.isProjectWeaver(waitingWeaver)) ) // 그리고 가입자가 아니어야함.
 			return true;
-		}
-		return false;
+		
+		 return false;
 	}
-	
+
+	/** 초대장 만듬.
+	 * @param joinTeam
+	 * @param proposer
+	 * @param waitingWaver
+	 * @param postID
+	 */
 	public void createWaitJoin(String joinTeam,String proposer,String waitingWaver,int postID){
 		waitJoinDao.add(new WaitJoin(joinTeam, proposer, waitingWaver,postID));
 	}
-	
-	
-	public boolean deleteProjectWaitJoin(WaitJoin waitJoin,Project project,Weaver currentWeaver){
-		if(waitJoin == null || project == null){
-		}
-		else if(project.getCreatorName().equals(currentWeaver.getId()) || //현재 위버가 프로젝트 관리자이거나
+
+
+	/** 프로젝트의 초대장 삭제
+	 * @param waitJoin
+	 * @param project
+	 * @param currentWeaver
+	 * @return
+	 */
+	public boolean deleteWaitJoin(WaitJoin waitJoin,Project project,Weaver currentWeaver){
+		if(waitJoin == null || project == null)
+			return false;
+		
+		if(project.getCreator().equals(currentWeaver) || //현재 위버가 프로젝트 관리자이거나
 				waitJoin.getWaitingWeaver().equals(currentWeaver.getId())){		//현재 위버가 대기중인 위버일때
-				waitJoinDao.delete(waitJoin);
-				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
-				return true;
+			waitJoinDao.delete(waitJoin);			
+			return true;
 		}			
+		
 		return false;
 	}
-	
-	public boolean deleteLectureWaitJoin(WaitJoin waitJoin,Lecture lecture,Weaver currentWeaver){
-		if(waitJoin == null || lecture == null){
-			
-		}
-		else if(lecture.getCreatorName().equals(currentWeaver.getId()) || 
+
+	/** 강의의 초대장 삭제
+	 * @param waitJoin
+	 * @param lecture
+	 * @param currentWeaver
+	 * @return
+	 */
+	public boolean deleteWaitJoin(WaitJoin waitJoin,Lecture lecture,Weaver currentWeaver){
+		if(waitJoin == null || lecture == null)
+			return false;
+		
+		if(currentWeaver.isAdmin(lecture.getName()) || 
 				waitJoin.getWaitingWeaver().equals(currentWeaver.getId())){			
-				waitJoinDao.delete(waitJoin);
-				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
-				return true;
+			waitJoinDao.delete(waitJoin);
+			return true;
 		}			
+		
 		return false;
 	}
-	
+
+	/** 초대장 수락 가능한지 여부 검증
+	 * @param waitJoin
+	 * @param adminWeaverName
+	 * @param currentWeaver
+	 * @return
+	 */
 	public boolean isOkJoin(WaitJoin waitJoin,String adminWeaverName,Weaver currentWeaver){
 		if(waitJoin == null)
 			return false;
+
 		if(waitJoin.getProposer().equals(waitJoin.getWaitingWeaver()) &&  //제안하는 사람과 대기중인 사람이 같고 현재 관리자가 평가할때
 				!waitJoin.getWaitingWeaver().equals(currentWeaver)&&
 				currentWeaver.getId().equals(adminWeaverName))
 			return true; //관리자가 승인하는 경우
-		else if(waitJoin.getProposer().equals(adminWeaverName) && //가입자가 승인하는 경우
+
+		if(waitJoin.getProposer().equals(adminWeaverName) && //가입자가 승인하는 경우
 				waitJoin.getWaitingWeaver().equals(currentWeaver.getId()))
 			return true;
+		
 		return false;
 	}
-	
-	public boolean delete(Weaver weaver,String joinTeam){
-		if(weaver == null || joinTeam == null){
-			
-		}
-		else if(weaver.isAdmin()){			
-				for(WaitJoin waitJoin:waitJoinDao.delete(joinTeam)){
-					postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제
-					return true;
-				}
-		}			
-		return false;
-	}
-	
+
+
+	/** 초대장 가져오기
+	 * @param joinTeam
+	 * @param waitingWeaver
+	 * @return
+	 */
 	public WaitJoin get(String joinTeam,String waitingWeaver){
 		return waitJoinDao.get(joinTeam,waitingWeaver);
 	}

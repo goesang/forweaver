@@ -49,7 +49,7 @@ public class RepoController {
 			periodInt = Integer.parseInt(request.getParameter("period"));
 		Repo repo = new Repo(repoName, 
 					1, 
-					WebUtil.removeHtml(request.getParameter("description")), 
+					request.getParameter("description"), 
 					periodInt, 
 					lecture,weaver);
 
@@ -310,20 +310,23 @@ public class RepoController {
 		return "/repo/commitLogViewer";
 	}
 
-	@RequestMapping(value = "/{repoName}/{commitName}/{download}.zip")
+	@RequestMapping(value = {"/{repoName}/{commitName}/{download}.zip",
+			"/{repoName}/{commitName}/{download}.tar"})
 	public void getRepoZip(@PathVariable("lectureName") String lectureName,
 			@PathVariable("repoName") String repoName,
 			@PathVariable("commitName") String commitName,
-			HttpServletResponse response) {
+			HttpServletRequest request,HttpServletResponse response) {
 		Lecture lecture = lectureService.get(lectureName);
 		Repo repo = lecture.getRepo(repoName);
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.hideBranch(lectureName, repoName, weaver.getId());
 
-		if(	gitService.existCommit(lectureName, repoName, commitName))
-			gitService.getProjectZip(lectureName, repoName, commitName, response);
-
+		if(	gitService.existCommit(lectureName, repoName, commitName)){
+			String url = request.getRequestURI();
+			String format = url.substring(url.lastIndexOf(".")+1);
+			gitService.getProjectZip(lectureName, repoName, commitName, format,response);
+		}
 		if(!lecture.getCreatorName().equals(weaver.getId()) && repo.getCategory() == 1)
 			gitService.showBranch(lectureName, repoName);
 		return;

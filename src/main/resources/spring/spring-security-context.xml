@@ -11,8 +11,7 @@
 
 	<!-- Stateless RESTful service using Basic authentication -->
 	<security:http pattern="/g/*/*.git/**">
-		<security:intercept-url pattern='/g/*/*.git/**'
-			access='ROLE_USER' />
+		<security:intercept-url pattern='/g/*/*.git/**' access="ROLE_ADMIN, ROLE_USER"/>
 		<security:http-basic />
 		<security:session-management
 			session-authentication-strategy-ref="sas" />
@@ -25,6 +24,10 @@
 		use-expressions="true">
 		<security:intercept-url pattern="/login"
 			access="isAnonymous()" />
+			<security:intercept-url pattern="/loginRequest"
+			access="isAnonymous()" />
+			<security:intercept-url pattern="/loginFail"
+			access="isAnonymous()" />
 		<security:intercept-url pattern="/repassword**"
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/join" access="isAnonymous()" />
@@ -33,17 +36,24 @@
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/manage"
-			access="isAuthenticated()" />
-
+			
+		
 		<security:intercept-url pattern="/community/add"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/community/*/delete"
 			access="isAuthenticated()" />
+		<security:intercept-url pattern="/community/*/*/delete"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/community/*/*/*/delete"
+			access="isAuthenticated()" />		
 		<security:intercept-url pattern="/community/*/update"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/community/*/repost-add"
+		<security:intercept-url pattern="/community/*/*/update"
 			access="isAuthenticated()" />
+		<security:intercept-url pattern="/community/*/add-repost"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/community/*/*/add-reply"
+			access="isAuthenticated()" />	
 		<security:intercept-url pattern="/community/*/edit"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/community/**"
@@ -55,50 +65,65 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/code/*/update"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/code/*/repost-add"
+		<security:intercept-url pattern="/code/*/add-repost"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/code/*/edit"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/code/**"
 			access="isAnonymous() or isAuthenticated()" />
 
-		<security:intercept-url pattern="/project/*/*/add"
+		<security:intercept-url pattern="/project/add"
 			access="isAuthenticated()" />
+			
 		<security:intercept-url pattern="/project/*/*/delete"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/push"
+		<security:intercept-url pattern="/project/*/*/*/update"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/weaver/*/add-weaver"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/weaver/*/join-ok"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/weaver/*/join-cancel"
+			access="isAuthenticated()" />		
+		<security:intercept-url pattern="/project/*/*/weaver/*/delete"
+			access="isAuthenticated()" />		
+		<security:intercept-url pattern="/project/*/*/cherry-pick/*/add"
+			access="isAuthenticated()" />	
+		<security:intercept-url pattern="/project/*/*/cherry-pick/*/delete"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/*/cherry-pick/*/*/accept"
+			access="isAuthenticated()" />		
+		<security:intercept-url pattern="/project/*/*/join"
+			access="isAuthenticated()" />	
+		<security:intercept-url pattern="/project/*/*/community/add"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/*/*/fork"
 			access="isAuthenticated()" />
-
-		<security:intercept-url pattern="/lecture/"
+		<security:intercept-url pattern="/project/**"
 			access="isAnonymous() or isAuthenticated()" />
-		<security:intercept-url pattern="/lecture/page**"
-			access="isAnonymous() or isAuthenticated()" />
-		<security:intercept-url pattern="/lecture/tags**"
-			access="isAnonymous() or isAuthenticated()" />
-
-		<security:intercept-url pattern='/lecture/*'
+		<security:intercept-url pattern='/lecture/**'
+			access="denyAll" />
+		<security:intercept-url pattern='/admin/**'
+			access="denyAll" />
+		
+		<security:intercept-url pattern="/weaver/**"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/delete'
+		<security:intercept-url pattern="/*/project/**"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/coummunity**'
+		<security:intercept-url pattern="/*/code/**"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/example**'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/weaver**'
-			access="isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/*/join'
-			access="isAuthenticated()" />
-
+		<security:intercept-url pattern="/*/sort:*/page:*"
+			access="isAuthenticated()" />	
+		
+				
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />
 
-		<security:form-login login-page='/login'
-			default-target-url='/' />
+		<security:form-login login-page="/login"
+			default-target-url='/' authentication-failure-url="/loginFail"/>
 		<security:session-management
 			session-authentication-strategy-ref="sas" />
-		<security:logout />
+		<security:logout logout-success-url="/login"/>
 	</security:http>
 
 	<bean id="sas"

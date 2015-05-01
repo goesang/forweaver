@@ -19,7 +19,7 @@ function showWeaverList(index) {
 						weaverList[i]["id"]+
 						"</td>"+
 						"<td class='vertical-middle'>" +
-						weaverList[i]["email"]+
+						weaverList[i]["massage"]+
 						"</td>"+
 						"<td style='width: 42px;' class='td-button'>"+
 						"<span class='span-button'><i class='fa fa-user'></i>"+
@@ -35,10 +35,10 @@ function showWeaverList(index) {
 						weaverList[i]["id"]+
 						"</td>"+
 						"<td class='vertical-middle'>" +
-						weaverList[i]["email"]+
+						weaverList[i]["massage"]+
 						"</td>"+
 						"<td style='width: 42px;' class='td-button'> " +
-						"<a href='"+
+						"<a onclick = 'return confirm(\"정말로 탈퇴하시겠습니까?\");' href='"+
 						weaverList[i]["removeLink"]+
 						"'><span class='span-button'>X" +
 						"<p class='p-button'>탈퇴</p>	" +

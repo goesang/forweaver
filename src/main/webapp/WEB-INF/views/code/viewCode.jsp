@@ -5,6 +5,11 @@
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
+
+<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
+<script src="/resources/forweaver/js/markdown/markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -22,9 +27,14 @@
 	}
 	
 	function fileUploadChange(fileUploader){
-		var fileName = $(fileUploader).val();			
+		var fileName = $(fileUploader).val();	
+		fileName = replaceAll(fileName,"?","_");
+		fileName = replaceAll(fileName,"#","_");
+		fileName = replaceAll(fileName," ","_");			
 		$(function (){
 		if(fileName !=""){ // 파일을 업로드하거나 수정함
+			
+			
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
 			fileHash[fileName] = mongoObjectId();
@@ -40,13 +50,14 @@
                     return data;
                 }()
 			});	
-			$("#repost-content").val($("#repost-content").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+			if(filename(fileName))
+			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 		
 			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 		fileCount++;
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 					"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
@@ -89,6 +100,8 @@
 					$(".file-div").fadeIn();
 					$("#repost-table").hide();
 					$("#myTab").hide();
+					if($("#repost-content").val().length == 0)
+						$("#repost-content").css('height','300px');
 			});
 			
 			$("#repost-content").focusout(function(){	
@@ -98,11 +111,13 @@
 					$("#repost-table").fadeIn();
 					$("#myTab").fadeIn();
 		      }
+				if($("#repost-content").val().length == 0)
+					$("#repost-content").css('height','auto');
 		});
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
@@ -112,14 +127,12 @@
 			
 			$(".file-div").hide();
 			
-			$('#tags-input').textext()[0].tags().addTags(
-					getTagList("/tags:<c:forEach items='${code.tags}' var='tag'>	${tag},</c:forEach>"));
+			move = false;
+			<c:forEach items='${code.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
-			$('.tag-name').click(
-					function() {
-						var tagname = $(this).text();
-						movePage("[\"" + tagname + "\"]","");	
-			});
 			
 			<c:forEach	items="${code.codes}" var="simpleCode" varStatus="status">	
 			$("#code-${status.count}").addClass("brush: "+extensionSeach('${simpleCode.fileName}')+";");
@@ -141,11 +154,11 @@
 							<td colspan="2" class="post-top-title none-top-border"><a
 								rel="external" class="a-post-title"
 								href="/code/tags:<c:forEach items='${code.tags}' var='tag'>${tag},</c:forEach>">
-									<i class="fa fa-download"></i>&nbsp;${code.name} -
-									${code.content}
+									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
+									${cov:htmlEscape(code.content)}
 							</a></td>
 							<td class="td-button none-top-border" rowspan="2"><a
-								href="/code/${code.codeID}/${code.name}.zip"> <span
+								href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 									class="span-button"> ${code.downCount}
 										<p class="p-button">다운</p>
 								</span></a></td>
@@ -169,11 +182,14 @@
 										</c:if>
 										">${tag}</span>
 								</c:forEach>
+								<c:if test="${code.writerName==currentUser}">	
 								<div class="function-div pull-right">
 									<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 										href="/code/${code.codeID}/delete"> <span
 										class="function-button">삭제</span></a>
-								</div></td>
+								</div>
+								</c:if>
+								</td>
 
 						</tr>
 						<c:forEach items="${code.codes}" var="simpleCode" varStatus="status">
@@ -182,7 +198,12 @@
 									onclick="javascript:hideAndShowSourceCode(${status.count})"
 									class="function-button function-file"> <i
 										class='icon-file icon-white'></i> ${simpleCode.fileName}
-								</span></td>
+								</span>
+								<a href="${simpleCode.fileName}">
+									<span class="function-button" title='파일 다운로드'> <i class='icon-file icon-white'></i> 다운로드
+									</span>
+								</a>
+								</td>
 							</tr>
 							
 							<tr>
@@ -192,7 +213,14 @@
 									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
 									
 									<c:if test="${!simpleCode.fileName.endsWith('.md')}">
-										<pre id="code-${status.count}">${simpleCode.getContent()}</pre>
+									
+										<c:if test="${!simpleCode.isImgFile()}">
+											<pre id="code-${status.count}">${cov:htmlEscape(simpleCode.getContent())}</pre>
+										</c:if>
+										<c:if test="${simpleCode.isImgFile()}">
+											<img src="/code/${code.codeID}/${simpleCode.fileName}">
+										</c:if>
+										
 									</c:if>
 									
 									<c:if test="${simpleCode.fileName.endsWith('.md')}">
@@ -213,16 +241,23 @@
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/code/${code.codeID}/add-repost" method="POST">
 
-					<div style="margin-left: 0px" class="span11">
-						<textarea name="content" id="repost-content"
-							class="post-content span10" onkeyup="textAreaResize(this)"
-							placeholder="답변할 내용을 입력해주세요!"></textarea>
+					<div style="margin-left: 0px; margin-bottom:10px" class="span11">
+						<textarea data-provide="markdown" name="content" id="repost-content"
+							class="post-content span10" 
+							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>
-							<button type="submit" class="post-button btn btn-primary">
+							<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
 								<i class="fa fa-check"></i>
 							</button>
+					</sec:authorize>
+					<sec:authorize access="isAuthenticated()">
+						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
+								<i class="fa fa-check"></i>
+							</button>
+					</sec:authorize>
 						</span>
 					</div>
 					<div class="file-div"></div>
@@ -237,9 +272,9 @@
 						<li id="push-desc"><a
 							href="/code/${code.codeID}/sort:push-desc">추천순</a></li>
 						<li id="reply-desc"><a
-							href="/code/${code.codeID}/sort:reply-desc">최신 답변순</a></li>
+							href="/code/${code.codeID}/sort:reply-desc">최신 댓글순</a></li>
 						<li id="reply-many"><a
-							href="/code/${code.codeID}/sort:reply-many">많은 답변순</a></li>
+							href="/code/${code.codeID}/sort:reply-many">많은 댓글순</a></li>
 						<li id="age-asc"><a href="/code/${code.codeID}/sort:age-asc">오래된순</a></li>
 					</ul>
 
@@ -251,30 +286,39 @@
 								<td class=" td-post-writer-img "><img
 									src="${rePost.getImgSrc()}"></td>
 
-								<td class="font-middle"><b>${rePost.writerName}</b>
+								<td class="font-middle"><a href="/${rePost.writerName}"><b>${rePost.writerName}</b></a>
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
 									<div class="pull-right">
+									<sec:authorize access="isAuthenticated()">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
-										<!-- <a href="/code/${code.codeID}/${rePost.rePostID}/update"> <span
-											class="function-button">수정</span></a>-->
+									</sec:authorize>	
+									<c:if test="${rePost.writerName==currentUser}">
+										<a onclick="return confirm('정말로 답변을 수정하시겠습니까?');" href='/code/${code.codeID}/${rePost.rePostID}/update#repost-content'>
+											<span class="function-button">수정</span>
+										</a>
 										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 											href='/code/${code.codeID}/${rePost.rePostID}/delete'> <span
 											class="function-button">삭제</span>
 										</a>
+									</c:if>
 									</div>
 								</td>
-								<td class="td-button"><span class="span-button">${rePost.push}
+								<td class="td-button">
+								<a onclick="return confirm('정말로 추천하시겠습니까?');" href="/code/${code.codeID}/${rePost.rePostID}/push">
+								<span class="span-button">${rePost.push}
 										<p class="p-button">추천</p>
-								</span></td>
+								</span>
+								</a>
+								</td>
 								<td class="td-button"><span class="span-button">${rePost.replys.size()}
 										<p class="p-button">댓글</p>
 								</span></td>
 							</tr>
 							<c:if test="${rePost.datas.size() > 0}">
 								<tr>
-									<td colspan="5"><c:forEach var="index" begin="0"
+									<td class ="none-top-border"colspan="5"><c:forEach var="index" begin="0"
 											end="${rePost.datas.size()-1}">
 											<a href='/data/${rePost.datas.get(index).getId()}'><span
 												class="function-button function-file"><i
@@ -296,14 +340,15 @@
 								<tr>
 									<td class="none-top-border"></td>
 									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
-										${reply.content} - <b>${reply.writerName}</b>
+										${reply.content} - <a href="/${reply.writerName}"><b>${reply.writerName}</b></a>
 										${reply.getFormatCreated()}
+										<c:if test="${reply.writerName==currentUser}">
 										<div class="function-div pull-right">
-											<a onclick="return confirm('정말로 삭제하시겠습니까?');"
-												href='/code/${code.codeID}/${rePost.rePostID}/${reply.number}/delete'>
+											<a
+												href="javascript:deleteReply(${post.postID},${rePost.rePostID},${reply.number})">
 												<i class='icon-remove'></i>
 											</a>
-										</div></td>
+										</div></c:if></td>
 								</tr>
 							</c:forEach>
 						</c:forEach>

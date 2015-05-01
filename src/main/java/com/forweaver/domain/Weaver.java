@@ -20,11 +20,14 @@ import com.mongodb.DBObject;
  * id 회원 아이디
  * password  비밀번호
  * email  이메일
+ * studentID 학번(과제용 자기소개)
  * say 간단한 소개
  * imgSrc  이미지 주소
  * image  이미지 파일
  * joinDate 가입일
  * passes 권한 : 일반 회원의 경우 RULE_USER, 관리자의 경우 RULE_ADMIN 그외 프로젝트의 회원은 1, 관리자는 2
+ * tags 태그
+ * isLeave 탈퇴 여부
  * weaverInfo 각종 회원 정보
  * </pre>
  */
@@ -39,37 +42,47 @@ public class Weaver implements UserDetails,Serializable {
 	private String password;
 	private String email;
 	private String say;
-	private String imgSrc;
+	private String studentID;
 	private Data image;
 	private Date joinDate;
+	private boolean isLeave;
 	private List<Pass> passes = new ArrayList<Pass>();
+	private List<String> tags = new ArrayList<String>();
 
 	@Transient
 	private DBObject weaverInfo;
 
+	//private WeaverInfo weaverInfo;
+	
 	public Weaver(){}
 
 
 	public Weaver(String id,String email){
 		this.id = id;
+		this.id = this.id.toLowerCase();
 		this.email = email;
 	}
 
 	public Weaver(String id,String email,Data image){
 		this.id = id;
+		this.id = this.id.toLowerCase();
 		this.email = email;
 		this.image = image;
 	}
 
 
 
-	public Weaver(String id,String password,String email,String say,Data image){
+	public Weaver(String id,String password,String email,List<String> tags,String studentID,String say,Data image){
 		this.id = id;
+		this.id = this.id.toLowerCase();
 		this.password = password;
 		this.email = email;
+		this.tags = tags;
+		this.studentID = studentID;
 		this.say = say;
 		this.image = image;
 		this.joinDate = new Date();
+		//this.weaverInfo = new WeaverInfo();
 	}
 
 	public String getPassword() {
@@ -92,12 +105,24 @@ public class Weaver implements UserDetails,Serializable {
 		this.passes = passes;
 	}
 
+	public String getStudentID() {
+		if(this.studentID != null && this.studentID.length() > 0)
+			return studentID;
+		
+		return "알수없는 사용자!";
+	}
+
+
+	public void setStudentID(String studentID) {
+		this.studentID = studentID;
+	}
+
 
 	public String getSay() {
-		if(this.say != null)
+		if(this.say != null && this.say.length() > 0)
 			return say;
-		else
-			return "Hello World!";
+
+		return "Hello World!";
 	}
 
 
@@ -164,14 +189,6 @@ public class Weaver implements UserDetails,Serializable {
 		this.image = image;
 	}
 
-	public void setImgSrc(String imgSrc) {
-		this.imgSrc = imgSrc;
-	}
-
-	public String getRealImgSrc() {
-		return this.imgSrc;
-	}
-
 	public String getImgSrc() {
 		return "/"+this.id+"/img/";
 	}
@@ -186,7 +203,7 @@ public class Weaver implements UserDetails,Serializable {
 		this.id = id;
 	}
 
-	public List<String> getPrivateTags(){
+	public List<String> getPrivateAndMassageTags(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass : this.passes){
 			if(!pass.getJoinName().startsWith("ROLE"))
@@ -196,13 +213,21 @@ public class Weaver implements UserDetails,Serializable {
 		return passNames;
 	}
 
+	public List<String> getPrivateTags(){
+		List<String> passNames = new ArrayList<String>();
+		for(Pass pass : this.passes){
+			if(!pass.getJoinName().startsWith("ROLE"))
+				passNames.add("@"+pass.getJoinName());
+		}
+		return passNames;
+	}
 
 	public DBObject getWeaverInfo() {
 		return weaverInfo;
 	}
-
+	
 	public String getInfo(String field) {
-		Object value = weaverInfo.get(field);
+		Object value = this.weaverInfo.get(field);
 		if(value == null)
 			value = "0";
 		return value.toString();
@@ -218,6 +243,8 @@ public class Weaver implements UserDetails,Serializable {
 	public void setWeaverInfo(DBObject weaverInfo) {
 		this.weaverInfo = weaverInfo;
 	}
+	
+	
 
 	public boolean isAdminWeaver(String joinName){
 		for(Pass pass : this.passes){
@@ -226,6 +253,16 @@ public class Weaver implements UserDetails,Serializable {
 		}
 		return false;
 	}
+
+	/*public WeaverInfo getWeaverInfo() {
+		return weaverInfo;
+	}
+
+
+	public void setWeaverInfo(WeaverInfo weaverInfo) {
+		this.weaverInfo = weaverInfo;
+	}*/
+
 
 	public boolean isJoinWeaver(String joinName){
 		for(Pass pass : this.passes){
@@ -252,16 +289,16 @@ public class Weaver implements UserDetails,Serializable {
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public List<String> getProjects(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(pass.getJoinName().contains("/")
-			&& !pass.getJoinName().startsWith("ROLE"))
+					&& !pass.getJoinName().startsWith("ROLE"))
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public List<String> getJoinLectures(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
@@ -279,12 +316,12 @@ public class Weaver implements UserDetails,Serializable {
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public List<String> getLectures(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(!pass.getJoinName().contains("/")
-			&& !pass.getJoinName().startsWith("ROLE"))
+					&& !pass.getJoinName().startsWith("ROLE"))
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
@@ -296,7 +333,7 @@ public class Weaver implements UserDetails,Serializable {
 				passNames.add(pass.getJoinName());
 		return passNames;
 	}
-	
+
 	public int countProject(){
 		return this.getProjects().size();
 	}
@@ -318,5 +355,45 @@ public class Weaver implements UserDetails,Serializable {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
+
+	public boolean equals(Weaver weaver) {
+		if(weaver == null)
+			return false;
+		return this.id.equals(weaver.getId());
+	}
+
+	public boolean isAdmin(String joinName){
+		Pass pass = this.getPass(joinName);
+
+		if(pass !=null)
+			return pass.getPermission() >1;
+
+		return false;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+
+	public boolean isLeave() {
+		return isLeave;
+	}
+
+
+	public void setLeave(boolean isLeave) {
+		this.isLeave = isLeave;
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.id;
+	}
+	
 
 }

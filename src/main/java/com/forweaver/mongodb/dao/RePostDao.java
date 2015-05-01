@@ -10,14 +10,22 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import com.forweaver.domain.Code;
+import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 
+/** 답변 관리를 위한 DAO
+ *
+ */
 @Repository
 public class RePostDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 
-	public void insert(RePost rePost) { // 글 추가하기
+	/** 답변 추가하기
+	 * @param rePost
+	 */
+	public void insert(RePost rePost) {
 		if (!mongoTemplate.collectionExists(RePost.class)) {
 			mongoTemplate.createCollection(RePost.class);
 			rePost.setRePostID(1);
@@ -32,10 +40,17 @@ public class RePostDao {
 		mongoTemplate.insert(rePost);
 	}
 
-	public List<RePost> get(String ID,int kind, String sort) { // 글 가져오기
+	/** 답변 가져오기
+	 * @param ID
+	 * @param kind
+	 * @param sort
+	 * @return
+	 */
+	public List<RePost> gets(int ID,int kind, String sort) {
 
-		Criteria criteria = 
-				new Criteria().and("originalPostID").is(ID).and("kind").is(kind);
+		Criteria criteria = new Criteria().orOperator(
+				new Criteria().where("originalPost.$id").is(ID).and("kind").is(kind),
+				new Criteria().where("originalCode.$id").is(ID).and("kind").is(kind));
 
 		this.filter(criteria, sort);
 
@@ -43,24 +58,57 @@ public class RePostDao {
 		this.sorting(query, sort);
 		return mongoTemplate.find(query, RePost.class);
 	}
+	
+	/** 글에 달린 답변 가져오기
+	 * @param post
+	 * @return
+	 */
+	public List<RePost> gets(Post post) {
+		Criteria criteria = 
+				new Criteria().and("originalPost.$id").is(post.getPostID());
+		Query query = new Query(criteria);
+		return mongoTemplate.find(query, RePost.class);
+	}
+	
+	/** 코드에 달린 답변 가져오기
+	 * @param code
+	 * @return
+	 */
+	public List<RePost> gets(Code code) {
+		Criteria criteria = 
+				new Criteria().and("originalCode.$id").is(code.getCodeID());
+		Query query = new Query(criteria);
+		return mongoTemplate.find(query, RePost.class);
+	}
 
-	public RePost get(int rePostID) { // 글 가져오기
+	/** 답변 가져오기
+	 * @param rePostID
+	 * @return
+	 */
+	public RePost get(int rePostID) {
 		Query query = new Query(Criteria.where("_id").is(rePostID));
 		return mongoTemplate.findOne(query, RePost.class);
 	}
 
+	/** 답변을 삭제합니다.
+	 * @param rePost
+	 */
 	public void delete(RePost rePost) {
 		mongoTemplate.remove(rePost);
 	}
 
-	public void deleteAll(String originalPostID) {
-		Query query = new Query(Criteria.where("originalPostID").is(
-				originalPostID));
+	public void deleteAll(Code code) {
+		Query query = new Query(Criteria.where("originalCode").is(code));
+		mongoTemplate.remove(query, RePost.class);
+	}
+	
+	public void deleteAll(Post post) {
+		Query query = new Query(Criteria.where("originalPost").is(post));
 		mongoTemplate.remove(query, RePost.class);
 	}
 
 	public void update(RePost rePost) {
-		Query query = new Query(Criteria.where("rePostID").is(
+		Query query = new Query(Criteria.where("_id").is(
 				rePost.getRePostID()));
 		Update update = new Update();
 		update.set("content", rePost.getContent());
@@ -75,6 +123,10 @@ public class RePostDao {
 		return mongoTemplate.findOne(query, RePost.class);
 	}
 
+	/** 필터링 메서드
+	 * @param criteria
+	 * @param sort
+	 */
 	public void filter(Criteria criteria, String sort) {
 		if (sort.equals("push-desc")) {
 			criteria.and("push").gt(0);
@@ -85,6 +137,10 @@ public class RePostDao {
 		}
 	}
 
+	/** 정렬하기 메서드
+	 * @param query
+	 * @param sort
+	 */
 	public void sorting(Query query, String sort) {
 		if (sort.equals("age-asc")) {
 			query.with(new Sort(Sort.Direction.ASC, "_id"));

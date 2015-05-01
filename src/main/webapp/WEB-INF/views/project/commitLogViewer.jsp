@@ -16,7 +16,7 @@ var fileHash = {};
 function fileUploadChange(fileUploader){
 	var fileName = $(fileUploader).val();			
 	$(function (){
-	if(fileName !=""){ // 파일을 업로드하거나 수정함
+	if(fileName !="" || !blank_pattern.test(fileName)  || fileName.length < 70){ // 파일을 업로드하거나 수정함
 		if(fileName.indexOf("C:\\fakepath\\") != -1)
 			fileName = fileName.substring(12);
 		fileHash[fileName] = mongoObjectId();
@@ -32,7 +32,7 @@ function fileUploadChange(fileUploader){
                 return data;
             }()
 		});	
-		$("#repost-content").val($("#repost-content").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+		$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+')');
 	
 		if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 	fileCount++;
@@ -78,6 +78,8 @@ function fileUploadChange(fileUploader){
 		$("#repost-content").focus(function(){				
 				$(".file-div").fadeIn();
 				$("#repost-table").hide();
+				if($("#repost-content").val().length == 0)
+					$("#repost-content").css('height','300px');
 		});
 		
 		$("#repost-content").focusout(function(){	
@@ -102,8 +104,11 @@ function fileUploadChange(fileUploader){
 	});
 	
 		SyntaxHighlighter.all();
-		$('#tags-input').textext()[0].tags().addTags(
-				getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>${tag},</c:forEach>"));
+		move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
 		
 	</script>
@@ -122,21 +127,26 @@ function fileUploadChange(fileUploader){
 			<div class="span8">
 				<ul class="nav nav-tabs">
 					<li><a href="/project/${project.name}/">브라우져</a></li>
-					<li class="active" ><a href="/project/${project.name}/commitlog-viewer">커밋</a></li>
+					<li class="active" ><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
-					<li><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<c:if test="${project.getCreator().equals(currentUser) }">
+					<li><a href="/project/${project.name}/edit">관리</a></li>
+					</c:if>
+					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() != 2}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -152,12 +162,12 @@ function fileUploadChange(fileUploader){
 								class="none-top-border post-top-title-short">${fn:substring(gitCommitLog.shortMassage,0,50)}</td>
 								
 							<td class="none-top-border" 
-								<c:if test="${project.getOriginalProject() != null}">
+								<c:if test="${project.getOriginalProjectName() != null}">
 									style="width:190px" 
 								</c:if>
 								rowspan="2">
-							<c:if test="${project.getOriginalProject() != null}">
-								<a	onclick="return confirm('정말 이 커밋을 체리 바구니하시겠습니까?')" 
+							<c:if test="${project.getOriginalProjectName() != null}">
+								<a	onclick="return confirm('정말 이 커밋을 체리 바구니에 담으시겠습니까?')" 
 								href="/project/${project.name}/cherry-pick/commit:${gitCommitLog.commitLogID}/add">
 										<span class="span-button"> <i  class="icon-css-padding icon-cherry"></i>
 											<p style ="margin-top: -2px;" class="p-button">체리</p></span>
@@ -183,31 +193,31 @@ function fileUploadChange(fileUploader){
 
 						<tr>
 							<td style="border-top: 0px"></td>
-							<td style="font-size:13px;" colspan="3">${gitCommitLog.fullMassage}</td>
+							<td style="font-size:13px;" colspan="3">${cov:htmlEscape(gitCommitLog.fullMassage)}</td>
 						</tr>
 						<c:if test="${gitCommitLog.getNote().length() > 0}">
 						<tr>
 							<td style="border-top: 0px"></td>
 							<td style="font-size:13px;" colspan="3">
 							 <span class="label label-warning"><i class="fa fa-book"></i> 노트:</span> 
-    						${gitCommitLog.getNote()}</td>
+    						${cov:htmlEscape(gitCommitLog.getNote())}</td>
 						</tr>
 						</c:if>
 					</tbody>
 				</table>
 				<c:if test="${fn:length(gitCommitLog.diff)>0}">
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" class="span9 brush: diff"><c:out value="${gitCommitLog.diff}"></c:out></pre>
+					<pre id="source-code" class="span9 brush: diff">${cov:htmlEscape(gitCommitLog.diff)}</pre>
 				</div>
 				</c:if>
-				<!-- 답변 작성란 -->
+				<!-- 답변 작성란 
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/add-repost" method="POST">
 
-					<div style="margin-left: 0px" class="span11">
+					<div style="margin-left: 0px; margin-bottom:10px" class="span11">
 						<textarea name="content" id="repost-content"
-							class="post-content span10" onkeyup="textAreaResize(this)"
-							placeholder="답변할 내용을 입력해주세요!"></textarea>
+							class="post-content span10" 
+							placeholder="답변할 내용을 입력해주세요!(최소 5자 이상 직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>
 					<div class="span1">
 						<span>
@@ -219,7 +229,7 @@ function fileUploadChange(fileUploader){
 					<div class="file-div"></div>
 				</form>
 			</div>
-			<!-- 답변 테이블 -->
+			
 			<table id="repost-table" class="table table-hover">
 					<tbody>
 						<c:forEach items="${rePosts}" var="rePost">
@@ -227,17 +237,12 @@ function fileUploadChange(fileUploader){
 								<td class=" td-post-writer-img "><img
 									src="${rePost.getImgSrc()}"></td>
 
-								<td class="font-middle"><b>${rePost.writerName}</b>
+								<td class="font-middle"><a href="/${rePost.writerName}"><b>${rePost.writerName}</b></a>
 									${rePost.getFormatCreated()}</td>
 								<td class="function-div font-middle">
 									<div class="pull-right">
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
-										<!--
-											<a
-											href="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/update">
-											<span class="function-button">수정</span>
-										</a>-->
 										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
 											href='/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/delete'>
 											<span class="function-button">삭제</span>
@@ -276,7 +281,7 @@ function fileUploadChange(fileUploader){
 								<tr>
 									<td class="none-top-border"></td>
 									<td class="reply dot-top-border" colspan="4"><b>${reply.number}.</b>
-										${reply.content} - <b>${reply.writerName}</b>
+										${reply.content} - <a href="/${reply.writerName}"><b>${reply.writerName}</b></a>
 										${reply.getFormatCreated()}
 										<div class="function-div pull-right">
 											<a onclick="return confirm('정말로 삭제하시겠습니까?');"
@@ -289,7 +294,7 @@ function fileUploadChange(fileUploader){
 						</c:forEach>
 
 					</tbody>
-				</table>
+				</table>-->
 		</div>
 		<!-- .row-fluid -->
 		<%@ include file="/WEB-INF/common/footer.jsp"%>

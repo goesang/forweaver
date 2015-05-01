@@ -16,11 +16,11 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
+								var tagNames = $("#tags-input").val();
 								if (tagNames.length == 2)
 									moveUserPage("/${weaver.getId()}/code/","[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
@@ -33,7 +33,7 @@
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									if(tagNames.length == 2){
 										alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 										return;
@@ -73,7 +73,7 @@
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()} <i
+				<big><i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.getSay())} <i
 					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 		</div>
@@ -109,8 +109,8 @@
 										class=" fa fa-comments"></i>&nbsp;&nbsp;커뮤니티</a></li>
 								<li><a href="/${weaver.getId()}/project"><i
 										class=" fa fa-bookmark"></i>&nbsp;&nbsp;프로젝트</a></li>
-								<li><a href="/${weaver.getId()}/lecture"><i
-										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+								<!-- <li><a href="/${weaver.getId()}/lecture"><i
+										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>-->
 							</ul>
 						</li>
 					</ul>
@@ -122,7 +122,9 @@
 			</div>
 			<div class="span1">
 				<span> <a id='search-button'
-					class="post-button btn btn-primary"> <i class="icon-search"></i>
+					class="post-button btn btn-primary"> <i class="fa fa-search"></i>
+
+
 				</a>
 				</span>
 			</div>
@@ -135,11 +137,11 @@
 									src="${code.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/code/${code.codeID}"> <i
-										class="fa fa-download"></i>&nbsp;${code.name} -
-										${code.content}
+										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
+										${cov:htmlEscape(code.content)}
 								</a></td>
 								<td class="td-button" rowspan="2"><a
-									href="/code/${code.codeID}/${code.name}.zip"> <span
+									href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 										class="span-button"> ${code.downCount}
 											<p class="p-button">다운</p>
 									</span>

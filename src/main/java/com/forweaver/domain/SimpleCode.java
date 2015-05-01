@@ -22,10 +22,14 @@ public class SimpleCode  implements Serializable {
 		this.fileName = fileName;
 	}
 	public String getContent() {
-		return WebUtil.removeHtml(content);
+		return content;
 	}
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public boolean isImgFile(){
+		return WebUtil.isImageName(this.fileName);
 	}
 	
 }

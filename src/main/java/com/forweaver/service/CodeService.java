@@ -1,8 +1,12 @@
 package com.forweaver.service;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -16,65 +20,86 @@ import com.forweaver.domain.Code;
 import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.CodeDao;
+import com.forweaver.mongodb.dao.RePostDao;
+import com.forweaver.util.WebUtil;
 
+/** 코드 서비스
+ *
+ */
 @Service
 public class CodeService {
 
 	@Autowired CodeDao codeDao;
+	@Autowired RePostDao rePostDao;
 
 	/** 코드를 추가함.
 	 * @param code
 	 * @param file
 	 */
-	public void add(Code code, MultipartFile file) {
-		try {
-			if ((file.getContentType().equals("application/zip") ||
-					file.getContentType().equals("application/x-zip-compressed")) && 
-					file.getOriginalFilename().endsWith(".zip")) { 
+	public void add(Code code, MultipartFile multipartFile) {
+		String zipPath = "/tmp/"+new org.bson.types.ObjectId().toString()+".zip";
+		try {			
+			if ((multipartFile.getContentType().equals("application/zip") ||
+					multipartFile.getContentType().equals("application/x-zip-compressed")) && 
+					multipartFile.getOriginalFilename().toLowerCase().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
-				ZipInputStream in = new ZipInputStream(file.getInputStream());
-				ZipEntry entry = in.getNextEntry();
-				while (entry != null) {
-					if (!entry.isDirectory()) { // 만약 파일의 경우
-						byte[] buf = new byte[1024];
-						int len;
-						String content = "";
-						while ((len = in.read(buf)) != -1)
-						{
-							content += new String(buf, 0, len);
-						}
 
-						if (entry.getName().toUpperCase().endsWith("README.MD")){ // 리드미파일의 경우
-							code.setReadme(content);
-							code.addFirstSimpleCode(new SimpleCode(entry.getName(),content)); // 일반 파일의 경우
-						}else{
-							code.addSimpleCode(new SimpleCode(entry.getName(),content)); // 일반 파일의 경우
+				
+
+				WebUtil.multipartFileToTempFile(zipPath, multipartFile);
+
+				byte[] buffer = new byte[1024];
+				try{
+					ZipInputStream zis = 
+							new ZipInputStream(new FileInputStream(zipPath),Charset.forName("8859_1"));
+					ZipEntry ze = zis.getNextEntry();
+
+					while(ze!=null){
+						String fileName = ze.getName();
+						if (!ze.isDirectory() && WebUtil.isAllowedFileName(fileName) ) { // 만약 파일의 경우
+							int len;
+							StringBuilder content = new StringBuilder();
+
+							while ((len = zis.read(buffer)) > 0)
+								if(WebUtil.isCodeName(new String(fileName.getBytes("8859_1"),"EUC-KR")))
+									content.append(new String(buffer, 0, len,Charset.forName("EUC-KR")));
+								else
+									content.append(new String(buffer, 0, len,Charset.forName("8859_1")));
+
+							if (ze.getName().toUpperCase().endsWith("README.MD")){ // 리드미파일의 경우
+								code.setReadme(content.toString());
+								code.addFirstSimpleCode(new SimpleCode(fileName,content.toString()));
+							}else{
+								code.addSimpleCode(new SimpleCode(new String(fileName.getBytes("8859_1"),"EUC-KR"),content.toString())); // 일반 파일의 경우
+							}
 						}
+						ze = zis.getNextEntry();
 					}
-					entry = in.getNextEntry();
+
+					zis.closeEntry();
+					zis.close();
+					
+				}catch(IOException ex){
+					ex.printStackTrace(); 
 				}
-				in.close();
 				codeDao.insert(code);
-			} else if(file.getOriginalFilename().endsWith(".c") || file.getOriginalFilename().endsWith(".h")|| file.getOriginalFilename().endsWith(".ino")
-					|| file.getOriginalFilename().endsWith(".java")|| file.getOriginalFilename().endsWith(".py")|| file.getOriginalFilename().endsWith(".cpp")
-					|| file.getOriginalFilename().endsWith(".html")|| file.getOriginalFilename().endsWith(".css")|| file.getOriginalFilename().endsWith(".pl")
-					|| file.getOriginalFilename().endsWith(".sql")|| file.getOriginalFilename().endsWith(".php")|| file.getOriginalFilename().endsWith(".cs")
-					|| file.getOriginalFilename().endsWith(".rb")|| file.getOriginalFilename().endsWith(".txt")|| file.getOriginalFilename().endsWith(".js")
-					|| file.getOriginalFilename().endsWith(".xml")|| file.getOriginalFilename().endsWith(".md")){ // 압축파일이 아닌 일반 파일의 경우
-				byte[] buf = new byte[1024];
+			} else if(WebUtil.isCodeName(multipartFile.getOriginalFilename())){ // 압축파일이 아닌 일반 파일의 경우
+				byte[] buf = new byte[8192];
 				int len;
-				String content = "";
-				InputStream is = file.getInputStream();
+				StringBuilder content = new StringBuilder();
+				InputStream is = multipartFile.getInputStream();
+				
 				while ((len = is.read(buf)) != -1)
-				{
-					content += new String(buf, 0, len);
-				}
-				code.addSimpleCode(new SimpleCode(file.getOriginalFilename(), content)); // 일반 파일의 경우
+					content.append(new String(buf, 0, len));
+				
+				code.addSimpleCode(new SimpleCode(multipartFile.getOriginalFilename(), content.toString())); // 일반 파일의 경우
 				codeDao.insert(code);
 			}
 
+			new File(zipPath).delete();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+			new File(zipPath).delete();
 			return;
 		} 
 	}
@@ -83,8 +108,11 @@ public class CodeService {
 	 * @param codeID
 	 * @return
 	 */
-	public Code get(int codeID) {
-		return codeDao.get(codeID);
+	public Code get(int codeID,boolean onlyCode) {
+		Code code = codeDao.get(codeID) ;
+		if(code != null && onlyCode)
+			code.onlyViewCode();
+		return code;
 	}
 
 	/** 코드를 다운로드함.
@@ -93,10 +121,14 @@ public class CodeService {
 	 */
 	public void dowloadCode(Code code, OutputStream os){
 		try {
-			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os));
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os),Charset.forName("8859_1"));
 			for(SimpleCode simpleCode :code.getCodes()){
-				zip.putNextEntry(new ZipEntry(simpleCode.getFileName()));
-				zip.write(simpleCode.getContent().getBytes());
+				zip.putNextEntry(new ZipEntry(new String (simpleCode.getFileName().getBytes(),"8859_1") ));
+				if(WebUtil.isCodeName(new String(simpleCode.getFileName().getBytes("8859_1"),"EUC-KR")))
+					zip.write(simpleCode.getContent().getBytes("EUC-KR"));
+				else
+					zip.write(simpleCode.getContent().getBytes("8859_1"));
+				
 			}	
 			code.download();
 			codeDao.update(code);
@@ -114,7 +146,7 @@ public class CodeService {
 	 * @return
 	 */
 	public long countCodes(Weaver weaver,List<String> tags,
-			 String search, String sort) {
+			String search, String sort) {
 		return codeDao.countCodes(weaver, tags, search, sort);
 	}
 
@@ -142,9 +174,8 @@ public class CodeService {
 		if(weaver == null || code == null)
 			return false;
 
-		if(weaver.isAdmin() || 
-				weaver.getId().equals(code.getWriterName())){
-
+		if(weaver.isAdmin() || weaver.getId().equals(code.getWriterName())){
+			rePostDao.deleteAll(code);
 			codeDao.delete(code);
 			return true;
 		}

@@ -13,7 +13,7 @@ var weaverList = new Array();
 weaverList.push({
 	"admin": true,
 	"id": "${adminWeaver.id}",
-	"email": "${adminWeaver.email}",
+	"massage": "${adminWeaver.studentID}",
 	"img": "${adminWeaver.getImgSrc()}"
 });
 </c:forEach>
@@ -21,7 +21,7 @@ weaverList.push({
 weaverList.push({
 	"admin": false,
 	"id": " ${joinWeaver.id}",
-	"email": "${joinWeaver.email}",
+	"massage": "${joinWeaver.studentID}",
 	"img": "${joinWeaver.getImgSrc()}",
 	"removeLink": "/lecture/${lecture.name}/weaver/${joinWeaver.id}/delete"
 });
@@ -120,7 +120,7 @@ $(document).ready(function() {
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}example.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}example.git" type="text"
 
 						class="input-block-level">
 				</div>

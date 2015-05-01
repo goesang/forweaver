@@ -12,43 +12,66 @@ import org.springframework.stereotype.Repository;
 import com.forweaver.domain.CherryPickRequest;
 import com.forweaver.domain.Project;
 
+/** 채리픽 관리를 위한 DAO
+ *
+ */
 @Repository
 public class CherryPickRequestDao {
 
 	@Autowired private MongoTemplate mongoTemplate;
 	
-	public void add(CherryPickRequest cherryPickRequest) { // 체리픽 요청 추가
+	/** 체리픽 요청 추가
+	 * @param cherryPickRequest
+	 */
+	public void add(CherryPickRequest cherryPickRequest) {
 		if (!mongoTemplate.collectionExists(CherryPickRequest.class)) {
 			mongoTemplate.createCollection(CherryPickRequest.class);
 		}
 		mongoTemplate.insert(cherryPickRequest);
 	}
 
-	public List<CherryPickRequest> get(Project orginalProject) { // 체리픽 요청 가져오기
+	/** 프로젝트의 체리픽 요청 가져오기
+	 * @param orginalProject
+	 * @return
+	 */
+	public List<CherryPickRequest> get(Project orginalProject) {
 		Query query = new Query(Criteria.where("orginalProject").is(orginalProject));
 		return mongoTemplate.find(query, CherryPickRequest.class);
 	}
 	
-	public CherryPickRequest get(String id) {// 체리픽 요청 가져오기
+	/** 체리픽 요청 가져오기
+	 * @param id
+	 * @return
+	 */
+	public CherryPickRequest get(String id) {
 		Query query = new Query(	Criteria.where("_id").is(id));
 		return mongoTemplate.findOne(query, CherryPickRequest.class);
 	}
 	
-	public void update(CherryPickRequest cherryPickRequest) { // 체리픽 요청 수정
+	/** 체리픽 요청 수정
+	 * @param cherryPickRequest
+	 */
+	public void update(CherryPickRequest cherryPickRequest) {
 		Query query = new Query(	Criteria.where("_id").is(cherryPickRequest.getId()));
 		Update update = new Update();
 		update.set("state", cherryPickRequest.getState());
 		mongoTemplate.updateFirst(query, update, CherryPickRequest.class);
 	}
 	
-	public void delete(CherryPickRequest cherryPickRequest) { // 체리픽 요청 삭제
+	/** 체리픽 요청 삭제
+	 * @param cherryPickRequest
+	 */
+	public void delete(CherryPickRequest cherryPickRequest) {
 		mongoTemplate.remove(cherryPickRequest);
 	}
 	
-	public void delete(Project project) { // 체리픽 요청 삭제
+	/** 프로젝트의 모든 체리픽 요청 삭제
+	 * @param project
+	 */
+	public void delete(Project project) {
 		Criteria criteria = new Criteria();
 		Query query = new Query(	criteria.orOperator(Criteria.where("cherryPickProject").is(project),
 				Criteria.where("orginalProject").is(project)));
-		mongoTemplate.remove(query);
+		mongoTemplate.remove(query,CherryPickRequest.class);
 	}
 }

@@ -31,7 +31,7 @@ $(document).ready(function() {
 
 	$("select").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
 	$("#selectBranch").change(function(){
-		if($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectBranch option:selected").val() != "empty_Branch")
 			window.location = $("#selectBranch option:selected").val();
 	});
 });
@@ -78,7 +78,7 @@ showFileBrowser("/");
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}example.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}example.git" type="text"
 
 						class="input-block-level">
 				</div>
@@ -141,7 +141,7 @@ showFileBrowser("/");
 			</div>
 			<c:if test="${readme.length() > 0}">
 				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
-				<div class="span12 readme">${readme}</div>
+				<div class="span12 readme"><s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(readme)" /></div>
 			</c:if>
 		</div>
 		<!-- .row-fluid -->

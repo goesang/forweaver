@@ -16,12 +16,16 @@ public class RePost implements Serializable {
 	static final long serialVersionUID = 573464611669134L;
 	@Id
 	private int rePostID;
-	private String originalPostID;
 	private String content;
 	private Date created;
 	private int push;
 	private Date recentReplyDate;
-	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변 , 4가 코드의 답변.
+	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변
+	
+	@DBRef
+	private Post originalPost;
+	@DBRef
+	private Code originalCode;
 	@DBRef
 	private Weaver writer;
 	@DBRef
@@ -29,20 +33,31 @@ public class RePost implements Serializable {
 	
 	@DBRef
 	private List<Data> datas = new ArrayList<Data>();
-	private List<String> tags = new ArrayList<String>();
 	private List<Reply> replys = new ArrayList<Reply>();
-
+	private List<String> tags = new ArrayList<String>();
 	public RePost() {
 	}
 
-	public RePost(String originalPostID,Weaver origianlWriter, Weaver writer, String content,List<String> tags,int kind) {
+	public RePost(Post originalPost,Weaver writer, String content) {
 		this.writer = writer;
-		this.origianlWriter = origianlWriter;
+		this.origianlWriter = originalPost.getWriter();
 		this.content = content;
-		this.kind = kind;
+		this.tags = originalPost.getTags();
+		this.kind = this.getKind(this.tags);
 		this.created = new Date();
-		this.originalPostID = originalPostID;
-		this.tags = tags;
+		this.originalPost = originalPost;
+		
+	}
+	
+	public RePost(Code originalCode,Weaver writer, String content) {
+		this.writer = writer;
+		this.origianlWriter = originalCode.getWriter();
+		this.content = content;
+		this.originalCode = originalCode;
+		this.tags = originalCode.getTags();
+		this.kind = this.getKind(this.tags);
+		this.created = new Date();		
+		
 	}
 
 	public int getRePostID() {
@@ -86,14 +101,6 @@ public class RePost implements Serializable {
 		this.push = push;
 	}
 
-	public String getOriginalPostID() {
-		return originalPostID;
-	}
-
-	public void setOriginalPostID(String originalPostID) {
-		this.originalPostID = originalPostID;
-	}
-
 	public String getWriterEmail() {
 		return this.writer.getEmail();
 	}
@@ -120,27 +127,26 @@ public class RePost implements Serializable {
 			reply.setNumber(1);
 		else
 			reply.setNumber(this.replys.get(0).getNumber() + 1);
+		
 		this.replys.add(0, reply);
-	}
-
-	public void updateReply(Reply reply, Weaver weaver, int number) {
-		for (Reply tmpReply : this.replys) {
-			if (tmpReply.getNumber() == number
-					&& weaver.getId().equals(tmpReply.getWriterName()))
-				tmpReply = reply;
-
-		}
+		
+		this.recentReplyDate = reply.getCreated();
 	}
 
 	public boolean removeReply(Weaver weaver, int number) {
 		for (int i = 0; i < this.replys.size(); i++) {
 			if (this.replys.get(i).getNumber() == number
-					&& weaver.getId()
-							.equals(this.replys.get(i).getWriterName()))
+					&& weaver.equals(this.replys.get(i).getWriter()))
 				this.replys.remove(i);
 			return true;
 		}
 		return false;
+	}
+	
+	public Weaver getReplyWriter(int number) {
+		if(number == 0)
+			return null;
+		return this.replys.get(number-1).getWriter();
 	}
 
 	public Date getRecentReplyDate() {
@@ -205,12 +211,40 @@ public class RePost implements Serializable {
 	}
 
 	public List<String> getTags() {
-		return tags;
+		return this.tags;
+	}
+
+	public Post getOriginalPost() {
+		return originalPost;
+	}
+
+	public void setOriginalPost(Post originalPost) {
+		this.originalPost = originalPost;
+	}
+
+	public Code getOriginalCode() {
+		return originalCode;
+	}
+
+	public void setOriginalCode(Code originalCode) {
+		this.originalCode = originalCode;
 	}
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
-	}
+	}	
 	
+	private int getKind(List<String> tags){
+		if(this.originalCode != null)
+			return 4;
+		
+		for (String tag :tags)
+			if (tag.startsWith("@")) 
+				return 2;
+			else if (tag.startsWith("$")) 
+				return 3;
+		
+		return 1;
+	}
 	
 }

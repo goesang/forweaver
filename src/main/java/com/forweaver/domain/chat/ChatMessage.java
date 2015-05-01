@@ -5,6 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/** 채팅 메시지 보관용 클래스
+ * message 실제 메시지
+ * weaver 회원 정보
+ * date 시간
+ */
 public class ChatMessage  implements Serializable{
 	
 	static final long serialVersionUID = 19911217L;

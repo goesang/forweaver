@@ -3,6 +3,7 @@ package com.forweaver.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +26,6 @@ import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
-import com.forweaver.util.Tuple;
 import com.forweaver.util.WebUtil;
 
 @Controller
@@ -44,8 +44,14 @@ public class WeaverController {
 	@Autowired 
 	private TagService tagService;
 
-	@RequestMapping("/login")
+	@RequestMapping(value = "/login")
 	public String login() {
+		return "/weaver/login";
+	}
+
+	@RequestMapping(value = "/loginFail")
+	public String loginFail(Model model) {
+		model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
 		return "/weaver/login";
 	}
 
@@ -58,14 +64,31 @@ public class WeaverController {
 	public String join(@RequestParam("id") String id,
 			@RequestParam("email") String email,
 			@RequestParam("password") String password,
+			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
+			@RequestParam("tags") String tags,
 			@RequestParam("image") MultipartFile image,
-			HttpServletRequest request) {
+			HttpServletRequest request,Model model) {
+		List<String> tagList = tagService.stringToTagList(tags);
 
-		if (weaverService.idCheck(id) || weaverService.idCheck(email))
+		if(!tagService.isPublicTags(tagList))
 			return "/weaver/join";
 
-		Weaver weaver = new Weaver(id, password, email,say, new Data(image,id));
+		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
+				say.length()>50 || studentID.length()>30 || 
+				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
+			model.addAttribute("say", "잘못 입력하셨습니다!.");
+			model.addAttribute("url", "/join");
+			return "/alert";
+		}
+
+		if (weaverService.idCheck(id) || weaverService.idCheck(email)){
+			model.addAttribute("say", "이미 존재하는 아이디 혹은 이메일입니다.");
+			model.addAttribute("url", "/join");
+			return "/alert";
+		}
+
+		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
 		return "redirect:/";
@@ -103,14 +126,16 @@ public class WeaverController {
 	public String weaversTags(Model model,@PathVariable("tagNames") String tagNames,
 			@PathVariable("page") String page) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
+
+		if(!tagService.isPublicTags(tagList))
+			return "redirect:/weaver/page:1";
+
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
-		Tuple<List<Weaver>, Integer> weaverInfos= weaverService.getWeaverInfos(tagList,pageNum-1,size);
-		
-		List<Weaver> weavers = weaverInfos.x;
-		int weaverCount = weaverInfos.y;
-		
+		List<Weaver> weavers= weaverService.getWeavers(tagList,pageNum,size);
+		long weaverCount = weaverService.countWeavers(tagList);
+
 		model.addAttribute("weavers", weavers);	
 		model.addAttribute("weaverCount", weaverCount);
 
@@ -123,13 +148,13 @@ public class WeaverController {
 	@RequestMapping({"/{id}","/{id}/code","/{id}/project","/{id}/lecture"})
 	public String home(@PathVariable("id") String id,HttpServletRequest request) {
 		Weaver weaver = weaverService.get(id);
-		if(weaver == null)
-			return "/error404";
+		if(weaver == null || weaver.isLeave())
+			return "/errorUserNull";
 		else
 			return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
 
 	}
-	
+
 	@RequestMapping("/{id}/sort:{sort}/page:{page}")
 	public String communityPage(@PathVariable("id") String id,
 			@PathVariable("page") String page,
@@ -138,7 +163,7 @@ public class WeaverController {
 		int size = WebUtil.getPageSize(page);
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -155,7 +180,7 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/"+id+"/sort:" + sort + "/page:");
 		return "/weaver/mypage/community";
 	}
-	
+
 	@RequestMapping("/{id}/code/sort:{sort}/page:{page}")
 	public String codePage(@PathVariable("id") String id,
 			@PathVariable("sort") String sort,
@@ -163,10 +188,10 @@ public class WeaverController {
 		Weaver weaver = weaverService.get(id);
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-		
-		if (weaver == null)
+
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
-			
+
 		model.addAttribute("weaver", weaver);
 		model.addAttribute("codes", codeService.getCodes(weaver, null, null, sort, pageNum, size));
 		model.addAttribute("codeCount", codeService.countCodes(weaver, null, null, sort));
@@ -175,7 +200,7 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/"+id+"/code/sort:" + sort + "/page:");
 		return "/weaver/mypage/code";
 	}
-	
+
 	@RequestMapping("/{id}/project/sort:{sort}/page:{page}")
 	public String projectPage(@PathVariable("id") String id,
 			@PathVariable("sort") String sort,
@@ -184,8 +209,8 @@ public class WeaverController {
 		Weaver weaver = weaverService.get(id);
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-		
-		if (weaver == null)
+
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
@@ -196,7 +221,7 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/"+id+"/project/sort:" + sort + "/page:");
 		return "/weaver/mypage/project";
 	}
-	
+
 	@RequestMapping("/{id}/lecture/sort:{sort}/page:{page}")
 	public String lecturePage(@PathVariable("id") String id,
 			@PathVariable("sort") String sort,
@@ -205,10 +230,10 @@ public class WeaverController {
 		Weaver weaver = weaverService.get(id);
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-		
-		if (weaver == null) 
+
+		if (weaver == null || weaver.isLeave()) 
 			return "redirect:/";
-		
+
 		model.addAttribute("weaver", weaver);
 		model.addAttribute("lectures", lectureService.getLecturesWithWeaver(currentWeaver, weaver, null, sort, pageNum, size));
 		model.addAttribute("lectureCount", lectureService.countLecturesWithWeaver(weaver, null, sort));
@@ -219,7 +244,7 @@ public class WeaverController {
 	}
 
 
-	
+
 	@RequestMapping({"/{id}/tags:{tagNames}",
 		"/{id}/code/tags:{tagNames}",
 		"/{id}/project/tags:{tagNames}"
@@ -239,7 +264,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -261,7 +286,7 @@ public class WeaverController {
 
 		return "/weaver/mypage/community";
 	}
-	
+
 	@RequestMapping("/{id}/code/tags:{tagNames}/sort:{sort}/page:{page}")
 	public String codeTagsWithPage(@PathVariable("tagNames") String tagNames,
 			@PathVariable("id") String id, @PathVariable("page") String page,
@@ -273,7 +298,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -293,7 +318,7 @@ public class WeaverController {
 
 		return "/weaver/mypage/code";
 	}
-	
+
 	@RequestMapping("/{id}/project/tags:{tagNames}/sort:{sort}/page:{page}")
 	public String projectTagsWithPage(@PathVariable("tagNames") String tagNames,
 			@PathVariable("id") String id, @PathVariable("page") String page,
@@ -303,10 +328,10 @@ public class WeaverController {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
-		
+
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -326,7 +351,7 @@ public class WeaverController {
 
 		return "/weaver/mypage/project";
 	}
-	
+
 	@RequestMapping("/{id}/lecture/tags:{tagNames}/sort:{sort}/page:{page}")
 	public String lectureTagsWithPage(@PathVariable("tagNames") String tagNames,
 			@PathVariable("id") String id, @PathVariable("page") String page,
@@ -338,7 +363,7 @@ public class WeaverController {
 
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -360,7 +385,7 @@ public class WeaverController {
 	}
 
 	@RequestMapping({"/{id}/tags:{tagNames}/search:{search}",
-		"/{id}/code/tags:{tagNames}/search:{search}"})
+	"/{id}/code/tags:{tagNames}/search:{search}"})
 	public String tagsWithSearch(HttpServletRequest request) {
 		return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
 	}
@@ -376,7 +401,7 @@ public class WeaverController {
 		int size = WebUtil.getPageSize(page);
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -400,7 +425,7 @@ public class WeaverController {
 
 		return "/weaver/mypage/community";
 	}
-	
+
 	@RequestMapping("/{id}/code/tags:{tagNames}/search:{search}/sort:{sort}/page:{page}")
 	public String codeTagsWithSearch(@PathVariable("tagNames") String tagNames,
 			@PathVariable("id") String id,
@@ -412,7 +437,7 @@ public class WeaverController {
 		int size = WebUtil.getPageSize(page);
 		Weaver weaver = weaverService.get(id);
 
-		if (weaver == null)
+		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -438,7 +463,7 @@ public class WeaverController {
 	@RequestMapping(value = "/{id}/edit")
 	public String editWeaver(@PathVariable("id") String id,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if (!weaver.getId().equals(id)) // 본인이 아닐 경우
+		if (weaver == null || !weaver.getId().equals(id)) // 본인이 아닐 경우
 			return "redirect:/";
 		model.addAttribute("weaver", weaver);
 		return "/weaver/edit";
@@ -448,33 +473,51 @@ public class WeaverController {
 	public String editWeaver(@PathVariable("id") String id,
 			@RequestParam("password") String password,
 			@RequestParam("newpassword") String newpassword,
+			@RequestParam("tags") String tags,
+			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
-			@RequestParam("image") MultipartFile image) {
+			@RequestParam("image") MultipartFile image,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if (!weaver.getId().equals(id) ) // 본인이 아니거나 비밀번호가 틀린경우
-			return "/exit";
+		List<String> tagList = tagService.stringToTagList(tags);
 
-		weaverService.update(weaver,password,newpassword,say,image);
+		if(!tagService.isPublicTags(tagList)){
+			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
+			model.addAttribute("url", "/"+id+"/edit");
+			return "/alert";
+		}
 
-		return "/exit";
+
+		if (!weaver.getId().equals(id) ){ // 본인이 아닐때
+			model.addAttribute("say", "권한이 없습니다!");
+			model.addAttribute("url", "/");
+			return "/alert";
+		}
+		
+		weaverService.update(weaver,password,newpassword,tagList,studentID,say,image);
+
+		model.addAttribute("say", "정보를 수정하였습니다!");
+		model.addAttribute("url", "/"+id+"/edit");
+		return "/alert";
+
 	}
 
 	@RequestMapping(value = "/{id}/img")
 	public void img(@PathVariable("id") String id, HttpServletResponse res)
 			throws IOException {
 		Weaver weaver = weaverService.get(id);
-		if (weaver == null) {
+		if (weaver == null || weaver.isLeave()) { // 사이트에 존재하지 않은 회원의 경우
 			if(id.contains("@") && id.contains("."))
 				res.sendRedirect("http://www.gravatar.com/avatar/"
 						+ WebUtil.convertMD5(id) + ".jpg");
 			else
 				res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
 			return;
-		}else if (weaver.getImage().getName().length() ==0) {
+		}else if (weaver.getImage().getContent().length  == 0) { // 존재하는 회원의 경우
 			res.sendRedirect("http://www.gravatar.com/avatar/"
 					+ WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
 		} else {
 			byte[] imgData = weaver.getImage().getContent();
+			res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
 			res.setContentType(weaver.getImage().getType());
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);
@@ -497,7 +540,7 @@ public class WeaverController {
 		if(weaverService.changePassword(email, key))
 			return "/weaver/repassword";
 		else
-			return "redirect:/error500";
+			return "/error500";
 	}
 
 	@RequestMapping(value = "/repassword", method = RequestMethod.POST)

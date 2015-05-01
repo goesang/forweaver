@@ -7,16 +7,27 @@ import javax.persistence.Id;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
+/**<pre> 자료를 보관하는 클래스
+ * id 실제 아이디
+ * weaver 올린 사람
+ * content 자료 내용
+ * name 자료 이름
+ * type 자료형
+ * date 올린 날짜
+ * </pre>
+ */
 @Document
 public class Data implements Serializable {
 	
 	static final long serialVersionUID = 3423431L;
 	@Id
 	private String id;
-	private String weaverID;
+	@DBRef
+	private Weaver weaver;
 	private byte[] content;
 	private String name;
 	private String type;
@@ -26,28 +37,35 @@ public class Data implements Serializable {
 		
 	}
 	
-	public Data(String id ,MultipartFile data,String weaverID){
+	public Data(String id ,MultipartFile data,Weaver weaver){
 		this.date = new Date();
 		this.id = id;
-		this.weaverID = weaverID;
+		this.weaver = weaver;
 		this.name= "";
 		try{
 			this.content= data.getBytes();
 			this.name = data.getOriginalFilename();
+			this.name = this.name.replace(" ", "_");
+			this.name = this.name.replace("#", "_");
+			this.name = this.name.replace("?", "_");	
+			this.name = this.name.trim();
 			this.type = data.getContentType();
 		}catch(Exception e){
 			
 		}
 	}
 	
-	public Data(MultipartFile data,String weaverID){
+	public Data(MultipartFile data){
 		this.date = new Date();
 		this.id = new ObjectId(this.date).toString();
-		this.weaverID = weaverID;
 		this.name= "";
 		try{
 			this.content= data.getBytes();
 			this.name = data.getOriginalFilename();
+			this.name = this.name.replace(" ", "_");
+			this.name = this.name.replace("#", "_");
+			this.name = this.name.replace("?", "_");	
+			this.name = this.name.trim();
 			this.type = data.getContentType();
 		}catch(Exception e){
 			
@@ -86,12 +104,13 @@ public class Data implements Serializable {
 		return new Base64().encodeToString(this.content);
 	}
 
-	public String getWeaverID() {
-		return weaverID;
-	}
+	
 
-	public void setWeaverID(String weaverID) {
-		this.weaverID = weaverID;
+	public Weaver getWeaver() {
+		return weaver;
+	}
+    public void setWeaver(Weaver weaver) {
+		this.weaver = weaver;
 	}
 
 	public Date getDate() {

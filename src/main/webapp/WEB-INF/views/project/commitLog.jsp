@@ -9,8 +9,11 @@
 <body>
 	<script>
 		$(document).ready(function() {
-			$('#tags-input').textext()[0].tags().addTags(
-					getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+			move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
 			
 			$("select").selectpicker({
@@ -18,12 +21,12 @@
 				menuStyle : 'dropdown-inverse'
 			});
 			$("#selectBranch").change(function() {
-				if ($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+				if ($("#selectBranch option:selected").val() != "empty_Branch")
 					window.location = $("#selectBranch option:selected").val();
 			});
 
 			var pageCount = ${gitCommitListCount+1}/15;
-			
+			pageCount = Math.ceil(pageCount);
 			var options = {
 		            currentPage: ${pageIndex},
 		            totalPages: pageCount,
@@ -60,18 +63,23 @@
 					<li class="active" ><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
-					<li><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<c:if test="${project.getCreator().equals(currentUser) }">
+					<li><a href="/project/${project.name}/edit">관리</a></li>
+					</c:if>
+					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() != 2}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -107,7 +115,7 @@
 											<p class="p-button">전체</p></span>
 									</a>
 									
-								<a	href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${fn:substring(gitCommit.commitLogID,0,8)}.zip">
+								<a	href="/project/${project.name}/${fn:substring(gitCommit.commitLogID,0,8)}/${project.getChatRoomName()}-${fn:substring(gitCommit.commitLogID,0,8)}.zip">
 										<span class="span-button"> <i class="fa fa-arrow-circle-o-down"></i>
 											<p class="p-button">다운</p></span>
 									</a>									

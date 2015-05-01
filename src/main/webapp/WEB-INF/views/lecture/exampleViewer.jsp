@@ -20,7 +20,7 @@ $(document).ready(function() {
 	$('#selectCommit').selectpicker('refresh');
 	
 	$("#selectCommit").change(function(){
-		if($("#selectCommit option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectCommit option:selected").val() != "empty_Branch")
 			window.location = $("#selectCommit option:selected").val()+"${fileName}";
 	});
 	
@@ -52,7 +52,7 @@ $(document).ready(function() {
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}example.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}example.git" type="text"
 
 						class="input-block-level">
 				</div>
@@ -69,7 +69,7 @@ $(document).ready(function() {
 						<c:if test='${status.count == selectCommitIndex + 1}'>
 						selected="selected"
 						</c:if >
-							value="/lecture/${lecture.name}/example/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
+							value="/lecture/${lecture.name}/example/commit:${fn:substring(gitLog.getName(),0,20)}/filepath:">
 							<jsp:setProperty name="dateValue" property="time"
 								value="${gitLog.getCommitTime()*1000}" />
 							<fmt:formatDate value="${dateValue}" pattern="yy년MM월dd일 HH시mm분" />
@@ -104,7 +104,7 @@ $(document).ready(function() {
 					</tbody>
 				</table>
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" >${fileContent}</pre>
+					<pre id="source-code" >${cov:htmlEscape(fileContent)}</pre>
 				</div>
 			</div>
 

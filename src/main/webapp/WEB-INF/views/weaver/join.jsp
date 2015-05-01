@@ -6,9 +6,31 @@
 </head>
 <body>
 <script>
-var check = false;
+editorMode = true;
+var idCheck = false;
+var passwordCheck = false;
+var emailCheck = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+function checkWeaver(){
+		if($("#tags-input").val().length < 1){
+			alert("태그를 하나 이상 입력해주세요!");
+			return false;
+		}
+		
+		if(!idCheck || !passwordCheck || !emailCheck){
+			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
+			return false;
+		}
+		$("form:first").append($("input[name='tags']"));
+		return idCheck&&passwordCheck&&emailCheck;
+	}
+
 $(document).ready(function() {
+	
+	 $('#tags-input').tagsinput('add',"한신대");
+	
+	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!");
+
 	
 	$("#image").change(function(){
         readURL(this);
@@ -17,60 +39,78 @@ $(document).ready(function() {
 	
 	$("#id").focusout(function() {
 		var t = escape($("#id").val());
-		var objPattern =  /[~!@\#$%^&*\()\=+_']/gi;
-		  if(objPattern.test(t)){
-  		$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 특수문자를 입력할수 없습니다!</div>");
-  		check = false;
-  	    }else{
-			$.ajax({                         
+		if(t.length == 0)
+			return;
+		
+		if(t.length <5){
+			alert("아이디를 최소 5자 이상 입력해주세요!");
+			idCheck = false;
+  			return;
+		}
+		var objPattern = /^[a-z0-9_]+$/;
+		  
+		if(!objPattern.test(t)){
+  		alert("아이디는 소문자와 숫자 그리고 언더바 조합입니다!");
+  		idCheck = false;
+  	    }
+			
+		  $.ajax({                         
 			    type: "POST",
 			    url: "/check",
 			    data: "id="+$("#id").val(),
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
-				    if(msg==true){
-				    	$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 닉네임이 중복됩니다!</div>");
-			    		check = false;
+				    if(msg){
+				    	alert("닉네임이 중복됩니다!");
+				    	idCheck = false;
 					    }else{
-			    	check = true;
+					    idCheck = true;
 				 }
 			   }
 			});
-  	    }
+  	    
 	});
 	$("#password").focusout(function() {
+		if($("#password").val().length == 0)
+			return;
+		
 	    if($("#password").val().length<=3){
-	    	$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 비밀번호를 4자리 이상 입력해주세요!</div>");
-    		check = false;
+	    	alert("비밀번호를 4자리 이상 입력해주세요!");
+	    	passwordCheck = false;
     	    }else{
-	    	check = true;
+    	    	passwordCheck = true;
 		 }
 	});
 	$("#rePassword").focusout(function() {
+		
+		if($("#rePassword").val().length == 0)
+			return;
+		
 		if($("#password").val()!=$("#rePassword").val()){
-			$("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 비밀번호가 일치하지 않습니다!</div>");
-    		check = false;
-    	    }else{
-	    	check = true;
-		 }
+			alert("비밀번호가 일치하지 않습니다!");
+    	 }
 	});
 	$("#email").focusout(function() {
 		var t = escape($("#email").val());
+		
+		if(t.length == 0)
+			return;
+		
 		  if(t.match(/^(\w+)@(\w+)[.](\w+)$/ig) == null && t.match(/^(\w+)@(\w+)[.](\w+)[.](\w+)$/ig) == null){
-			  $("#signupform").prepend("<div class='alert'>"+close+"<strong>경고!</strong> 올바른 이메일 주소를 입력해주세요!</div>");
-    		check = false;
+			  alert("올바른 이메일 주소를 입력해주세요!");
+			  emailCheck = false;
     	    }else{
-	    	check = true;
+    	    	emailCheck = true;
 		 }
 		  $.ajax({                         
 			    type: "POST",
 			    url: "/check",
 			    data: "id="+$("#email").val(),
 			    success: function(msg) {  //성공시 이 함수를 호출한다.
-				    if(msg=="true"){
-			    		$("#email").tooltip({title: "이메일이 중복됩니다!",trigger: 'manual',placement:"right"}).tooltip('show');
-			    		check = false;
+				    if(msg){
+				    	alert("이메일이 중복됩니다!");
+				    	emailCheck = false;
 					    }else{
-			    	check = true;
+					    	emailCheck = true;
 				 }
 			   }
 			});
@@ -82,8 +122,9 @@ $(document).ready(function() {
 
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
+
 			<div id="signupform" class="well-white">
-				<form enctype="multipart/form-data"  onsubmit="return check" class="form-horizontal" action="" method="POST">
+				<form onsubmit="return checkWeaver()" enctype="multipart/form-data" class="form-horizontal" action="" method="POST">
 					<fieldset >
 						<legend><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;회원가입</legend>
 						<div class="span6">
@@ -91,23 +132,23 @@ $(document).ready(function() {
 							
 							<label  for="id" class="control-label">닉네임</label>
 							<div class="controls">
-								<input id="id" name="id" class="input-large"
-									type="text" value="" />
+								<input maxlength="15" id="id" name="id" class="input-large"
+									type="text" placeholder="영문-소문자,숫자,언더바 5자 이상" value="" />
 							</div>
 						</div>
 						
 						<div class="control-group">
 							<label for="email" class="control-label">이메일</label>
 							<div class="controls">
-								<input id="email" name="email" class="input-large" type="text"
-									value="" />
+								<input maxlength="30" id="email" name="email" class="input-large" type="text"
+									value="" placeholder="프로젝트 진행시 사용할 이메일" />
 							</div>
 						</div>
 						
 						<div class="control-group">
 							<label for="password" class="control-label">비밀번호</label>
 							<div class="controls">
-								<input id="password" name="password" class="input-large"
+								<input maxlength="30"  id="password" name="password" class="input-large"
 									type="password" />
 
 							</div>
@@ -115,16 +156,25 @@ $(document).ready(function() {
 						<div class="control-group">
 							<label for="rePassword" class="control-label">비밀번호 확인</label>
 							<div class="controls">
-								<input id="rePassword" class="input-large"
+								<input maxlength="30"  id="rePassword" class="input-large"
 									type="password" />
 
 							</div>
+						</div>
+						
+						<div class="control-group">
+							<label for="studentID" class="control-label">학번 (선택)</label>
+							<div class="controls">
+								<input maxlength="30"  name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
+
+							</div>
+						
 						</div>
 						</div>
 						<div class="span4">
 						
 						<div class ="control-group" style="text-align:center;">
-						<img id="preview" style="height:150px;width:150px;" class="img-polaroid" src="">
+						<img id="preview" style="height:190px;width:190px;" class="img-polaroid" src="">
 						</div>
 						
 						
@@ -145,9 +195,9 @@ $(document).ready(function() {
 						</div>
 						<div class="span11">
 						<div class="control-group">
-							<label for="say" class="control-label">자기소개</label>
+							<label for="say" class="control-label">자기소개 (선택)</label>
 							<div class="controls">
-								<input name="say" id="say" style="width:90%;" type="text"/>
+								<input maxlength="50"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 
 							</div>
 						</div>

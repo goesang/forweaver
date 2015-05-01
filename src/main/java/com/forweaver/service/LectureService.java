@@ -4,18 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Pass;
-import com.forweaver.domain.Project;
 import com.forweaver.domain.Repo;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
@@ -34,14 +28,13 @@ public class LectureService {
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private WaitJoinDao waitJoinDao;
 	@Autowired private PostDao postDao;
-
-	@Value("${gitpath}")
-	private String gitpath;
-
+	@Autowired private GitUtil gitUtil;
+	
 	public void add(Lecture lecture,Weaver currentWeaver) {
 
 		if(lecture.getName().toUpperCase().equals("ROLE_ADMIN")||
 				lecture.getName().toUpperCase().equals("ROLE_USER")||	
+				lecture.getName().toUpperCase().equals("ROLE_PROF")||
 				weaverDao.get(lecture.getName()) != null || 
 				lectureDao.get(lecture.getName()) != null)
 			return; // 중복 검사
@@ -52,23 +45,38 @@ public class LectureService {
 
 		Pass pass = new Pass(lecture.getName(), 2); // 강의의 생성자 권한을 부여
 		currentWeaver.addPass(pass);
-		weaverDao.update(currentWeaver);
+		weaverDao.updatePass(currentWeaver);
 
 
-		File file = new File(gitpath + lecture.getName());
+		File file = new File(gitUtil.getGitPath() + lecture.getName());
 		file.mkdir();
 
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,repo);
+			gitUtil.Init(repo);
 			gitUtil.createRepository();
 		} catch (Exception e) {
 			System.err.println("예제 저장소 생성 불가");
 		}
 	}
-
+	/** 회원 추가함.
+	 * @param lecture
+	 * @param currentWeaver
+	 * @param joinWeaver
+	 */
+	public boolean addWeaver(Lecture lecture,Weaver joinWeaver){
+		// TODO Auto-generated method stub
+		if(lecture == null || joinWeaver == null)
+			return false;
+		Pass pass = new Pass(lecture.getName(), 1);
+		lecture.addJoinWeaver(joinWeaver); //프로젝트 목록에 추가
+		joinWeaver.addPass(pass);
+		weaverDao.updatePass(joinWeaver);
+		this.update(lecture);
+		return true;
+	}
 	public void addRepo(Lecture lecture,Repo repo){
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,repo);
+			gitUtil.Init(repo);
 			gitUtil.createRepository();
 		} catch (Exception e) {
 			return;
@@ -79,7 +87,7 @@ public class LectureService {
 
 	public void removeRepo(Lecture lecture,Repo repo){
 		try{
-			GitUtil gitUtil = new GitUtil(gitpath,repo);
+			gitUtil.Init(repo);
 			gitUtil.deleteRepository();
 		} catch (Exception e) {
 			return;
@@ -105,7 +113,7 @@ public class LectureService {
 			deleteWeaver.deletePass(lecture.getName());
 			lecture.removeJoinWeaver(deleteWeaver);
 
-			weaverDao.update(deleteWeaver);
+			weaverDao.updatePass(deleteWeaver);
 			lectureDao.update(lecture);
 
 			return true;
@@ -125,7 +133,7 @@ public class LectureService {
 			deleteWeaver.deletePass(lecture.getName());
 			lecture.removeJoinWeaver(deleteWeaver);
 
-			weaverDao.update(deleteWeaver);
+			weaverDao.updatePass(deleteWeaver);
 			lectureDao.update(lecture);
 
 			return true;
@@ -150,11 +158,11 @@ public class LectureService {
 				weaver.getId().equals(lecture.getCreatorName())){
 			for(Weaver adminWeaver:lecture.getAdminWeavers()){
 				adminWeaver.deletePass(lecture.getName());
-				weaverDao.update(adminWeaver);
+				weaverDao.updatePass(adminWeaver);
 			}
 			for(Weaver joinWeaver:lecture.getJoinWeavers()){
 				joinWeaver.deletePass(lecture.getName());
-				weaverDao.update(joinWeaver);
+				weaverDao.updatePass(joinWeaver);
 			}
 			for(WaitJoin waitJoin:waitJoinDao.delete(lecture.getName())){ // 대기 중인 초대장 삭제.
 				postDao.delete(postDao.get(waitJoin.getPostID())); //처음 보냈던 메세지 삭제.
@@ -252,10 +260,10 @@ public class LectureService {
 	public void uploadZip(Lecture lecture,Repo repo,Weaver weaver,String branchName,String message,MultipartFile zip){
 		if(message==null || !zip.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			return;
-		GitUtil gitUtil = new GitUtil(gitpath,repo);
+		gitUtil.Init(repo);
 		List<String> beforeBranchList = gitUtil.getBranchList();
 		try{
-			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
+			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip);
 			if (lecture.getCreatorName().equals(weaver.getId())) { // 강의 개설자의 경우
 				if (repo.getCategory() == 1) {
 					gitUtil.createStudentBranch(beforeBranchList,	lecture);
@@ -267,7 +275,7 @@ public class LectureService {
 				if (repo.getCategory() == 0) { // 예제 저장소의 경우
 
 					gitUtil.notWriteBranches();
-					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
+					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip);
 					gitUtil.writeBranches();
 				} else{ // 숙제 저장소의 경우
 
@@ -277,7 +285,7 @@ public class LectureService {
 					}
 					gitUtil.hideNotUserBranches(weaver.getId());
 					gitUtil.checkOutBranch(weaver.getId());
-					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip.getInputStream());
+					gitUtil.uploadZip(weaver.getId(), weaver.getEmail(),branchName, message, zip);
 					gitUtil.showBranches();
 					gitUtil.checkOutMasterBranch();
 

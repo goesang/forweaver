@@ -10,12 +10,18 @@ import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Data;
 
+/** 자료 관리를 위한 DAO
+ *
+ */
 @Repository
 public class DataDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 
-	public void insert(Data data) { // 글 추가하기
+	/** 자료 추가함.
+	 * @param data
+	 */
+	public void insert(Data data) {
 		if (!mongoTemplate.collectionExists(Data.class)) {
 			mongoTemplate.createCollection(Data.class);
 		}
@@ -23,16 +29,26 @@ public class DataDao {
 		return;
 	}
 
-	public Data get(String dataID) { // 자료 가져오기
+	/** 자료 가져오기
+	 * @param dataID
+	 * @return
+	 */
+	public Data get(String dataID) {
 		Query query = new Query(Criteria.where("_id").is(dataID));
 		return mongoTemplate.findOne(query, Data.class);
 	}
 	
 
-	public void delete(Data data) { // 자료 삭제하기
+	/** 자료 삭제하기
+	 * @param data
+	 */
+	public void delete(Data data) {
 		mongoTemplate.remove(data);
 	}
 	
+	/** 마지막 자료 가져오기
+	 * @return
+	 */
 	public Data getLast() {
 		Query query = new Query().with(new Sort(Sort.Direction.DESC, "_id"));
 		return mongoTemplate.findOne(query, Data.class);

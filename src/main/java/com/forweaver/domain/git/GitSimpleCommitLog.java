@@ -6,7 +6,9 @@ import java.util.Date;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
-//커밋 브라우져에서 볼 수 있도록 리스트에 담길 클래스
+/** 커밋 브라우져에서 볼 수 있도록 리스트에 담길 클래스
+ *
+ */
 public class GitSimpleCommitLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;
@@ -29,6 +31,8 @@ public class GitSimpleCommitLog implements Serializable {
 	}
 	
 	public GitSimpleCommitLog(RevCommit revCommit){
+		if(revCommit == null)
+			return;
 		this.commitLogID = revCommit.getName();
 		this.shortMassage = revCommit.getShortMessage();
 		this.commiterName = revCommit.getAuthorIdent().getName();
@@ -69,7 +73,7 @@ public class GitSimpleCommitLog implements Serializable {
 	}
 
 	public String getImgSrc(){
-		return "/"+this.commiterEmail.replace(".", ",")+"/img";
+		return "/"+this.commiterEmail+"/img";
 	}
 
 

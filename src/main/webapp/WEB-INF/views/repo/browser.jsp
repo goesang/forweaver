@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>${repo.lectureName}/${repo.name}~${repo.description}</title>
+<title>${repo.lectureName}/${repo.name}~${cov:htmlEscape(repo.description)}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
 </head>
@@ -12,7 +12,7 @@ $(document).ready(function() {
 	$('#labelPath').append("/");
 	$("select").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
 	$("#selectBranch").change(function(){
-		if($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectBranch option:selected").val() != "empty_Branch")
 			window.location = $("#selectBranch option:selected").val();
 	});
 });
@@ -43,7 +43,7 @@ showFileBrowser("/");
 		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
-				<small>${repo.description}</small>
+				<small>${cov:htmlEscape(repo.description)}</small>
 			</h5>
 		</div>
 		<div class="row">
@@ -52,16 +52,12 @@ showFileBrowser("/");
 					<li><a href="/lecture/${repo.lectureName}/repo">돌아가기</a></li>
 					<li class="active"><a href="/lecture/${repo.lectureName}/${repo.name}/browser">소스목록</a></li>
 					<li><a href="/lecture/${repo.lectureName}/${repo.name}/commitlog">커밋내역</a></li>
-					<c:if test="${repo.getCategory() == 2}">
-						<li><a onclick="return confirm('정말 팀프로젝트로 포크하시겠습니까?')"
-						href="/lecture/${repo.lectureName}/${repo.name}/fork">포크</a></li>
-					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}/${repo.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}/${repo.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -86,7 +82,7 @@ showFileBrowser("/");
 			</div>
 			<c:if test="${readme.length() > 0}">
 				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
-				<div class="span12 readme">${readme}</div>
+				<div class="span12 readme"><s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(readme)" /></div>
 			</c:if>
 		</div>
 		<!-- .row-fluid -->

@@ -5,6 +5,12 @@ import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 
+/**<pre> 회원의 권한을 보관하는 클래스
+ * joinName 권한 이름
+ * permission 권한 수준
+ * joinDate 권한 부여일
+ *</pre>
+ */
 public class Pass implements GrantedAuthority, Serializable {
 
 	static final long serialVersionUID = 11111161134L;

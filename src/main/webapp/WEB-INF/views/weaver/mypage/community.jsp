@@ -16,24 +16,22 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
-								if (tagNames.length == 2)
-									moveUserPage("/${weaver.getId()}/","[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								var tagNames = $("#tags-input").val();
+								if (tagNames.length == 0)
+									moveUserPage("/${weaver.getId()}/",tagname,"");
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									moveUserPage("/${weaver.getId()}/",tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									moveUserPage("/${weaver.getId()}/",tagNames+ ","+ tagname+" ","");
 								}
 							});
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									if(tagNames.length == 2){
 										alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 										return;
@@ -75,7 +73,7 @@
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()} <i
+				<big><i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.getSay())} <i
 					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 
@@ -115,8 +113,8 @@
 							<ul class="dropdown-menu">
 								<li><a href="/${weaver.getId()}/project"><i
 										class=" fa fa-bookmark"></i>&nbsp;&nbsp;프로젝트</a></li>
-								<li><a href="/${weaver.getId()}/lecture"><i
-										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+								<!-- <li><a href="/${weaver.getId()}/lecture"><i
+										class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li> -->
 								<li><a href="/${weaver.getId()}/code"><i
 										class=" fa fa-rocket"></i>&nbsp;&nbsp;코드</a></li>
 							</ul>
@@ -130,7 +128,9 @@
 			</div>
 			<div class="span1">
 				<span> <a id='search-button'
-					class="post-button btn btn-primary"> <i class="icon-search"></i>
+					class="post-button btn btn-primary"> <i class="fa fa-search"></i>
+
+
 				</a>
 				</span>
 			</div>
@@ -147,16 +147,26 @@
 											<i class=" icon-align-justify"></i>
 										</c:if> <c:if test="${!post.isLong()}">
 											<i class="fa fa-comment"></i>
-										</c:if> &nbsp;${post.title}
+										</c:if> &nbsp;<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
+										<c:if test="${post.isNotice()}">${post.title}</c:if>
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind == 2}">
-										<a href="/community/${post.postID}/delete"> <span
-											class="span-button"> <i class="fa fa-trash-o"></i>
-												<p class="p-button">삭제</p>
+										test="${post.kind == 3 && post.getWriterName().equals(currentUser.id)}">
+										<a href="/community/${post.postID}"> <span
+											class="span-button"> <i class="fa fa-envelope-o"></i>
+												<p class="p-button">보냄</p>
 										</span>
 										</a>
-									</c:if> <c:if test="${post.kind != 2}">
+									</c:if> 
+									<c:if
+										test="${post.kind == 3 && !post.getWriterName().equals(currentUser.id)}">
+										<a href="/community/${post.postID}"> <span
+											class="span-button"> <i class="fa fa-envelope"></i>
+												<p class="p-button">받음</p>
+										</span>
+										</a>
+									</c:if> 
+									<c:if test="${post.kind <= 2}">
 										<a href="/community/${post.postID}/push"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>
@@ -173,7 +183,7 @@
 									${post.getFormatCreated()}</td>
 								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
 										var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private

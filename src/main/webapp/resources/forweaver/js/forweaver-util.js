@@ -1,5 +1,9 @@
 
 var editorMode = false; 
+function replaceAll(str, searchStr, replaceStr) {
+
+    return str.split(searchStr).join(replaceStr);
+}
 
 function mongoObjectId () {
 	var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
@@ -84,23 +88,6 @@ function deleteRePost(postID,rePostID){
 	}
 }
 
-function spacialSignEncoder(str) {
-	str = str.split(" ").join("@$@");
-	str = str.split("+").join("@#@");
-	str = str.split("%").join("@!@");
-	str = str.split("&").join("@4@");
-	return str;
-}
-
-function specialSignDecoder(str) {
-	str = str.split("@$@").join(" ");
-	str = str.split("@#@").join("+");
-	str = str.split("@!@").join("%");
-	str = str.split("@4@").join("&");
-	return str;
-}
-
-
 function getSearchWord(url){
 	if(url.indexOf("/search:")==-1)
 		return [];
@@ -114,19 +101,16 @@ function getSearchWord(url){
 
 function getTagList(url){
 	if(url.indexOf("/tags:")==-1)
-		return [];
+		return "";
 	url =  decodeURI(url);
-	var tagList = new Array();
+	var tagList = "";
 	var realURL = true;
 	if(url.indexOf("/tags:") == 0)
 		realURL = false;
 	url = url.substring(url.indexOf("tags:")+5);
 	if(realURL && url.indexOf("/")!=-1)
 		url = url.substring(0,url.indexOf("/"));
-	$.each(url.split(","), function(index, value) {
-		value = value.replace('>', '/');
-		tagList.push(value);
-	});
+	tagList = url.replace('>', '/');
 	return tagList;
 }
 
@@ -177,7 +161,7 @@ function extensionSeach(url){
 function movePage(tagArrayString,searchWord){
 	if(editorMode)
 		return;
-	var tagArray = eval(tagArrayString);
+	
 	var url = document.location.href;
 
 	if(url.indexOf("/tags:") != -1)
@@ -194,12 +178,17 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
 	else	
 		url = "/community/";
-	if(tagArray.length == 0){
+	
+	if(tagArrayString.length == 0){
 		window.location = url;
 		return;
 	}
-	url = url + "tags:"+	tagInputValueConverter(tagArray);
-	url = url.substring(0,url.length-1);
+	if(tagArrayString.indexOf(",") === 0)
+		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
+	
+	tagArrayString = tagArrayString.replace('/', '>');
+	
+	url = url + "tags:"+	tagArrayString;
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
@@ -209,15 +198,20 @@ function movePage(tagArrayString,searchWord){
 function moveUserPage(path,tagArrayString,searchWord){
 	if(editorMode)
 		return;
-	var tagArray = eval(tagArrayString);
+	
 	var url = document.location.href;
 
-	if(tagArray.length == 0){
+	if(tagArrayString.length == 0 || tagArrayString==""){
 		window.location = url;
 		return;
 	}
-	url = path + "tags:"+	tagInputValueConverter(tagArray);
-	url = url.substring(0,url.length-1);
+	
+	if(tagArrayString.indexOf(",") === 0)
+		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
+	
+	tagArrayString = tagArrayString.replace('/', '>');
+	
+	url = path + "tags:"+	tagArrayString;
 
 	if(searchWord.length != 0)
 		url = url +"/search:"+ searchWord;
@@ -225,19 +219,6 @@ function moveUserPage(path,tagArrayString,searchWord){
 	window.location = url;
 }
 
-
-function tagInputValueConverter(tagArray){
-	var simpleArray="";
-	$.each(tagArray, function(index, value) {
-		simpleArray = simpleArray+ value.replace('/', '>')+",";
-	});
-	return simpleArray;
-}
-
-function textAreaResize(obj) {
-	obj.style.height = "1px";
-	obj.style.height = (20+obj.scrollHeight)+"px";
-}
 
 function readURL(input) {
 	if (input.files && input.files[0]) {
@@ -251,8 +232,24 @@ function readURL(input) {
 	}
 
 }
+
 function openWindow(url, width, height){
 	window.open(url,'','width='+width+',height='+height+',top='+((screen.height-height)/2)+',left='+((screen.width-width)/2)+',location =no,scrollbars=no, status=no;');
 }
 
+function filename(filename) { // 파일이 이미지 파일인지 검사
+	filename = filename.substring(filename.lastIndexOf(".") + 1,filename.length).toUpperCase();
+		if(filename.search("ANI")!=-1 || filename.search("BMP")!=-1 || filename.search("CAL")!=-1
+			|| filename.search("CAL")!=-1 || filename.search("FAX")!=-1 || filename.search("GIF")!=-1
+			|| filename.search("IMG")!=-1 || filename.search("JPE")!=-1 || filename.search("JPEG")!=-1
+			|| filename.search("JPG")!=-1 || filename.search("MAC")!=-1 || filename.search("PBM")!=-1
+			|| filename.search("PCD")!=-1 || filename.search("PCX")!=-1 || filename.search("PCT")!=-1
+			|| filename.search("PGM")!=-1 || filename.search("PNG")!=-1 || filename.search("PPM")!=-1
+			|| filename.search("PSD")!=-1 || filename.search("RAS")!=-1 || filename.search("TGA")!=-1
+			|| filename.search("TIF")!=-1 || filename.search("TIFF")!=-1 || filename.search("WMF")!=-1){
+		return true;
+	}
+ return false;
+
+}
 

@@ -6,6 +6,13 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+/** <pre> 댓글을 보관하는 클래스
+ * writer 댓글단 사람
+ * created 댓글 올린 날짜
+ * content 댓글 내용
+ * number 댓글 아이디
+ * </pre>
+ */
 public class Reply implements Serializable {
 
 	static final long serialVersionUID = 1211334L;

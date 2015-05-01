@@ -1,9 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
+
 <!DOCTYPE html>
 <html><head>
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
+<script src="/resources/forweaver/js/markdown/markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -11,37 +16,40 @@
 	var fileArray = [];
 	var fileHash = {};
 	function checkPost(){
-
+			
 		for(var i=0;i<fileCount;i++){
 			var fileName = $("#file"+(i+1)).val();
 			
 			if(fileName.indexOf("C:\\fakepath\\") != -1)
 				fileName = fileName.substring(12);
-			
-			if(containsObject(fileArray,fileName)){
-				alert("중복되는 파일이 있습니다!");
-				return false;
-			}
-			else
-				fileArray[i] = fileName;
+
+			fileName = replaceAll(fileName,"?","_");
+			fileName = replaceAll(fileName,"#","_");
+			fileName = replaceAll(fileName," ","_");
+			fileArray[i] = fileName;
 		}
 		
-		var tags = $("input[name='tags']").val();
+		var tags = $("#tags-input").val();
 		
-		if(tags.length == 2){
+		if(tags.length == 0){
+			alert("태그를 한개 이상 입력해주세요!");
 			return false;
-		}else if($('#post-title-input').val() == ""){
-			alert("아무것도 입력하시지 않았습니다!");
+		}else if($('#post-title-input').val().length <5){
+			alert("최소 5자 이상 입력해주세요!");
+			return false;
+		}else if($('#post-title-input').val().length > 200){
+			alert("최대 200까지만 입력해주세요!");
 			return false;
 		}else{
+			$("form:first").append($("#post-title-input"));
 			$("form:first").append($("input[name='tags']"));
 			return true;
 		}
 	}
 	
 		function showPostContent() {
-			var tags = $("input[name='tags']").val();
-			if(tags.length == 2){
+			var tags = $("#tags-input").val();
+			if(tags.length == 0){
 				alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 				return;
 			}
@@ -51,6 +59,7 @@
 
 			$('#show-content-button').hide();
 			$('#hide-content-button').show();
+			$('.md-editor').fadeIn('slow');
 			$('.file-div').fadeIn('slow');
 			editorMode = true;
 		}
@@ -62,6 +71,9 @@
 
 			$('#show-content-button').show();
 			$('#hide-content-button').hide();
+			
+			$('.md-editor').hide();
+			
 			$('.file-div').hide();
 			editorMode = false;
 		}
@@ -72,7 +84,7 @@
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
@@ -80,9 +92,18 @@
 					  "</div>"+
 					"</div>");
 			
+			$( "#post-title-input" ).focus(function() {
+				var tags = $("#tags-input").val();
+				if(tags.length == 0){
+					$( "#post-title-input" ).val('');
+					alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
+					return;
+				}
+			});
+			
 			$( "#post-title-input" ).keypress(function() {
-				var tags = $("input[name='tags']").val();
-				if(tags.length == 2){
+				var tags = $("#tags-input").val();
+				if(tags.length == 0){
 					$( "#post-title-input" ).val('');
 					alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 					return;
@@ -96,24 +117,23 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
-								if (tagNames.length == 2)
-									movePage("[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								var tagNames = $("#tags-input").val();
+								
+								if (tagNames.length == 0 || tagNames == "")
+									movePage(tagname,"");
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									movePage(tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									movePage(tagNames+ ","+ tagname+" ","");
 								}
 							});
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									movePage(tagNames,$('#post-title-input').val());							
 							});
 					
@@ -122,11 +142,13 @@
 					$('#post-title-input').keyup(
 							function(e) {
 								if(!editorMode && e.keyCode == 13){
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									movePage(tagNames,$('#post-title-input').val());
 								}
 							});
-					var pageCount = ${postCount+1}/${number};
+					
+					
+					var pageCount = ${postCount}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -139,15 +161,34 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+				        
+				        $("#post-content-textarea").focus(function(){	
+							if($("#post-content-textarea").val().length == 0)
+								$("#post-content-textarea").css('height','300px');
+						});
+						
+						$("#post-content-textarea").focusout(function(){	
+							if($("#post-content-textarea").val().length == 0)
+								$("#post-content-textarea").css('height','auto');
+						});
 		});
 
 		function fileUploadChange(fileUploader){
 			var fileName = $(fileUploader).val();			
-			
+
 			$(function (){
+			
+			if( fileName.length > 70 ){
+				alert("파일 이름이 너무 깁니다!");
+				return;
+			}
 			if(fileName !=""){ // 파일을 업로드하거나 수정함
 				if(fileName.indexOf("C:\\fakepath\\") != -1)
 					fileName = fileName.substring(12);
+				fileName = replaceAll(fileName,"?","_");
+				fileName = replaceAll(fileName,"#","_");
+				fileName = replaceAll(fileName," ","_");
+				
 				fileHash[fileName] = mongoObjectId();
 				$.ajax({
 				    url: '/data/tmp',
@@ -161,13 +202,14 @@
 	                    return data;
 	                }()
 				});	
-				$("#post-content-textarea").val($("#post-content-textarea").val()+' !['+fileName+'](/data/'+fileHash[fileName]+')');
+				if(filename(fileName))
+				$("#post-content-textarea").val($("#post-content-textarea").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 			
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
 			fileCount++;
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
@@ -184,15 +226,16 @@
 			}}});
 		}
 		
+		
+		
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
-				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> <small>프로젝트
-					진행사항이나 궁금한 점들을 올려보세요!</small>
-				<div style="margin-top: -10px" class="pull-right">
+				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big>  <small><a href="/intro/community">아직 커뮤니티를 이용하는 방법을 모르신다면 사용법을 읽어주세요!</a></small>
+				<div style="margin-top: -10px" class="pull-right" title='전체 커뮤니티 글 수&#13;${postCount}개'>
 
 					<button class="btn btn-warning">
 						<b><i class="fa fa-database"></i> ${postCount}</b>
@@ -224,33 +267,48 @@
 				</ul>
 			</div>
 
+		<div class="span9">
+					<input maxlength="200"  id="post-title-input" class="title span9" name="title"
+					title="이곳에 내용 입력하시고 오른쪽의 검색버튼을 누르면 검색이! 맨 오른쪽의 체크 버튼을 누르면 트위터 처럼 글을 쓸 수 있습니다."
+						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 200자 입력)" type="text"
+						value="" />
+				</div>
+
 			<form id="postForm" onsubmit="return checkPost()"
 				action="/community/add" enctype="multipart/form-data" METHOD="POST">
 
-				<div class="span9">
-					<input id="post-title-input" class="title span9" name="title"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요!" type="text"
-						value="" />
-				</div>
 				<div class="span3">
-					<span> <a id='search-button'
+					<span> <a id='search-button' title="글 검색하기"
 						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
-					</a> <a style="display: none;" id="hide-content-button"
+					</a> 
+					<sec:authorize access="isAuthenticated()">
+					<a id="show-content-button" title="글 내용 작성하기"
+						href="javascript:showPostContent();"
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
-						<button id='post-ok' class="post-button btn btn-primary">
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+					<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+					</button> 
+						<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!" class="post-button btn btn-primary">
+							<i class="fa fa-times"></i>
+						</button>
+					</sec:authorize>
+					<sec:authorize access="isAuthenticated()">
+						<button  id='post-ok' title="글 올리기" class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
-
+					</sec:authorize>
 					</span>
 				</div>
 				<div class="span12">
-					<textarea style="display: none;" id="post-content-textarea" name="content"
-						class="post-content span12" onkeyup="textAreaResize(this)"
-						placeholder="글 내용을 입력해주세요!"></textarea>
+					<textarea data-provide="markdown"  style="display: none;" id="post-content-textarea" name="content"
+						class="post-content span12" 
+						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 						<div class="file-div"></div>
 				</div>
 			</form>
@@ -269,17 +327,27 @@
 											<i class=" icon-align-justify"></i>
 										</c:if> <c:if test="${!post.isLong()}">
 											<i class="fa fa-comment"></i>
-										</c:if> &nbsp;${post.title}
+										</c:if> &nbsp;<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
+										<c:if test="${post.isNotice()}">${post.title}</c:if>
 								</a></td>
 								<td class="td-button" rowspan="2"><c:if
-										test="${post.kind == 3}">
-										<a href="/community/${post.postID}/delete"> <span
-											class="span-button"> <i class="fa fa-trash-o"></i>
-												<p class="p-button">삭제</p>
+										test="${post.kind == 3 && post.getWriterName().equals(currentUser.id)}">
+										<a href="/community/${post.postID}"> <span
+											class="span-button"> <i class="fa fa-envelope-o"></i>
+												<p class="p-button">보냄</p>
 										</span>
 										</a>
-									</c:if> <c:if test="${post.kind <= 2}">
-										<a href="/community/${post.postID}/push"> <span
+									</c:if> 
+									<c:if
+										test="${post.kind == 3 && !post.getWriterName().equals(currentUser.id)}">
+										<a href="/community/${post.postID}"> <span
+											class="span-button"> <i class="fa fa-envelope"></i>
+												<p class="p-button">받음</p>
+										</span>
+										</a>
+									</c:if> 
+									<c:if test="${post.kind <= 2}">
+										<a href="/community/${post.postID}"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>
 										</span>
@@ -295,7 +363,7 @@
 									${post.getFormatCreated()}</td>
 								<td class="post-bottom-tag"><c:forEach items="${post.tags}"
 										var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private

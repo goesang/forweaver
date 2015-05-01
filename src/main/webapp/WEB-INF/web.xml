@@ -87,15 +87,10 @@
 	<load-on-startup>1</load-on-startup>
 	<async-supported>true</async-supported>
 	</servlet>
-	<context-param>
-	    <param-name>gitpath</param-name>
-	    <param-value>/home/git/</param-value>
-	</context-param>
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	<!-- Setup git servlet -->
    <servlet>
      <servlet-name>GitServlet</servlet-name>
      <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
@@ -119,6 +114,10 @@
 </error-page>
 <error-page>
     <error-code>400</error-code>
+    <location>/error400</location>
+</error-page>
+<error-page>
+    <error-code>403</error-code>
     <location>/error400</location>
 </error-page>
 <error-page>

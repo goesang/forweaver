@@ -13,6 +13,9 @@ import com.forweaver.mongodb.dao.CherryPickRequestDao;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.util.GitUtil;
 
+/** 체리픽 관리 서비스
+ *
+ */
 @Service
 public class CherryPickRequestService {
 	
@@ -20,19 +23,33 @@ public class CherryPickRequestService {
 	private CherryPickRequestDao cherryPickRequestDao;
 	@Autowired 
 	private PostDao postDao;
-
-	@Value("${gitpath}")
-	private String gitpath;
+	@Autowired 
+	private GitUtil gitUtil;
 	
+	/** 프로젝트를 통해서 체리픽 가져오기
+	 * @param orginalProject
+	 * @return
+	 */
 	public List<CherryPickRequest> get(Project orginalProject){
 		return cherryPickRequestDao.get(orginalProject);
 	}
 
+	/** 아이디를 통해서 체리픽 가져오기
+	 * @param orginalProject
+	 * @return
+	 */
 	public CherryPickRequest get(String id){
 		return cherryPickRequestDao.get(id);
 	}
 
-	public boolean add(Project orginalProject, // 체리픽 요청 추가.
+	/** 체리픽 요청 추가.
+	 * @param orginalProject
+	 * @param cherryPickProject
+	 * @param weaver
+	 * @param commitID
+	 * @return
+	 */
+	public boolean add(Project orginalProject,
 			Project cherryPickProject,
 			Weaver weaver,
 			String commitID){
@@ -48,8 +65,14 @@ public class CherryPickRequestService {
 		return true;
 	}
 
-	public boolean accept(CherryPickRequest cherryPickRequest,String originalRepoBranch,Weaver weaver){ // 채리픽 요청을 수락함.
-		GitUtil gitUtil = new GitUtil(gitpath,cherryPickRequest.getOrginalProject());
+	/** 채리픽 요청을 수락함.
+	 * @param cherryPickRequest
+	 * @param originalRepoBranch
+	 * @param weaver
+	 * @return
+	 */
+	public boolean accept(CherryPickRequest cherryPickRequest,String originalRepoBranch,Weaver weaver){
+		gitUtil.Init(cherryPickRequest.getOrginalProject());
 
 		if(!weaver.isAdminWeaver(cherryPickRequest.getOrginalProject().getName())) // 원본 프로젝트의 운영자만 수락 가능.
 			return false;
@@ -62,6 +85,11 @@ public class CherryPickRequestService {
 		return true;
 	}
 
+	/** 채리픽 요청 삭제.
+	 * @param cherryPickRequest
+	 * @param weaver
+	 * @return
+	 */
 	public boolean delete(CherryPickRequest cherryPickRequest,Weaver weaver){
 		
 		if(cherryPickRequest == null || weaver == null)

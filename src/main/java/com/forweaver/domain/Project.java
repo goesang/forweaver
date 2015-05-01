@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 /**<pre> 프로젝트 정보를 담은 클래스. 
  * name 프로젝트 이름 이게 기본 키
- * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트 2면 파생 프로젝트
+ * category  프로젝트 종류 값이 0이면 공개 프로젝트, 1이면 비공개 프로젝트, -1이면 파생 프로젝트, 3이면 과제 프로젝트
  * description  프로젝트 소개
  * openingDate 프로젝트 시작일
  * endDate  프로젝트 종료일
@@ -23,6 +23,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * childProjects 파생 프로젝트 모음
  * isJoin 프로젝트 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
  * tags 프로젝트 태그 모음
+ * activeDate 활성화된 날짜
+ * commitCount 커밋 갯수
  * adminWeavers 관리자들
  * joinWeavers 가입자들
  * </pre>
@@ -37,11 +39,12 @@ public class Project implements Serializable {
 	private String description;
 	private Date openingDate;
 	private Date endDate;
-	private String originalProject;
+	private String originalProjectName;
+	private Date activeDate;
+	private int commitCount;
 	@DBRef
 	private Weaver creator;
-	private int push;
-	
+	private long push;
 	@DBRef
 	private List<Project> childProjects = new ArrayList<Project>();
 	
@@ -73,31 +76,35 @@ public class Project implements Serializable {
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
+		this.name = this.name.toLowerCase();
 		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
 		this.tags = tagList;
+		this.activeDate = this.openingDate;
 	}
 	
 	public Project(String name,Weaver weaver,Project originalProject) { //포크할 때 생성자
 		super();
 		this.name = weaver.getId()+"/"+name;
-		this.category = 2;
+		this.name = this.name.toLowerCase();
+		this.category = -1;
 		this.description = originalProject.getDescription();
 		this.openingDate = new Date();
+		this.activeDate = this.openingDate;
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
-		if(originalProject.getOriginalProject() != null 
-				&& originalProject.getOriginalProject().length() >0){
+		if(originalProject.getOriginalProjectName() != null //이미 파생한 프로젝트를 또 파생할때
+				&& originalProject.getOriginalProjectName().length() >0){
 			this.tags.addAll(originalProject.getTags());
-		}else{
+		}else{ // 원본 프로젝트를 파생할 때
 			this.tags.add("@"+originalProject.getName());
 			this.tags.addAll(originalProject.getTags());
 		}
 		originalProject.getChildProjects().add(this);
-		this.originalProject = originalProject.getName();
+		this.originalProjectName = originalProject.getName();
 		
 	}
 	
@@ -172,11 +179,11 @@ public class Project implements Serializable {
 	}
 
 
-	public int getPush() {
+	public long getPush() {
 		return push;
 	}
 
-	public void setPush(int push) {
+	public void setPush(long push) {
 		this.push = push;
 	}
 	
@@ -212,19 +219,38 @@ public class Project implements Serializable {
 	}
 	
 	public void removeJoinWeaver(Weaver weaver){
-		this.joinWeavers.remove(weaver);
+		int index = -1;
+		
+		for(int i = 0;i<this.joinWeavers.size();i++)
+			if(joinWeavers.get(i).getId().equals(weaver.getId()))
+				index = i;
+		
+		
+		if(index >= 0)
+			this.joinWeavers.remove(index);
+	}
+	
+	public void removeAdminWeaver(Weaver weaver){
+		int index = -1;
+		
+		for(int i = 0;i<this.adminWeavers.size();i++)
+			if(adminWeavers.get(i).getId().equals(weaver.getId()))
+				index = i;
+		
+		if(index >= 0)
+			this.adminWeavers.remove(index);
 	}
 	
 	public String getChatRoomName(){
 		return this.name.replace("/", "@");
 	}
 
-	public String getOriginalProject() {
-		return originalProject;
+	public String getOriginalProjectName() {
+		return originalProjectName;
 	}
 
-	public void setOriginalProject(String originalProject) {
-		this.originalProject = originalProject;
+	public void setOriginalProjectName(String originalProjectName) {
+		this.originalProjectName = originalProjectName;
 	}
 
 	public List<Project> getChildProjects() {
@@ -248,7 +274,7 @@ public class Project implements Serializable {
 	}
 	
 	public boolean isForkProject(){
-		if(this.originalProject != null && this.originalProject.length() > 0)
+		if(this.originalProjectName != null && this.originalProjectName.length() > 0)
 			return true;
 		return false;
 	}
@@ -258,6 +284,54 @@ public class Project implements Serializable {
 		weavers.addAll(this.joinWeavers);
 		weavers.addAll(this.adminWeavers);
 		return weavers;
+	}
+	
+	public boolean isEducation(){
+		return this.category == 3;
+	}
+
+	public Date getActiveDate() {
+		return activeDate;
+	}
+
+	public void setActiveDate(Date activeDate) {
+		this.activeDate = activeDate;
+	}
+
+	public int getCommitCount() {
+		return commitCount;
+	}
+
+	public void setCommitCount(int commitCount) {
+		this.commitCount = commitCount;
+	}
+	
+	public boolean isPublic(){
+		if(this.category == 0 || this.category ==-1)
+			return true;
+		return false;
+	}
+	
+	public boolean isProjectWeaver(Weaver weaver){
+		if(this.creator.equals(weaver))
+			return true;
+		for(Weaver joinWeaver:this.joinWeavers)
+			if(joinWeaver.equals(weaver))
+				return true;
+		return false;
+				
+	}
+	
+	
+	public boolean isForked(){
+		if(this.category == -1)
+			return true;
+		
+		if(this.originalProjectName == null || this.originalProjectName.length()  == 0)
+			if(this.childProjects == null || this.childProjects.size() == 0)
+				return false;
+		
+		return true;
 	}
 	
 }

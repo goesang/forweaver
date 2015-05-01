@@ -129,7 +129,7 @@ public class LectureController {
 		if(!tagService.isPublicTags(tagList))
 			return "redirect:/lecture/";
 		Lecture lecture = new Lecture(params.get("name"),
-										WebUtil.removeHtml(params.get("description")),
+										params.get("description"),
 										currentWeaver,
 										tagList);
 		lectureService.add(lecture,currentWeaver);
@@ -216,8 +216,7 @@ public class LectureController {
 			return "redirect:/lecture/"+lectureName;
 		else if(content == null)
 			content = "";
-		List<String> tagList = tagService.stringToTagList(
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(tags))));
+		List<String> tagList = tagService.stringToTagList(tags);
 		tagList.add(new String("@"+lectureName));
 		Weaver weaver = weaverService.getCurrentWeaver();
 
@@ -225,10 +224,7 @@ public class LectureController {
 			return "redirect:/lecture/"+lectureName;
 			
         
-		Post post = new Post(weaver,
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(title))), 
-				WebUtil.removeHtml(WebUtil.specialSignDecoder(URLDecoder.decode(content))), 
-				tagList);
+		Post post = new Post(weaver,title,content,tagList);
 		
 		postService.add(post,null);
 		return "redirect:/lecture/"+lectureName+"/community";
@@ -354,33 +350,41 @@ public class LectureController {
 						"강의명:"+lecture.getName()+"에서 탈퇴당하셨습니다.", "", 
 						tagService.stringToTagList("$"+deleteWeaver.getId()));//강의실에 메세지 보냄
 				postService.add(post,null);
+				return "redirect:/lecture/"+lectureName+"/weaver";
 			}else{//사용자가 탈퇴할시에 메세지
 				post = new Post(currentWeaver, 
 						deleteWeaver.getId()+"님이 탈퇴하셨습니다.", "", 
 						tagService.stringToTagList("@"+lecture.getName()+",탈퇴"));//강의실에 메세지 보냄
 				postService.add(post,null);
+				return "redirect:/";
 			}
 			
 		}
-		return "redirect:/lecture/" + lectureName;
+		return "redirect:/";
 	}
 	
-	@RequestMapping("/{lectureName}/weaver/{weaver}/add-weaver")
+	@RequestMapping("/{lectureName}/weaver/{weaverName}/add-weaver")
 	public String addWeaver(	@PathVariable("lectureName") String lectureName,
-			@PathVariable("weaver") String weaver) {
+			@PathVariable("weaverName") String weaverName,Model model) {
 		Lecture lecture = lectureService.get(lectureName);
-		Weaver waitingWeaver = weaverService.get(weaver);
+		Weaver waitingWeaver = weaverService.get(weaverName);
 		Weaver proposer = weaverService.getCurrentWeaver();
 
-		if(waitJoinService.isCreateLectureWaitJoin(lecture, waitingWeaver, proposer)){
+		if(weaverService.get(weaverName) == null){
+			model.addAttribute("url", "/lecture/"+ lectureName+"/weaver");
+			model.addAttribute("say", "회원이 존재하지 않습니다!");
+			return "/alert";		
+		}
+		
+		if(!waitingWeaver.equals(proposer) && waitJoinService.isCreateWaitJoin(lecture, waitingWeaver, proposer)){
 			Weaver lectureCreator = weaverService.get(lecture.getCreatorName());
-			String title ="강의명:"+lectureName+"에 가입 초대를 <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+weaver+"/join-cancel'>거절하시겠습니까?</a>";
+			String title ="강의명:"+lectureName+"에 가입 초대를 <a href='/lecture/"+lectureName+"/weaver/"+weaverName+"/join-ok'>승락하시겠습니까?</a> "
+					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+weaverName+"/cancel'>거절하시겠습니까?</a>";
 			
 			Post post = new Post(lectureCreator,
 					title, 
 					"", 
-					tagService.stringToTagList("$"+weaver));
+					tagService.stringToTagList("$"+weaverName));
 			waitJoinService.createWaitJoin(
 					lecture.getName(), 
 					proposer.getId(), 
@@ -397,9 +401,9 @@ public class LectureController {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver waitingWeaver = weaverService.getCurrentWeaver();
 
-		if(waitJoinService.isCreateLectureWaitJoin(lecture, waitingWeaver, waitingWeaver)){
+		if(waitJoinService.isCreateWaitJoin(lecture, waitingWeaver, waitingWeaver)){
 			String title = waitingWeaver.getId()+"님이 강의명:"+lectureName+"에 가입 신청을 <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
-					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a>";
+					+ "아니면 <a href='/lecture/"+lectureName+"/weaver/"+waitingWeaver.getId()+"/cancel'>거절하시겠습니까?</a>";
 			Post post = new Post(waitingWeaver,
 					title, 
 					"", 
@@ -425,9 +429,9 @@ public class LectureController {
 		Pass pass = new Pass(lectureName, 1);
 
 		if(waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
-				&& lecture.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, waitingWeaver)){
-						
+				&& lecture.getCreator().equals(currentWeaver)
+				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, waitingWeaver)){
+			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
 			lecture.addJoinWeaver(waitingWeaver); //강의 목록에 추가
 			waitingWeaver.addPass(pass);
 			weaverService.update(waitingWeaver);
@@ -447,8 +451,9 @@ public class LectureController {
 			
 		}else if(lecture != null //관리자가 쪽지를 보내고 가입자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
-				&& !lecture.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, currentWeaver)){
+				&& !lecture.getCreator().equals(currentWeaver)
+				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, currentWeaver)){
+			postService.delete(postService.get(waitJoin.getPostID()), lecture.getCreator());	
 			lecture.addJoinWeaver(currentWeaver); //강의 목록에 추가
 			currentWeaver.addPass(pass);
 			weaverService.update(currentWeaver);
@@ -464,23 +469,24 @@ public class LectureController {
 			
 			postService.add(post,null);
 			
-			return "redirect:/lecture/"+lectureName+"/manage";
+			return "redirect:/lecture/"+lectureName+"/weaver";
 		}
 		
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄
 	}
 	
-	@RequestMapping("/{lectureName}/weaver/{weaver}/join-cancel") //강의에 가입 승인 취소
+	@RequestMapping("/{lectureName}/weaver/{weaver}/cancel") //강의에 가입 승인 취소
 	public String joinCancel(@PathVariable("lectureName") String lectureName,@PathVariable("weaver") String weaver) {
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		WaitJoin waitJoin = waitJoinService.get(lecture.getName(), weaver);
-			
+		Weaver waitingWeaver = weaverService.get(weaver);
+		
 		if(lecture != null //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
-				&& lecture.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, currentWeaver)){
-			
+				&& lecture.getCreator().equals(currentWeaver)
+				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, currentWeaver)){
+			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
 			Post post = new Post(currentWeaver,  //관리자가 가입자에게 보내는 메세지
 					"관리자 "+lecture.getCreatorName()+"님의 강의명:"+
 					lectureName+
@@ -494,9 +500,9 @@ public class LectureController {
 			
 		}else if(lecture != null //관리자가 쪽지를 보내고 가입자가 거절 하는 경우
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
-				&& !lecture.getCreatorName().equals(currentWeaver.getId())
-				&& waitJoinService.deleteLectureWaitJoin(waitJoin, lecture, currentWeaver)){
-						
+				&& !lecture.getCreator().equals(currentWeaver)
+				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, currentWeaver)){
+			postService.delete(postService.get(waitJoin.getPostID()), lecture.getCreator());	
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 강의명:"+
 					"<a href='/lecture/"+lectureName+"'>"+
@@ -507,7 +513,7 @@ public class LectureController {
 			
 			postService.add(post,null);
 			
-			return "redirect:/lecture/"+lectureName+"/manage";
+			return "redirect:/";
 		}
 		
 		return "redirect:/";//엉뚱한 사람이 들어올때 그냥 돌려보냄

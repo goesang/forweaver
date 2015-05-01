@@ -3,6 +3,9 @@
 <html><head>
 </head>
 <body>
-<script>window.close();</script>
+<script>
+alert("${say}");
+window.location.href = "${url}";
+</script>
 </body>
 </html>

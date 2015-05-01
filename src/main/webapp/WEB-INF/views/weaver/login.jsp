@@ -7,6 +7,7 @@
 </head>
 <body>
 <script>
+${script}
 $(document).ready(function() {
 	$("#repasswordButton").click(function(){
 		$("#repasswordFieldset").show();
@@ -22,8 +23,8 @@ $(document).ready(function() {
 		    url: "/repassword",
 		    data: "email="+$("#email").val(),
 		    success: function(msg) {  //성공시 이 함수를 호출한다.
-			    if(msg==true){
-			    	alert("이메일로 비밀번호가 발송되었습니다!");
+			    if(msg){
+			    	alert("이메일로 비밀번호 변경 링크가 발송되었습니다. 5분 이내에 접속하시길 바랍니다!");
 				    }else{
 				    alert("가입된 이메일이 아니거나 비밀번호가 이미 발송되었습니다!");
 			 }

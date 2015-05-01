@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class GitTotalStatistics implements Serializable{
 	
 	static final long serialVersionUID = 2219L;
-		
+
 	private int totalAdd;
 	private int totalDelete;
 	private int totalAddFile;

@@ -13,6 +13,9 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
+/** 커뮤니티와 관련하여 회원의 권한을 분석하여 제어하는 인터셉터
+ *
+ */
 public class CommunityIntercepter extends HandlerInterceptorAdapter {
 	@Autowired WeaverService weaverService;
 	@Autowired TagService tagService;
@@ -29,7 +32,7 @@ public class CommunityIntercepter extends HandlerInterceptorAdapter {
 			tags = URLDecoder.decode(tags, "UTF-8");
 			List<String> tagList = tagService.stringToTagList(tags);
 			if(!tagService.validateTag(tagList, weaver)){
-				response.sendError(400);
+				response.sendError(400);				
 				return false;
 			}
 

@@ -5,25 +5,24 @@
 	<a href="/">ForWeaver</a> <small>학생들을 위한 소셜 코딩!</small>
 </h1>
 
-<div class="navbar navbar-inverse">
+<div id="forweaver-nav"class="navbar navbar-inverse">
 	<div class="navbar-inner">
 		<div class="container-fluid">
 			<div class="nav-collapse collapse">
 				<ul class="nav">
 					<li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li>
-					<li><a href="/lecture/"><i class="fa fa-university"></i>&nbsp;강의</a></li>
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
-					<li><a href="/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
-					
+					<li><a href="/intro/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
+					<li><a href="/contactUs"><i class="fa fa-phone-square"></i>&nbsp;고객센터</a></li>
 				</ul>
 
 				<ul class="nav pull-right">
-					<sec:authorize ifNotGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 						<li><a href="<c:url value="/login" />"><i class="fa fa-user"></i>&nbsp;로그인</a></li>
 					</sec:authorize>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
 
 						<li class="dropdown"><a href="#" class="dropdown-toggle"
 							data-toggle="dropdown"> 
@@ -32,7 +31,7 @@
 							<ul class="dropdown-menu">
 							
 								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
-								<li><a href="javascript:void(0);" onclick="openWindow('/${currentUser.id}/edit', 360, 500);"><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
+								<li><a href='/${currentUser.username}/edit' ><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>
@@ -49,49 +48,58 @@
 			</div>
 			<div class="span11">
 				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
-				<div class="span10 tag-span">
-					<textarea placeholder="태그를 입력해 보세요!" name="tags"
-						class="tagarea tagarea-full" id="tags-input" rows="1"></textarea>
+				<div title="태그를 입력하시고 나서 꼭 엔터키나 스페이스키를 누르시면 추가가 됩니다."  class="span10 tag-span">
+					<input placeholder="여기에 태그를 입력하고 꼭 엔터!" 
+						class="tagarea tagarea-full" id="tags-input" />
+					<input name="tags" type="hidden" id="tag-hidden"/>
+
 					<script>
 					
+					var move = true;
+					function ieVersion () {
+						  var myNav = navigator.userAgent.toLowerCase();
+						  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+						}
 					
-						$('#tags-input').textext({
-							plugins : 'tags',
-						});
+					if (ieVersion() && ieVersion()<11) {	
+						$(function() {$("#forweaver-nav").after(
+								"<div class='alert'>이 사이트는 인터넷 익스플로러 11 버젼 부터 지원합니다! "+
+								"<a href='http://windows.microsoft.com/ko-kr/internet-explorer/download-ie'>최신버젼</a>으로 업그레이드 "+
+								"하시거나 <a href='http://www.google.co.kr/chrome/browser/desktop/'>크롬</a>"+
+								"이나 <a href='http://www.mozilla.or.kr/ko/firefox/new/'>파이어폭스</a>로 이용해주세요!</div>");
+					});
+						}
+					$('#tags-input').tagsinput({
+						  confirmKeys: [13, 32],
+						  maxTags: 6,
+						  maxChars: 30,
+						  trimValue: true
+					});
+					$("#tag-hidden").val(getTagList(document.location.href));
+					
+					$.each(getTagList(document.location.href).split(","), function(index, value) { 
+						  $('#tags-input').tagsinput('add',value);
+					});
+					
+					$('#tags-input').on('itemAdded', function(event) {
+						 if(event.item.indexOf("?") !=-1 || event.item.indexOf("#") !=-1 || 
+								 event.item.indexOf(".") !=-1){
+							 $('#tags-input').tagsinput('remove',event.item);
+							 return;
+						 }
 						
-						$('#tags-input').textext()[0].tags().addTags(
-								getTagList(document.location.href));
-
-
-						$('#tag-addon').click(function(){
-							movePage($("input[name='tags']").val(),"");
+						$("#tag-hidden").val($("#tags-input").val());
+						
+						if(move)
+							movePage($("#tags-input").val(),"");
 						});
-
-						$('#tags-input').keydown(
-								function(e) {
-									if (e.keyCode == 13) {
-										$('#tags-input').textext()[0].tags().removeTag($('#tags-input').val());
-									}
-								});
-						$('#tags-input').keyup(
-								function(e) {
-									if(e.keyCode == 32){
-										var tagArray = new Array();
-										var taginput = $('#tags-input').val();
-										taginput = taginput.substring(0,taginput.length-1);
-										
-										tagArray.push(taginput);
-										$('#tags-input').textext()[0].tags().removeTag(taginput);
-										$('#tags-input').textext()[0].tags().addTags(tagArray);
-										$('#tags-input').val('');
-										
-										movePage($("input[name='tags']").val(),"");
-										
-									}
-									else if (e.keyCode == 13) {
-										movePage($("input[name='tags']").val(),"");
-									}
-								});
+					
+					$('#tags-input').on('itemRemoved', function(event) {
+						$("#tag-hidden").val($("#tags-input").val());
+						movePage($("#tags-input").val(),"");
+						});
+					
+					$('#tags-input').tagsinput('focus');
 					</script>
 				</div>
 			</div>

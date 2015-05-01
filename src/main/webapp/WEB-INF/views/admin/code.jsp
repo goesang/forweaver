@@ -15,11 +15,11 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
+								var tagNames = $("#tags-input").val();
 								if (tagNames.length == 2)
 									moveUserPage("${weaver.getId()}","[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
@@ -32,7 +32,7 @@
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									if(tagNames.length == 2){
 										alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 										return;
@@ -53,19 +53,6 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
-				      
-				        $('#age-desc').click(
-							function() {
-								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 최신순</span>");
-							});
-						 $('#push-desc').click(
-							function() {
-								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 추천순</span>");
-							});
-						 $('#repost-desc').click(
-							function() {
-								$('#sort-menu').replaceWith("<span id='sort-menu' style='font-size:14px;'> 최신 답변순</span>");
-							});
 		});
 
 		
@@ -73,59 +60,50 @@
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 		<div class="page-header page-header-none">
-			<alert></alert>
-			<h5 style="text-align: center">
-				<img style="height: 60px; width: 60px;" class="img-polaroid"
-					src="${weaver.getImgSrc()}">
-			</h5>
-			<h5 style="text-align: center">
-
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()}
-				 <i class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
-			</h5>
+			<h1 style="text-align: center; font-weight: 500;">
+				<span style="font-size:55px; color:#999;"><i class="fa fa-wrench"></i></span>
+				 관리자 페이지입니다! 
+			</h1><br/>
+			<div class="pull-right">권한 : <span class="label btn-danger">삭제</span> <span class="label label-warning">관리</span></div>
+			<br/><br/>
 			<div class="row">
 				<div class="span12">
 					<ul class="nav nav-tabs pull-left" id="myTab">
-						<li><a
-								href="/${weaver.getId()}/lecture"><i
-								class=" fa fa-twitter"></i> 위버</a></li>
-						<li><a
-								href="/${weaver.getId()}/"><i
-								class=" fa fa-comments"></i> 커뮤니티</a></li>
-						<li><a
-							href="/${weaver.getId()}/project"><i
-								class=" fa fa-bookmark"></i> 프로젝트</a></li>
-						<li><a
-								href="/${weaver.getId()}/lecture"><i
-								class=" fa fa-university"></i> 강의</a></li>
-						<li><a
-								href="/${weaver.getId()}/code"><i
-								class=" fa fa-rocket"></i> 코드</a></li>
+						<li id="age-desc"><a
+							href="/admin/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+						<c:if test="${massage == null }">
+							<li id="download-desc"><a
+								href="/admin/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:download-desc/page:1">다운로드순</a></li>
+						</c:if>
+						<li id="repost-desc"><a
+							href="/admin/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신
+								답변순</a></li>
+						<li id="repost-many"><a
+							href="/admin/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은
+								답변순</a></li>
+						<li id="age-asc"><a
+							href="/admin/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+						<li id="repost-null"></li>
 					</ul>
 					<div class="navbar navbar-inverse">
 						<ul style="border-bottom: 0px;" class="nav pull-right">
 							<li class="dropdown"><button
 								class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-								<span id="sort-menu" style="font-size:14px;"> 최신순 </span><b class="caret"></b></button>
+								<i class=" fa fa-rocket"></i> 코드<b class="caret"></b></button>
 							 
 								<ul class="dropdown-menu">
-									<li id="age-desc"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-desc/page:1">최신순</a></li>
-									<c:if test="${massage == null }">
-										<li id="push-desc"><a
-											href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:push-desc/page:1">추천순</a></li>
-									</c:if>
-									<li id="repost-desc"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-desc/page:1">최신
-											답변순</a></li>
-									<li id="repost-many"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-many/page:1">많은
-											답변순</a></li>
-									<li id="age-asc"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-									<li id="repost-null"><a
-										href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
-											없는 글</a></li>
+									<li><a
+										href="/admin/weaver"><i
+										class=" fa fa-twitter"></i> 위버</a></li>
+									<li><a
+										href="/admin"><i
+										class=" fa fa-comments"></i> 커뮤니티</a></li>
+									<li><a
+										href="/admin/project"><i
+										class=" fa fa-bookmark"></i> 프로젝트</a></li>
+									<li><a
+										href="/admin/lecture"><i
+										class=" fa fa-university"></i> 강의</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -160,7 +138,8 @@
 													<i class=" icon-align-justify"></i>
 												</c:if> <c:if test="${!post.isLong()}">
 													<i class="fa fa-comment"></i>
-												</c:if> &nbsp;${post.title}
+												</c:if> &nbsp;<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
+										<c:if test="${post.isNotice()}">${post.title}</c:if>
 										</a></td>
 										<td class="td-button" rowspan="2"><c:if
 												test="${post.kind == 2}">
@@ -276,11 +255,11 @@
 											src="${code.getImgSrc()}"></td>
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/code/${code.codeID}"> <i
-												class="fa fa-download"></i>&nbsp;${code.name} -
-												${code.content}
+												class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
+												${cov:htmlEscape(code.content)}
 										</a></td>
 										<td class="td-button" rowspan="2"><a
-											href="/code/${code.codeID}/${code.name}.zip"> <span
+											href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 												class="span-button"> ${code.downCount}
 													<p class="p-button">다운</p>
 											</span>
@@ -314,7 +293,7 @@
 										<td colspan="2" class="post-top-title"><a
 											class="a-post-title" href="/project/${project.name}/"> <i
 												class="fa fa-bookmark"></i> &nbsp;${project.name} ~
-												&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
+												&nbsp;${fn:substring(cov:htmlEscape(project.description),0,100-fn:length(project.name))}
 										</a></td>
 										<td class="td-button" rowspan="2"><c:if
 												test="${project.category != 0}">

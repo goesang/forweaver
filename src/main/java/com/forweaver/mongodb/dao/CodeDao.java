@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 import com.forweaver.domain.Code;
 import com.forweaver.domain.Weaver;
 
+/** 코드 서비스의 DAO
+ *
+ */
 @Repository
 public class CodeDao {
 	
@@ -64,7 +67,6 @@ public class CodeDao {
 		update.set("downCount", code.getDownCount());
 		update.set("readme", code.getReadme());
 		update.set("tags", code.getTags());
-		update.set("codes", code.getCodes());
 		update.set("rePostCount", code.getRePostCount());
 		update.set("recentReCodeDate", code.getRecentRePostDate());
 		mongoTemplate.updateFirst(query, update, Code.class);

@@ -48,7 +48,7 @@ var editorMode = false;
 					function() {
 						var tagname = $(this).text();
 						var exist = false;
-						var tagNames = $("input[name='tags']").val();
+						var tagNames = $("#tags-input").val();
 						if (tagNames.length == 2)
 							movePage("[\"" + tagname + "\"]","");
 						var tagArray = eval(tagNames);
@@ -57,16 +57,14 @@ var editorMode = false;
 								exist = true;
 						});
 						if (!exist)
-							movePage(tagNames.substring(0,
-									tagNames.length - 1)
-									+ ",\"" + tagname + "\"]","");
+							movePage(tagNames+ ","+ tagname+" ","");
 
 					});
 			$('#post-ok').click(function(){
 				var title = $('#post-title-input').val();
 				var content ="";
-				var tags = $("input[name='tags']").val();
-				tags = tagInputValueConverter(eval(tags));
+				var tags = $("#tags-input").val();
+				
 				if(editorMode)
 					content = $('#post-content-textarea').val();
 				$.ajax({
@@ -105,7 +103,7 @@ var editorMode = false;
 			<div style="margin-top:-10px" class="pull-right">
 
 				<button class="btn btn-warning">
-								<b>COUNT : ${postCount}</b>
+								<b><i class="fa fa-database"></i> ${postCount}</b>
 				</button>
 
 			</div>
@@ -140,7 +138,7 @@ var editorMode = false;
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}example.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}example.git" type="text"
 
 						class="input-block-level">
 				</div>
@@ -152,10 +150,10 @@ var editorMode = false;
 				</div>
 				<div class="span2">
 					<span> <a id="show-content-button" href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a> <a style="display: none;" id="hide-content-button"
 						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
 						<button id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
@@ -165,8 +163,8 @@ var editorMode = false;
 				</div>
 				<div class="span12">
 					<textarea style="display: none;" id="post-content-textarea"
-						class="post-content span12" onkeyup="textAreaResize(this)"
-						placeholder="글 내용을 입력해주세요!"></textarea>
+						class="post-content span12" 
+						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 				</div>
 				<div class="span12">
 					<table id="post-table" class="table table-hover">
@@ -182,7 +180,8 @@ var editorMode = false;
 											<i class=" icon-align-justify"></i>
 										</c:if> <c:if test="${!post.isLong()}">
 											<i class="fa fa-comment"></i>
-										</c:if> &nbsp;${post.title}
+										</c:if> &nbsp;<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
+										<c:if test="${post.isNotice()}">${post.title}</c:if>
 								</a></td>
 								<td class="td-button" rowspan="2">
 										<span class = "span-button">${post.push}

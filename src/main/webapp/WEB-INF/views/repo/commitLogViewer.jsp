@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>${repo.lectureName}/${repo.name}~${repo.description}</title>
+<title>${repo.lectureName}/${repo.name}~${cov:htmlEscape(repo.description)}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
 </head>
@@ -16,7 +16,7 @@
 		<div class="page-header page-header-none">
 			<h5>
 				<big><big><i class="fa fa-bomb"></i> ${repo.name}</big></big> 
-				<small>${repo.description}</small>
+				<small>${cov:htmlEscape(repo.description)}</small>
 			</h5>
 		</div>
 		<div class="row">
@@ -34,7 +34,7 @@
 			<div class="span4">
 				<div class="input-block-level input-prepend">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${repo.lectureName}/${repo.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repo.lectureName}/${repo.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -72,21 +72,21 @@
 
 						<tr>
 							<td style="border-top: 0px"></td>
-								<td style="font-size:13px;" colspan="3">${gitCommitLog.fullMassage}</td>
+								<td style="font-size:13px;" colspan="3">${cov:htmlEscape(gitCommitLog.fullMassage)}</td>
 						</tr>
 						<c:if test="${gitCommitLog.getNote().length() > 0}">
 						<tr>
 							<td style="border-top: 0px"></td>
 							<td style="font-size:13px;" colspan="3">
 							 <span class="label label-warning"><i class="fa fa-book"></i> 노트:</span> 
-    						${gitCommitLog.getNote()}</td>
+    						${cov:htmlEscape(gitCommitLog.getNote())}</td>
 						</tr>
 						</c:if>
 					</tbody>
 				</table>
 				<c:if test="${fn:length(gitCommitLog.diff)>0}">
 					<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" class="span9 brush: diff"><c:out value="${gitCommitLog.diff}"></c:out></pre>
+					<pre id="source-code" class="span9 brush: diff">${cov:htmlEscape(gitCommitLog.diff)}</pre>
 				</div>
 				</c:if>
 			</div>

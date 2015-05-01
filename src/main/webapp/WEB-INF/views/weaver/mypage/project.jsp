@@ -21,11 +21,11 @@ tr:first-child>td {
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
+								var tagNames = $("#tags-input").val();
 								if (tagNames.length == 2)
 									moveUserPage("/${weaver.getId()}/project/","[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
@@ -38,7 +38,7 @@ tr:first-child>td {
 					
 					$('#search-button').click(
 							function() {
-									var tagNames = $("input[name='tags']").val();
+									var tagNames = $("#tags-input").val();
 									if(tagNames.length == 2){
 										alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 										return;
@@ -78,7 +78,7 @@ tr:first-child>td {
 			</h5>
 			<h5 style="text-align: center">
 
-				<big><i class="fa fa-quote-left"></i> ${weaver.getSay()} <i
+				<big><i class="fa fa-quote-left"></i> ${cov:htmlEscape(weaver.getSay())} <i
 					class="fa fa-quote-right"></i></big> <small>- ${weaver.getId()}</small>
 			</h5>
 			<div class="row">
@@ -91,9 +91,6 @@ tr:first-child>td {
 								프로젝트</a></li>
 						<li id="join"><a
 							href="/${weaver.getId()}/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:join/page:1">참여중인
-								프로젝트</a></li>
-						<li id="fork"><a
-							href="/${weaver.getId()}/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:fork/page:1">파생한
 								프로젝트</a></li>
 					</ul>
 
@@ -109,8 +106,8 @@ tr:first-child>td {
 								<ul class="dropdown-menu">
 									<li><a href="/${weaver.getId()}/"><i
 											class=" fa fa-comments"></i>&nbsp;&nbsp;커뮤니티</a></li>
-									<li><a href="/${weaver.getId()}/lecture"><i
-											class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>
+									 <!--  <li><a href="/${weaver.getId()}/lecture"><i
+											class=" fa fa-university"></i>&nbsp;&nbsp;강의</a></li>-->
 									<li><a href="/${weaver.getId()}/code"><i
 											class=" fa fa-rocket"></i>&nbsp;&nbsp;코드</a></li>
 								</ul>
@@ -129,21 +126,25 @@ tr:first-child>td {
 									<td colspan="2" class="post-top-title"><a
 										class="a-post-title" href="/project/${project.name}/"> <i
 											class="fa fa-bookmark"></i> &nbsp;${project.name} ~
-											&nbsp;${fn:substring(project.description,0,100-fn:length(project.name))}
+											&nbsp;${fn:substring(cov:htmlEscape(project.description),0,100-fn:length(project.name))}
 									</a></td>
-									<td class="td-button" rowspan="2"><c:if
-											test="${project.category != 0}">
-											<a href="/project/${project.name}/join"> <span
-												class="span-button"><i class="fa fa-lock"></i>
-													<p class="p-button">비공개</p> </span>
-											</a>
-										</c:if> <c:if test="${project.category == 0}">
-											<a href="/project/${project.name}/"> <span
-												class="span-button">${project.push}<p
-														class="p-button">추천</p>
-											</span>
-											</a>
-										</c:if></td>
+									<td class="td-button" rowspan="2">
+								 <c:if test="${project.category == 0}">
+										<span
+											class="span-button"><i class="fa fa-share-alt"></i><p class="p-button">공개</p>
+										</span>
+									</c:if>
+								<c:if test="${project.category == 1}">
+										<span
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
+									</c:if>
+								<c:if test="${project.category == 3}">
+										<span
+											class="span-button"><i class="fa fa-university"></i>
+												<p class="p-button">과제</p> </span>
+									</c:if>		
+									</td>
 									<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
 										<a href="/project/${project.name}/join"> <span

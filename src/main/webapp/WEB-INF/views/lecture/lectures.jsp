@@ -12,8 +12,8 @@
 		var objPattern = /^[a-zA-Z0-9]+$/;
 		var name = $('#lecture-name').val();
 		var description = $('#lecture-description').val();
-		var tags = $("input[name='tags']").val();
-		tags = tagInputValueConverter(eval(tags));
+		var tags = $("#tags-input").val();
+		
 		if(tags.length == 0){
 			$("alert").append("<div class='alert alert-error'>"+
 					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
@@ -23,7 +23,7 @@
 		}else if(!objPattern.test(name)){
 			$("alert").append("<div class='alert alert-error'>"+
 					  "<button type='button' class='close' data-dismiss='alert'>&times;</button>"+
-					  "<strong>경고!</strong> 강의명은 영문 숙자 조합이어야 합니다. 다시 입력해주세요!"+
+					  "<strong>경고!</strong> 강의명은 영문-소문자 숙자 조합이어야 합니다. 다시 입력해주세요!"+
 					"</div>");
 			return false;
 		}
@@ -46,8 +46,8 @@
 	}
 	
 	function showPostContent() {
-		var tags = $("input[name='tags']").val();
-		if(tags.length == 2){
+		var tags = $("#tags-input").val();
+		if(tags.length == 0){
 			alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
 			return;
 		}
@@ -79,7 +79,7 @@
 			hidePostContent();
 			$('#search-button').click(
 					function() {
-							var tagNames = $("input[name='tags']").val();
+							var tagNames = $("#tags-input").val();
 							movePage(tagNames,$('#post-search-input').val());							
 					});
 			
@@ -87,18 +87,16 @@
 							function() {
 								var tagname = $(this).text();
 								var exist = false;
-								var tagNames = $("input[name='tags']").val();
-								if (tagNames.length == 2)
-									movePage("[\"" + tagname + "\"]","");
-								var tagArray = eval(tagNames);
-								$.each(tagArray, function(index, value) {
+								var tagNames = $("#tags-input").val();
+								if (tagNames.length == 0 || tagNames == "")
+									movePage(tagname,"");
+								
+								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist)
-									movePage(tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									movePage(tagNames+ ","+ tagname+" ","");
 							});
 
 						var pageCount = ${lectureCount+1}/${number};
@@ -148,10 +146,10 @@
 				<div class="span2">
 					<span> <a id="show-content-button"
 						href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a> <a id='search-button' class="post-button btn btn-primary"> <i class="fa fa-search"></i>
 					</a> <a id="hide-content-button" href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="icon-pencil"></i>
+						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
 					</a>
 						<button type="submit" id='post-ok' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
@@ -171,7 +169,7 @@
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/lecture/${lecture.name}"> <i
 										class='fa fa-university'></i>&nbsp;${lecture.name} ~
-										&nbsp;${fn:substring(lecture.description,0,100-fn:length(lecture.name))}
+										&nbsp;${fn:substring(cov:htmlEscape(lecture.description),0,100-fn:length(lecture.name))}
 								</a></td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
@@ -207,7 +205,7 @@
 									${lecture.getOpeningDateFormat()}</td>
 								<td class="post-bottom-tag"><c:forEach
 										items="${lecture.tags}" var="tag">
-										<span
+										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
 											class="tag-name
 										<c:if test="${tag.startsWith('@')}">
 										tag-private

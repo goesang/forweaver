@@ -5,6 +5,7 @@
 <title>${project.name}-forWeaver</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
+<script src="/resources/forweaver/js/spin.min.js"></script>
 </head>
 <body>
 	<script>
@@ -24,18 +25,53 @@ function hideUploadContent() {
 	$('#fileBrowserTable').show('slow');
 }
 
+function checkUpload(){
+	var fileName = $("#file").val();
+	fileName = fileName.toUpperCase();
+
+	if($("#commit-message").val().length < 5){
+		alert("커밋 메세지는 꼭 5자 이상 입력하셔야 합니다!");
+		return false;
+	}
+	
+	var opts = {
+			  lines: 13, // The number of lines to draw
+			  length: 20, // The length of each line
+			  width: 10, // The line thickness
+			  radius: 30, // The radius of the inner circle
+			  corners: 1, // Corner roundness (0..1)
+			  rotate: 0, // The rotation offset
+			  direction: 1, // 1: clockwise, -1: counterclockwise
+			  color: '#000', // #rgb or #rrggbb or array of colors
+			  speed: 1, // Rounds per second
+			  trail: 60, // Afterglow percentage
+			  shadow: false, // Whether to render a shadow
+			  hwaccel: false, // Whether to use hardware acceleration
+			  className: 'spinner', // The CSS class to assign to the spinner
+			  zIndex: 2e9, // The z-index (defaults to 2000000000)
+			  top: '50%', // Top position relative to parent
+			  left: '50%' // Left position relative to parent
+			};
+			var spinner = new Spinner(opts).spin(document.getElementById('upload-form'));
+	
+	return true;
+}
+
 
 $(document).ready(function() {
 	
 	hideUploadContent();
 	$('#labelPath').append("/");
-	$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+			move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
 	
 	$("select").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
 	$("#selectBranch").change(function(){
-		if($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+		if($("#selectBranch option:selected").val() != "empty_Branch")
 			window.location = $("#selectBranch option:selected").val();
 	});
 });
@@ -79,36 +115,56 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
-					<li><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<c:if test="${project.getCreator().equals(currentUser) }">
+					<li><a href="/project/${project.name}/edit">관리</a></li>
+					</c:if>
+					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() != 2}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
 
 			<div class="span12 row">
-				<div class="span7">
+				<div class="span6">
 					<label id="labelPath"></label>
 				</div>
-				<div style="width: 90px;" class="span2">
-					<a id="show-content-button" class="btn btn-primary"
-						href="javascript:showUploadContent();"> <i
-						class="fa fa-arrow-circle-o-up"> </i></a> <a
-						id="hide-content-button" class="btn btn-primary"
-						href="javascript:hideUploadContent();"> <i
-						class="fa fa-arrow-circle-o-up"> </i></a> <a
-						class="btn btn-primary"
+				<div class="span3">
+				
+					<sec:authorize access="isAuthenticated()">
+					
+					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
+						href="javascript:showUploadContent();">파일 업로드</a> 
+						
+					<a
+						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"
+						href="javascript:hideUploadContent();">업로드 취소</a> 
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						<button disabled="disabled" title="로그인을 하셔야 업로드가 가능합니다!"
+						class="btn btn-primary"> <i class="fa fa-times"></i>
+					</button> 
+					</sec:authorize>
+					<a style="font-size:11px"
+						class="btn btn-primary" title="프로젝트 .zip파일로 다운로드"
 						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
-						<i class="fa fa-arrow-circle-o-down"> </i>
+						ZIP
+					</a>
+					<a style="font-size:11px"
+						class="btn btn-primary" title="프로젝트 .tar파일로 다운로드"
+						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.tar">
+						TAR
 					</a>
 
 				</div>
@@ -121,12 +177,13 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 							value="/project/${project.name}/browser/commit:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
-				<form id="upload-form" enctype="multipart/form-data" 
+				<form onsubmit="return checkUpload();" id="upload-form" enctype="multipart/form-data" 
 				action="/project/${project.name}/${selectBranch}/upload" method="post">
 					<div class="span12">
-						<input class="title span10" type="text" name="message"
-							placeholder="커밋을 입력해주세요!"></input>
-						<button type="submit" class="post-button btn btn-primary"
+					<input id="path" type="hidden" name="path" value="${filePath}"></input>
+						<input maxlength="50" class="title span10" type="text" id = "commit-message" name="message"
+							placeholder="프로젝트의 각종 변경사항을 입력해주세요! (최소 5자 이상 입력!)"></input>
+						<button type="submit" class="post-button btn btn-primary" title="프로젝트 등록"
 							style="margin-top: -10px; display: inline-block;">
 							<i class="fa fa-check"></i>
 
@@ -135,16 +192,20 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<div id="file-div" style="padding-left: 20px;">
 						<div class='fileinput fileinput-new' data-provides='fileinput'>
 							<div class='input-group'>
-								<div class='form-control' data-trigger='fileinput'>
+								<div class='form-control' data-trigger='fileinput' title="업로드할 파일을 선택하세요">
 									<i class='icon-file '></i> <span class='fileinput-filename'></span>
 								</div>
+								
+								
 								<span class='input-group-addon btn btn-primary btn-file'><span
-									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
+									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i> 파일 업로드</span>
 									<span class='fileinput-exists'><i
 										class='icon-repeat icon-white'></i></span> <input type='file'
-									id='file' multiple='true' name='zip'></span> <a href='#'
-									class='input-group-addon btn btn-primary fileinput-exists'
+									id='file' multiple='true' name='zip'></span> 
+									<a href='#'
+									class='input-group-addon btn btn-primary fileinput-exists' title="업로드 취소"
 									data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+									
 							</div>
 						</div>
 					</div>
@@ -154,7 +215,8 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 			</div>
 			<c:if test="${readme.length() > 0}">
 				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
-				<div class="span12 readme">${readme}</div>
+				<div class="span12 readme"><s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(readme)" /></div>
+				
 			</c:if>
 		</div>
 		<!-- .row-fluid -->

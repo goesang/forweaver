@@ -171,6 +171,7 @@ body,table,input,textarea,select,button {
 	font-family: 나눔고딕, NG, sans-serif !important;
 }
 
+
 .full-button{
 	margin-top:10px;
 	width:90%;
@@ -326,10 +327,12 @@ a.post-button {
 
 .td-post-writer-img{
 	width:46px;
+	height:46px;
 }
 .td-post-writer-img img{
 	padding-right: 0px;
 	width:46px;
+	height:46px;
 }
 
 .none-top-border {
@@ -614,4 +617,13 @@ a.post-button {
 }
 tr:first-child>td {
 	border-top: none !important;
+}
+
+.btn-small{
+	background-color: #415B76;
+}
+
+.md-editor > textarea {
+	background: #fff !important;
+	padding:10px 10px!important;
 }

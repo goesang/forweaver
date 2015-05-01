@@ -13,7 +13,12 @@ var weaverList = new Array();
 weaverList.push({
 	"admin": true,
 	"id": "${adminWeaver.id}",
-	"email": "${adminWeaver.email}",
+	<c:if test="${project.isEducation()}">
+	"massage": "${adminWeaver.studentID}",
+	</c:if>
+	<c:if test="${!project.isEducation()}">
+	"massage": "${cov:htmlEscape(adminWeaver.say)}",
+	</c:if>
 	"img": "${adminWeaver.getImgSrc()}"
 });
 </c:forEach>
@@ -21,7 +26,12 @@ weaverList.push({
 weaverList.push({
 	"admin": false,
 	"id": " ${joinWeaver.id}",
-	"email": "${joinWeaver.email}",
+	<c:if test="${project.isEducation()}">
+	"massage": "${joinWeaver.studentID}",
+	</c:if>
+	<c:if test="${!project.isEducation()}">
+	"massage": "${cov:htmlEscape(joinWeaver.say)}",
+	</c:if>
 	"img": "${joinWeaver.getImgSrc()}",
 	"removeLink": "/project/${project.name}/weaver/${joinWeaver.id}/delete"
 });
@@ -47,8 +57,11 @@ $(document).ready(function() {
 			window.location = "/project/${project.name}/weaver/"+weaverName+"/add-weaver";
 	});
 	
-	$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+	move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 
 	makeNavigationInManageWeaver(weaverList.length,10);
 	showWeaverList(1);
@@ -123,22 +136,29 @@ $(document).ready(function() {
 					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
-					<li  class="active"><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li  class="active"><a href="/project/${project.name}/weaver">사용자</a></li>
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<c:if test="${project.getCreator().equals(currentUser) }">
+					<li><a href="/project/${project.name}/edit">관리</a></li>
+					</c:if>
+					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					
-					<c:if test="${project.getCategory() != 2}">
+					<c:if test="${project.getCategory() == 10}">
 						<li><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 					</c:if>
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
-			<div class="span12">				
+			
+			<div class="span12">
+							
 				<div class="span7">
 					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-user"></i>  사용자 목록</h4>
 				</div>
@@ -146,7 +166,8 @@ $(document).ready(function() {
 					<input id="weaverName" style="width:90%;" placeholder="아이디나 이메일을 입력해주세요!" type="text">
 				</div>
 				<div style="margin-left:-5px;" class="span1">
-					<button id="weaverAdd" class = "btn btn-primary"><i class="fa fa-plus"></i></button>
+					<button id="weaverAdd" class = "btn btn-primary"
+					 title="Weaver 추가"><i class="fa fa-plus"></i></button>
 				</div>
 				
 				<table id="weaverTable" class="table table-hover">

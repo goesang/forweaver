@@ -11,7 +11,7 @@
 function acceptCherryPick(cherryPickID){
 	if(!confirm('정말 체리픽 요청을 수락하시겠습니까?'))
 		return;
-	if ($("#selectBranch option:selected").val() != "체크아웃한 브랜치 없음")
+	if ($("#selectBranch option:selected").val() != "empty_Branch")
 		window.location =  
 			"/project/${project.name}/cherry-pick/branch:"
 			+$("#selectBranch option:selected").val()
@@ -19,8 +19,11 @@ function acceptCherryPick(cherryPickID){
 }
 
 $(document).ready(function() {
-	$('#tags-input').textext()[0].tags().addTags(
-			getTagList("/tags:<c:forEach items='${project.tags}' var='tag'>	${tag},</c:forEach>"));
+	move = false;
+			<c:forEach items='${project.tags}' var='tag'>
+			$('#tags-input').tagsinput('add',"${tag}");
+			</c:forEach>
+			move = true;
 	$("select").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
 	
 });
@@ -46,15 +49,20 @@ $(document).ready(function() {
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);"
 						onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
-					<li><a href="/project/${project.name}/weaver">참가자</a></li>
+					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<c:if test="${project.getCreator().equals(currentUser) }">
+					<li><a href="/project/${project.name}/edit">관리</a></li>
+					</c:if>
+					</sec:authorize>
 					<li><a href="/project/${project.name}/info">정보</a></li>
 					<li class="active"><a href="/project/${project.name}/cherry-pick">체리 바구니</a></li>
 				</ul>
 			</div>
 			<div class="span4">
-				<div class="input-block-level input-prepend">
+				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -63,7 +71,7 @@ $(document).ready(function() {
 					<h4 style="margin: 10px 0px 0px 0px"><i class="icon-addtocart"></i> 체리 목록</h4>
 				</div>
 				<div style="width: 40px;" class="span1">
-					<a id="show-content-button" class="btn btn-primary"
+					<a id="show-content-button" class="btn btn-primary" title="프로젝트 포크"
 						onclick="return confirm('정말 프로젝트를 포크하시겠습니까?')" href="/project/${project.name}/fork"> <i
 						 class="fa fa-code-fork"> </i></a> 
 

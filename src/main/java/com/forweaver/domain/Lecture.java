@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * description  강의 소개
  * openingDate 강의 시작일
  * creator 강의 개설자 정보
- * push 강의 추천수
  * isJoin 강의 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
  * tags 강의 태그 모음
  * adminWeavers 관리자들
@@ -54,6 +53,7 @@ public class Lecture implements Serializable {
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = name;
+		this.name = this.name.toLowerCase();
 		this.description = description;
 		this.openingDate = new Date();
 		this.creator = weaver;
@@ -117,7 +117,25 @@ public class Lecture implements Serializable {
 	}
 	
 	public void removeJoinWeaver(Weaver weaver){
-		this.joinWeavers.remove(weaver);
+		int index = -1;
+		
+		for(int i = 0;i<this.joinWeavers.size();i++)
+			if(joinWeavers.get(i).getId().equals(weaver.getId()))
+				index = i;
+		
+		if(index >= 0)
+			this.joinWeavers.remove(index);
+	}
+	
+	public void removeAdminWeaver(Weaver weaver){
+		int index = -1;
+		
+		for(int i = 0;i<this.adminWeavers.size();i++)
+			if(adminWeavers.get(i).getId().equals(weaver.getId()))
+				index = i;
+		
+		if(index >= 0)
+			this.adminWeavers.remove(index);
 	}
 	public List<String> getTags() {
 		return tags;

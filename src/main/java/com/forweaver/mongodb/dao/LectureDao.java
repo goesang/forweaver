@@ -1,6 +1,7 @@
 package com.forweaver.mongodb.dao;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Lecture;
 
+/** 강의 관리를 위한 DAO
+ *
+ */
 @Repository
 public class LectureDao {
 	

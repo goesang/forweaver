@@ -8,6 +8,16 @@ import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+/** <pre> 과제 저장소 정보를 보관하는 클래스
+ * repoID 과제 저장소 아이디
+ * name 과제 저장소 이름
+ * category 과제 저장소 종류 0이면 예제 1이면 과제
+ * description 과제 저장소 설명
+ * openingDate 생성날짜
+ * deadLine 마감일
+ * LectureName 수업 이름
+ *</pre>
+ */
 public class Repo implements Serializable {
 
 	static final long serialVersionUID = 7777773L;
@@ -28,6 +38,7 @@ public class Repo implements Serializable {
 	
 	public Repo(String name, int category, String description,int deadLine,Lecture lecture,Weaver creator) {
 		this.name = name;
+		this.name = this.name;
 		this.category = category;
 		this.description = description;
 		this.openingDate = new Date();

@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-// 커밋 로그 정보를 담기 위한 클래스
+/** 커밋 로그 정보를 담기 위한 클래스
+ *
+ */
 public class GitCommitLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;
@@ -28,6 +30,9 @@ public class GitCommitLog implements Serializable {
 		this.commiterEmail = commiterEmail;
 		this.note = note;
 		this.diff = diff;
+		if(diff.length() >20000)
+			this.diff = diff.substring(0, 19999)+"\n\n /////////////내용이 길어서 생략////////////////////";
+
 		this.commitDate = new Date(commitDate*1000L);
 	}
 	
@@ -65,7 +70,7 @@ public class GitCommitLog implements Serializable {
 	}
 	
 	public String getImgSrc(){
-		return "/"+this.commiterEmail.replace(".", ",")+"/img";
+		return "/"+this.commiterEmail+"/img";
 	}
 
 	public String getFullMassage() {

@@ -26,7 +26,7 @@ public class DataController {
 	@Autowired 
 	private WeaverService weaverService;
 
-	@RequestMapping(value = "/{dataID}")
+	@RequestMapping(value = {"/{dataID}","/{dataID}/**"})
 	public void data(@PathVariable("dataID") String dataID, HttpServletResponse res)
 			throws IOException {
 		Data data = dataService.get(dataID);
@@ -35,6 +35,10 @@ public class DataController {
 			return;
 		} else {
 			byte[] imgData = data.getContent();
+			res.reset();
+			res.setContentType("application/octet-stream");
+			String Encoding = new String(data.getName().getBytes("UTF-8"), "8859_1");
+			res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
 			res.setContentType(data.getType());
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);
@@ -49,7 +53,7 @@ public class DataController {
 	public void tmp(@RequestParam("objectID") String objectID,
 			@RequestParam("file") MultipartFile file){
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		Data data = new Data(objectID, file, currentWeaver.getId());
+		Data data = new Data(objectID, file, currentWeaver);
 		dataService.addTemp(data);
 	}
 }
