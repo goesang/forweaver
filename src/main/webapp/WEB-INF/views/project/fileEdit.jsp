@@ -6,12 +6,42 @@
 <html><head>
 <title>${project.name}~${project.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
-<%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
+<script src="/resources/forweaver/js/spin.min.js"></script>
 </head>
 <body>
 
 	<script>
+	function checkUpload(){
 
+		if($("#message").val().length < 5){
+			alert("커밋 메세지는 꼭 5자 이상 입력하셔야 합니다!");
+			return false;
+		}
+		
+		var opts = {
+				  lines: 13, // The number of lines to draw
+				  length: 20, // The length of each line
+				  width: 10, // The line thickness
+				  radius: 30, // The radius of the inner circle
+				  corners: 1, // Corner roundness (0..1)
+				  rotate: 0, // The rotation offset
+				  direction: 1, // 1: clockwise, -1: counterclockwise
+				  color: '#000', // #rgb or #rrggbb or array of colors
+				  speed: 1, // Rounds per second
+				  trail: 60, // Afterglow percentage
+				  shadow: false, // Whether to render a shadow
+				  hwaccel: false, // Whether to use hardware acceleration
+				  className: 'spinner', // The CSS class to assign to the spinner
+				  zIndex: 2e9, // The z-index (defaults to 2000000000)
+				  top: '50%', // Top position relative to parent
+				  left: '50%' // Left position relative to parent
+				};
+				var spinner = new Spinner(opts).spin(document.getElementById('upload-form'));
+		
+		return true;
+	}
+	
+	
 $(document).ready(function() {
 	move = false;
 			<c:forEach items='${project.tags}' var='tag'>
@@ -28,8 +58,7 @@ $(document).ready(function() {
 			window.location = $("#selectCommit option:selected").val()+"/"+"${fileName}";
 	});
 	
-	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
-	SyntaxHighlighter.all();
+
 		
 });
 
@@ -103,36 +132,12 @@ $(document).ready(function() {
 								class="none-top-border post-top-title-short"><a class="none-color" href="/project/${project.name}/commitlog-viewer/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 								${fn:substring(gitCommitLog.shortMassage,0,45)}</a></td>
 							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
-									<span class="span-button"> <i class="fa fa-eye"></i>
-										<p class="p-button">전체</p>
-									</span>
-							</a></td>
-							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/data/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:/${fn:replace(fileName,'.jsp', ',jsp')}">
-									<span class="span-button"> <i class="fa fa-download"></i>
-										<p class="p-button">다운</p>
+							<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:${fn:replace(fileName,'.jsp', ',jsp')}">
+									<span class="span-button"> <i class="fa fa-file-code-o"></i>
+										<p class="p-button">소스</p>
 									</span>
 									
 							</a></td>
-							<c:if  test="${isCodeName}">
-							<sec:authorize access="isAuthenticated()">
-							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/edit/commit:${fn:substring(commit,0,20)}/filepath:/${fn:replace(fileName,'.jsp', ',jsp')}">
-									<span class="span-button"> <i class="fa fa-edit"></i>
-										<p class="p-button">편집</p>
-									</span>
-									
-							</a></td>
-							</sec:authorize>
-							<td class="none-top-border td-button" rowspan="2">
-							<a	href="/project/${project.name}/blame/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:/${fn:replace(fileName,'.jsp', ',jsp')}">
-									<span class="span-button"> <i class="fa fa-search"></i>
-										<p class="p-button">추적</p>
-									</span>
-									
-							</a></td>
-							</c:if>
 						</tr>
 						<tr>
 							<td class="post-bottom"><b>${gitCommitLog.commiterName}</b>
@@ -142,16 +147,21 @@ $(document).ready(function() {
 						</tr>
 					</tbody>
 				</table>
-				<c:if  test="${isImageName}">
-					<div style="padding-top:30px;">
-						<img src="/project/${project.name}/data/commit:${gitCommitLog.commitLogID}/filepath:${filePath}">
+					<div class="span12">
+					<form id="upload-form" onsubmit="return checkUpload();"  action="/project/${project.name}/file-edit" method="post">
+					
+						<input maxlength="50" class="title span10" type="text" id = "message" name="message"
+							placeholder="코드의 변경사항을 입력해주세요! (최소 5자 이상 입력!)"></input>
+						<button type="submit" class="post-button btn btn-primary" title="소스 코드 수정"
+							style="margin-top: -10px; display: inline-block;">
+							<i class="fa fa-check"></i>
+						</button>
+						<input type="hidden" id="path" name="path" value="${fileName}">
+						<input type="hidden" id="commit" name="commit" value="${commit}">
+						<textarea id="code" name ="code" style="width:94%; height:400px;">${cov:htmlEscape(fileContent)}</textarea>
+					</form>
 					</div>
-				</c:if>
-				<c:if  test="${!isImageName}">
-					<div style="padding-top:30px;" class="well-white">
-						<pre id="source-code" > ${cov:htmlEscape(fileContent)}</pre>
-					</div>
-				</c:if>
+
 			</div>
 
 			<!-- .span9 -->

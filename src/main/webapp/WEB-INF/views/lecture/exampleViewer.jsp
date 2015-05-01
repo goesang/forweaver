@@ -69,7 +69,7 @@ $(document).ready(function() {
 						<c:if test='${status.count == selectCommitIndex + 1}'>
 						selected="selected"
 						</c:if >
-							value="/lecture/${lecture.name}/example/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
+							value="/lecture/${lecture.name}/example/commit:${fn:substring(gitLog.getName(),0,20)}/filepath:">
 							<jsp:setProperty name="dateValue" property="time"
 								value="${gitLog.getCommitTime()*1000}" />
 							<fmt:formatDate value="${dateValue}" pattern="yy년MM월dd일 HH시mm분" />

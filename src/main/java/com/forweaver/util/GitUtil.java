@@ -223,6 +223,7 @@ public class GitUtil {
 
 			return new GitFileInfo(filePath, BlobUtils.getContent(
 					this.localRepo, selectCommit.getId(), filePath),
+					BlobUtils.getRawContent(this.localRepo, selectCommit.getId(), filePath),
 					gitLogList, selectCommitIndex,isDirectory(commitID,filePath));
 
 		}
@@ -610,22 +611,22 @@ public class GitUtil {
 				try{
 					git.branchCreate().setStartPoint("refs/remotes/origin/"+branchName).setName(branchName).call();
 				} 
-				catch(Exception e) {}
+			catch(Exception e) {}
 
 			if(!branchName.equals("empty_Branch"))
 				try{
 					git.checkout().setCreateBranch(true).setName(branchName).call();
 				} 
-				catch(Exception e) 
-				{
-					git.checkout().setName(branchName).call();
-				}
-			
+			catch(Exception e) 
+			{
+				git.checkout().setName(branchName).call();
+			}
+
 			for(String fileName:getGitFileList(branchName))
 				git.rm().addFilepattern(fileName.substring(1)).call();	
 
 			WebUtil.unZip(directoryPath+".zip", directoryPath,WebUtil.isOneDirectory(directoryPath+".zip"));
-	
+
 			git.add().addFilepattern(".").call();		
 			git.commit().setCommitter(personIdent).setAuthor(personIdent).setMessage(message).call();
 			git.push().setRemote("origin").call();
@@ -634,6 +635,10 @@ public class GitUtil {
 			new File(directoryPath+".zip").delete();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+			try{
+				FileUtils.deleteDirectory(new File(directoryPath));
+				new File(directoryPath+".zip").delete();
+			}catch(Exception ex){}
 		}
 	}
 
@@ -650,7 +655,64 @@ public class GitUtil {
 	}
 
 
-	/** GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
+	/** GIT이 없이도 웹에서 파일을 수정하면 자동으로 git에 푸시해주는 기능.
+	 * @param name
+	 * @param email
+	 * @param branchName
+	 * @param message
+	 * @param zip
+	 */
+	public void updateFile(String name,String email,String branchName,String message,String path,String code){
+		String directoryPath = "/tmp/"+new org.bson.types.ObjectId().toString();
+
+		PersonIdent personIdent = new PersonIdent(name, email);
+		try {
+			// 임시 git 저장소 생성하고 클론.
+			File localPath = new File(directoryPath);
+			Git.cloneRepository().setURI(this.path).setDirectory(localPath).call();
+
+			// .git을 제외한 파일 모두 삭제.
+			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
+			this.localRepo = git.getRepository();
+
+			if(!branchName.equals("empty_Branch")) // 브랜치가 존재하지 않는다면 새로 만듬.
+				try{
+					git.branchCreate().setStartPoint("refs/remotes/origin/"+branchName).setName(branchName).call();
+				} 
+			catch(Exception e) {}
+
+			if(!branchName.equals("empty_Branch"))
+				try{
+					git.checkout().setCreateBranch(true).setName(branchName).call();
+				} 
+			catch(Exception e) 
+			{
+				git.checkout().setName(branchName).call();
+			}
+			
+			File file = new File(directoryPath+"/"+path);
+			
+			if(!file.exists()) // 파일이 존재하지 않는다면.
+				throw new Exception();
+			
+			FileWriter fw= new FileWriter(file); //파일을 수정함.
+			fw.write(code);
+			fw.close();
+			git.add().addFilepattern(".").call();		
+			git.commit().setCommitter(personIdent).setAuthor(personIdent).setMessage(message).call();
+			git.push().setRemote("origin").call();
+
+			FileUtils.deleteDirectory(new File(directoryPath));
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			try{
+				FileUtils.deleteDirectory(new File(directoryPath));
+			}catch(Exception ex){}
+		}
+	}
+
+
+	/** GIT이 없이도 파일을 업로드하면 자동으로 git에 푸시해주는 기능.
 	 * @param name
 	 * @param email
 	 * @param branchName
@@ -665,7 +727,7 @@ public class GitUtil {
 			// 임시 git 저장소 생성하고 클론.
 			File localPath = new File(directoryPath);
 			Git.cloneRepository().setURI(this.path).setDirectory(localPath).call();
-			
+
 			// .git을 제외한 파일 모두 삭제.
 			Git git = new Git(new FileRepository(new File(localPath.getAbsoluteFile()+ File.separator+".git")));
 			this.localRepo = git.getRepository();
@@ -674,26 +736,26 @@ public class GitUtil {
 				try{
 					git.branchCreate().setStartPoint("refs/remotes/origin/"+branchName).setName(branchName).call();
 				} 
-				catch(Exception e) {}
+			catch(Exception e) {}
 
 			if(!branchName.equals("empty_Branch"))
 				try{
 					git.checkout().setCreateBranch(true).setName(branchName).call();
 				} 
-				catch(Exception e) 
-				{
-					git.checkout().setName(branchName).call();
-				}
-			
+			catch(Exception e) 
+			{
+				git.checkout().setName(branchName).call();
+			}
+
 			boolean existBranch = false; // 브랜치가 존재하는지 여부
 			for(String brench:git.getRepository().getAllRefs().keySet())
 				if(brench.equals("refs/remotes/origin/"+branchName))
 					existBranch = true;
-			
+
 			if(!existBranch) // 새로 브랜치를 만들었다면 다 지움
 				for(String fileName:getGitFileList(branchName))
 					git.rm().addFilepattern(fileName.substring(1)).call();	
-			
+
 			WebUtil.multipartFileToTempFile(directoryPath+path+"/"+file.getOriginalFilename(), file);
 			git.add().addFilepattern(".").call();		
 			git.commit().setCommitter(personIdent).setAuthor(personIdent).setMessage(message).call();

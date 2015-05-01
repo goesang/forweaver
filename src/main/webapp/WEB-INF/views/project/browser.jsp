@@ -25,7 +25,7 @@ function hideUploadContent() {
 	$('#fileBrowserTable').show('slow');
 }
 
-function checkZipUpload(){
+function checkUpload(){
 	var fileName = $("#file").val();
 	fileName = fileName.toUpperCase();
 
@@ -177,7 +177,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 							value="/project/${project.name}/browser/commit:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
-				<form onsubmit="return checkZipUpload();" id="upload-form" enctype="multipart/form-data" 
+				<form onsubmit="return checkUpload();" id="upload-form" enctype="multipart/form-data" 
 				action="/project/${project.name}/${selectBranch}/upload" method="post">
 					<div class="span12">
 					<input id="path" type="hidden" name="path" value="${filePath}"></input>

@@ -149,7 +149,7 @@ public class WeaverController {
 	public String home(@PathVariable("id") String id,HttpServletRequest request) {
 		Weaver weaver = weaverService.get(id);
 		if(weaver == null || weaver.isLeave())
-			return "/error404";
+			return "/errorUserNull";
 		else
 			return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
 

@@ -22,10 +22,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.forweaver.domain.CherryPickRequest;
 import com.forweaver.domain.Data;
-import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.WaitJoin;
@@ -228,14 +227,12 @@ public class ProjectController {
 			return;
 		} else {
 			
-			byte[] imgData;
-			
-				imgData = gitFileInfo.getContent().getBytes();
+			byte[] imgData = gitFileInfo.getData();
 			
 			res.reset();
 			res.setContentType("application/octet-stream");
-			String Encoding = new String(gitFileInfo.getName().getBytes("UTF-8"), "8859_1");
-			res.setHeader("Content-Disposition", "attachment; filename = " + Encoding);
+			String filename = new String(gitFileInfo.getName().getBytes("UTF-8"), "8859_1");
+			res.setHeader("Content-Disposition", "attachment; filename = " + filename);
 			res.setContentType(WebUtil.getFileExtension(gitFileInfo.getName()));
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);
@@ -288,6 +285,8 @@ public class ProjectController {
 			model.addAttribute("selectBranch",commit);
 			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commit,gitFileInfoList));
 			model.addAttribute("filePath",filePath);
+			model.addAttribute("commit",commit);
+			
 			return "/project/browser";
 		}else{ // 파일이라면
 			model.addAttribute("project", project);
@@ -300,13 +299,62 @@ public class ProjectController {
 			model.addAttribute("gitCommitLog", 
 					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
 			model.addAttribute("filePath",filePath);
+			model.addAttribute("isCodeName",WebUtil.isCodeName(filePath));
+			model.addAttribute("isImageName",WebUtil.isImageName(filePath));
 			return "/project/fileViewer";
 		}
 
 
 	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/edit/commit:{commit}/**")
+	public String fileEdit(HttpServletRequest request,@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("commit") String commit,Model model) throws UnsupportedEncodingException  {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
+		String filePath = uri.substring(uri.indexOf("filepath:")+9);
+		filePath = filePath.replace(",jsp", ".jsp");
 
-	@RequestMapping("/{creatorName}/{projectName}/browser/blame/commit:{commit}/**")
+		if(!WebUtil.isCodeName(filePath)) //소스코드만 수정 가능함.
+			return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commit+"/filepath:"+filePath;
+
+		commit = uri.substring(uri.indexOf("/commit:")+8);
+		commit = commit.substring(0, commit.indexOf("/"));
+
+		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
+			model.addAttribute("project", project);
+			model.addAttribute("fileName", gitFileInfo.getName());
+			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
+			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
+			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
+			model.addAttribute("gitCommitLog", 
+					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+			model.addAttribute("filePath",filePath);
+			model.addAttribute("commit",commit);
+			
+			return "/project/fileEdit";
+	}
+	
+	@RequestMapping(value="/{creatorName}/{projectName}/file-edit",method = RequestMethod.POST )
+	public String fileEdit(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@RequestParam("commit") String commit,
+			@RequestParam("message") String message,
+			@RequestParam("path") String path,
+			@RequestParam("code") String code,Model model)  {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+
+		if(!projectService.updateFile(project, currentWeaver,commit, message,path, code)){
+			model.addAttribute("say", "업로드 실패! 프로젝트에 가입되어 있는지 혹은 최신 커밋의 파일인지 확인해보세요!");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/edit/commit:"+commit+"/filepath:/"+path);
+			return "/alert";
+		}
+		return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commit+"/filepath:/"+path;
+	}
+
+	@RequestMapping("/{creatorName}/{projectName}/blame/commit:{commit}/**")
 	public String blame(HttpServletRequest request, @PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("commit") String commit,Model model) throws UnsupportedEncodingException{
@@ -314,6 +362,10 @@ public class ProjectController {
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
+		
+		if(!WebUtil.isCodeName(filePath)) //소스코드만 추적 가능함.
+			return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commit+"/filepath:"+filePath;
+		
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));		
 		GitFileInfo gitFileInfo = gitService.getFileInfoWithBlame(creatorName, projectName, commit, filePath);
@@ -323,8 +375,6 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("fileName", gitFileInfo.getName());
-		if(!WebUtil.isCodeName(gitFileInfo.getName()))
-			gitFileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
 		model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
@@ -798,7 +848,7 @@ public class ProjectController {
 			@RequestParam("zip") MultipartFile zip,Model model) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		if(!projectService.uploadFiles(project, currentWeaver,branchName, message,path, zip)){
+		if(!projectService.uploadFile(project, currentWeaver,branchName, message,path, zip)){
 			model.addAttribute("say", "업로드 실패! 프로젝트에 가입되어 있는지 혹은 압축파일을 다시 확인해주세요!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";

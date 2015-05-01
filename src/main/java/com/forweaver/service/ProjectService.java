@@ -237,7 +237,7 @@ public class ProjectService{
 	 * @param message
 	 * @param zip
 	 */
-	public boolean uploadFiles(Project project,Weaver weaver,String branchName,String message,String path,MultipartFile file){
+	public boolean uploadFile(Project project,Weaver weaver,String branchName,String message,String path,MultipartFile file){
 		if(message==null || message.length() < 5 ||weaver  == null || 
 				weaver.getPass(project.getName()) == null)
 			return false;
@@ -250,6 +250,24 @@ public class ProjectService{
 			gitUtil.uploadFile(weaver.getId(), weaver.getEmail(), branchName, message, path, file);
 		
 		
+		return true;
+	}
+	
+	/** 파일을 수정하면 자동으로 커밋함.
+	 * @param project
+	 * @param weaver
+	 * @param branchName
+	 * @param message
+	 * @param zip
+	 */
+	public boolean updateFile(Project project,Weaver weaver,String branchName,String message,String path,String code){
+		if(message==null || message.length() < 5 ||weaver  == null || 
+				weaver.getPass(project.getName()) == null)
+			return false;
+		
+		gitUtil.Init(project);
+		gitUtil.updateFile(weaver.getId(), weaver.getEmail(), branchName, message, path, code);
+
 		return true;
 	}
 

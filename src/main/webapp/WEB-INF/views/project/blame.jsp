@@ -110,7 +110,7 @@
 						<c:if test='${status.count == selectCommitIndex + 1}'>
 						selected="selected"
 						</c:if >
-							value="/project/${project.name}/browser/blame/commit:${fn:substring(gitLog.getName(),0,8)}/filepath:">
+							value="/project/${project.name}/blame/commit:${fn:substring(gitLog.getName(),0,20)}/filepath:">
 							<jsp:setProperty name="dateValue" property="time"
 								value="${gitLog.getCommitTime()*1000}" />
 							<fmt:formatDate value="${dateValue}" pattern="yy년MM월dd일 HH시mm분" />
@@ -131,6 +131,13 @@
 							<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
 									<span class="span-button"> <i class="fa fa-eye"></i>
 										<p class="p-button">전체</p>
+									</span>
+									
+							</a></td>
+							<td class="none-top-border td-button" rowspan="2">
+							<a	href="/project/${project.name}/data/commit:${fn:substring(gitCommitLog.commitLogID,0,20)}/filepath:/${fn:replace(fileName,'.jsp', ',jsp')}">
+									<span class="span-button"> <i class="fa fa-download"></i>
+										<p class="p-button">다운</p>
 									</span>
 									
 							</a></td>

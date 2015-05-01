@@ -76,8 +76,16 @@ public class WebUtil {
 		if(str.endsWith(".c") || str.endsWith(".h")|| str.endsWith(".ino")
 				|| str.endsWith(".java")|| str.endsWith(".py")|| str.endsWith(".cpp") || str.endsWith(".hpp")
 				|| str.endsWith(".html")|| str.endsWith(".css")|| str.endsWith(".pl") || str.endsWith(".r")
-				|| str.endsWith(".sql")|| str.endsWith(".php")|| str.endsWith(".cs") || str.endsWith(".r")
-				|| str.endsWith(".rb")|| str.endsWith(".txt")|| str.endsWith(".js") || str.endsWith(".properties")
+				|| str.endsWith(".sql")|| str.endsWith(".php")|| str.endsWith(".cs") || str.endsWith(".scala")
+				|| str.endsWith("makefile")|| str.endsWith(".bas")|| str.endsWith(".asm") || str.endsWith(".jsp")
+				|| str.endsWith("pym")|| str.endsWith(".less")|| str.endsWith(".rh") || str.endsWith(".cc")
+				|| str.endsWith("cp")|| str.endsWith(".mf")|| str.endsWith(".rh") || str.endsWith(".meta")
+				|| str.endsWith(".m")|| str.endsWith(".wiki")|| str.endsWith(".lua") || str.endsWith(".json")
+				|| str.endsWith(".rb")|| str.endsWith(".txt")|| str.endsWith(".js") || str.endsWith(".do")
+				|| str.endsWith(".aspx")|| str.endsWith(".tcl")|| str.endsWith(".el") || str.endsWith(".cxx")
+				|| str.endsWith(".iml")|| str.endsWith(".htm")|| str.endsWith(".rhtml") || str.endsWith(".pde")
+				|| str.endsWith("license")|| str.endsWith(".gradle")|| str.endsWith("notice") || str.endsWith(".bat")
+				|| str.endsWith(".gitignore")|| str.endsWith(".asp")|| str.endsWith(".ss") || str.endsWith(".properties")
 				|| str.endsWith(".xml")|| str.endsWith(".md") || str.endsWith(".log")|| str.endsWith(".pom"))
 			return true;
 		return false;

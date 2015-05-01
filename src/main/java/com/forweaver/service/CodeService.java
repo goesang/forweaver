@@ -37,9 +37,8 @@ public class CodeService {
 	 * @param file
 	 */
 	public void add(Code code, MultipartFile multipartFile) {
-		try {
-			String zipPath = "/tmp/"+new org.bson.types.ObjectId().toString()+".zip";
-			
+		String zipPath = "/tmp/"+new org.bson.types.ObjectId().toString()+".zip";
+		try {			
 			if ((multipartFile.getContentType().equals("application/zip") ||
 					multipartFile.getContentType().equals("application/x-zip-compressed")) && 
 					multipartFile.getOriginalFilename().toLowerCase().endsWith(".zip")) { 
@@ -79,7 +78,7 @@ public class CodeService {
 
 					zis.closeEntry();
 					zis.close();
-
+					
 				}catch(IOException ex){
 					ex.printStackTrace(); 
 				}
@@ -100,6 +99,7 @@ public class CodeService {
 			new File(zipPath).delete();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+			new File(zipPath).delete();
 			return;
 		} 
 	}

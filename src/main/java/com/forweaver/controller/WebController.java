@@ -45,9 +45,10 @@ public class WebController {
 	public void error400() {}
 	
 	@RequestMapping("/error404")
-	public void error404() {
-		
-	}
+	public void error404() {}
+	
+	@RequestMapping("/errorUserNull")
+	public void errorUserNull() {}
 
 	@RequestMapping("/")
 	public String front(Model model) {
