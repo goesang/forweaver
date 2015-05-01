@@ -145,7 +145,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					<sec:authorize access="isAuthenticated()">
 					
 					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
-						href="javascript:showUploadContent();">프로젝트 업로드</a> 
+						href="javascript:showUploadContent();">파일 업로드</a> 
 						
 					<a
 						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"

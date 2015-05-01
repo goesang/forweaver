@@ -505,18 +505,19 @@ public class WeaverController {
 	public void img(@PathVariable("id") String id, HttpServletResponse res)
 			throws IOException {
 		Weaver weaver = weaverService.get(id);
-		if (weaver == null || weaver.isLeave()) {
+		if (weaver == null || weaver.isLeave()) { // 사이트에 존재하지 않은 회원의 경우
 			if(id.contains("@") && id.contains("."))
 				res.sendRedirect("http://www.gravatar.com/avatar/"
 						+ WebUtil.convertMD5(id) + ".jpg");
 			else
 				res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
 			return;
-		}else if (weaver.getImage().getContent().length  == 0) {
+		}else if (weaver.getImage().getContent().length  == 0) { // 존재하는 회원의 경우
 			res.sendRedirect("http://www.gravatar.com/avatar/"
 					+ WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
 		} else {
 			byte[] imgData = weaver.getImage().getContent();
+			res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
 			res.setContentType(weaver.getImage().getType());
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);

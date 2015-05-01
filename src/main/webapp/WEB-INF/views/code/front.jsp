@@ -136,7 +136,7 @@
 									movePage(tagNames,$('#post-search-input').val());
 								}
 							});
-					var pageCount = ${codeCount+1}/${number};
+					var pageCount = ${codeCount}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -203,7 +203,7 @@
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
 				</div>
 
-				<div class="span2">
+				<div style="margin-left:5px;" class="span2">
 
 
 					<span> 

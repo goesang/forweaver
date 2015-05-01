@@ -5,6 +5,11 @@
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
+
+<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
+<script src="/resources/forweaver/js/markdown/markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -236,8 +241,8 @@
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/code/${code.codeID}/add-repost" method="POST">
 
-					<div style="margin-left: 0px" class="span11">
-						<textarea name="content" id="repost-content"
+					<div style="margin-left: 0px; margin-bottom:10px" class="span11">
+						<textarea data-provide="markdown" name="content" id="repost-content"
 							class="post-content span10" 
 							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 					</div>

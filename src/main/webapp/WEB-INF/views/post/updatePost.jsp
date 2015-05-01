@@ -5,6 +5,10 @@
 <title>Forweaver : 소통해보세요!</title>
 
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
+<script src="/resources/forweaver/js/markdown/markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -66,7 +70,7 @@
 					</div>
 					
 					<div class="span11">
-						<textarea style="height:250px"
+						<textarea data-provide="markdown" style="height:250px"
 							id="post-content-textarea" name ="content" class="span11 post-content"
 							 placeholder="글 내용을 입력해주세요!">${post.content}</textarea>
 					</div>

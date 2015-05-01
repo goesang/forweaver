@@ -12,7 +12,6 @@
 	padding-top:4px;
 }
 
-
 .readme {
 	border-color: #AAA;
 	border-width: 1px;
@@ -618,4 +617,13 @@ a.post-button {
 }
 tr:first-child>td {
 	border-top: none !important;
+}
+
+.btn-small{
+	background-color: #415B76;
+}
+
+.md-editor > textarea {
+	background: #fff !important;
+	padding:10px 10px!important;
 }

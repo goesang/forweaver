@@ -22,6 +22,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.github.rjeschke.txtmark.Processor;
 
 
+
 /** 각종 웹 유틸 클래스
  * @author go
  *
@@ -129,7 +130,8 @@ public class WebUtil {
 			return text;
 		}
 
-		String escapedText = HtmlUtils.htmlEscape(text);
+		String escapedText = HtmlUtils.htmlEscape(text)
+				.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<a href=\"$2\">$2</a>$4");
 
 		return escapedText;
 	}
@@ -208,9 +210,9 @@ public class WebUtil {
 	 * @param str
 	 * @return html화된 문자열.
 	 */
-	public static String markDownEncoder(String str) {
-		str = str.replace("\n", "\n\n");
-		return Processor.process(str,true);
+	public static String markDownEncoder(String str){
+		str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<$2>$4");
+		return Processor.process(str, true).replaceAll("\n", "</p><p>");
 	}
 
 	/**	이전시간과 현재시간과의 차이를 계산하여 지난시간 반환
@@ -379,7 +381,7 @@ public class WebUtil {
 			zis.close();
 
 		}catch(IOException ex){
-			ex.printStackTrace(); 
+			System.out.println(ex.getLocalizedMessage());
 		}
 	}    
 	

@@ -109,7 +109,7 @@
 							});
 					
 							
-						var pageCount = ${projectCount+1}/${number};
+						var pageCount = ${projectCount}/${number};
 						pageCount = Math.ceil(pageCount);
 						var options = {
 					            currentPage: ${pageIndex},
@@ -178,7 +178,7 @@
 						placeholder="프로젝트에 대해 설명해주세요! (최대 50자까지)"></input>
 				</div>
 
-				<div class="span2">
+				<div style="margin-left:5px;" class="span2">
 					<span> 
 					<sec:authorize access="isAuthenticated()">
 					<a id="show-content-button"

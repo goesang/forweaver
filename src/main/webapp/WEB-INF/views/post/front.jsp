@@ -5,6 +5,10 @@
 <html><head>
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
+<script src="/resources/forweaver/js/markdown/markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -55,6 +59,7 @@
 
 			$('#show-content-button').hide();
 			$('#hide-content-button').show();
+			$('.md-editor').fadeIn('slow');
 			$('.file-div').fadeIn('slow');
 			editorMode = true;
 		}
@@ -66,6 +71,9 @@
 
 			$('#show-content-button').show();
 			$('#hide-content-button').hide();
+			
+			$('.md-editor').hide();
+			
 			$('.file-div').hide();
 			editorMode = false;
 		}
@@ -140,7 +148,7 @@
 							});
 					
 					
-					var pageCount = ${postCount+1}/${number};
+					var pageCount = ${postCount}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -298,7 +306,7 @@
 					</span>
 				</div>
 				<div class="span12">
-					<textarea style="display: none;" id="post-content-textarea" name="content"
+					<textarea data-provide="markdown"  style="display: none;" id="post-content-textarea" name="content"
 						class="post-content span12" 
 						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 						<div class="file-div"></div>
