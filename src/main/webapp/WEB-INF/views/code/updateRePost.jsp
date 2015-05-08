@@ -35,8 +35,7 @@
 							<td colspan="2" class="post-top-title none-top-border"><a
 								rel="external" class="a-post-title"
 								href="/code/tags:<c:forEach items='${code.tags}' var='tag'>${tag},</c:forEach>">
-									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
-									${cov:htmlEscape(code.content)}
+									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 							</a></td>
 							<td class="td-button none-top-border" rowspan="2"><a
 								href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span

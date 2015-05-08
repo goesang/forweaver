@@ -40,6 +40,7 @@ public class Code implements Serializable  {
 	private String readme;
 	private String name;
 	private String content;
+	private String url;
 	private int rePostCount;
 	private Date recentRePostDate;
 	
@@ -49,10 +50,11 @@ public class Code implements Serializable  {
 	public Code(){}
 	
 	public Code(Weaver weaver, String name,
-			String content, List<String> tags) {
+			String content,String url, List<String> tags) {
 		super();
 		this.writer = weaver;
 		this.name = name;
+		this.url = url;
 		this.content = content;
 		this.tags = tags;
 		this.openingDate = new Date();
@@ -159,6 +161,9 @@ public class Code implements Serializable  {
 	}
 	
 	public void addSimpleCode(SimpleCode simpleCode){
+		for(SimpleCode code:this.codes)
+			if(code.getFileName().equals(simpleCode.getFileName()))
+				return;
 		this.codes.add(simpleCode);
 	}
 	
@@ -201,6 +206,14 @@ public class Code implements Serializable  {
 			if(!WebUtil.isCodeName(simpleCode.getFileName()))
 					simpleCode.setContent("이것은 볼 수 없는 소스 코드입니다!");
 		}
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	

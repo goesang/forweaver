@@ -12,24 +12,23 @@
 	function checkCode(){
 		var objPattern = /^[a-z0-9_]+$/;
 		var fileName = $("#file").val();
+		var output = $("#output").val();
 		var tags = $("#tags-input").val();
 		
 		if(fileName == ""){
 			alert("파일을 업로드해 주세요!");
 			return false;
-		}else if(!objPattern.test($('#code-name').val())){
-			alert("코드명은 영문-소문자 숫자 조합이어야 합니다. 다시 입력해주세요!");
-			return false;
 		}else if(tags.length == 0){
 			alert("태그를 하나라도 입력해주세요!");
-			return false;
-		}else if($('#code-name').val().length <5 ){
-			alert("코드명을 5자 이상 입력하지 않았습니다!");
 			return false;
 		}else if($('#code-content').val().length <5 ){
 			alert("코드 설명을 5자 이상 입력하지 않았습니다!");
 			return false;
-		}else{
+		}else if(output.length > 0 && !filename(output)){
+			alert("결과화면이 이미지 파일이 아닙니다!");
+			return false;
+		}
+		
 			$("form:first").append($("input[name='tags']"));
 			
 			var opts = {
@@ -53,7 +52,6 @@
 					var spinner = new Spinner(opts).spin(document.getElementById('codeForm'));
 			
 			return true;
-		}
 	}
 	
 		function showCodeContent() {
@@ -136,7 +134,7 @@
 									movePage(tagNames,$('#post-search-input').val());
 								}
 							});
-					var pageCount = ${codeCount}/${number};
+					var pageCount = ${codeCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -151,7 +149,11 @@
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
 		});
 
-		
+		function fileUploadChange(fileUploader){
+			var fileName = $(fileUploader).val();	
+			if(fileName !="" && !filename(fileName))
+				alert("이미지 파일이 아닙니다!");
+		}
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
@@ -197,11 +199,14 @@
 				enctype="multipart/form-data" method="post">
 
 				<div id="post-div" class="span10">
-					<input maxlength="15" name="name" id="code-name" class="title span3"
-						placeholder="코드명 (소문자 숫자 최소 5자)" type="text" /> <input name="content"
-						id="code-content" class="title span7" maxlength="50"
+					<input name="content" 
+						id="code-content" class="span10" maxlength="50"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
+						<input name="url"
+						id="code-url" class="span10" maxlength="50"
+						placeholder="만일 다른곳에서 퍼오셨다면 원본 출처를 입력해주세요!" type="text" />
 				</div>
+				
 
 				<div style="margin-left:5px;" class="span2">
 
@@ -236,14 +241,33 @@
 				<div id="file-div" style="padding-left: 20px;">
 					<div class='fileinput fileinput-new' data-provides='fileinput'>
 						<div class='input-group'>
-							<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'>
+							<div class='form-control' data-trigger='fileinput'
+								title='업로드할 파일을 선택하세요!'>
 								<i class='icon-file '></i> <span class='fileinput-filename'></span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span
-								class='fileinput-new'><i class='fa fa-arrow-circle-o-up icon-white'></i> ZIP파일 혹은 소스코드</span>
-								<span class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input  type='file'
-								id='file' multiple='true' name='file'></span> <a href='#'
+								class='fileinput-new'>ZIP파일 혹은 소스파일</span> <span
+								class='fileinput-exists'><i
+									class='icon-repeat icon-white'></i></span><input type='file' id='file'
+								multiple='true' name='file'></span> <a href='#'
+								class='input-group-addon btn btn-primary fileinput-exists'
+								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+						</div>
+					</div>
+					<div class='fileinput fileinput-new' data-provides='fileinput'>
+						<div class='input-group'>
+							<div class='form-control' data-trigger='fileinput'
+								title='업로드할 파일을 선택하세요!'>
+								<i class='icon-file '></i> <span class='fileinput-filename'></span>
+							</div>
+							<span class='input-group-addon btn btn-primary btn-file'><span
+								class='fileinput-new'><i
+									class='fa fa-file-photo-o'></i> 결과 화면</span> <span
+								class='fileinput-exists'><i
+									class='icon-repeat icon-white'></i></span><input 
+									onchange ='fileUploadChange(this);'
+									type='file' id='output'
+								multiple='true' name='output'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
 								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
 						</div>
@@ -284,8 +308,7 @@
 									src="${code.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/code/${code.codeID}"> <i
-										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
-										${cov:htmlEscape(code.content)}
+										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 								</a></td>
 								<td class="td-button" rowspan="2"><a
 									href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span

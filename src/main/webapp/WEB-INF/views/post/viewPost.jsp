@@ -89,18 +89,17 @@
 					$("#repost-table").hide();
 					$("#myTab").hide();
 					if($("#repost-content").val().length == 0)
-						$("#repost-content").css('height','300px');
+						$("#repost-content").css('height','330px');
 			});
 			
 			$("#repost-content").focusout(function(){	
 
 				if( !this.value ) {
-					$(".file-div").hide();
+
 					$("#repost-table").fadeIn();
 					$("#myTab").fadeIn();
 		      }
-				if($("#repost-content").val().length == 0)
-					$("#repost-content").css('height','auto');
+				
 		});
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
@@ -204,7 +203,7 @@
 
 
 				<!-- 답변에 관련된 테이블 시작-->
-
+				<sec:authorize access="isAuthenticated()">
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/community/${post.postID}/add-repost" method="POST">
 
@@ -215,22 +214,17 @@
 					</div>
 					<div class="span1">
 						<span>
-							<sec:authorize access="isAnonymous()">
-						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
-								<i class="fa fa-times"></i>
-							</button>
-					</sec:authorize>
-					<sec:authorize access="isAuthenticated()">
+				
 						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
 								<i class="fa fa-check"></i>
 							</button>
-					</sec:authorize>
+					
 						</span>
 					</div>
 					
 					<div class="file-div"></div>
 				</form>
-
+			</sec:authorize>
 				<c:if test="${post.rePostCount != 0}">
 
 					<div class="span12"></div>

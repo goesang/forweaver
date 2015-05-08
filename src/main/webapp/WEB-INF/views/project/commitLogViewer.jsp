@@ -79,7 +79,7 @@ function fileUploadChange(fileUploader){
 				$(".file-div").fadeIn();
 				$("#repost-table").hide();
 				if($("#repost-content").val().length == 0)
-					$("#repost-content").css('height','300px');
+					$("#repost-content").css('height','330px');
 		});
 		
 		$("#repost-content").focusout(function(){	

@@ -1,8 +1,6 @@
 package com.forweaver.controller;
 
 
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,5 +85,6 @@ public class WebController {
 			return "/alert";
 	}
 	
-		
+	@RequestMapping("intro/tutorial/*")
+	public void tutorial() {}
 }

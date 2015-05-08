@@ -30,6 +30,13 @@
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/repassword**"
 			access="isAnonymous()" />
+			
+		<security:intercept-url pattern="/intro/**"
+			access="isAnonymous() or isAuthenticated()" />
+			
+		<security:intercept-url pattern="/contactUs"
+			access="isAuthenticated()" />
+			
 		<security:intercept-url pattern="/join" access="isAnonymous()" />
 
 		<security:intercept-url pattern="/check"

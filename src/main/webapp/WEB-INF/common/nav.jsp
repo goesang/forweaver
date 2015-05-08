@@ -14,7 +14,13 @@
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
-					<li><a href="/intro/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown"> <i class="fa fa-flickr"></i>&nbsp;도움말</a>
+							<ul class="dropdown-menu">
+							
+								<li><a href="/intro/forweaver"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;기본 사용법</a></li>
+								<li><a href='/intro/tutorial/default' ><i class="fa fa-git"></i>&nbsp;&nbsp;개발툴과 연동</a></li>
+							</ul></li>
 					<li><a href="/contactUs"><i class="fa fa-phone-square"></i>&nbsp;고객센터</a></li>
 				</ul>
 

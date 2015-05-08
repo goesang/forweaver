@@ -106,7 +106,15 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 							<i class="fa fa-code-fork"></i></c:if> 
 							${project.name}</big></big>
 				<small>${project.description}</small>
+				<div style="margin-top:-10px" class="pull-right">
+
+				<a href="/intro/tutorial/default" title="포위버 프로젝트 저장소에 파일을 업로드하는 방법" class="btn btn-danger">
+								<i class="fa fa-question-circle"></i> <b>업로드 방법</b>
+				</a>
+
+				</div>
 			</h5>
+			
 		</div>
 		<div class="row">
 			<div class="span8">
@@ -198,7 +206,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 								
 								
 								<span class='input-group-addon btn btn-primary btn-file'><span
-									class='fileinput-new'> <i class='fa fa-arrow-circle-o-up icon-white'></i> 파일 업로드</span>
+									class='fileinput-new'>ZIP파일 혹은 소스파일</span>
 									<span class='fileinput-exists'><i
 										class='icon-repeat icon-white'></i></span> <input type='file'
 									id='file' multiple='true' name='zip'></span> 

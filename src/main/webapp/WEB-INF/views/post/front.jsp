@@ -148,7 +148,7 @@
 							});
 					
 					
-					var pageCount = ${postCount}/${number};
+					var pageCount = ${postCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -164,7 +164,7 @@
 				        
 				        $("#post-content-textarea").focus(function(){	
 							if($("#post-content-textarea").val().length == 0)
-								$("#post-content-textarea").css('height','300px');
+								$("#post-content-textarea").css('height','350px');
 						});
 						
 						$("#post-content-textarea").focusout(function(){	

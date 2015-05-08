@@ -139,19 +139,24 @@ public class CodeController {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
 		MultipartFile file = multiRequest.getFile("file");
+		MultipartFile output = multiRequest.getFile("output");
 		String tags = request.getParameter("tags");
-		String name = request.getParameter("name");
 		String content = request.getParameter("content");
-
-		if(tags == null || name.length() < 5 || content.length() < 5 || content.length() >50 || file == null || !Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", name)){ // 태그가 없을 때
+		String url = request.getParameter("url");
+		String name = file.getOriginalFilename();
+		name = name.substring(0, name.indexOf('.'));
+		if(tags == null || content.length() < 5 || content.length() >50 || file == null){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/");
 			return "/alert";
 		}
 		List<String> tagList = tagService.stringToTagList(tags);
 		Weaver weaver = weaverService.getCurrentWeaver();
-
-		codeService.add(new Code(weaver, name, content, tagList), file);
+		if(!codeService.add(new Code(weaver, name, content,url, tagList), file,output)){ // 태그가 없을 때
+			model.addAttribute("say", "코드 업로드에 실패하였습니다! 압축파일을 확인하시거나 제대로된 소스파일인지 확인해주세요.");
+			model.addAttribute("url", "/code/");
+			return "/alert";
+		}
 		return "redirect:/code/";
 	}
 

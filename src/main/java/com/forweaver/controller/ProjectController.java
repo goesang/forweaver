@@ -208,7 +208,7 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 
-	
+
 	@RequestMapping(value = {"/{creatorName}/{projectName}/data/commit:{commit}/**"})
 	public void data(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -219,16 +219,14 @@ public class ProjectController {
 
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));
-		
+
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
 
-		if (gitFileInfo.getContent() == null) {
-			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
+		if (gitFileInfo == null) {
 			return;
 		} else {
-			
 			byte[] imgData = gitFileInfo.getData();
-			
+
 			res.reset();
 			res.setContentType("application/octet-stream");
 			String filename = new String(gitFileInfo.getName().getBytes("UTF-8"), "8859_1");
@@ -242,7 +240,7 @@ public class ProjectController {
 		} 
 
 	}
-	
+
 	@RequestMapping(value=
 		{	"/{creatorName}/{projectName}", 
 		"/{creatorName}/{projectName}/browser"}
@@ -271,6 +269,8 @@ public class ProjectController {
 		commit = commit.substring(0, commit.indexOf("/"));
 
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
+
+
 		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			List<GitSimpleFileInfo> gitFileInfoList = 
 					gitService.getGitSimpleFileInfoList(creatorName, projectName,commit,filePath);
@@ -286,14 +286,15 @@ public class ProjectController {
 			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commit,gitFileInfoList));
 			model.addAttribute("filePath",filePath);
 			model.addAttribute("commit",commit);
-			
+
 			return "/project/browser";
 		}else{ // 파일이라면
 			model.addAttribute("project", project);
 			model.addAttribute("fileName", gitFileInfo.getName());
 			if(!WebUtil.isCodeName(gitFileInfo.getName()))
 				gitFileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
-			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
+			if(gitFileInfo.getContent() != null)
+				model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
 			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
 			model.addAttribute("gitCommitLog", 
@@ -306,7 +307,7 @@ public class ProjectController {
 
 
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/edit/commit:{commit}/**")
 	public String fileEdit(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -323,19 +324,20 @@ public class ProjectController {
 		commit = commit.substring(0, commit.indexOf("/"));
 
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
-			model.addAttribute("project", project);
-			model.addAttribute("fileName", gitFileInfo.getName());
+		model.addAttribute("project", project);
+		model.addAttribute("fileName", gitFileInfo.getName());
+		if(gitFileInfo.getContent() != null)
 			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
-			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
-			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-			model.addAttribute("gitCommitLog", 
-					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
-			model.addAttribute("filePath",filePath);
-			model.addAttribute("commit",commit);
-			
-			return "/project/fileEdit";
+		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
+		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
+		model.addAttribute("gitCommitLog", 
+				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+		model.addAttribute("filePath",filePath);
+		model.addAttribute("commit",commit);
+
+		return "/project/fileEdit";
 	}
-	
+
 	@RequestMapping(value="/{creatorName}/{projectName}/file-edit",method = RequestMethod.POST )
 	public String fileEdit(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -362,10 +364,10 @@ public class ProjectController {
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
-		
+
 		if(!WebUtil.isCodeName(filePath)) //소스코드만 추적 가능함.
 			return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commit+"/filepath:"+filePath;
-		
+
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));		
 		GitFileInfo gitFileInfo = gitService.getFileInfoWithBlame(creatorName, projectName, commit, filePath);
@@ -375,7 +377,8 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("fileName", gitFileInfo.getName());
-		model.addAttribute("fileContent", gitFileInfo.getContent());
+		if(gitFileInfo.getContent() != null)
+			model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
 		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
@@ -909,7 +912,7 @@ public class ProjectController {
 
 		return "/project/chat";
 	}
-/*
+	/*
 	@RequestMapping("/{creatorName}/{projectName}/fork") // 포크
 	public String fork(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model){

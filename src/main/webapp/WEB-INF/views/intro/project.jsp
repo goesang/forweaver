@@ -10,6 +10,7 @@
 
 	<div  class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
+
 				<ul class="nav nav-tabs" id="myTab">
 					<li><a href="/intro/forweaver">ForWeaver란?</a></li>
 					<li><a href="/intro/membertool">기본 기능 사용하기!</a></li>

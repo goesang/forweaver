@@ -199,25 +199,19 @@ public class GitUtil {
 	public GitFileInfo getFileInfo(String commitID, String filePath) {
 		List<RevCommit> gitLogList = new ArrayList<RevCommit>();
 		RevCommit selectCommit = this.getCommit(commitID);
-
-		int selectCommitIndex = 0;
-
+		int selectCommitIndex= 0;
 		if (selectCommit == null)
 			return null;
+		
 		try {
-			Iterable<RevCommit> gitLogIterable = git.log().all()
-					.addPath(filePath).call();
-			int index = 0;
-			for (RevCommit revCommit : gitLogIterable) {
-				if (!gitLogList.contains(revCommit)) {
-					if (selectCommit.getName().equals(revCommit.getName()))
-						selectCommitIndex = index;
-
+			Iterable<RevCommit> gitLogIterable = git.log().all().addPath(filePath).call();
+			
+			for (RevCommit revCommit : gitLogIterable) 
 					gitLogList.add(revCommit);
-					index++;
-				}
-			}
-
+			
+			for(;selectCommitIndex<gitLogList.size();selectCommitIndex++)
+				if(gitLogList.get(selectCommitIndex).getId().equals(selectCommit.getId()))
+					break;
 
 		} finally {
 
