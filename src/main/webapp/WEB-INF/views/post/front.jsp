@@ -264,6 +264,10 @@
 					<li id="repost-null"><a
 						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변
 							없는 글</a></li>
+					<sec:authorize access="isAuthenticated()">
+					<li id="my"><a
+						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">내가 쓴 글</a></li>		
+					</sec:authorize>
 				</ul>
 			</div>
 

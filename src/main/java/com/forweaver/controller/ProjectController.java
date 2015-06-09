@@ -106,7 +106,7 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
 				projectService.getProjects(currentWeaver, null, "", sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(null, "", sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,null, "", sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");
@@ -131,7 +131,7 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
 				projectService.getProjects(currentWeaver, tagList, null, sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(tagList, null, sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,tagList, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/sort:"+sort+"/page:");
@@ -154,7 +154,7 @@ public class ProjectController {
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,search,sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(tagList,search,sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,tagList,search,sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/search:"+search+"/sort:"+sort+"/page:");
@@ -853,6 +853,19 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		if(!projectService.uploadFile(project, currentWeaver,branchName, message,path, zip)){
 			model.addAttribute("say", "업로드 실패! 프로젝트에 가입되어 있는지 혹은 압축파일을 다시 확인해주세요!");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
+			return "/alert";
+		}
+		return "redirect:/project/"+creatorName+"/"+projectName;
+	}
+	
+	@RequestMapping(value="/{creatorName}/{projectName}/reset")
+	public String reset(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,Model model) {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		if(!projectService.reSetRepository(project, currentWeaver)){
+			model.addAttribute("say", "초기화 실패! 관리자만이 초기화 가능합니다!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";
 		}

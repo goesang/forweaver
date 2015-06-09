@@ -7,7 +7,6 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
-import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
 import com.forweaver.domain.SimpleCode;
@@ -61,11 +59,12 @@ public class CodeController {
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
-
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		
 		model.addAttribute("codes", 
-				codeService.getCodes(null, null, null, sort, pageNum, size));
+				codeService.getCodes(currentWeaver, null, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(null, null, null, sort));
+				codeService.countCodes(currentWeaver, null, null, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
@@ -93,9 +92,9 @@ public class CodeController {
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodes(null, tags, null, sort, pageNum, size));
+				codeService.getCodes(currentWeaver, tags, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(null,tags, null, sort));
+				codeService.countCodes(currentWeaver,tags, null, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -116,14 +115,19 @@ public class CodeController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		List<String> tags = tagService.stringToTagList(tagNames);
-
+		
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		if(!tagService.validateTag(tags,currentWeaver)){
+			return "redirect:/code/sort:age-desc/page:1";
+		}
+		
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page);
 
 		model.addAttribute("codes", 
-				codeService.getCodes(null,tags, search, sort, pageNum, size));
+				codeService.getCodes(currentWeaver,tags, search, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(null,tags, search, sort));
+				codeService.countCodes(currentWeaver,tags, search, sort));
 
 		model.addAttribute("number", size);
 		model.addAttribute("tagNames", tagNames);

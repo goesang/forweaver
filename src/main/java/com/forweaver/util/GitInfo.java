@@ -561,22 +561,22 @@ public class GitInfo {
 		matcher.add(last);
 		matcher.add(authorsFilter, committersFilter);
 		matcher.add(authorHistogramFilter, committerHistogramFilter);
-		matcher.add(new AllDiffFilter(true, diffFileCountFilter,
+		matcher.add(new AllDiffFilter( diffFileCountFilter,
 				fileImpactFilter, new AllDiffEditFilter(diffLineCountFilter,
 						lineImpactFilter)));
 
 		AllCommitFilter parent = new AllCommitFilter();
 		parent.add(matcher);
-		parent.add(new AndCommitFilter(new ParentCountFilter(2),
-				mergeCountFilter));
-		parent.add(new AndCommitFilter(new ParentCountFilter(2),
-				new DiffFileSizeFilter(true, 1), mergeConflictFilter));
-
+		// 에러로 인해 막아 놓음
+		//parent.add(new AndCommitFilter(new ParentCountFilter(2), 
+		//		mergeCountFilter));
+		//parent.add(new AndCommitFilter(new ParentCountFilter(2),
+			//	new DiffFileSizeFilter(true, 1), mergeConflictFilter));
 		CommitFinder finder = new CommitFinder(repository);
 		finder.setFilter(parent);
 		finder.findFrom(start);
-
 		this.end = last.getLast();
+		System.out.println(last.getLast().getFullMessage());
 		for (CommitImpact impact : fileImpactFilter)
 			mostFiles.put(impact.getCommit(), impact);
 		for (CommitImpact impact : lineImpactFilter)
@@ -602,7 +602,6 @@ public class GitInfo {
 		Map<String, Set<String>> committerNamesToEmails = mergeIdentities(committersFilter
 				.getPersons());
 		namesToEmails.putAll(committerNamesToEmails);
-
 		authors.addAll(authorNamesToEmails.keySet());
 		authorLineImpacts.addAll(authorNamesToEmails.keySet());
 		authorFileImpacts.addAll(authorNamesToEmails.keySet());

@@ -106,7 +106,7 @@ public class AdminController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
 				projectService.getProjects(currentWeaver, null, "", sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(null, "", sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,null, "", sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");

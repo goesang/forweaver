@@ -29,7 +29,7 @@ public class PostService {
 	@Autowired private DataDao dataDao;
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private CacheManager cacheManager;
-	
+
 	/** 글을 생성함.
 	 * @param post
 	 * @param datas
@@ -72,7 +72,7 @@ public class PostService {
 	public boolean push(Post post, Weaver weaver,String ip) {
 		if (weaver != null && weaver.equals(post.getWriter()))
 			return false;
-		
+
 		Cache cache = cacheManager.getCache("push"); // 중복 추천 방지!
 		Element element = cache.get(post.getPostID()+"@@"+ip);
 
@@ -112,7 +112,7 @@ public class PostService {
 		for(Post post:posts)
 			this.delete(post);
 	}
-	
+
 	/** 실제 글을 삭제하는 메서드
 	 * @param post
 	 */
@@ -120,7 +120,7 @@ public class PostService {
 		rePostDao.deleteAll(post); // 답변 전부 삭제.
 		postDao.delete(post); //댓글 전부 삭제.
 	}
-	
+
 	/** 글을 삭제함.
 	 * @param post
 	 * @param weaver
@@ -177,6 +177,9 @@ public class PostService {
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(null, null, null, sort);
 
+		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
+			return postDao.countMyPosts(null,null, weaver, null, sort);
+
 		return postDao.countPostsWhenLogin(null,weaver.getPrivateAndMassageTags(),null,null, sort);
 
 	}
@@ -193,6 +196,9 @@ public class PostService {
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.getPostsWhenNotLogin(null, null, null, sort, page, size);
 
+		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
+			return postDao.getMyPosts(null,null, weaver, null, sort,page,size);
+
 		return postDao.getPostsWhenLogin(null,weaver.getPrivateAndMassageTags(),null,null, sort, page, size);
 	}
 
@@ -207,17 +213,18 @@ public class PostService {
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(tags, null, null, sort);
 
+		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
+			return postDao.countMyPosts(tags,null, weaver, null, sort);
+
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort);
+
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.countPostsWithPrivateTags(tags, null, null, sort);
-		if(this.isMassageTags(tags)) {// 태그가 메세지 태그의 경우.
-			System.out.println(tags);
-			System.out.println(this.getOneMassageTag(weaver.getId(),tags));
+
+		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
 			return postDao.countPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), null, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort);
 
-		
-		}
 		return 0;
 	}
 
@@ -233,16 +240,22 @@ public class PostService {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.getPostsWhenNotLogin(tags, null, null, sort, page, size);
+
+		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
+			return postDao.getMyPosts(tags,null, weaver, null, sort, page, size);
+
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort, page, size);
+
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.getPostsWithPrivateTags(tags, null, null, sort, page, size);
-		if(this.isMassageTags(tags)) {// 태그가 메세지 태그의 경우.
+
+		if(this.isMassageTags(tags))// 태그가 메세지 태그의 경우.
 			return postDao.getPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), null, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort, page, size);
-		}
+
 		return null;
 	}
-	
+
 	/** 프로젝트에 쓴 글들을 가져와서 수를 셈
 	 * @param projectName
 	 * @param tags
@@ -254,12 +267,12 @@ public class PostService {
 	 * @return
 	 */
 	public long countProjectPosts(String projectName,List<String> tags,String search,String sort,Weaver writer) {
-			if(tags == null)
-				tags = new ArrayList<String>();
-			tags.add("@"+projectName);
-			return postDao.countPosts(tags, search, writer, sort);
+		if(tags == null)
+			tags = new ArrayList<String>();
+		tags.add("@"+projectName);
+		return postDao.countPosts(tags, search, writer, sort);
 	}
-	
+
 	/**  프로젝트에 쓴 가져옴.
 	 * @param projectName
 	 * @param tags
@@ -289,6 +302,8 @@ public class PostService {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.countPostsWhenNotLogin(tags, search, null, sort);
+		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
+			return postDao.countMyPosts(tags,null, weaver, search, sort);
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,search, sort);
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
@@ -312,13 +327,15 @@ public class PostService {
 
 		if(weaver == null) //로그인하지 않은 회원의 경우
 			return postDao.getPostsWhenNotLogin(tags, search, null, sort, page, size);
+		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
+			return postDao.getMyPosts(tags,null, weaver, search, sort, page, size);
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,search, sort, page, size);
 		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
 			return postDao.getPostsWithPrivateTags(tags, search, null, sort, page, size);
 		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
 			return postDao.getPostsWithMassageTag( this.getOneMassageTag(weaver.getId(),tags), search, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort, page, size);
-				
+
 		return null;
 
 	}
@@ -335,7 +352,10 @@ public class PostService {
 			return postDao.countPostsWhenNotLogin(null, null, writer, sort);
 
 		if(loginWeaver.equals(writer))
-			return postDao.countMyPosts(null,loginWeaver.getPrivateAndMassageTags(), writer, null, sort);
+			if(sort.equals("my"))
+				return postDao.countMyPosts(null,null, writer, null, sort);
+			else
+				return postDao.countMyPosts(null,loginWeaver.getPrivateAndMassageTags(), writer, null, sort);
 		else
 			return postDao.countPostsWithWriter(null, 
 					loginWeaver.getPrivateAndMassageTags(),
@@ -357,7 +377,10 @@ public class PostService {
 			return postDao.getPostsWhenNotLogin(null, null, writer, sort,page,size);
 
 		if(loginWeaver.equals(writer))
-			return postDao.getMyPosts(null,loginWeaver.getPrivateAndMassageTags(), writer, null, sort,page,size);
+			if(sort.equals("my"))
+				return postDao.getMyPosts(null,null, writer, null, sort,page,size);
+			else
+				return postDao.getMyPosts(null,loginWeaver.getPrivateAndMassageTags(), writer, null, sort,page,size);
 		else
 			return postDao.getPostsWithWriter(null, 
 					loginWeaver.getPrivateAndMassageTags(), 
@@ -378,7 +401,10 @@ public class PostService {
 			return postDao.countPostsWhenNotLogin(tags, null, writer, sort);
 
 		if(loginWeaver.equals(writer))
-			return postDao.countMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, null, sort);
+			if(sort.equals("my"))
+				return postDao.countMyPosts(tags,null, writer, null, sort);
+			else
+				return postDao.countMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, null, sort);
 		else
 			return postDao.countPostsWithWriter(tags, 
 					loginWeaver.getPrivateAndMassageTags(),
@@ -402,7 +428,10 @@ public class PostService {
 			return postDao.getPostsWhenNotLogin(tags, null, writer, sort,page,size);
 
 		if(loginWeaver.equals(writer))
-			return postDao.getMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, null, sort,page,size);
+			if(sort.equals("my"))
+				return postDao.getMyPosts(tags,null, writer, null, sort,page,size);
+			else
+				return postDao.getMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, null, sort,page,size);
 		else
 			return postDao.getPostsWithWriter(tags, 
 					loginWeaver.getPrivateAndMassageTags(), 
@@ -423,7 +452,10 @@ public class PostService {
 			return postDao.countPostsWhenNotLogin(tags, search, writer, sort);
 
 		if(loginWeaver.equals(writer))
-			return postDao.countMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, search, sort);
+			if(sort.equals("my"))
+				return postDao.countMyPosts(tags,null, writer, search, sort);
+			else
+				return postDao.countMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, search, sort);
 		else
 			return postDao.countPostsWithWriter(tags, 
 					loginWeaver.getPrivateAndMassageTags(),
@@ -448,7 +480,10 @@ public class PostService {
 			return postDao.getPostsWhenNotLogin(tags, search, writer, sort,page,size);
 
 		if(loginWeaver.equals(writer))
-			return postDao.getMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, search, sort,page,size);
+			if(sort.equals("my"))
+				return postDao.getMyPosts(tags,null, writer, search, sort,page,size);
+			else
+				return postDao.getMyPosts(tags,loginWeaver.getPrivateAndMassageTags(), writer, search, sort,page,size);
 		else
 			return postDao.getPostsWithWriter(tags, 
 					loginWeaver.getPrivateAndMassageTags(), 
@@ -497,11 +532,11 @@ public class PostService {
 
 		if(tags.size() == 1)
 			return tags.get(0);
-		
-			if (tags.get(0).equals("$" + nickName)) 
-				return tags.get(1);
-			else 
-				return "$" + nickName;
+
+		if (tags.get(0).equals("$" + nickName)) 
+			return tags.get(1);
+		else 
+			return "$" + nickName;
 	}
 
 

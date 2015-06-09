@@ -17,17 +17,15 @@
 								var tagname = $(this).text();
 								var exist = false;
 								var tagNames = $("#tags-input").val();
-								if (tagNames.length == 2)
-									moveUserPage("/${weaver.getId()}/code/","[\"" + tagname + "\"]","");
+								if (tagNames.length == 0 || tagNames == "")
+									moveUserPage("/${weaver.getId()}/code/",tagname,"");
 								
 								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									moveUserPage("/${weaver.getId()}/code/",tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									moveUserPage("/${weaver.getId()}/code/",tagNames+ ","+ tagname+" ","");
 								}
 							});
 					

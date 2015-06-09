@@ -84,7 +84,6 @@ public class CodeService {
 					new File(zipPath).delete();
 					return false;
 				}
-				codeDao.insert(code);
 			} else if(WebUtil.isCodeName(file.getOriginalFilename())){ // 압축파일이 아닌 일반 파일의 경우
 
 				StringBuilder content = new StringBuilder();
@@ -160,7 +159,9 @@ public class CodeService {
 	 */
 	public long countCodes(Weaver weaver,List<String> tags,
 			String search, String sort) {
-		return codeDao.countCodes(weaver, tags, search, sort);
+		if(sort.equals("my"))
+			return codeDao.countCodes(weaver, tags, search, sort);
+		return codeDao.countCodes(null, tags, search, sort);
 	}
 
 	/** 코드를 검색함.
@@ -173,6 +174,34 @@ public class CodeService {
 	 * @return
 	 */
 	public List<Code> getCodes(Weaver weaver, List<String> tags,
+			String search, String sort, int page, int size) {
+		if(sort.equals("my"))
+			return codeDao.getCodes(tags, search, weaver, sort, page, size);
+		return codeDao.getCodes(tags, search, null, sort, page, size);
+	}
+	
+	/** 코드를 검색하고 갯수를 파악함.
+	 * @param weaver
+	 * @param tags
+	 * @param serach
+	 * @param sort
+	 * @return
+	 */
+	public long countMyCodes(Weaver weaver,List<String> tags,
+			String search, String sort) {
+		return codeDao.countCodes(weaver, tags, search, sort);
+	}
+
+	/** 코드를 검색함.
+	 * @param weaver
+	 * @param tags
+	 * @param search
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Code> getMyCodes(Weaver weaver, List<String> tags,
 			String search, String sort, int page, int size) {
 		return codeDao.getCodes(tags, search, weaver, sort, page, size);
 	}
@@ -187,7 +216,7 @@ public class CodeService {
 		if(weaver == null || code == null)
 			return false;
 
-		if(weaver.isAdmin() || weaver.getId().equals(code.getWriterName())){
+		if(weaver.isAdmin() || weaver.equals(code.getWriter())){
 			rePostDao.deleteAll(code);
 			codeDao.delete(code);
 			return true;

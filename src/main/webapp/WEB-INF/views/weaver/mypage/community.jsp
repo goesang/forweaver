@@ -17,7 +17,7 @@
 								var tagname = $(this).text();
 								var exist = false;
 								var tagNames = $("#tags-input").val();
-								if (tagNames.length == 0)
+								if (tagNames.length == 0 || tagNames == "")
 									moveUserPage("/${weaver.getId()}/",tagname,"");
 								
 								$.each(tagNames.split(","), function(index, value) {
@@ -99,6 +99,10 @@
 					<li id="repost-null"><a
 						href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
 							없는 글</a></li>
+					<sec:authorize access="isAuthenticated()">
+					<li id="my"><a
+						href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:my/page:1">${weaver.getId()}가 쓴 글</a></li>	
+					</sec:authorize>	
 				</ul>
 
 				<div class="navbar navbar-inverse">

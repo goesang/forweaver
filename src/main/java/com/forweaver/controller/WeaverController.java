@@ -193,8 +193,8 @@ public class WeaverController {
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("codes", codeService.getCodes(weaver, null, null, sort, pageNum, size));
-		model.addAttribute("codeCount", codeService.countCodes(weaver, null, null, sort));
+		model.addAttribute("codes", codeService.getMyCodes(weaver, null, null, sort, pageNum, size));
+		model.addAttribute("codeCount", codeService.countMyCodes(weaver, null, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/"+id+"/code/sort:" + sort + "/page:");
@@ -308,9 +308,9 @@ public class WeaverController {
 
 		model.addAttribute("weaver", weaver);
 		model.addAttribute("codes", codeService
-				.getCodes(weaver, tags, null, sort, pageNum, size));
+				.getMyCodes(weaver, tags, null, sort, pageNum, size));
 		model.addAttribute("codeCount", codeService
-				.countCodes(weaver, tags, null, sort));
+				.countMyCodes(weaver, tags, null, sort));
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", size);
@@ -447,9 +447,9 @@ public class WeaverController {
 
 		model.addAttribute("weaver", weaver);
 		model.addAttribute("codes", codeService
-				.getCodes(weaver, tags, search, sort, pageNum, size));
+				.getMyCodes(weaver, tags, search, sort, pageNum, size));
 		model.addAttribute("codeCount", codeService
-				.countCodes(weaver, tags, search, sort));
+				.countMyCodes(weaver, tags, search, sort));
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("search", search);
 		model.addAttribute("pageIndex", page);

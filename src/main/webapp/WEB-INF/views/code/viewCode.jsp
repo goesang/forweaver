@@ -155,6 +155,13 @@
 								href="/code/tags:<c:forEach items='${code.tags}' var='tag'>${tag},</c:forEach>">
 									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 							</a></td>
+							<c:if test="${code.url != null}">
+							<td class="td-button none-top-border" rowspan="2"><a
+								href="${code.url}"> <span
+									class="span-button"> <i class=" fa fa-external-link-square"></i>
+										<p class="p-button">출처</p>
+								</span></a></td>
+							</c:if>	
 							<td class="td-button none-top-border" rowspan="2"><a
 								href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 									class="span-button"> ${code.downCount}
@@ -205,10 +212,8 @@
 							</tr>
 							
 							<tr>
-								<td id="td-code-${status.count}" class="well-white " style="padding-top: 20px; max-width: 480px;"
+								<td id="td-code-${status.count}" class="well-white " style="<c:if test="${status.count > 5 && !status.last}" >display:none;</c:if> padding-top: 20px; max-width: 480px;"
 									colspan="5">
-									
-									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
 									
 									<c:if test="${!simpleCode.fileName.endsWith('.md')}">
 									
