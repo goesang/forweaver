@@ -10,6 +10,8 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,7 @@ import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
+import com.forweaver.intercepter.LoggerInterceptor;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 import com.forweaver.util.MailUtil;
@@ -38,6 +41,7 @@ import com.mongodb.DBObject;
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
 
+	protected Log log = LogFactory.getLog(WeaverService.class);
 	@Autowired 
 	private WeaverDao weaverDao;
 	@Autowired 
@@ -51,18 +55,20 @@ public class WeaverService implements UserDetailsService {
 	@Autowired 
 	private GitUtil gitUtil;
 
-	public UserDetails loadUserByUsername(String id)
-			throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		Weaver weaver = weaverDao.get(id);
-		if(weaver.isLeave())
+		
+		if(weaver == null || weaver.isLeave())
 			return null;
+		
+		log.info("================ "+weaver.getId()+"  login   ================");
 		return weaver;
 	}
 
 	public boolean idCheck(String id) { // 이름 중복 체크
 		id = id.toLowerCase();
-		if(id.equals("project") || id.equals("lecture") || id.equals("repassword") || id.equals("community") ||
+		if(id.equals("tracker") || id.equals("lecture") || id.equals("repassword") || id.equals("community") ||
 				id.equals("forweaver") || id.equals("weaver") || id.startsWith("rule_") || id.equals("resources") ||
 				id.startsWith("error") || id.equals("login") || id.equals("admin") || id.equals("check") || id.equals("chat") || 
 				weaverDao.get(id) != null)

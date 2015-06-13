@@ -30,6 +30,10 @@
 			<bean class="com.forweaver.intercepter.LectureIntercepter" />
 		</mvc:interceptor>
 		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.forweaver.intercepter.LoggerInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
 			<mvc:mapping path="/community/**" />
 			<bean class="com.forweaver.intercepter.CommunityIntercepter" />
 		</mvc:interceptor>

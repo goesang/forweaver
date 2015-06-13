@@ -188,9 +188,10 @@
 							답변순</a></li>
 					<li id="age-asc"><a
 						href="/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-					
+					<sec:authorize access="isAuthenticated()">
 					<li id="my"><a
 						href="/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">내가 올린 코드</a></li>
+					</sec:authorize>
 				</ul>
 			</div>
 			<div id="search-div" class="span10">
