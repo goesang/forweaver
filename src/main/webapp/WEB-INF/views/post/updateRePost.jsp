@@ -11,12 +11,42 @@
 </head>
 <body>
 	<script type="text/javascript">
+	var fileCount = 1;
+	var fileArray = [];
+	var fileHash = {};
+	
+	function removeFile(id,name){
+		if(confirm("정말로 "+name+"을 삭제하시겠습니까?")){
+			$("#file-"+id).remove();
+			$("#remove").val($("#remove").val()+"@"+id);
+		}
+	}
+	
 		$(function() {
 			move = false;
 			<c:forEach items='${post.tags}' var='tag'>
 			$('#tags-input').tagsinput('add',"${tag}");
 			</c:forEach>
 			move = true;
+			
+			<c:forEach items="${rePost.datas}" var="data">
+			$(".file-div").append("<div id='file-${data.id}' class='fileinput fileinput-exists'><div class='input-group'>"+
+					"<div class='form-control'><i class='icon-file '></i> <span class='fileinput-filename'>"+
+					"${data.name}"+
+					"</span></div><a href='#' onclick='javascript:removeFile(\"${data.id}\",\"${data.name}\")' class='input-group-addon btn btn-primary fileinput-exists'>"+
+					"<i class='icon-remove icon-white'></i></a></div></div>");
+			</c:forEach>
+			
+			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+					  "<div class='input-group'>"+
+					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+						"<input onchange ='fileUploadChange(this,\"#repost-content\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+					  "</div>"+
+					"</div>");
+			
 				});
 	</script>
 	<div class="container">
@@ -93,7 +123,7 @@
 					action="/community/${post.postID}/${rePost.rePostID}/update" method="POST">
 
 					<div style="margin-left: 0px; margin-bottom:10px" class="span11">
-						<textarea data-provide="markdown" style="height:250px" name="content" id="repost-content"
+						<textarea data-provide="markdown"  name="content" id="repost-content"
 							class="post-content span10" 
 							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)">${rePost.content}</textarea>
 					</div>
@@ -104,6 +134,8 @@
 							</button>
 						</span>
 					</div>
+					 <div class="file-div"> </div>
+					 <input type="hidden" id="remove" name="remove">
 				</form>
 			</div>
 		</div>

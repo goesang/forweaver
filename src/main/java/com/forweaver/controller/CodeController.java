@@ -294,27 +294,37 @@ public class CodeController {
 	@RequestMapping(value="/{codeID}/{rePostID}/update", method = RequestMethod.POST)
 	public String update(@PathVariable("codeID") int codeID, @PathVariable("rePostID") int rePostID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
 
+		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+		ArrayList<Data> datas = new ArrayList<Data>();
 		Code code = codeService.get(codeID,true);
 		RePost rePost = rePostService.get(rePostID);
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
-
-		if(code == null || rePost == null || content.length() < 5 ||  !rePost.getWriter().equals(weaver) ||
-				rePost.getOriginalCode().getCodeID() != code.getCodeID()){ // 태그가 없을 때
+		String remove = request.getParameter("remove");
+		if(code == null || rePost == null || content.length() < 5 ||  
+				rePost.getOriginalCode().getCodeID() != code.getCodeID()){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/"+codeID);
 			return "/alert";
 		}	
 
-		if(!code.getWriter().equals(weaver) && 
+		if(!rePost.getWriter().equals(weaver) && 
 				!tagService.validateTag(code.getTags(),weaver)){ // 태그에 권한이 없을때
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/code/"+codeID);
 			return "/alert";
 		}	
 		
+		for (MultipartFile file : files.values())
+			if(!file.isEmpty()){
+				String fileID= dataService.getObjectID(file.getOriginalFilename(), weaver);
+				if(!fileID.equals(""))
+					datas.add(new Data(fileID,file,weaver));
+			}
+		
 		rePost.setContent(content);
-		rePostService.update(rePost,null);
+		rePostService.update(rePost,datas,remove.split("@"));
 
 		return "redirect:/code/"+codeID;
 	}

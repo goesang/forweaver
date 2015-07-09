@@ -115,7 +115,7 @@
 				</div>
 			</div>
 			<div class="span11">
-				<input name="title" id="post-title-input" class="title span11"
+				<input maxlength="200" name="title" id="post-title-input" class="title span11"
 					placeholder="찾고 싶은 검색어를 입력해주세요!" type="text" />
 			</div>
 			<div class="span1">

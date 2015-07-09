@@ -114,6 +114,7 @@ public class RePostDao {
 		update.set("content", rePost.getContent());
 		update.set("push", rePost.getPush());
 		update.set("replys", rePost.getReplys());
+		update.set("datas", rePost.getDatas());
 		update.set("recentReplyDate", rePost.getRecentReplyDate());
 		mongoTemplate.updateFirst(query, update, RePost.class);
 	}

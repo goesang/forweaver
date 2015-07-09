@@ -44,14 +44,14 @@ public class RePostService {
 		if(datas != null)
 			for(Data data:datas){
 				dataDao.insert(data);
-				rePost.addData(dataDao.getLast());
+				rePost.addData(data);
 			}
 
 		weaverDao.update(rePost.getWriter());
 		rePostDao.insert(rePost);
 		return true;
 	}
-	
+
 
 	/** 댓글을 추가함.
 	 * @param rePost
@@ -65,25 +65,25 @@ public class RePostService {
 		rePostDao.update(rePost);
 		return true;
 	}
-	
+
 	/** 댓글을 삭제함.
 	 * @param rePost
 	 * @param reply
 	 * @return
 	 */
 	public boolean deleteReply(RePost rePost,Weaver weaver,int number) {
-		
+
 		if(rePost == null || weaver == null)
 			return false;
-		
+
 		Weaver replyWriter = rePost.getReplyWriter(number);
-		
+
 		if(replyWriter == null || !replyWriter.equals(weaver))
 			return false;
-		
+
 		if(!rePost.removeReply(weaver, number))
 			return false;
-		
+
 		rePostDao.update(rePost);
 		return true;
 	}
@@ -124,13 +124,21 @@ public class RePostService {
 		return false;
 	}
 
-	public boolean update(RePost rePost,String[] removeDataList){
+	public boolean update(RePost rePost,List<Data> datas,String[] removeDataList){
 		if(rePost == null)
 			return false;
+
+		//만약 자료를 올렸다면.
+		if(datas != null && datas.size() >0)
+			for(Data data:datas){
+				dataDao.insert(data);
+				rePost.addData(dataDao.getLast());
+			}
+
 		if(removeDataList != null)
-			for(String dataName: removeDataList){
-				dataDao.delete(rePost.getData(dataName));
-				rePost.deleteData(dataName);
+			for(String dataID: removeDataList){
+				dataDao.delete(rePost.getData(dataID));
+				rePost.deleteData(dataID);
 			}
 		rePostDao.update(rePost);
 		return true;
@@ -146,10 +154,10 @@ public class RePostService {
 
 		if(post == null ||rePost == null || weaver == null)
 			return false;
-		
+
 		if(rePost.getWriterName().equals(weaver.getId()) 
 				||  weaver.isAdmin()){
-			
+
 			post.rePostCountDown();
 			postDao.update(post);
 			rePostDao.delete(rePost);
@@ -168,7 +176,7 @@ public class RePostService {
 
 		if(code == null ||rePost == null || weaver == null)
 			return false;
-		
+
 		if(rePost.getWriterName().equals(weaver.getId()) ||  weaver.isAdmin()){
 
 			code.rePostCountDown();

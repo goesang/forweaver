@@ -52,7 +52,7 @@ h1 a{
 }
 
 .file-div{
-	margin-left:250px;
+	margin-left:200px;
 }
 .fileinput{
 	padding-right: 12px;
@@ -60,7 +60,7 @@ h1 a{
 .fileinput .form-control {
     padding-top: 10px;
     padding-bottom: 10px;
-    width:360px;
+    width:480px;
     }
 .form-control {
     display: block;

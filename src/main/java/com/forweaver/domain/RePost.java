@@ -161,9 +161,9 @@ public class RePost implements Serializable {
 		this.datas.add(data);
 	}
 	
-	public void deleteData(String name){
+	public void deleteData(String id){
 		for(int i = 0 ; i< this.datas.size() ; i++){
-			if(this.datas.get(i).getName().equals(name)){
+			if(this.datas.get(i).getId().equals(id)){
 				this.datas.remove(i);
 				return;
 			}
@@ -187,9 +187,9 @@ public class RePost implements Serializable {
 		this.kind = kind;
 	}
 	
-	public Data getData(String dataName){
+	public Data getData(String dataID){
 		for(Data data:this.datas)
-			if(data.getName().equals(dataName))
+			if(data.getId().equals(dataID))
 				return data;
 		return null;
 	}

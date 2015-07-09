@@ -24,7 +24,7 @@
 		}else if($('#code-content').val().length <5 ){
 			alert("코드 설명을 5자 이상 입력하지 않았습니다!");
 			return false;
-		}else if(output.length > 0 && !filename(output)){
+		}else if(output.length > 0 && !isImage(output)){
 			alert("결과화면이 이미지 파일이 아닙니다!");
 			return false;
 		}
@@ -151,7 +151,7 @@
 
 		function fileUploadChange(fileUploader){
 			var fileName = $(fileUploader).val();	
-			if(fileName !="" && !filename(fileName))
+			if(fileName !="" && !isImage(fileName))
 				alert("이미지 파일이 아닙니다!");
 		}
 	</script>

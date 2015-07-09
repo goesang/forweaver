@@ -584,6 +584,7 @@ public class PostDao {
 		update.set("content", post.getContent());
 		update.set("title", post.getTitle());
 		update.set("push", post.getPush());
+		update.set("datas", post.getDatas());
 		update.set("rePostCount", post.getRePostCount());
 		update.set("recentRePostDate", post.getRecentRePostDate());
 		update.set("tags", post.getTags());

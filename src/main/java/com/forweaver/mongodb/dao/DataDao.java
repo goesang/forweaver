@@ -15,7 +15,7 @@ import com.forweaver.domain.Data;
  */
 @Repository
 public class DataDao {
-	
+
 	@Autowired private MongoTemplate mongoTemplate;
 
 	/** 자료 추가함.
@@ -37,15 +37,17 @@ public class DataDao {
 		Query query = new Query(Criteria.where("_id").is(dataID));
 		return mongoTemplate.findOne(query, Data.class);
 	}
-	
+
 
 	/** 자료 삭제하기
 	 * @param data
 	 */
 	public void delete(Data data) {
+		if(data == null)
+			return;
 		mongoTemplate.remove(data);
 	}
-	
+
 	/** 마지막 자료 가져오기
 	 * @return
 	 */

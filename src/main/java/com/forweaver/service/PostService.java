@@ -50,7 +50,7 @@ public class PostService {
 		if(datas != null && datas.size() >0)
 			for(Data data:datas){
 				dataDao.insert(data);
-				post.addData(dataDao.getLast());
+				post.addData(data);
 			}
 		return postDao.insert(post);
 
@@ -86,20 +86,22 @@ public class PostService {
 		return false;
 	}
 
-	public void update(Post post,String[] removeDataList) {
-		if (post.getContent().length() >= 10)
-			post.setLong(true);
-		else {
-			post.setLong(false);
-			post.setContent("");
-		}
-		if (post.getTitle().length() <= 1)
+	public void update(Post post,List<Data> datas,String[] removeDataList) {
+		if (post.getTitle().length() < 5)
 			return;
 
+		//만약 자료를 올렸다면.
+		if(datas != null && datas.size() >0)
+			for(Data data:datas){
+				dataDao.insert(data);
+				post.addData(dataDao.getLast());
+			}
+
 		if(removeDataList != null)
-			for(String dataName: removeDataList){
-				dataDao.delete(post.getData(dataName));
-				post.deleteData(dataName);
+			for(String dataID: removeDataList){
+				System.out.println(dataID);
+				dataDao.delete(post.getData(dataID));
+				post.deleteData(dataID);
 			}
 		postDao.update(post);
 	}
