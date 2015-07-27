@@ -253,7 +253,7 @@
 									</td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
-										<a href="/login"> <span
+										<a href="/login?state=null"> <span
 											class="span-button"><i class="fa fa-hand-o-up"></i>
 												<p class="p-button">가입</p></span>
 										</a>      

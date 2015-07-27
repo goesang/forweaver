@@ -44,16 +44,18 @@ public class WeaverController {
 	@Autowired 
 	private TagService tagService;
 
-	@RequestMapping(value = "/login")
-	public String login() {
+	@RequestMapping(value = "/login",method = RequestMethod.GET)
+	public String login(@RequestParam("state") String state,Model model) {
+		
+		if("fail".equals(state))
+			model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
+		
+		if("not".equals(state))
+			model.addAttribute("script", "alert('서비스를 이용하시려면 로그인부터 해주세요!')");
+		
 		return "/weaver/login";
 	}
 
-	@RequestMapping(value = "/loginFail")
-	public String loginFail(Model model) {
-		model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
-		return "/weaver/login";
-	}
 
 	@RequestMapping("/join")
 	public String join() {

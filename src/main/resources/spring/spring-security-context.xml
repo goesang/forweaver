@@ -29,10 +29,6 @@
 		
 		<security:intercept-url pattern="/login"
 			access="isAnonymous()" />
-		<security:intercept-url pattern="/loginRequest"
-			access="isAnonymous()" />
-		<security:intercept-url pattern="/loginFail"
-			access="isAnonymous()" />
 		<security:intercept-url pattern="/repassword**"
 			access="isAnonymous()" />
 
@@ -47,7 +43,7 @@
 		<security:intercept-url pattern="/check"
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/"
-			access="isAuthenticated()" />
+			access="isAnonymous() or isAuthenticated()" />
 
 
 		<security:intercept-url pattern="/community/add"
@@ -131,8 +127,8 @@
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />
 
-		<security:form-login login-page="/login"
-			default-target-url='/' authentication-failure-url="/loginFail" />
+		<security:form-login login-page="/login?state=not"
+			default-target-url='/' authentication-failure-url="/login?state=fail" />
 		<security:session-management
 			session-authentication-strategy-ref="sas" />
 		<security:logout success-handler-ref="logoutSuccessHandler" />
@@ -153,7 +149,7 @@
 
 	</security:authentication-manager>
 	<bean id="logoutSuccessHandler" class="com.forweaver.intercepter.LogoutSuccessHandler">
-		<constructor-arg value="/login" />
+		<constructor-arg value="/login?state=null" />
 	</bean>
 
 	<bean id="passwordEncoder"

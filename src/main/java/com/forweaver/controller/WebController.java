@@ -52,7 +52,7 @@ public class WebController {
 	public String front(Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(weaver == null)
-			return "redirect:/login";
+			return "redirect:/login?state=null";
 		return "redirect:/"+weaver.getId()+"/project";
 	}
 	
