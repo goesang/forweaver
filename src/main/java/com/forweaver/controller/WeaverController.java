@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Data;
+import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
 import com.forweaver.service.LectureService;
@@ -43,6 +47,8 @@ public class WeaverController {
 	private CodeService codeService;
 	@Autowired 
 	private TagService tagService;
+	@Autowired 
+	private MongoTemplate mongoTemplate;
 
 	@RequestMapping(value = "/login",method = RequestMethod.GET)
 	public String login(@RequestParam("state") String state,Model model) {
@@ -69,17 +75,31 @@ public class WeaverController {
 			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
 			@RequestParam("tags") String tags,
+			@RequestParam("key") String key,
 			@RequestParam("image") MultipartFile image,
 			HttpServletRequest request,Model model) {
+		
+		String aKey =  mongoTemplate.findOne(new Query(Criteria.where("_id").is("hello")), String.class,"key");
+		
+		
 		List<String> tagList = tagService.stringToTagList(tags);
 
-		if(!tagService.isPublicTags(tagList))
-			return "/weaver/join";
+		if(!tagService.isPublicTags(tagList)){
+			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
+			model.addAttribute("url", "/join");
+			return "/alert";
+		}
 
+		if(key == null || key.length() < 1 || !key.equals(aKey)){
+			model.addAttribute("say", "인증키를 잘못 입력하셨습니다!");
+			model.addAttribute("url", "/join");
+			return "/alert";
+		}
+		
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
 				say.length()>50 || studentID.length()>30 || 
 				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
-			model.addAttribute("say", "잘못 입력하셨습니다!.");
+			model.addAttribute("say", "잘못 입력하셨습니다!");
 			model.addAttribute("url", "/join");
 			return "/alert";
 		}
