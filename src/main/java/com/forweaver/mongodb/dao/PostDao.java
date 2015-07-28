@@ -58,7 +58,7 @@ public class PostDao {
 	 * @param sort
 	 * @return
 	 */
-	public long countPosts(List<String> tags, String search, Weaver writer, String sort) {
+	public long countPostsAsAdmin(List<String> tags, String search, Weaver writer, String sort) {
 		Criteria criteria = new Criteria();
 
 		if (search != null)
@@ -84,8 +84,8 @@ public class PostDao {
 	 * @param size
 	 * @return
 	 */
-	public List<Post> getPosts(List<String> tags, String search, Weaver writer, String sort,
-			int page, int size,boolean limit) {
+	public List<Post> getPostsAsAdmin(List<String> tags, String search, Weaver writer, String sort,
+			int page, int size) {
 		Criteria criteria = new Criteria();
 
 		if (search != null)
@@ -97,15 +97,13 @@ public class PostDao {
 		if (writer != null)
 			criteria.and("writer").is(writer);
 
-		if(limit)
-			this.filter(criteria, sort);
+		this.filter(criteria, sort);
 
 		Query query = new Query(criteria);
 
-		if(limit){
-			query.with(new PageRequest(page - 1, size));
-			this.sorting(query, sort);
-		}
+		query.with(new PageRequest(page - 1, size));
+		this.sorting(query, sort);
+
 		return mongoTemplate.find(query, Post.class);
 	}
 
@@ -179,7 +177,7 @@ public class PostDao {
 	 * @param sort
 	 * @return
 	 */
-	public long countPostsWithPrivateTags(List<String> privateAndMassageTags, String search, Weaver writer,String sort) {
+	public long countPostsAsPrivateTags(List<String> privateAndMassageTags, String search, Weaver writer,String sort) {
 		Criteria criteria = new Criteria();
 
 		criteria.and("kind").is(2).and("tags")
@@ -206,7 +204,7 @@ public class PostDao {
 	 * @param size
 	 * @return
 	 */
-	public List<Post> getPostsWithPrivateTags(List<String> privateAndMassageTags, String search, Weaver writer,
+	public List<Post> getPostsAsPrivateTags(List<String> privateAndMassageTags, String search, Weaver writer,
 			String sort, int page, int size) {
 
 		Criteria criteria = new Criteria();
@@ -238,7 +236,7 @@ public class PostDao {
 	 * @param sort
 	 * @return
 	 */
-	public long countPostsWithMassageTag(String massageTag, String search, Weaver writer,
+	public long countPostsAsMassageTag(String massageTag, String search, Weaver writer,
 			boolean my, String sort) {
 		Criteria criteria;
 		if (my) // 유저가 test1라면 $test1 하나만 들어왔을때
@@ -273,7 +271,7 @@ public class PostDao {
 	 * @param size
 	 * @return
 	 */
-	public List<Post> getPostsWithMassageTag(
+	public List<Post> getPostsAsMassageTag(
 			String massageTag, String search,Weaver writer, 
 			boolean my, String sort, int page, int size) {
 		Criteria criteria;
@@ -391,11 +389,11 @@ public class PostDao {
 	 * @param sort
 	 * @return
 	 */
-	public long countPostsWithWriter(
+	public long countPostsAsWriter(
 			List<String> publicTags, List<String> loginWeaverprivateAndMassageTags,
 			Weaver writer, Weaver loginWeaver, String search, String sort) {
 		Criteria criteria = new Criteria();
-		
+
 		criteria.orOperator(
 				Criteria.where("kind").is(1).and("writer").is(writer),
 				Criteria.where("tags").in(loginWeaverprivateAndMassageTags)
@@ -425,7 +423,7 @@ public class PostDao {
 	 * @param size
 	 * @return
 	 */
-	public List<Post> getPostsWithWriter(
+	public List<Post> getPostsAsWriter(
 			List<String> publicTags, List<String> loginWeaverprivateAndMassageTags,
 			Weaver writer, Weaver loginWeaver, String search, String sort,
 			int page, int size) {
@@ -463,13 +461,13 @@ public class PostDao {
 	public long countMyPosts(List<String> publicTags,List<String> privateAndMassageTags, Weaver writer, 
 			String search, String sort) {
 		Criteria criteria = new Criteria();
-		
+
 		if(privateAndMassageTags != null)
-		criteria.orOperator(Criteria.where("writer").is(writer).and("kind").ne(3),
-				Criteria.where("tags").in(privateAndMassageTags));
+			criteria.orOperator(Criteria.where("writer").is(writer).and("kind").ne(3),
+					Criteria.where("tags").in(privateAndMassageTags));
 		else
 			criteria.orOperator(Criteria.where("writer").is(writer).and("kind").ne(3));
-		
+
 		if (search != null)
 			criteria.andOperator(new Criteria().orOperator(
 					Criteria.where("title").regex(search),
@@ -498,8 +496,8 @@ public class PostDao {
 		Criteria criteria = new Criteria();
 
 		if(privateAndMassageTags != null)
-		criteria.orOperator(Criteria.where("writer").is(writer).and("kind").ne(3),
-				Criteria.where("tags").in(privateAndMassageTags));
+			criteria.orOperator(Criteria.where("writer").is(writer).and("kind").ne(3),
+					Criteria.where("tags").in(privateAndMassageTags));
 		else
 			criteria.orOperator(Criteria.where("writer").is(writer).and("kind").ne(3));
 		if (search != null)

@@ -19,11 +19,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * created 생성일
  * recentRePostDate 최근 답변일
  * isNotice 시스템에서 자동으로 생성하는 알림 글 여부
+ * isWiki 위키인지 여부
  * writer 글쓴이
  * push 추천수
  * rePostCount 답변수
  * tags 태그들
  * datas 자료들
+ * diffs 바뀐 정보들
  *</pre>
  */
 @Document
@@ -39,6 +41,7 @@ public class Post implements Serializable {
 	private Date created;
 	private Date recentRePostDate;
 	private boolean isNotice;
+	private boolean isWiki;
 	@DBRef
 	private Weaver writer;
 	private int push;
@@ -191,14 +194,22 @@ public class Post implements Serializable {
 				this.tags.remove(i);
 		}
 	}
+   
+	public boolean isWiki() {
+		return isWiki;
+	}
+
+	public void setWiki(boolean isWiki) {
+		this.isWiki = isWiki;
+	}
 
 	public void addData(Data data){
 		this.datas.add(data);
 	}
 	
-	public void deleteData(String name){
+	public void deleteData(String id){
 		for(int i = 0 ; i< this.datas.size() ; i++){
-			if(this.datas.get(i).getName().equals(name)){
+			if(this.datas.get(i).getId().equals(id)){
 				this.datas.remove(i);
 				return;
 			}
@@ -206,9 +217,9 @@ public class Post implements Serializable {
 		
 	}
 	
-	public Data getData(String dataName){
+	public Data getData(String id){
 		for(Data data:this.datas)
-			if(data.getName().equals(dataName))
+			if(data.getId().equals(id))
 				return data;
 		return null;
 	}

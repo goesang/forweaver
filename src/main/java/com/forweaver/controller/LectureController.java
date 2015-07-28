@@ -431,7 +431,7 @@ public class LectureController {
 		if(waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& lecture.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, waitingWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
+			postService.delete(waitingWeaver,postService.get(waitJoin.getPostID()));	
 			lecture.addJoinWeaver(waitingWeaver); //강의 목록에 추가
 			waitingWeaver.addPass(pass);
 			weaverService.update(waitingWeaver);
@@ -453,7 +453,7 @@ public class LectureController {
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
 				&& !lecture.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, currentWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), lecture.getCreator());	
+			postService.delete(lecture.getCreator(),postService.get(waitJoin.getPostID()));	
 			lecture.addJoinWeaver(currentWeaver); //강의 목록에 추가
 			currentWeaver.addPass(pass);
 			weaverService.update(currentWeaver);
@@ -486,7 +486,7 @@ public class LectureController {
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
 				&& lecture.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, currentWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
+			postService.delete(waitingWeaver,postService.get(waitJoin.getPostID()));	
 			Post post = new Post(currentWeaver,  //관리자가 가입자에게 보내는 메세지
 					"관리자 "+lecture.getCreatorName()+"님의 강의명:"+
 					lectureName+
@@ -502,7 +502,7 @@ public class LectureController {
 				&& waitJoinService.isOkJoin(waitJoin, lecture.getCreatorName(), currentWeaver)
 				&& !lecture.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, lecture, currentWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), lecture.getCreator());	
+			postService.delete(lecture.getCreator(),postService.get(waitJoin.getPostID()));	
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 강의명:"+
 					"<a href='/lecture/"+lectureName+"'>"+

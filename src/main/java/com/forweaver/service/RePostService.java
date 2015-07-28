@@ -88,6 +88,26 @@ public class RePostService {
 		return true;
 	}
 
+	/** 댓글을 전부 삭제함.
+	 * @param rePost
+	 * @param reply
+	 * @return
+	 */
+	public boolean deleteAllReply(Weaver currentWeaver,Weaver weaver) {
+
+		if(weaver == null || currentWeaver == null)
+			return false;
+
+		if(currentWeaver.isAdmin() || weaver.equals(currentWeaver)){
+			for(RePost rePost:rePostDao.getsAsReply(weaver)){
+				rePost.deleteAllReply(weaver);
+				rePostDao.update(rePost);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	/** 답변들을 가져옴
 	 * @param ID
 	 * @param kind
@@ -97,10 +117,16 @@ public class RePostService {
 	public List<RePost> gets(int ID,int kind,String sort) {
 		return rePostDao.gets(ID,kind,sort);
 	}
+	
+	public List<RePost> gets(Weaver weaver) {
+		return rePostDao.gets(weaver);
+	}
 
 	public RePost get(int rePostID) {
 		return rePostDao.get(rePostID);
 	}
+	
+
 
 	/** 답변을 추천하면 캐시에 저장하고 24시간 제한을 둠.
 	 * @param rePost
@@ -160,13 +186,13 @@ public class RePostService {
 
 			post.rePostCountDown();
 			postDao.update(post);
-			rePostDao.delete(rePost);
+			this.delete(rePost);
 			return true;
 		}
 		return false;
 	}
 
-	/** 코드에 단 댓글을 삭제할 때
+	/** 코드에 단 답변을 삭제할 때
 	 * @param code
 	 * @param rePost
 	 * @param weaver
@@ -181,10 +207,22 @@ public class RePostService {
 
 			code.rePostCountDown();
 			codeDao.update(code);
-			rePostDao.delete(rePost);
+			this.delete(rePost);
 			return true;
 		}
 		return false;
+	}
+	
+
+	/** 그냥 답변을 삭제함.
+	 * @param rePost
+	 */
+	public void delete(RePost rePost){
+		
+		for(Data data:rePost.getDatas())
+			dataDao.delete(data);
+		
+		rePostDao.delete(rePost);
 	}
 
 }

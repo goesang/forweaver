@@ -39,7 +39,12 @@
 			access="isAuthenticated()" />
 
 		<security:intercept-url pattern="/join" access="isAnonymous()" />
-
+	
+		<security:intercept-url pattern="/del"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/edit"
+			access="isAuthenticated()" />
+			
 		<security:intercept-url pattern="/check"
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/"
@@ -124,7 +129,6 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/*/sort:*/page:*"
 			access="isAuthenticated()" />
-
 
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />

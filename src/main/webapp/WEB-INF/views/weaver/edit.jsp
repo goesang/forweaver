@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
+<title>Forweaver : 회원 정보 수정</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
@@ -16,9 +17,8 @@ function checkWeaver(){
 		return false;
 	}
 
-			
 	$("form:first").append($("input[name='tags']"));
-	return check;
+	return true;
 }
 
 $(document).ready(function() {
@@ -41,11 +41,14 @@ $(document).ready(function() {
 
 <div class="container">
 <%@ include file="/WEB-INF/common/nav.jsp"%>
-	
-			<div id="signupform" class="well-white">
-				<form onsubmit="return checkWeaver()"  enctype="multipart/form-data" class="form-horizontal" action="/${weaver.id}/edit" method="POST">
-					<fieldset >
-						<legend><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;정보수정</legend>
+<div class="row">
+	<div class="span12">
+				<ul class="nav nav-tabs">
+					<li class="active" id="age-desc"><a href="/edit">정보수정</a></li>
+					<li id="age-desc"><a href="/del">탈퇴</a></li>
+				</ul>
+	</div>
+				<form onsubmit="return checkWeaver()"  enctype="multipart/form-data" class="form-horizontal" action="/edit" method="POST">
 						<div class="span6">
 						
 						<div title ="비밀번호를 변경하시려면 여기에 먼저 기존 비밀번호를 입력하세요!" class="control-group">
@@ -109,9 +112,10 @@ $(document).ready(function() {
 							<button type="submit" class="btn btn-block btn-inverse"><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;수정하기</button>
 						</div>
 						</div>
-					</fieldset>
 				</form>
 		</div>
+		<br><br>
+		
 				<%@ include file="/WEB-INF/common/footer.jsp"%>
 	</div>
 </body>

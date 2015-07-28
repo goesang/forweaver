@@ -215,7 +215,7 @@ public class LectureService {
 	 * @param sort
 	 * @return
 	 */
-	public long countLecturesWithWeaver(Weaver weaver,List<String> tags,String sort) {
+	public long countLecturesAsWeaver(Weaver weaver,List<String> tags,String sort) {
 		// TODO Auto-generated method stub
 		if(sort.equals("join"))
 			return lectureDao.countLectures(weaver.getJoinLectures(), tags);
@@ -232,7 +232,7 @@ public class LectureService {
 	 * @param size
 	 * @return
 	 */
-	public List<Lecture> getLecturesWithWeaver(Weaver currentWeaver,Weaver weaver,List<String> tags,String sort,int page,int size){
+	public List<Lecture> getLecturesAsWeaver(Weaver currentWeaver,Weaver weaver,List<String> tags,String sort,int page,int size){
 		List<Lecture> lectures = new ArrayList<Lecture>();
 		
 		if(sort.equals("teach"))		

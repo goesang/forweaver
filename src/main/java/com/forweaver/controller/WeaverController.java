@@ -2,6 +2,7 @@ package com.forweaver.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -21,13 +22,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Post;
+import com.forweaver.domain.RePost;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
+import com.forweaver.service.DataService;
 import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
+import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
@@ -40,11 +45,15 @@ public class WeaverController {
 	@Autowired
 	private PostService postService;
 	@Autowired
+	private RePostService rePostService;
+	@Autowired
 	private ProjectService projectService;
 	@Autowired
 	private LectureService lectureService;
 	@Autowired
 	private CodeService codeService;
+	@Autowired
+	private DataService dataService;
 	@Autowired 
 	private TagService tagService;
 	@Autowired 
@@ -52,13 +61,13 @@ public class WeaverController {
 
 	@RequestMapping(value = "/login",method = RequestMethod.GET)
 	public String login(@RequestParam("state") String state,Model model) {
-		
+
 		if("fail".equals(state))
 			model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
-		
+
 		if("not".equals(state))
 			model.addAttribute("script", "alert('서비스를 이용하시려면 로그인부터 해주세요!')");
-		
+
 		return "/weaver/login";
 	}
 
@@ -78,10 +87,10 @@ public class WeaverController {
 			@RequestParam("key") String key,
 			@RequestParam("image") MultipartFile image,
 			HttpServletRequest request,Model model) {
-		
+
 		String aKey =  mongoTemplate.findOne(new Query(Criteria.where("_id").is("hello")), String.class,"key");
-		
-		
+
+
 		List<String> tagList = tagService.stringToTagList(tags);
 
 		if(!tagService.isPublicTags(tagList)){
@@ -90,12 +99,12 @@ public class WeaverController {
 			return "/alert";
 		}
 
-		if(key == null || key.length() < 1 || !key.equals(aKey)){
-			model.addAttribute("say", "인증키를 잘못 입력하셨습니다!");
-			model.addAttribute("url", "/join");
-			return "/alert";
-		}
-		
+		//if(key == null || key.length() < 1 || !key.equals(aKey)){
+		//	model.addAttribute("say", "인증키를 잘못 입력하셨습니다!");
+		//	model.addAttribute("url", "/join");
+		//	return "/alert";
+		//}
+
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
 				say.length()>50 || studentID.length()>30 || 
 				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
@@ -257,8 +266,8 @@ public class WeaverController {
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("lectures", lectureService.getLecturesWithWeaver(currentWeaver, weaver, null, sort, pageNum, size));
-		model.addAttribute("lectureCount", lectureService.countLecturesWithWeaver(weaver, null, sort));
+		model.addAttribute("lectures", lectureService.getLecturesAsWeaver(currentWeaver, weaver, null, sort, pageNum, size));
+		model.addAttribute("lectureCount", lectureService.countLecturesAsWeaver(weaver, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/"+id+"/lecture/sort:" + sort + "/page:");
@@ -395,9 +404,9 @@ public class WeaverController {
 
 		model.addAttribute("weaver", weaver);
 		model.addAttribute("lectures", lectureService
-				.getLecturesWithWeaver(currentWeaver, weaver, tags, sort, pageNum, size));
+				.getLecturesAsWeaver(currentWeaver, weaver, tags, sort, pageNum, size));
 		model.addAttribute("lectureCount", lectureService
-				.countLecturesWithWeaver(weaver, tags, sort));
+				.countLecturesAsWeaver(weaver, tags, sort));
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", size);
@@ -482,17 +491,17 @@ public class WeaverController {
 	}
 
 
-	@RequestMapping(value = "/{id}/edit")
-	public String editWeaver(@PathVariable("id") String id,Model model) {
+	@RequestMapping(value = "/edit")
+	public String editWeaver(Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-		if (weaver == null || !weaver.getId().equals(id)) // 본인이 아닐 경우
+		if (weaver == null) // 로그인하지 않은 경우
 			return "redirect:/";
 		model.addAttribute("weaver", weaver);
 		return "/weaver/edit";
 	}
 
-	@RequestMapping(value = "/{id}/edit", method = RequestMethod.POST)
-	public String editWeaver(@PathVariable("id") String id,
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	public String editWeaver(
 			@RequestParam("password") String password,
 			@RequestParam("newpassword") String newpassword,
 			@RequestParam("tags") String tags,
@@ -501,24 +510,17 @@ public class WeaverController {
 			@RequestParam("image") MultipartFile image,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(tags);
-
+		System.out.println(tags);
 		if(!tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
-			model.addAttribute("url", "/"+id+"/edit");
+			model.addAttribute("url", "/edit");
 			return "/alert";
 		}
 
-
-		if (!weaver.getId().equals(id) ){ // 본인이 아닐때
-			model.addAttribute("say", "권한이 없습니다!");
-			model.addAttribute("url", "/");
-			return "/alert";
-		}
-		
 		weaverService.update(weaver,password,newpassword,tagList,studentID,say,image);
 
 		model.addAttribute("say", "정보를 수정하였습니다!");
-		model.addAttribute("url", "/"+id+"/edit");
+		model.addAttribute("url", "/edit");
 		return "/alert";
 
 	}
@@ -570,6 +572,63 @@ public class WeaverController {
 	public boolean repasswordCheck(@RequestParam("email") String email) {
 		return weaverService.sendRepassword(email);
 	}
+
+
+	@RequestMapping(value = "/del")
+	public String delete() {
+		Weaver weaver = weaverService.getCurrentWeaver();
+
+		if (weaver == null) // 로그인하지 않은 경우
+			return "redirect:/";
+		return "/weaver/del";
+	}
+	
+	@RequestMapping(value = "/del", method = RequestMethod.POST)
+	public String delete(Model model,@RequestParam("password") String password) {
+		Weaver weaver = weaverService.getCurrentWeaver();
+
+		if(!weaverService.validPassword(weaver, password)){
+			model.addAttribute("say", "비밀번호가 일치하지 않습니다!");
+			model.addAttribute("url", "/del");
+			return "/alert";
+		}
+		/*
+		for(String projectName:weaver.getJoinProjects()) // 가입한 프로젝트 모두 탈퇴
+			projectService.deleteWeaver(projectService.get(projectName), weaver, weaver);
+
+		for(String projectName:weaver.getAdminProjects()){ // 개설한 프로젝트 모두 삭제
+			projectService.delete(weaver,projectService.get(projectName));
+			List<String> tags = new ArrayList<String>();
+			tags.add("@"+projectName);
+			for(Post post:postService.getPosts(tags, null, null, "", 1, Integer.MAX_VALUE)){ // 프로젝트 글 모두 삭제
+				postService.delete(post);
+			}
+		}
+
+		for(Data data:dataService.gets(weaver)) // 올린 자료 전부 삭제
+			dataService.delete(data);
+
+		for(Code code:codeService.getMyCodes(weaver, null, null, "", 1, Integer.MAX_VALUE)) // 올린 코드 전부 삭제
+			codeService.delete(weaver, code);
+
+		for(Post post:postService.getPosts(null, "", weaver, "", 1, Integer.MAX_VALUE)){ // 본인이 올린 글 전부 삭제
+			postService.delete(post);
+		}
+
+		for(RePost rePost:rePostService.gets(weaver)){ // 본인이 올린 답변 전부 삭제
+			rePostService.delete(rePost);
+		}
+
+		rePostService.deleteAllReply(weaver, weaver);
+
+		weaverService.delete(weaver);
+		*/
+		model.addAttribute("say", "성공적으로 탈퇴 처리됐습니다!");
+		model.addAttribute("url", "/j_spring_security_logout");
+		return "/alert";
+	}
+
+
 
 
 }

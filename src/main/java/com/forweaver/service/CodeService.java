@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Code;
+import com.forweaver.domain.Data;
+import com.forweaver.domain.RePost;
 import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.CodeDao;
+import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.RePostDao;
 import com.forweaver.util.WebUtil;
 
@@ -30,6 +33,7 @@ import com.forweaver.util.WebUtil;
 public class CodeService {
 
 	@Autowired CodeDao codeDao;
+	@Autowired DataDao dataDao;
 	@Autowired RePostDao rePostDao;
 
 	/** 코드를 추가함.
@@ -217,7 +221,15 @@ public class CodeService {
 			return false;
 
 		if(weaver.isAdmin() || weaver.equals(code.getWriter())){
-			rePostDao.deleteAll(code);
+			
+			for(RePost rePost:rePostDao.gets(code)) { // 관련 답변들을 전부 불러옴
+				
+				for(Data data:rePost.getDatas()) //자료 전부 삭제.
+					dataDao.delete(data);
+				
+				rePostDao.delete(rePost); // 답변 차례대로 삭제
+			}
+			
 			codeDao.delete(code);
 			return true;
 		}

@@ -451,7 +451,7 @@ public class PostController {
 
 	@RequestMapping("/{postID}/delete")
 	public String deletePost(Model model, @PathVariable("postID") int postID) {
-		if(!postService.delete(postService.get(postID),weaverService.getCurrentWeaver())){
+		if(!postService.delete(weaverService.getCurrentWeaver(),postService.get(postID))){
 			model.addAttribute("say", "삭제하지 못하였습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";

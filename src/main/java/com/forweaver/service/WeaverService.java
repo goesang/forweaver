@@ -58,10 +58,10 @@ public class WeaverService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		Weaver weaver = weaverDao.get(id);
-		
+
 		if(weaver == null || weaver.isLeave())
 			return null;
-		
+
 		log.info("================ "+weaver.getId()+"  login   ================");
 		return weaver;
 	}
@@ -160,39 +160,21 @@ public class WeaverService implements UserDetailsService {
 
 	}
 
-	public boolean delete(String password,Weaver weaver) { //위버 삭제
+
+	public boolean delete(Weaver weaver) { //위버 삭제
 		// TODO Auto-generated method stub
 
-		if(weaver == null || password == null || weaver.isAdmin())
+		if(weaver == null)
 			return false;
 
-		if(weaver.getPassword().equals(passwordEncoder.encodePassword(password, null))){
-
-			try {
-				FileUtils.deleteDirectory(new File(gitUtil.getGitPath() + weaver.getId()));
-				weaverDao.delete(weaver);
-			} catch (Exception e) {
-				return false;
-			}
-		}
-		return false;
-	}
-
-	public boolean delete(Weaver adminWeaver,Weaver weaver) { //위버 삭제
-		// TODO Auto-generated method stub
-
-		if(adminWeaver == null || weaver == null || weaver.isAdmin())
+		try {
+			FileUtils.deleteDirectory(new File(gitUtil.getGitPath() + weaver.getId()));
+			weaverDao.delete(weaver);
+		} catch (Exception e) {
 			return false;
-
-		if(adminWeaver.isAdmin()){
-			try {
-				FileUtils.deleteDirectory(new File(gitUtil.getGitPath() + weaver.getId()));
-				weaverDao.delete(weaver);
-			} catch (Exception e) {
-				return false;
-			}
 		}
-		return false;
+
+		return true;
 	}
 
 	public boolean autoLoginWeaver(Weaver weaver, HttpServletRequest request) {

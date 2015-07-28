@@ -326,7 +326,7 @@ public class Weaver implements UserDetails,Serializable {
 		return passNames;
 	}
 
-	public List<String> getPassAll(){
+	public List<String> getAllPass(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(!pass.getJoinName().startsWith("ROLE"))

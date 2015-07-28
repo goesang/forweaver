@@ -247,4 +247,14 @@ public class RePost implements Serializable {
 		return 1;
 	}
 	
+	public void deleteAllReply(Weaver weaver){
+		List<Reply> replys = new ArrayList<Reply>();
+		
+		for(Reply reply:this.replys)
+			if(!reply.getWriter().equals(weaver))
+				replys.add(reply);
+		
+		this.replys = replys;
+	}
+	
 }

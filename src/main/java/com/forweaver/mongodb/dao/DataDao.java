@@ -1,6 +1,8 @@
 package com.forweaver.mongodb.dao;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Data;
+import com.forweaver.domain.Weaver;
 
 /** 자료 관리를 위한 DAO
  *
@@ -36,6 +39,15 @@ public class DataDao {
 	public Data get(String dataID) {
 		Query query = new Query(Criteria.where("_id").is(dataID));
 		return mongoTemplate.findOne(query, Data.class);
+	}
+	
+	/** 위버가 올린 자료를 다 가져옴
+	 * @param weaver
+	 * @return
+	 */
+	public List<Data> gets(Weaver weaver) {
+		Query query = new Query(Criteria.where("weaver.$id").is(weaver.getId()));
+		return mongoTemplate.find(query, Data.class);
 	}
 
 
