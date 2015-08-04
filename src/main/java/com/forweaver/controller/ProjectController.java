@@ -101,7 +101,7 @@ public class ProjectController {
 	public String projectsWithPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
@@ -126,7 +126,7 @@ public class ProjectController {
 			@PathVariable("sort") String sort,Model model) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
@@ -150,7 +150,7 @@ public class ProjectController {
 			@PathVariable("sort") String sort,Model model) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,search,sort, pageNum, size));
@@ -401,7 +401,7 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("page") String page,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tags = new ArrayList<String>();
@@ -429,7 +429,7 @@ public class ProjectController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);	
+		int size = WebUtil.getPageSize(page,0);	
 
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
@@ -607,7 +607,7 @@ public class ProjectController {
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 
 		gitBranchList.remove(commit);

@@ -134,7 +134,7 @@ public class WeaverController {
 	@RequestMapping("/weaver/page:{page}")
 	public String weavers(@PathVariable("page") String page,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		long weaverCount = weaverService.countWeavers();
 		List<Weaver> weavers = weaverService.getWeavers(pageNum, size);
@@ -162,7 +162,7 @@ public class WeaverController {
 			return "redirect:/weaver/page:1";
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		List<Weaver> weavers= weaverService.getWeavers(tagList,pageNum,size);
 		long weaverCount = weaverService.countWeavers(tagList);
@@ -191,7 +191,7 @@ public class WeaverController {
 			@PathVariable("page") String page,
 			@PathVariable("sort") String sort, Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		Weaver weaver = weaverService.get(id);
 
 		if (weaver == null || weaver.isLeave())
@@ -218,7 +218,7 @@ public class WeaverController {
 			@PathVariable("page") String page, Model model) {
 		Weaver weaver = weaverService.get(id);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
@@ -239,7 +239,7 @@ public class WeaverController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver weaver = weaverService.get(id);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		if (weaver == null || weaver.isLeave())
 			return "redirect:/";
@@ -260,7 +260,7 @@ public class WeaverController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Weaver weaver = weaverService.get(id);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		if (weaver == null || weaver.isLeave()) 
 			return "redirect:/";
@@ -291,7 +291,7 @@ public class WeaverController {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver weaver = weaverService.get(id);
 
@@ -325,7 +325,7 @@ public class WeaverController {
 		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver weaver = weaverService.get(id);
 
@@ -357,7 +357,7 @@ public class WeaverController {
 		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 
 		Weaver weaver = weaverService.get(id);
@@ -390,7 +390,7 @@ public class WeaverController {
 		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver weaver = weaverService.get(id);
 
@@ -429,7 +429,7 @@ public class WeaverController {
 			@PathVariable("page") String page, Model model) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		Weaver weaver = weaverService.get(id);
 
 		if (weaver == null || weaver.isLeave())
@@ -465,7 +465,7 @@ public class WeaverController {
 			@PathVariable("page") String page, Model model) {
 		List<String> tags = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		Weaver weaver = weaverService.get(id);
 
 		if (weaver == null || weaver.isLeave())

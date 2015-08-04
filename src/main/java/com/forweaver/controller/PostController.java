@@ -81,7 +81,7 @@ public class PostController {
 	public String page(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
@@ -108,7 +108,7 @@ public class PostController {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
@@ -137,7 +137,7 @@ public class PostController {
 			@PathVariable("page") String page,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 

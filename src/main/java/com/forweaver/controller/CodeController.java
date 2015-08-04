@@ -58,7 +58,7 @@ public class CodeController {
 	public String page(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,5);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		
 		model.addAttribute("codes", 
@@ -84,7 +84,7 @@ public class CodeController {
 		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,5);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		if(!tagService.validateTag(tags,currentWeaver)){
@@ -122,7 +122,7 @@ public class CodeController {
 		}
 		
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,5);
 
 		model.addAttribute("codes", 
 				codeService.getCodes(currentWeaver,tags, search, sort, pageNum, size));

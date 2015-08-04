@@ -65,7 +65,7 @@ public class LectureController {
 	@RequestMapping("/page:{page}")
 	public String page(@PathVariable("page") String page,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, null, null, pageNum, size));
@@ -89,7 +89,7 @@ public class LectureController {
 	
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, tagList, null, pageNum, size));
@@ -111,7 +111,7 @@ public class LectureController {
 			@PathVariable("page") String page,Model model) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("lectures", lectureService.getLectures(currentWeaver,tagList,search,pageNum, size));
@@ -154,7 +154,7 @@ public class LectureController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		Lecture lecture = lectureService.get(lectureName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -185,7 +185,7 @@ public class LectureController {
 			Model model){
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		Lecture lecture = lectureService.get(lectureName);
 		List<String> tagList = tagService.stringToTagList(tagNames);

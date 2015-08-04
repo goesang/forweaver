@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 import com.forweaver.util.WebUtil;
 
@@ -216,6 +219,22 @@ public class Code implements Serializable  {
 		this.url = url;
 	}
 
+	public String getFirstCode(){
+		for(SimpleCode code:this.codes)
+			if( WebUtil.isCodeName(code.getFileName()))
+				if(WebUtil.nth(code.getContent(), "\n", 15) == -1)
+					return code.getContent();
+				else
+					return code.getContent().substring(0,WebUtil.nth(code.getContent(), "\n", 15));
+		
+		return "";
+	}
 	
+	public String getFirstCodeName(){
+		for(SimpleCode code:this.codes)
+			if( WebUtil.isCodeName(code.getFileName()))
+				return code.getFileName();
+		return "";
+	}
 	
 }

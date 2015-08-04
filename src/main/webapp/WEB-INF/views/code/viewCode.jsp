@@ -108,7 +108,7 @@
 								href="/code/tags:<c:forEach items='${code.tags}' var='tag'>${tag},</c:forEach>">
 									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 							</a></td>
-							<c:if test="${code.url != null}">
+							<c:if test='${code.url != null && code.url !=""}'>
 							<td class="td-button none-top-border" rowspan="2"><a
 								href="${code.url}"> <span
 									class="span-button"> <i class=" fa fa-external-link-square"></i>
@@ -152,7 +152,7 @@
 						</tr>
 						<c:forEach items="${code.codes}" var="simpleCode" varStatus="status">
 							<tr>
-								<td colspan="5"><span
+								<td colspan="6"><span
 									onclick="javascript:hideAndShowSourceCode(${status.count})"
 									class="function-button function-file"> <i
 										class='icon-file icon-white'></i> ${simpleCode.fileName}
@@ -166,7 +166,7 @@
 							
 							<tr>
 								<td id="td-code-${status.count}" class="well-white " style="<c:if test="${status.count > 5 && !status.last}" >display:none;</c:if> padding-top: 20px; max-width: 480px;"
-									colspan="5">
+									colspan="6">
 									
 									<c:if test="${!simpleCode.fileName.endsWith('.md')}">
 									

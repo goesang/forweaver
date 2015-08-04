@@ -5,6 +5,10 @@
 <title>Forweaver : 공유해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/spin.min.js"></script>
+<%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
+<style>
+.syntaxhighlighter{overflow:hidden;}
+</style>
 </head>
 <body>
 	<script type="text/javascript">
@@ -147,8 +151,15 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+				        
+				        
+			 <c:forEach	items="${codes}" var="code" varStatus="status">	
+				 $("#code-${status.count}").addClass("brush: "+extensionSeach('${code.getFirstCodeName()}')+";");
+			 </c:forEach>
 		});
 
+		SyntaxHighlighter.all();
+		
 		function fileUploadChange(fileUploader){
 			var fileName = $(fileUploader).val();	
 			if(fileName !="" && !isImage(fileName))
@@ -305,7 +316,7 @@
 
 				<table id="post-table" class="table table-hover">
 					<tbody>
-						<c:forEach items="${codes}" var="code">
+						<c:forEach items="${codes}" var="code" varStatus="status">
 							<tr>
 								<td class="td-post-writer-img" rowspan="2"><a href="/${code.writerName}"><img
 									src="${code.getImgSrc()}"></a></td>
@@ -331,6 +342,12 @@
 										var="tag">
 										<span class="tag-name">${tag}</span>
 									</c:forEach></td>
+							</tr>
+							<tr><td style="padding-top: 20px; max-width: 480px;" class="none-top-border"colspan="5">
+							<a href="/code/${code.codeID}">
+							<pre id="code-${status.count}">${cov:htmlEscape(code.getFirstCode())}</pre>
+							</a>
+							 </td>
 							</tr>
 						</c:forEach>
 
