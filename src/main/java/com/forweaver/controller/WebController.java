@@ -2,6 +2,7 @@ package com.forweaver.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +44,8 @@ public class WebController {
 	public void error400() {}
 
 	@RequestMapping("/error404")
-	public void error404() {}
+	public void error404() {
+	}
 
 	@RequestMapping("/errorUserNull")
 	public void errorUserNull() {}

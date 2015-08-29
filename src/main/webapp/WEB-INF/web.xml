@@ -86,6 +86,7 @@
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
+		<url-pattern>/m/*</url-pattern>
 	</servlet-mapping>
    <servlet>
      <servlet-name>GitServlet</servlet-name>

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver : ${weaver.getId()}님의 커뮤니티</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>

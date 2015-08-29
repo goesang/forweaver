@@ -36,7 +36,7 @@
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 							
-								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
+								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;마이페이지</a></li>
 								<li><a href='/edit' ><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
@@ -106,6 +106,7 @@
 						});
 					
 					$('#tags-input').tagsinput('focus');
+					
 					</script>
 				</div>
 			</div>

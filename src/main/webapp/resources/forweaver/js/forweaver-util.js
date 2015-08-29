@@ -1,5 +1,20 @@
 
 var editorMode = false; 
+
+function IndexOf(Val, Str, x) {
+	if (x <= (Str.split(Val).length - 1)) {
+		Ot = Str.indexOf(Val);
+		if (x > 1) {
+			for (var i = 1; i < x; i++) {
+				var Ot = Str.indexOf(Val, Ot + 1)
+			}
+		}
+		return Ot;
+	} else {
+		return 0
+	}
+}
+
 function replaceAll(str, searchStr, replaceStr) {
 
     return str.split(searchStr).join(replaceStr);
@@ -176,8 +191,11 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/code")+5)+'/';
 	else if(url.indexOf("/lecture") != -1)
 		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
-	else	
-		url = "/community/";
+	else
+		if(url.indexOf("/m/") != -1 )
+			url = url.substring(0,IndexOf("/",url,5))+"/";
+		else
+			url = url.substring(0,IndexOf("/",url,4))+"/";
 	
 	if(tagArrayString.length == 0){
 		window.location = url;

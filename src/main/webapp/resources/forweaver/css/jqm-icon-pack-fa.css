@@ -633,11 +633,11 @@
 	content: "\f02c"
 }
 
-.ui-fa fa-university:before {
+.ui-icon-book:before {
 	content: "\f02d"
 }
 
-.ui-fa fa-universitymark:before {
+.ui-icon-bookmark:before {
 	content: "\f02e"
 }
 
@@ -1060,7 +1060,7 @@
 	content: "\f096"
 }
 
-.ui-fa fa-universitymark-empty:before {
+.ui-icon-bookmark-empty:before {
 	content: "\f097"
 }
 

@@ -143,7 +143,6 @@ public class GitService {
 	public GitInfo getGitInfo(String parentDirctoryName,
 			String repositoryName,String branchName){
 		gitUtil.Init(parentDirctoryName,repositoryName);	
-		System.out.println("dddddddddddddddddddddddd");
 		return gitUtil.getGitInfo(branchName);
 	}
 

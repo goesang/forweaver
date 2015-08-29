@@ -4,13 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver : ${weaver.getId()}님의 프로젝트</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
-<style>
-tr:first-child>td {
-	border-top: none !important;
-}
-</style>
 </head>
 <body>
 	<script type="text/javascript">	

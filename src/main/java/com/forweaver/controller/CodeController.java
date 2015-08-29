@@ -198,7 +198,7 @@ public class CodeController {
 			HttpServletRequest request,HttpServletResponse res) throws IOException {
 		Code code = codeService.get(codeID,false);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
-		String filePath = uri.substring(6+(""+codeID).length());		
+		String filePath = uri.substring(uri.indexOf("/code/")+6+(""+codeID).length());		
 		SimpleCode simpleCode = code.getSimpleCode(filePath);
 
 		if (simpleCode == null) {

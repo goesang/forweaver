@@ -10,6 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.forweaver.util.WebUtil;
+
 /**<pre> 글 정보를 담는 클래스. 
  * postID 글 아이디
  * title 글 제목
@@ -19,7 +21,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * created 생성일
  * recentRePostDate 최근 답변일
  * isNotice 시스템에서 자동으로 생성하는 알림 글 여부
- * isWiki 위키인지 여부
  * writer 글쓴이
  * push 추천수
  * rePostCount 답변수
@@ -41,7 +42,6 @@ public class Post implements Serializable {
 	private Date created;
 	private Date recentRePostDate;
 	private boolean isNotice;
-	private boolean isWiki;
 	@DBRef
 	private Weaver writer;
 	private int push;
@@ -194,14 +194,6 @@ public class Post implements Serializable {
 				this.tags.remove(i);
 		}
 	}
-   
-	public boolean isWiki() {
-		return isWiki;
-	}
-
-	public void setWiki(boolean isWiki) {
-		this.isWiki = isWiki;
-	}
 
 	public void addData(Data data){
 		this.datas.add(data);
@@ -248,5 +240,12 @@ public class Post implements Serializable {
 				return 3;
 		
 		return 1;
+	}
+	
+	public String getFirstImageURL(){
+		for(Data data:this.datas)
+			if(WebUtil.isImageName(data.getName()))
+				return "/data/"+data.getId()+"/"+data.getName();
+		return "";
 	}
 }

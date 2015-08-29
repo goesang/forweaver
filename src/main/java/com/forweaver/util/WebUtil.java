@@ -29,7 +29,7 @@ import com.github.rjeschke.txtmark.Processor;
  */
 public class WebUtil {
 
-	
+
 	/** 압축파일을 열었을 때 모든 파일들이 한 디렉토리에 담겨있는지 검사함.
 	 * @param file
 	 * @return
@@ -222,12 +222,16 @@ public class WebUtil {
 	 * @return html화된 문자열.
 	 */
 	public static String markDownEncoder(String str){
+
 		str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<$2>$4"); // 자동 링크 추가
-		str = Processor.process(str, true).replaceAll("\n", "</p><p>");
+		try{
+			str = Processor.process(str, true).replaceAll("\n", "</p><p>");
+		}catch(Exception e){}	
 		if(str.contains("&lt;iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/")){// 유투브 기본 동영상 태그는 허용함.
 			str = str.replaceAll("&lt;iframe width", "<iframe width");
 			str = str.replaceAll("allowfullscreen>&lt;/iframe>", "allowfullscreen></iframe>");
 		}
+
 		return str;
 	}
 

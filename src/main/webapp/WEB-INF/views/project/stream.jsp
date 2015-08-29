@@ -240,7 +240,7 @@ $(document).ready(function() {
 							.classed("hover", true)
 							.attr("stroke", strokecolor)
 							.attr("stroke-width", "1px"), 
-							tooltip.html( "<p> <img style='width:32px;' src = '/"+(d.key).replace(".",",")+"/img'> " + d.key + " " + pro + " "+say+"</p>" ).style("visibility", "visible");
+							tooltip.html( "<p> <img style='width:32px;' src = '/"+d.key+"/img'> " + d.key + " " + pro + " "+say+"</p>" ).style("visibility", "visible");
 				
 						})
 						.on("mouseout", function(d, i) {

@@ -37,7 +37,8 @@
 		            }
 		        }
 
-		        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+		        $('#page-pagination').bootstrapPaginator(options);
+			$('a').attr('rel', 'external');
 			
 		});
 	</script>

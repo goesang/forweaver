@@ -2,10 +2,14 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver! : ${code.name}</title>
+<meta property="og:image" content="/resources/forweaver/img/previewCode.png" />
+<meta property="og:title" content="${code.name}" />
+<meta property="og:description" content="${code.content}" />
+
+
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
-
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>
 <script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
