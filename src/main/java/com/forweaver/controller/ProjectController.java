@@ -101,12 +101,12 @@ public class ProjectController {
 	public String projectsWithPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
 				projectService.getProjects(currentWeaver, null, "", sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(null, "", sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,null, "", sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");
@@ -126,12 +126,12 @@ public class ProjectController {
 			@PathVariable("sort") String sort,Model model) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
 				projectService.getProjects(currentWeaver, tagList, null, sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(tagList, null, sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,tagList, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/sort:"+sort+"/page:");
@@ -150,11 +150,11 @@ public class ProjectController {
 			@PathVariable("sort") String sort,Model model) {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", projectService.getProjects(currentWeaver,tagList,search,sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(tagList,search,sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,tagList,search,sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/tags:"+tagNames+"/search:"+search+"/sort:"+sort+"/page:");
@@ -196,9 +196,13 @@ public class ProjectController {
 			@PathVariable("projectName") String projectName) {
 		Project project = projectService.get(creatorName+"/"+projectName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
+		List<String> tags = new ArrayList<String>();
+		tags.add("@"+project.getName());
+		
 		if(projectService.delete(currentWeaver, project))
-			postService.delete(postService.getProjectPosts(project.getName(), null, null, null, null, 0, 0, false));
+			for(Post post:postService.getPosts(tags, null, null, "", 1, Integer.MAX_VALUE)) // 프로젝트에 쓴 글 모두 삭제
+				postService.delete(post);
+			
 		else{
 			model.addAttribute("say", "삭제하지 못하였습니다!!!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
@@ -208,7 +212,7 @@ public class ProjectController {
 		return "redirect:/project/";
 	}
 
-	
+
 	@RequestMapping(value = {"/{creatorName}/{projectName}/data/commit:{commit}/**"})
 	public void data(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -219,16 +223,14 @@ public class ProjectController {
 
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));
-		
+
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
 
-		if (gitFileInfo.getContent() == null) {
-			res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
+		if (gitFileInfo == null) {
 			return;
 		} else {
-			
 			byte[] imgData = gitFileInfo.getData();
-			
+
 			res.reset();
 			res.setContentType("application/octet-stream");
 			String filename = new String(gitFileInfo.getName().getBytes("UTF-8"), "8859_1");
@@ -242,7 +244,7 @@ public class ProjectController {
 		} 
 
 	}
-	
+
 	@RequestMapping(value=
 		{	"/{creatorName}/{projectName}", 
 		"/{creatorName}/{projectName}/browser"}
@@ -271,6 +273,8 @@ public class ProjectController {
 		commit = commit.substring(0, commit.indexOf("/"));
 
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
+
+
 		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			List<GitSimpleFileInfo> gitFileInfoList = 
 					gitService.getGitSimpleFileInfoList(creatorName, projectName,commit,filePath);
@@ -286,14 +290,15 @@ public class ProjectController {
 			model.addAttribute("readme",gitService.getReadme(creatorName, projectName,commit,gitFileInfoList));
 			model.addAttribute("filePath",filePath);
 			model.addAttribute("commit",commit);
-			
+
 			return "/project/browser";
 		}else{ // 파일이라면
 			model.addAttribute("project", project);
 			model.addAttribute("fileName", gitFileInfo.getName());
 			if(!WebUtil.isCodeName(gitFileInfo.getName()))
 				gitFileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
-			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
+			if(gitFileInfo.getContent() != null)
+				model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
 			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
 			model.addAttribute("gitCommitLog", 
@@ -306,7 +311,7 @@ public class ProjectController {
 
 
 	}
-	
+
 	@RequestMapping("/{creatorName}/{projectName}/edit/commit:{commit}/**")
 	public String fileEdit(HttpServletRequest request,@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -323,19 +328,20 @@ public class ProjectController {
 		commit = commit.substring(0, commit.indexOf("/"));
 
 		GitFileInfo gitFileInfo = gitService.getFileInfo(creatorName, projectName, commit, filePath);
-			model.addAttribute("project", project);
-			model.addAttribute("fileName", gitFileInfo.getName());
+		model.addAttribute("project", project);
+		model.addAttribute("fileName", gitFileInfo.getName());
+		if(gitFileInfo.getContent() != null)
 			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
-			model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
-			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-			model.addAttribute("gitCommitLog", 
-					new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
-			model.addAttribute("filePath",filePath);
-			model.addAttribute("commit",commit);
-			
-			return "/project/fileEdit";
+		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
+		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
+		model.addAttribute("gitCommitLog", 
+				new GitSimpleCommitLog(gitFileInfo.getSelectCommitLog()));
+		model.addAttribute("filePath",filePath);
+		model.addAttribute("commit",commit);
+
+		return "/project/fileEdit";
 	}
-	
+
 	@RequestMapping(value="/{creatorName}/{projectName}/file-edit",method = RequestMethod.POST )
 	public String fileEdit(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
@@ -362,10 +368,10 @@ public class ProjectController {
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
-		
+
 		if(!WebUtil.isCodeName(filePath)) //소스코드만 추적 가능함.
 			return "redirect:/project/"+creatorName+"/"+projectName+"/browser/commit:"+commit+"/filepath:"+filePath;
-		
+
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));		
 		GitFileInfo gitFileInfo = gitService.getFileInfoWithBlame(creatorName, projectName, commit, filePath);
@@ -375,7 +381,8 @@ public class ProjectController {
 
 		model.addAttribute("project", project);
 		model.addAttribute("fileName", gitFileInfo.getName());
-		model.addAttribute("fileContent", gitFileInfo.getContent());
+		if(gitFileInfo.getContent() != null)
+			model.addAttribute("fileContent", gitFileInfo.getContent());
 		model.addAttribute("gitLogList", gitFileInfo.getGitLogList());
 		model.addAttribute("gitBlameList", gitFileInfo.getGitBlames());
 		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
@@ -394,15 +401,17 @@ public class ProjectController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("page") String page,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
-
+		int size = WebUtil.getPageSize(page,0);
+		
 		Project project = projectService.get(creatorName+"/"+projectName);
-
+		List<String> tags = new ArrayList<String>();
+		tags.add("@"+project.getName());
+		
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getProjectPosts(creatorName+"/"+projectName, null, null, sort, null, pageNum, size,true));
+				postService.getPosts(tags, null, null, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countProjectPosts(creatorName+"/"+projectName, null, null, sort, null));
+				postService.countPosts(tags, null, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/sort:"+sort+"/page:");
 		return "/project/community";
@@ -420,16 +429,17 @@ public class ProjectController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);	
+		int size = WebUtil.getPageSize(page,0);	
 
 		Project project = projectService.get(creatorName+"/"+projectName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
-
+		tagList.add("@"+project.getName());
+		
 		model.addAttribute("project", project);
 		model.addAttribute("posts", 
-				postService.getProjectPosts(creatorName+"/"+projectName, tagList, null, sort, null, pageNum, size,true));
+				postService.getPosts(tagList, null, null, sort, pageNum, size));
 		model.addAttribute("postCount", 
-				postService.countProjectPosts(creatorName+"/"+projectName, tagList, null, sort, null));
+				postService.countPosts(tagList, null, null, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", 
@@ -597,7 +607,7 @@ public class ProjectController {
 		commit = uri.substring(uri.indexOf("/commit:")+8);
 		commit = commit.substring(0, commit.indexOf("/"));
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		List<String> gitBranchList = gitService.getBranchList(creatorName, projectName);
 
 		gitBranchList.remove(commit);
@@ -758,7 +768,7 @@ public class ProjectController {
 		if(waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, waitingWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
+			postService.delete( waitingWeaver,postService.get(waitJoin.getPostID()));	
 			projectService.addWeaver(project, waitingWeaver);
 			Post post = new Post(waitingWeaver, 
 					"관리자 "+project.getCreatorName()+"님의 승인으로 프로젝트명:"+
@@ -775,7 +785,7 @@ public class ProjectController {
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& !project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), project.getCreator());	
+			postService.delete(project.getCreator(),postService.get(waitJoin.getPostID()));	
 			projectService.addWeaver(project, waitingWeaver);
 
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
@@ -806,7 +816,7 @@ public class ProjectController {
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& project.getCreator().equals(currentWeaver)
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), waitingWeaver);	
+			postService.delete(waitingWeaver,postService.get(waitJoin.getPostID()));	
 			Post post = new Post(currentWeaver,  //관리자가 가입자에게 보내는 메세지
 					"관리자 "+project.getCreatorName()+"님의 프로젝트명:"+
 					creatorName+"/"+projectName+
@@ -822,7 +832,7 @@ public class ProjectController {
 				&& waitJoinService.isOkJoin(waitJoin, project.getCreatorName(), currentWeaver)
 				&& !project.getCreatorName().equals(currentWeaver.getId())
 				&& waitJoinService.deleteWaitJoin(waitJoin, project, currentWeaver)){
-			postService.delete(postService.get(waitJoin.getPostID()), project.getCreator());	
+			postService.delete(project.getCreator(),postService.get(waitJoin.getPostID()));	
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 프로젝트명:"+creatorName+"/"+projectName+
 					"를 가입 초대를 거절하셨습니다.", 
@@ -850,6 +860,19 @@ public class ProjectController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		if(!projectService.uploadFile(project, currentWeaver,branchName, message,path, zip)){
 			model.addAttribute("say", "업로드 실패! 프로젝트에 가입되어 있는지 혹은 압축파일을 다시 확인해주세요!");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
+			return "/alert";
+		}
+		return "redirect:/project/"+creatorName+"/"+projectName;
+	}
+	
+	@RequestMapping(value="/{creatorName}/{projectName}/reset")
+	public String reset(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,Model model) {
+		Project project = projectService.get(creatorName+"/"+projectName);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		if(!projectService.reSetRepository(project, currentWeaver)){
+			model.addAttribute("say", "초기화 실패! 관리자만이 초기화 가능합니다!");
 			model.addAttribute("url", "/project/"+creatorName+"/"+projectName);
 			return "/alert";
 		}
@@ -909,7 +932,7 @@ public class ProjectController {
 
 		return "/project/chat";
 	}
-/*
+	/*
 	@RequestMapping("/{creatorName}/{projectName}/fork") // 포크
 	public String fork(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,Model model){

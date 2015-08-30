@@ -2,7 +2,11 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver! : ${post.title}</title>
+<meta property='og:image' content='<c:if test="${post.getFirstImageURL() == ''}">/resources/forweaver/img/preview.png</c:if>
+										<c:if test="${post.getFirstImageURL() != ''}"> ${post.getFirstImageURL()} </c:if>' />
+<meta property='og:title' content='${post.title}' />
+<meta property='og:description' content='<c:if test="${post.isLong()}">${post.content}</c:if><c:if test="${!post.isLong()}">학생들을 위한 소셜 코딩!</c:if>' />			
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>
@@ -14,53 +18,6 @@
 	var fileCount = 1;
 	var comment = 0;
 	var fileHash = {};
-	function fileUploadChange(fileUploader){
-		var fileName = $(fileUploader).val();	
-		fileName = replaceAll(fileName,"?","_");
-		fileName = replaceAll(fileName,"#","_");
-		fileName = replaceAll(fileName," ","_");
-		$(function (){
-		
-		if(fileName !=""){ // 파일을 업로드하거나 수정함
-			if(fileName.indexOf("C:\\fakepath\\") != -1)
-				fileName = fileName.substring(12);
-			fileHash[fileName] = mongoObjectId();
-			
-			$.ajax({
-			    url: '/data/tmp',
-                type: "POST",
-                contentType: false,
-                processData: false,
-                data: function() {
-                    var data = new FormData();
-                    data.append("objectID", fileHash[fileName]);
-                    data.append("file", fileUploader.files[0]);
-                    return data;
-                }()
-			});	
-			if(filename(fileName))
-			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
-		
-			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-				fileCount++;
-				$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-						  "<div class='input-group'>"+
-						    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-						    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-						    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-							"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-						   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-						  "</div>"+
-						"</div>");
-					}
-		}else{
-			if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
-				
-			$("#file"+fileCount).parent().parent().remove();
-
-				--fileCount;
-		}}});
-	}
 		function showCommentAdd(rePostID){
 			$("#repost-form").hide();
 			$(".comment-form").remove();
@@ -88,19 +45,22 @@
 					$(".file-div").fadeIn();
 					$("#repost-table").hide();
 					$("#myTab").hide();
-					if($("#repost-content").val().length == 0)
-						$("#repost-content").css('height','300px');
+				if($("#repost-content").val().length >= 0)
+						$("#repost-content").css('height','380px');
 			});
+			
 			
 			$("#repost-content").focusout(function(){	
 
+				if($("#repost-content").val().length == 0)
+					$("#repost-content").css('height','auto');
+			
 				if( !this.value ) {
-					$(".file-div").hide();
+
 					$("#repost-table").fadeIn();
 					$("#myTab").fadeIn();
 		      }
-				if($("#repost-content").val().length == 0)
-					$("#repost-content").css('height','auto');
+				
 		});
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
@@ -108,7 +68,7 @@
 					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+						"<input onchange ='fileUploadChange(this,\"#repost-content\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 					  "</div>"+
 					"</div>");
@@ -120,7 +80,7 @@
 			$('#tags-input').tagsinput('add',"${tag}");
 			</c:forEach>
 			move = true;
-				});
+		});
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
@@ -170,11 +130,9 @@
 											<a href="/community/${post.postID}/delete"
 												onclick="return confirm('글을 정말로 삭제하시겠습니까?')"> <span
 												class="function-button">삭제</span></a>
-											<c:if test="${post.isLong()}">
-												<a href="/community/${post.postID}/update"
+											<a href="/community/${post.postID}/update"
 													onclick="return confirm('글을 정말로 수정하시겠습니까?')"> <span
 													class="function-button">수정</span></a>
-											</c:if>
 										</div>
 								</c:if>		
 								</td>
@@ -204,7 +162,7 @@
 
 
 				<!-- 답변에 관련된 테이블 시작-->
-
+				<sec:authorize access="isAuthenticated()">
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/community/${post.postID}/add-repost" method="POST">
 
@@ -215,22 +173,17 @@
 					</div>
 					<div class="span1">
 						<span>
-							<sec:authorize access="isAnonymous()">
-						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
-								<i class="fa fa-times"></i>
-							</button>
-					</sec:authorize>
-					<sec:authorize access="isAuthenticated()">
+				
 						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
 								<i class="fa fa-check"></i>
 							</button>
-					</sec:authorize>
+					
 						</span>
 					</div>
 					
 					<div class="file-div"></div>
 				</form>
-
+			</sec:authorize>
 				<c:if test="${post.rePostCount != 0}">
 
 					<div class="span12"></div>

@@ -144,7 +144,7 @@
 				<ul class="nav nav-tabs" id="myTab">
 					<li id="age-desc"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
-					<li id="active"><a
+					<li id="public"><a
 							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">공개</a></li>
 					<li id="homework"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:homework/page:1">과제</a></li>
@@ -152,7 +152,10 @@
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">비공개</a></li>	
 					<li id="age-asc"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-
+					<sec:authorize access="isAuthenticated()">
+						<li id="my"><a
+							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">가입한 프로젝트</a></li>
+					</sec:authorize>
 				</ul>
 			</div>
 			<div id="search-div" class="span10">
@@ -178,7 +181,7 @@
 						placeholder="프로젝트에 대해 설명해주세요! (최대 50자까지)"></input>
 				</div>
 
-				<div style="margin-left:5px;" class="span2">
+				<div style="margin-left:5px; width:150px" class="span2">
 					<span> 
 					<sec:authorize access="isAuthenticated()">
 					<a id="show-content-button"
@@ -250,7 +253,7 @@
 									</td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
-										<a href="/login"> <span
+										<a href="/login?state=null"> <span
 											class="span-button"><i class="fa fa-hand-o-up"></i>
 												<p class="p-button">가입</p></span>
 										</a>      

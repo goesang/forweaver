@@ -1,9 +1,8 @@
 package com.forweaver.controller;
 
 
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,31 +21,32 @@ public class WebController {
 	private MailUtil mailUtil;
 	@Autowired 
 	private WeaverService weaverService;
-	
+
 	@RequestMapping("intro/forweaver")
 	public void forweaver() {}
-	
+
 	@RequestMapping("intro/community")
 	public void community() {}
-	
+
 	@RequestMapping("intro/project")
 	public void project() {}
-	
+
 	@RequestMapping("intro/code")
 	public void code() {}
-	
+
 	@RequestMapping("intro/membertool")
 	public void membertool() {}
-	
+
 	@RequestMapping("/error500")
 	public void error500() {}
-	
+
 	@RequestMapping("/error400")
 	public void error400() {}
-	
+
 	@RequestMapping("/error404")
-	public void error404() {}
-	
+	public void error404() {
+	}
+
 	@RequestMapping("/errorUserNull")
 	public void errorUserNull() {}
 
@@ -54,38 +54,32 @@ public class WebController {
 	public String front(Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(weaver == null)
-			return "redirect:/login";
+			return "redirect:/login?state=null";
 		return "redirect:/"+weaver.getId()+"/project";
 	}
-	
+
 	@RequestMapping("/contactUs")
 	public void contactUs( ) {
-		
+
 	}
-	
+
 	@RequestMapping(value="/contactUs", method = RequestMethod.POST)
 	public String contactUs(@RequestParam("title") String title,
-			@RequestParam("question") String question,
 			@RequestParam("email") String email,
 			@RequestParam("content") String content,Model model) {
-		if(!question.equals("병점역") && !question.equals("병점") ){
-			model.addAttribute("say", "인증 질문이 틀렸습니다!");
-			model.addAttribute("url", "/contactUs");
-			return "/alert";
-		}
 		
 		if(title.length() == 0 || content.length() == 0 || email.length() == 0){
 			model.addAttribute("say", "잘못 입력하셨습니다!");
 			model.addAttribute("url", "/contactUs");
 			return "/alert";
 		}
-		
-		
-			mailUtil.sendMail("goesanghan@gmail.com", title+" - " +email, content);
-			model.addAttribute("say", "메일을 보냈습니다!");
-			model.addAttribute("url", "/contactUs");
-			return "/alert";
+
+		mailUtil.sendMail("goesanghan@gmail.com", title+" - " +email, content);
+		model.addAttribute("say", "메일을 보냈습니다!");
+		model.addAttribute("url", "/contactUs");
+		return "/alert";
 	}
-	
-		
+
+	@RequestMapping("intro/tutorial/*")
+	public void tutorial() {}
 }

@@ -29,6 +29,7 @@ import com.github.rjeschke.txtmark.Processor;
  */
 public class WebUtil {
 
+
 	/** 압축파일을 열었을 때 모든 파일들이 한 디렉토리에 담겨있는지 검사함.
 	 * @param file
 	 * @return
@@ -163,10 +164,12 @@ public class WebUtil {
 
 	/** page url 부분을 해석하여 페이지 사이즈를 가져오는 메서드.
 	 * @param pageUrl
+	 * @param size
 	 * @return 페이지 사이즈
 	 */
-	public static int getPageSize(String pageUrl){  
-		int size = 15;
+	public static int getPageSize(String pageUrl,int size){  
+		if(size <1)
+			size = 15;
 
 		try{
 			if(pageUrl.contains(",")){
@@ -219,8 +222,17 @@ public class WebUtil {
 	 * @return html화된 문자열.
 	 */
 	public static String markDownEncoder(String str){
-		str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<$2>$4");
-		return Processor.process(str, true).replaceAll("\n", "</p><p>");
+
+		str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<$2>$4"); // 자동 링크 추가
+		try{
+			str = Processor.process(str, true).replaceAll("\n", "</p><p>");
+		}catch(Exception e){}	
+		if(str.contains("&lt;iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/")){// 유투브 기본 동영상 태그는 허용함.
+			str = str.replaceAll("&lt;iframe width", "<iframe width");
+			str = str.replaceAll("allowfullscreen>&lt;/iframe>", "allowfullscreen></iframe>");
+		}
+
+		return str;
 	}
 
 	/**	이전시간과 현재시간과의 차이를 계산하여 지난시간 반환
@@ -287,10 +299,7 @@ public class WebUtil {
 		return str;
 	}
 
-	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
-	 * @param List<String> 파일리스트 문자열
-	 * @return 해당 경로의 파일리스트를 반환
-	 */
+
 	public static int nth(String source, String pattern, int n) {
 
 		int i = 0, pos = 0, tpos = 0;
@@ -311,10 +320,7 @@ public class WebUtil {
 	}
 
 
-	/**	파일 경로 받으면 파일리스트에서 해당 경로를 반환
-	 * @param List<String> 파일리스트 문자열
-	 * @return 해당 경로의 파일리스트를 반환
-	 */
+
 	public static List<String> getFileList(List<String> list, String filePath){
 		List<String> returnList = new ArrayList<String>();
 		int spiltNumber = 0;
@@ -363,12 +369,12 @@ public class WebUtil {
 				String fileName = ze.getName();
 				if (!ze.isDirectory() && isAllowedFileName(fileName)) { 
 					String path = "";
-					
+
 					if(skipDirectory)
 						path = outputFolder + File.separator + fileName.substring(fileName.indexOf("/"));
 					else
 						path = outputFolder + File.separator + fileName;
-					
+
 					File newFile = new File(path);
 
 					new File(newFile.getParent()).mkdirs();
@@ -392,12 +398,12 @@ public class WebUtil {
 			System.out.println(ex.getLocalizedMessage());
 		}
 	}    
-	
+
 	public static byte[] concatenateByteArrays(byte[] a, byte[] b) {
-	    byte[] result = new byte[a.length + b.length]; 
-	    System.arraycopy(a, 0, result, 0, a.length); 
-	    System.arraycopy(b, 0, result, a.length, b.length); 
-	    return result;
+		byte[] result = new byte[a.length + b.length]; 
+		System.arraycopy(a, 0, result, 0, a.length); 
+		System.arraycopy(b, 0, result, a.length, b.length); 
+		return result;
 	} 
-	
+
 }

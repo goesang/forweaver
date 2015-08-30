@@ -58,7 +58,7 @@
 					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li class="active"><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
@@ -78,8 +78,9 @@
 				</div>
 			</div>
 			
+			
+				<div class="span12"><h4>프로젝트 관리</h4></div>
 			<form onsubmit="return checkProject()" action="/project/${project.name}/edit" method="post">
-
 				<div id="project-div" class="span10">
 					<input id ="project-name" class="title span5" value="${project.name}"
 						placeholder="프로젝트명을 입력해주세요!" type="text" readonly="readonly"/> 
@@ -114,7 +115,16 @@
 				</div>
 				<input value="0" id ="category" name="category" type="hidden"/> 	
 			</form>
-
+			
+			<div class="span12">
+					<hr/>
+				</div>
+				
+			<div class="span12"><h4>저장소 관리</h4></div>
+			<div class="span12" style="text-align:center;margin-bottom:40px;">
+			
+			<a onclick="return confirm('정말로 프로젝트를 초기화시킬 생각입니까? 복구 불가능 합니다!')" href="/project/${project.name}/reset" class="btn btn-danger">저장소 초기화</a>
+			</div>
 		</div>
 		<%@ include file="/WEB-INF/common/footer.jsp"%>
 	</div>

@@ -81,7 +81,7 @@ public class PostController {
 	public String page(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
@@ -108,7 +108,7 @@ public class PostController {
 		List<String> tagList = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
@@ -137,7 +137,7 @@ public class PostController {
 			@PathVariable("page") String page,Model model){
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
@@ -261,7 +261,7 @@ public class PostController {
 		RePost rePost = new RePost(post,weaver,content);
 		post.setRecentRePostDate(rePost.getCreated());
 		post.addRePostCount();	
-		postService.update(post, null);
+		postService.update(post,null, null);
 		rePostService.add(rePost,datas);
 
 
@@ -345,12 +345,6 @@ public class PostController {
 			return "/alert";
 		}
 		
-		if(!post.isLong()){
-			model.addAttribute("say", "단문은 수정할 수 없습니다!");
-			model.addAttribute("url", "/community/"+postID+"/");
-			return "/alert";
-		}
-		
 		model.addAttribute("post", post);
 
 		return "/post/updatePost";
@@ -359,15 +353,24 @@ public class PostController {
 	@RequestMapping(value="/{postID}/update", method = RequestMethod.POST)
 	public String update(@PathVariable("postID") int postID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
 
+		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+		ArrayList<Data> datas = new ArrayList<Data>();
+		
 		Post post = postService.get(postID);
 		String tags = request.getParameter("tags");
+		String remove = request.getParameter("remove");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
+		for (MultipartFile file : files.values())
+			if(!file.isEmpty()){
+				String fileID= dataService.getObjectID(file.getOriginalFilename(), weaver);
+				if(!fileID.equals(""))
+					datas.add(new Data(fileID,file,weaver));
+			}
 		
-		if(post == null || tags == null || title == null || content == null || 
-				title.length() < 5 || title.length() > 200|| content.length() < 5 ||
-				!post.getWriter().equals(weaver)){ // 태그가 없을 때
+		if(post == null || tags == null || title == null || title.length() < 5 || title.length() > 200){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
@@ -376,7 +379,7 @@ public class PostController {
 		List<String> tagList = tagService.stringToTagList(tags);
 
 
-		if(!tagService.validateTag(tagList,weaver)){ // 태그에 권한이 없을때
+		if(!tagService.validateTag(tagList,weaver) && !post.getWriter().equals(weaver)){ // 권한이 없을때
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
@@ -384,7 +387,7 @@ public class PostController {
 		post.setTitle(title);
 		post.setContent(content);
 		post.setTags(tagList);
-		postService.update(post,null);
+		postService.update(post,datas,remove.split("@"));
 		
 		return "redirect:/community/"+postID;	
 	}
@@ -410,34 +413,45 @@ public class PostController {
 	@RequestMapping(value="/{postID}/{rePostID}/update", method = RequestMethod.POST)
 	public String update(@PathVariable("postID") int postID, @PathVariable("rePostID") int rePostID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
 
+		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+		ArrayList<Data> datas = new ArrayList<Data>();
 		Post post = postService.get(postID);
 		RePost rePost = rePostService.get(rePostID);
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
-
-		if(post == null || rePost == null || content.length() < 5 ||  !rePost.getWriter().equals(weaver) ||
+		String remove = request.getParameter("remove");
+		
+		if(post == null || rePost == null || content.length() < 5 ||
 				rePost.getOriginalPost().getPostID() != post.getPostID()){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
 		}	
 
-		if(!post.getWriter().equals(weaver) && 
+		if(!rePost.getWriter().equals(weaver) &&
 				!tagService.validateTag(post.getTags(),weaver)){ // 태그에 권한이 없을때
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";
 		}	
 		
+		for (MultipartFile file : files.values())
+			if(!file.isEmpty()){
+				String fileID= dataService.getObjectID(file.getOriginalFilename(), weaver);
+				if(!fileID.equals(""))
+					datas.add(new Data(fileID,file,weaver));
+			}
+		
 		rePost.setContent(content);
-		rePostService.update(rePost,null);
+		rePostService.update(rePost,datas,remove.split("@"));
 
 		return "redirect:/community/"+postID;	
 	}
 
 	@RequestMapping("/{postID}/delete")
 	public String deletePost(Model model, @PathVariable("postID") int postID) {
-		if(!postService.delete(postService.get(postID),weaverService.getCurrentWeaver())){
+		if(!postService.delete(weaverService.getCurrentWeaver(),postService.get(postID))){
 			model.addAttribute("say", "삭제하지 못하였습니다!!!");
 			model.addAttribute("url", "/community/"+postID);
 			return "/alert";

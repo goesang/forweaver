@@ -51,7 +51,7 @@ public class AdminController {
 	public String weaverPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		long weaverCount = weaverService.countWeavers();
 		List<Weaver> weavers = weaverService.getWeavers(pageNum, size);
@@ -69,7 +69,7 @@ public class AdminController {
 	public String codePage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		model.addAttribute("codes", 
 				codeService.getCodes(null, null, null, sort, pageNum, size));
@@ -86,7 +86,7 @@ public class AdminController {
 	public String lecturePage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("lectures", lectureService.getLectures(currentWeaver, null, null, pageNum, size));
@@ -101,12 +101,12 @@ public class AdminController {
 	public String projectPage(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		model.addAttribute("projects", 
 				projectService.getProjects(currentWeaver, null, "", sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(null, "", sort));
+		model.addAttribute("projectCount", projectService.countProjects(currentWeaver,null, "", sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/project/sort:"+sort+"/page:");

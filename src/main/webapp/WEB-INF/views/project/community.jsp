@@ -73,7 +73,7 @@ function checkPost(){
 				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-					"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+					"<input onchange ='fileUploadChange(this,\"#post-content-textarea\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 				  "</div>"+
 				"</div>");
@@ -123,8 +123,8 @@ function checkPost(){
 		            }
 		        }
 			$("#post-content-textarea").focus(function(){	
-				if($("#post-content-textarea").val().length == 0)
-					$("#post-content-textarea").css('height','300px');
+				if($("#post-content-textarea").val().length >= 0)
+					$("#post-content-textarea").css('height','380px');
 			});
 			
 			$("#post-content-textarea").focusout(function(){	
@@ -159,7 +159,7 @@ function checkPost(){
 	                    return data;
 	                }()
 				});	
-				if(filename(fileName))
+				if(isImage(fileName))
 				$("#post-content-textarea").val($("#post-content-textarea").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
 			
 				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
@@ -213,7 +213,7 @@ function checkPost(){
 					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>

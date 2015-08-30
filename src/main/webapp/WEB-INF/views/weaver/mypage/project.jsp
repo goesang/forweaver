@@ -4,13 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver : ${weaver.getId()}님의 프로젝트</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
-<style>
-tr:first-child>td {
-	border-top: none !important;
-}
-</style>
 </head>
 <body>
 	<script type="text/javascript">	
@@ -22,17 +17,16 @@ tr:first-child>td {
 								var tagname = $(this).text();
 								var exist = false;
 								var tagNames = $("#tags-input").val();
-								if (tagNames.length == 2)
-									moveUserPage("/${weaver.getId()}/project/","[\"" + tagname + "\"]","");
 								
+								if (tagNames.length == 0 || tagNames == "")
+									moveUserPage("/${weaver.getId()}/project/",tagname,"");
+									
 								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									moveUserPage("/${weaver.getId()}/project",tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									moveUserPage("/${weaver.getId()}/project/",tagNames+ ","+ tagname+" ","");
 								}
 							});
 					

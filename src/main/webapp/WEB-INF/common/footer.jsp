@@ -32,4 +32,5 @@
 			</ul>
 		</div>
 	</div>
-	<p class="copyright">&copy; Forweaver.com 2015</p>
+	<p class="copyright">&copy; Forweaver.com 2015 / forweaver.com@gmail.com</p>
+

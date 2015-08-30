@@ -33,7 +33,7 @@ public class ProjectDao {
 		mongoTemplate.insert(project);
 	}
 	
-	/** 프로젝트명으로 강의를 가져옴
+	/** 프로젝트명으로 가져옴
 	 * @param projectName
 	 * @return
 	 */

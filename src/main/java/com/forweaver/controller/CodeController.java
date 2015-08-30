@@ -7,7 +7,6 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.Code;
 import com.forweaver.domain.Data;
-import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
 import com.forweaver.domain.SimpleCode;
@@ -60,12 +58,13 @@ public class CodeController {
 	public String page(@PathVariable("page") String page,
 			@PathVariable("sort") String sort,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
-
+		int size = WebUtil.getPageSize(page,5);
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		
 		model.addAttribute("codes", 
-				codeService.getCodes(null, null, null, sort, pageNum, size));
+				codeService.getCodes(currentWeaver, null, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(null, null, null, sort));
+				codeService.countCodes(currentWeaver, null, null, sort));
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
@@ -85,7 +84,7 @@ public class CodeController {
 		List<String> tags = tagService.stringToTagList(tagNames);
 
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,5);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		if(!tagService.validateTag(tags,currentWeaver)){
@@ -93,9 +92,9 @@ public class CodeController {
 		}
 
 		model.addAttribute("codes", 
-				codeService.getCodes(null, tags, null, sort, pageNum, size));
+				codeService.getCodes(currentWeaver, tags, null, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(null,tags, null, sort));
+				codeService.countCodes(currentWeaver,tags, null, sort));
 
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", pageNum);
@@ -116,14 +115,19 @@ public class CodeController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		List<String> tags = tagService.stringToTagList(tagNames);
-
+		
+		Weaver currentWeaver = weaverService.getCurrentWeaver();
+		if(!tagService.validateTag(tags,currentWeaver)){
+			return "redirect:/code/sort:age-desc/page:1";
+		}
+		
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,5);
 
 		model.addAttribute("codes", 
-				codeService.getCodes(null,tags, search, sort, pageNum, size));
+				codeService.getCodes(currentWeaver,tags, search, sort, pageNum, size));
 		model.addAttribute("codeCount", 
-				codeService.countCodes(null,tags, search, sort));
+				codeService.countCodes(currentWeaver,tags, search, sort));
 
 		model.addAttribute("number", size);
 		model.addAttribute("tagNames", tagNames);
@@ -139,19 +143,24 @@ public class CodeController {
 		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
 		MultipartFile file = multiRequest.getFile("file");
+		MultipartFile output = multiRequest.getFile("output");
 		String tags = request.getParameter("tags");
-		String name = request.getParameter("name");
 		String content = request.getParameter("content");
-
-		if(tags == null || name.length() < 5 || content.length() < 5 || content.length() >50 || file == null || !Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", name)){ // 태그가 없을 때
+		String url = request.getParameter("url");
+		String name = file.getOriginalFilename();
+		name = name.substring(0, name.indexOf('.'));
+		if(tags == null || content.length() < 5 || content.length() >50 || file == null){ // 태그가 없을 때
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/");
 			return "/alert";
 		}
 		List<String> tagList = tagService.stringToTagList(tags);
 		Weaver weaver = weaverService.getCurrentWeaver();
-
-		codeService.add(new Code(weaver, name, content, tagList), file);
+		if(!codeService.add(new Code(weaver, name, content,url, tagList), file,output)){ // 태그가 없을 때
+			model.addAttribute("say", "코드 업로드에 실패하였습니다! 압축파일을 확인하시거나 제대로된 소스파일인지 확인해주세요.");
+			model.addAttribute("url", "/code/");
+			return "/alert";
+		}
 		return "redirect:/code/";
 	}
 
@@ -189,7 +198,7 @@ public class CodeController {
 			HttpServletRequest request,HttpServletResponse res) throws IOException {
 		Code code = codeService.get(codeID,false);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
-		String filePath = uri.substring(6+(""+codeID).length());		
+		String filePath = uri.substring(uri.indexOf("/code/")+6+(""+codeID).length());		
 		SimpleCode simpleCode = code.getSimpleCode(filePath);
 
 		if (simpleCode == null) {
@@ -285,27 +294,37 @@ public class CodeController {
 	@RequestMapping(value="/{codeID}/{rePostID}/update", method = RequestMethod.POST)
 	public String update(@PathVariable("codeID") int codeID, @PathVariable("rePostID") int rePostID,HttpServletRequest request,Model model) throws UnsupportedEncodingException {		
 
+		final MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+		ArrayList<Data> datas = new ArrayList<Data>();
 		Code code = codeService.get(codeID,true);
 		RePost rePost = rePostService.get(rePostID);
 		String content = request.getParameter("content");
 		Weaver weaver = weaverService.getCurrentWeaver();
-
-		if(code == null || rePost == null || content.length() < 5 ||  !rePost.getWriter().equals(weaver) ||
-				rePost.getOriginalCode().getCodeID() != code.getCodeID()){ // 태그가 없을 때
+		String remove = request.getParameter("remove");
+		if(code == null || rePost == null || content.length() < 5 ||  
+				rePost.getOriginalCode().getCodeID() != code.getCodeID()){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/code/"+codeID);
 			return "/alert";
 		}	
 
-		if(!code.getWriter().equals(weaver) && 
+		if(!rePost.getWriter().equals(weaver) && 
 				!tagService.validateTag(code.getTags(),weaver)){ // 태그에 권한이 없을때
 			model.addAttribute("say", "권한이 없습니다!!!");
 			model.addAttribute("url", "/code/"+codeID);
 			return "/alert";
 		}	
 		
+		for (MultipartFile file : files.values())
+			if(!file.isEmpty()){
+				String fileID= dataService.getObjectID(file.getOriginalFilename(), weaver);
+				if(!fileID.equals(""))
+					datas.add(new Data(fileID,file,weaver));
+			}
+		
 		rePost.setContent(content);
-		rePostService.update(rePost,null);
+		rePostService.update(rePost,datas,remove.split("@"));
 
 		return "redirect:/code/"+codeID;
 	}

@@ -1,5 +1,20 @@
 
 var editorMode = false; 
+
+function IndexOf(Val, Str, x) {
+	if (x <= (Str.split(Val).length - 1)) {
+		Ot = Str.indexOf(Val);
+		if (x > 1) {
+			for (var i = 1; i < x; i++) {
+				var Ot = Str.indexOf(Val, Ot + 1)
+			}
+		}
+		return Ot;
+	} else {
+		return 0
+	}
+}
+
 function replaceAll(str, searchStr, replaceStr) {
 
     return str.split(searchStr).join(replaceStr);
@@ -176,8 +191,11 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/code")+5)+'/';
 	else if(url.indexOf("/lecture") != -1)
 		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
-	else	
-		url = "/community/";
+	else
+		if(url.indexOf("/m/") != -1 )
+			url = url.substring(0,IndexOf("/",url,5))+"/";
+		else
+			url = url.substring(0,IndexOf("/",url,4))+"/";
 	
 	if(tagArrayString.length == 0){
 		window.location = url;
@@ -237,7 +255,7 @@ function openWindow(url, width, height){
 	window.open(url,'','width='+width+',height='+height+',top='+((screen.height-height)/2)+',left='+((screen.width-width)/2)+',location =no,scrollbars=no, status=no;');
 }
 
-function filename(filename) { // 파일이 이미지 파일인지 검사
+function isImage(filename) { // 파일이 이미지 파일인지 검사
 	filename = filename.substring(filename.lastIndexOf(".") + 1,filename.length).toUpperCase();
 		if(filename.search("ANI")!=-1 || filename.search("BMP")!=-1 || filename.search("CAL")!=-1
 			|| filename.search("CAL")!=-1 || filename.search("FAX")!=-1 || filename.search("GIF")!=-1
@@ -253,3 +271,56 @@ function filename(filename) { // 파일이 이미지 파일인지 검사
 
 }
 
+
+function fileUploadChange(fileUploader,textarea){
+	var fileName = $(fileUploader).val();			
+
+	$(function (){
+	
+	if( fileName.length > 70 ){
+		alert("파일 이름이 너무 깁니다!");
+		return;
+	}
+	if(fileName !=""){ // 파일을 업로드하거나 수정함
+		if(fileName.indexOf("C:\\fakepath\\") != -1)
+			fileName = fileName.substring(12);
+		fileName = replaceAll(fileName,"?","_");
+		fileName = replaceAll(fileName,"#","_");
+		fileName = replaceAll(fileName," ","_");
+		
+		fileHash[fileName] = mongoObjectId();
+		$.ajax({
+		    url: '/data/tmp',
+            type: "POST",
+            contentType: false,
+            processData: false,
+            data: function() {
+                var data = new FormData();
+                data.append("objectID", fileHash[fileName]);
+                data.append("file", fileUploader.files[0]);
+                return data;
+            }()
+		});	
+		if(isImage(fileName))
+			$(textarea).val($(textarea).val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
+	
+		if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
+	fileCount++;
+	$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
+			  "<div class='input-group'>"+
+			    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+			    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
+			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+				"<input onchange ='fileUploadChange(this,\""+textarea+"\");' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
+			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+			  "</div>"+
+			"</div>");
+		}
+	}else{
+		if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
+			
+		$("#file"+fileCount).parent().parent().remove();
+
+			--fileCount;
+	}}});
+}

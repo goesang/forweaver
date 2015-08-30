@@ -1,5 +1,7 @@
 package com.forweaver.service;
 
+import java.util.List;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -19,20 +21,14 @@ public class DataService {
 	
 	public Data get(String dataID) {
 		Cache tmpCache = cacheManager.getCache("tmp");
-		Cache dataCache = cacheManager.getCache("data");
 		if(tmpCache.get(dataID) != null)
 			return (Data) tmpCache.get(dataID).getValue();
-		else if(dataCache.get(dataID) != null)
-			return (Data) dataCache.get(dataID).getValue();
-		else {
-			Data data = dataDao.get(dataID);
-			if (data == null)
-				return null;
-			Element newElement = new Element(data.getId(), data);
-			dataCache.put(newElement);
-			return data;
-		}
-			
+		else 
+			return dataDao.get(dataID);
+	}
+	
+	public List<Data> gets(Weaver weaver) {
+		return dataDao.gets(weaver);
 	}
 	
 	

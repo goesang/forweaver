@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.forweaver.domain.Code;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
+import com.forweaver.domain.Weaver;
 
 /** 답변 관리를 위한 DAO
  *
@@ -80,6 +81,28 @@ public class RePostDao {
 		Query query = new Query(criteria);
 		return mongoTemplate.find(query, RePost.class);
 	}
+	
+	/** 자신이 올린 답변 가져오기
+	 * @param weaver
+	 * @return
+	 */
+	public List<RePost> gets(Weaver weaver) {
+		Criteria criteria = 
+				new Criteria().and("writer.$id").is(weaver.getId());
+		Query query = new Query(criteria);
+		return mongoTemplate.find(query, RePost.class);
+	}
+	
+	/** 내가 댓글을 단 답변 목록
+	 * @param weaver
+	 * @return
+	 */
+	public List<RePost> getsAsReply(Weaver weaver) {
+		Criteria criteria = 
+				new Criteria().and("replys.writer.$id").is(weaver.getId());
+		Query query = new Query(criteria);
+		return mongoTemplate.find(query, RePost.class);
+	}
 
 	/** 답변 가져오기
 	 * @param rePostID
@@ -97,16 +120,6 @@ public class RePostDao {
 		mongoTemplate.remove(rePost);
 	}
 
-	public void deleteAll(Code code) {
-		Query query = new Query(Criteria.where("originalCode").is(code));
-		mongoTemplate.remove(query, RePost.class);
-	}
-	
-	public void deleteAll(Post post) {
-		Query query = new Query(Criteria.where("originalPost").is(post));
-		mongoTemplate.remove(query, RePost.class);
-	}
-
 	public void update(RePost rePost) {
 		Query query = new Query(Criteria.where("_id").is(
 				rePost.getRePostID()));
@@ -114,6 +127,7 @@ public class RePostDao {
 		update.set("content", rePost.getContent());
 		update.set("push", rePost.getPush());
 		update.set("replys", rePost.getReplys());
+		update.set("datas", rePost.getDatas());
 		update.set("recentReplyDate", rePost.getRecentReplyDate());
 		mongoTemplate.updateFirst(query, update, RePost.class);
 	}

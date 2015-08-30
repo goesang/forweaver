@@ -13,6 +13,10 @@ public class SimpleCode  implements Serializable {
 	public SimpleCode(String fileName, String content) {
 		super();
 		this.fileName = fileName;
+		this.fileName = this.fileName.replace(" ", "_");
+		this.fileName = this.fileName.replace("#", "_");
+		this.fileName = this.fileName.replace("?", "_");	
+		this.fileName = this.fileName.trim();
 		this.content = content;
 	}
 	public String getFileName() {

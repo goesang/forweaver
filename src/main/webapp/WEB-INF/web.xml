@@ -34,11 +34,7 @@
     <!-- log4j 설정 -->
     <context-param>
         <param-name>log4jConfigLocation</param-name>
-        <param-value>classpath:log4j.properties</param-value>
-    </context-param>
-        <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>classpath:log4j.properties</param-value>
+        <param-value>classpath:log4j.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
@@ -90,6 +86,7 @@
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
+		<url-pattern>/m/*</url-pattern>
 	</servlet-mapping>
    <servlet>
      <servlet-name>GitServlet</servlet-name>
@@ -103,11 +100,20 @@
        <param-value>1</param-value>
      </init-param>
      <load-on-startup>2</load-on-startup>
- </servlet>
+	</servlet>
    <servlet-mapping>
      <servlet-name>GitServlet</servlet-name>
      <url-pattern>/g/*</url-pattern>
    </servlet-mapping>
+   <servlet>
+		<servlet-name>TrackerServlet</servlet-name>
+		<servlet-class>log4jwebtracker.servlet.TrackerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TrackerServlet</servlet-name>
+		<url-pattern>/tracker/*</url-pattern>
+	</servlet-mapping>
+   
 <error-page>
     <error-code>404</error-code>
     <location>/error404</location>

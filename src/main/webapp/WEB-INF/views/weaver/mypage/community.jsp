@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver : ${weaver.getId()}님의 커뮤니티</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
@@ -17,7 +17,7 @@
 								var tagname = $(this).text();
 								var exist = false;
 								var tagNames = $("#tags-input").val();
-								if (tagNames.length == 0)
+								if (tagNames.length == 0 || tagNames == "")
 									moveUserPage("/${weaver.getId()}/",tagname,"");
 								
 								$.each(tagNames.split(","), function(index, value) {
@@ -99,6 +99,10 @@
 					<li id="repost-null"><a
 						href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:repost-null/page:1">답변
 							없는 글</a></li>
+					<sec:authorize access="isAuthenticated()">
+					<li id="my"><a
+						href="/${weaver.getId()}<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/sort:my/page:1">${weaver.getId()}가 쓴 글</a></li>	
+					</sec:authorize>	
 				</ul>
 
 				<div class="navbar navbar-inverse">
@@ -123,7 +127,7 @@
 				</div>
 			</div>
 			<div class="span11">
-				<input name="title" id="post-title-input" class="title span11"
+				<input maxlength="200" name="title" id="post-title-input" class="title span11"
 					placeholder="찾고 싶은 검색어를 입력해주세요!" type="text" />
 			</div>
 			<div class="span1">

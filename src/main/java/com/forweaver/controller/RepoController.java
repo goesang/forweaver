@@ -255,7 +255,7 @@ public class RepoController {
 			@PathVariable("page") String page,Model model,
 			HttpServletRequest request) {
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page);
+		int size = WebUtil.getPageSize(page,0);
 		
 		String uri = request.getRequestURI();
 		commit = uri.substring(uri.indexOf("/commit:")+8);

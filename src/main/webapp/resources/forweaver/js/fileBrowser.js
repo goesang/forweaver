@@ -1,19 +1,3 @@
-
-function IndexOf(Val, Str, x) {
-	if (x <= (Str.split(Val).length - 1)) {
-		Ot = Str.indexOf(Val);
-		if (x > 1) {
-			for (var i = 1; i < x; i++) {
-				var Ot = Str.indexOf(Val, Ot + 1)
-			}
-		}
-		return Ot;
-	} else {
-		return 0
-	}
-}
-
-
 function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 	
 	var parentDirectoryPath = makeParentDirectoryPath(directoryPath);
@@ -33,29 +17,29 @@ function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 			$("#fileBrowserTable").append("<tr><td style='border-top:0px;'>"+
 					"<img src ='/resources/forweaver/img/directory.png'>"+
 					"</td><td colspan = '3' style='border-top:0px;' class= 'td-filename'>" +
-					"<a href='"+fileBrowserURL+selectBranch+ "/filepath:"+parentDirectoryPath + "'>상위 디렉토리</a>" + 
+					"<a rel='external' href ='"+fileBrowserURL+selectBranch+ "/filepath:"+parentDirectoryPath + "'>상위 디렉토리</a>" + 
 				"</td></tr>");
 		
 		$.each(fileBrowser, function(index, value) {
 
 			var appendHTML = "";
 			if (value.directory) {
-				appendHTML = "<tr>" +
+				appendHTML = "<tr>" +  	
 				"<td class='td-icon'>" +
-				"<a href='"+
+				"<a rel='external' href ='"+
 				fileBrowserURL+
 				selectBranch+
-				"/filepath:/"+
+				"/filepath:"+
 				value.path+"'>" + 
 				"<img src ='/resources/forweaver/img/directory.png'></a></td>";
 
 			} else {
 				appendHTML = "<tr>" +
 				"<td class='td-icon'>" +
-				"<a href='"+
+				"<a rel='external' href ='"+
 				fileBrowserURL+
 				selectBranch+
-				"/filepath:/"+
+				"/filepath:"+
 				value.path.replace(".jsp",",jsp")+"'>" + 
 				"<img src ='/resources/forweaver/img/file.png'></a></td>";
 			}
@@ -63,18 +47,18 @@ function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 			
 			
 			appendHTML += "<td class = 'td-filename'>" +
-			"<a href='"+fileBrowserURL+selectBranch+"/filepath:"+value.path.replace(".jsp",",jsp")+"'>" + value.name + 
+			"<a rel='external' href ='"+fileBrowserURL+selectBranch+"/filepath:"+value.path.replace(".jsp",",jsp")+"'>" + value.name + 
 			"</a></td><td class = 'td-commitlog'>";
 			
 			//이미지를 추가함
-			appendHTML+="<a href='/"+value.commiterEmail+"'><img class='td-commitlog-img' src='/"
+			appendHTML+="<a rel='external' href ='/"+value.commiterEmail+"'><img class='td-commitlog-img' src='/"
 				+value.commiterEmail+"/img' title='"+value.commiterName+"<"+value.commiterEmail+">'></a>&nbsp;&nbsp;";
 				
 			if(commitlogHref.length == 0){
 				appendHTML = appendHTML + value.commitLog + "</td>" + 
 				"<td class = 'td-time'>" + value.date + "</td></tr>"; 
 			}else{
-				appendHTML = appendHTML + "<a class='none-color' href ="+ commitlogHref+value.commitID+">"+
+				appendHTML = appendHTML + "<a rel='external' class='none-color' href ="+ commitlogHref+value.commitID+">"+
 				value.commitLog + 
 				"</a></td>" + 
 				"<td class = 'td-time'>" + 

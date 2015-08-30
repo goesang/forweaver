@@ -173,13 +173,22 @@ public class ProjectService{
 	}
 
 
-	public long countProjects(List<String> tags,String search,String sort){
+	public long countProjects(Weaver currentWeaver,List<String> tags,String search,String sort){
+		if(currentWeaver != null && sort.equals("my"))
+			return projectDao.countProjects(currentWeaver.getProjects(),tags,sort);
+
 		return projectDao.countProjects(tags, search, sort);
 	}
 
 	public List<Project> getProjects(Weaver currentWeaver,List<String> tags,
 			String search,String sort, int pageNumber,int lineNumber){
-		List<Project> projects=  projectDao.getProjects(tags, search, sort, pageNumber, lineNumber);
+		List<Project> projects;
+
+		if(currentWeaver != null && sort.equals("my"))
+			projects = projectDao.getProjects(currentWeaver.getProjects(),tags,sort, pageNumber, lineNumber);
+		else
+			projects=  projectDao.getProjects(tags, search, sort, pageNumber, lineNumber);
+
 		if(currentWeaver != null)
 			for(Project project:projects){
 				Pass pass = currentWeaver.getPass(project.getName());
@@ -241,18 +250,18 @@ public class ProjectService{
 		if(message==null || message.length() < 5 ||weaver  == null || 
 				weaver.getPass(project.getName()) == null)
 			return false;
-		
+
 		gitUtil.Init(project);
-		
+
 		if(file.getOriginalFilename().toUpperCase().endsWith(".ZIP"))
 			gitUtil.uploadZip(weaver.getId(), weaver.getEmail(), branchName, message, file);
 		else
 			gitUtil.uploadFile(weaver.getId(), weaver.getEmail(), branchName, message, path, file);
-		
-		
+
+
 		return true;
 	}
-	
+
 	/** 파일을 수정하면 자동으로 커밋함.
 	 * @param project
 	 * @param weaver
@@ -264,11 +273,26 @@ public class ProjectService{
 		if(message==null || message.length() < 5 ||weaver  == null || 
 				weaver.getPass(project.getName()) == null)
 			return false;
-		
+
 		gitUtil.Init(project);
 		gitUtil.updateFile(weaver.getId(), weaver.getEmail(), branchName, message, path, code);
 
 		return true;
+	}
+
+	public boolean reSetRepository(Project project,Weaver weaver){
+		if(!project.getCreator().equals(weaver))
+			return false;
+		gitUtil.Init(project);
+		try{
+			gitUtil.deleteRepository();
+			gitUtil.createRepository();
+			return true;
+		}catch(Exception e){
+			return false;
+		}
+
+
 	}
 
 	public void update(Project project) {

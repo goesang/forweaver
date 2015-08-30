@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.forweaver.domain.Code;
+import com.forweaver.domain.Data;
+import com.forweaver.domain.RePost;
 import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.CodeDao;
+import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.RePostDao;
 import com.forweaver.util.WebUtil;
 
@@ -30,25 +33,25 @@ import com.forweaver.util.WebUtil;
 public class CodeService {
 
 	@Autowired CodeDao codeDao;
+	@Autowired DataDao dataDao;
 	@Autowired RePostDao rePostDao;
 
 	/** 코드를 추가함.
 	 * @param code
 	 * @param file
 	 */
-	public void add(Code code, MultipartFile multipartFile) {
+	public boolean add(Code code, MultipartFile file,MultipartFile output) {
 		String zipPath = "/tmp/"+new org.bson.types.ObjectId().toString()+".zip";
+		byte[] buf = new byte[1024];
+		int len;
 		try {			
-			if ((multipartFile.getContentType().equals("application/zip") ||
-					multipartFile.getContentType().equals("application/x-zip-compressed")) && 
-					multipartFile.getOriginalFilename().toLowerCase().endsWith(".zip")) { 
+			if ((file.getContentType().equals("application/zip") ||
+					file.getContentType().equals("application/x-zip-compressed")) && 
+					file.getOriginalFilename().toLowerCase().endsWith(".zip")) { 
 				// zip파일의 경우 내부를 살펴봄
 
-				
+				WebUtil.multipartFileToTempFile(zipPath, file);
 
-				WebUtil.multipartFileToTempFile(zipPath, multipartFile);
-
-				byte[] buffer = new byte[1024];
 				try{
 					ZipInputStream zis = 
 							new ZipInputStream(new FileInputStream(zipPath),Charset.forName("8859_1"));
@@ -57,14 +60,14 @@ public class CodeService {
 					while(ze!=null){
 						String fileName = ze.getName();
 						if (!ze.isDirectory() && WebUtil.isAllowedFileName(fileName) ) { // 만약 파일의 경우
-							int len;
+
 							StringBuilder content = new StringBuilder();
 
-							while ((len = zis.read(buffer)) > 0)
+							while ((len = zis.read(buf)) > 0)
 								if(WebUtil.isCodeName(new String(fileName.getBytes("8859_1"),"EUC-KR")))
-									content.append(new String(buffer, 0, len,Charset.forName("EUC-KR")));
+									content.append(new String(buf, 0, len,Charset.forName("EUC-KR")));
 								else
-									content.append(new String(buffer, 0, len,Charset.forName("8859_1")));
+									content.append(new String(buf, 0, len,Charset.forName("8859_1")));
 
 							if (ze.getName().toUpperCase().endsWith("README.MD")){ // 리드미파일의 경우
 								code.setReadme(content.toString());
@@ -78,29 +81,42 @@ public class CodeService {
 
 					zis.closeEntry();
 					zis.close();
+
 					
 				}catch(IOException ex){
-					ex.printStackTrace(); 
+					System.err.println(ex.getMessage());
+					new File(zipPath).delete();
+					return false;
 				}
-				codeDao.insert(code);
-			} else if(WebUtil.isCodeName(multipartFile.getOriginalFilename())){ // 압축파일이 아닌 일반 파일의 경우
-				byte[] buf = new byte[8192];
-				int len;
+			} else if(WebUtil.isCodeName(file.getOriginalFilename())){ // 압축파일이 아닌 일반 파일의 경우
+
 				StringBuilder content = new StringBuilder();
-				InputStream is = multipartFile.getInputStream();
-				
+				InputStream is = file.getInputStream();
+
 				while ((len = is.read(buf)) != -1)
 					content.append(new String(buf, 0, len));
+
+				code.addSimpleCode(new SimpleCode(file.getOriginalFilename(), content.toString())); // 일반 파일의 경우
 				
-				code.addSimpleCode(new SimpleCode(multipartFile.getOriginalFilename(), content.toString())); // 일반 파일의 경우
-				codeDao.insert(code);
 			}
 
+			if(output != null && output.getSize()>0 && WebUtil.isImageName(output.getOriginalFilename())){
+				StringBuilder content = new StringBuilder();
+				InputStream is = output.getInputStream();
+
+				while ((len = is.read(buf)) != -1)
+					content.append(new String(buf, 0, len,Charset.forName("8859_1")));
+
+				code.addSimpleCode(new SimpleCode(output.getOriginalFilename().replace(" ", "_"), content.toString())); // 결과화면
+			}
+			codeDao.insert(code);
+			
 			new File(zipPath).delete();
+			return true;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			new File(zipPath).delete();
-			return;
+			return false;
 		} 
 	}
 
@@ -128,7 +144,7 @@ public class CodeService {
 					zip.write(simpleCode.getContent().getBytes("EUC-KR"));
 				else
 					zip.write(simpleCode.getContent().getBytes("8859_1"));
-				
+
 			}	
 			code.download();
 			codeDao.update(code);
@@ -147,7 +163,9 @@ public class CodeService {
 	 */
 	public long countCodes(Weaver weaver,List<String> tags,
 			String search, String sort) {
-		return codeDao.countCodes(weaver, tags, search, sort);
+		if(sort.equals("my"))
+			return codeDao.countCodes(weaver, tags, search, sort);
+		return codeDao.countCodes(null, tags, search, sort);
 	}
 
 	/** 코드를 검색함.
@@ -160,6 +178,34 @@ public class CodeService {
 	 * @return
 	 */
 	public List<Code> getCodes(Weaver weaver, List<String> tags,
+			String search, String sort, int page, int size) {
+		if(sort.equals("my"))
+			return codeDao.getCodes(tags, search, weaver, sort, page, size);
+		return codeDao.getCodes(tags, search, null, sort, page, size);
+	}
+	
+	/** 코드를 검색하고 갯수를 파악함.
+	 * @param weaver
+	 * @param tags
+	 * @param serach
+	 * @param sort
+	 * @return
+	 */
+	public long countMyCodes(Weaver weaver,List<String> tags,
+			String search, String sort) {
+		return codeDao.countCodes(weaver, tags, search, sort);
+	}
+
+	/** 코드를 검색함.
+	 * @param weaver
+	 * @param tags
+	 * @param search
+	 * @param sort
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Code> getMyCodes(Weaver weaver, List<String> tags,
 			String search, String sort, int page, int size) {
 		return codeDao.getCodes(tags, search, weaver, sort, page, size);
 	}
@@ -174,8 +220,16 @@ public class CodeService {
 		if(weaver == null || code == null)
 			return false;
 
-		if(weaver.isAdmin() || weaver.getId().equals(code.getWriterName())){
-			rePostDao.deleteAll(code);
+		if(weaver.isAdmin() || weaver.equals(code.getWriter())){
+			
+			for(RePost rePost:rePostDao.gets(code)) { // 관련 답변들을 전부 불러옴
+				
+				for(Data data:rePost.getDatas()) //자료 전부 삭제.
+					dataDao.delete(data);
+				
+				rePostDao.delete(rePost); // 답변 차례대로 삭제
+			}
+			
 			codeDao.delete(code);
 			return true;
 		}

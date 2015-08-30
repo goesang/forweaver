@@ -29,7 +29,10 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler)
 					throws Exception {
 		String uri = request.getRequestURI();
-
+		
+		if(uri.startsWith("/m/"))
+			uri= uri.substring(2);
+		
 		String projectName = new String();
 		if (uri.split("/").length>3){
 			projectName= uri.split("/")[2]+"/"+uri.split("/")[3];

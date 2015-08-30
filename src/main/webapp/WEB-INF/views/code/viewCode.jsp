@@ -2,10 +2,14 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver! : ${code.name}</title>
+<meta property="og:image" content="/resources/forweaver/img/previewCode.png" />
+<meta property="og:title" content="${code.name}" />
+<meta property="og:description" content="${code.content}" />
+
+
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
-
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>
 <script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
@@ -26,53 +30,6 @@
 		});
 	}
 	
-	function fileUploadChange(fileUploader){
-		var fileName = $(fileUploader).val();	
-		fileName = replaceAll(fileName,"?","_");
-		fileName = replaceAll(fileName,"#","_");
-		fileName = replaceAll(fileName," ","_");			
-		$(function (){
-		if(fileName !=""){ // 파일을 업로드하거나 수정함
-			
-			
-			if(fileName.indexOf("C:\\fakepath\\") != -1)
-				fileName = fileName.substring(12);
-			fileHash[fileName] = mongoObjectId();
-			$.ajax({
-			    url: '/data/tmp',
-                type: "POST",
-                contentType: false,
-                processData: false,
-                data: function() {
-                    var data = new FormData();
-                    data.append("objectID", fileHash[fileName]);
-                    data.append("file", fileUploader.files[0]);
-                    return data;
-                }()
-			});	
-			if(filename(fileName))
-			$("#repost-content").val($("#repost-content").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
-		
-			if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-		fileCount++;
-		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-					"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-				   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-				  "</div>"+
-				"</div>");
-			}
-		}else{
-			if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
-				
-			$("#file"+fileCount).parent().parent().remove();
-
-				--fileCount;
-		}}});
-	}
 		function showCommentAdd(rePostID){
 			$("#repost-form").hide();
 			$(".comment-form").remove();
@@ -101,18 +58,17 @@
 					$("#repost-table").hide();
 					$("#myTab").hide();
 					if($("#repost-content").val().length == 0)
-						$("#repost-content").css('height','300px');
+						$("#repost-content").css('height','330px');
 			});
 			
 			$("#repost-content").focusout(function(){	
 
 				if( !this.value ) {
-					$(".file-div").hide();
+
 					$("#repost-table").fadeIn();
 					$("#myTab").fadeIn();
 		      }
-				if($("#repost-content").val().length == 0)
-					$("#repost-content").css('height','auto');
+				
 		});
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
@@ -120,7 +76,7 @@
 					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+						"<input onchange ='fileUploadChange(this,\"#repost-content\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 					  "</div>"+
 					"</div>");
@@ -154,9 +110,15 @@
 							<td colspan="2" class="post-top-title none-top-border"><a
 								rel="external" class="a-post-title"
 								href="/code/tags:<c:forEach items='${code.tags}' var='tag'>${tag},</c:forEach>">
-									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
-									${cov:htmlEscape(code.content)}
+									<i class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 							</a></td>
+							<c:if test='${code.url != null && code.url !=""}'>
+							<td class="td-button none-top-border" rowspan="2"><a
+								href="${code.url}"> <span
+									class="span-button"> <i class=" fa fa-external-link-square"></i>
+										<p class="p-button">출처</p>
+								</span></a></td>
+							</c:if>	
 							<td class="td-button none-top-border" rowspan="2"><a
 								href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
 									class="span-button"> ${code.downCount}
@@ -194,7 +156,7 @@
 						</tr>
 						<c:forEach items="${code.codes}" var="simpleCode" varStatus="status">
 							<tr>
-								<td colspan="5"><span
+								<td colspan="6"><span
 									onclick="javascript:hideAndShowSourceCode(${status.count})"
 									class="function-button function-file"> <i
 										class='icon-file icon-white'></i> ${simpleCode.fileName}
@@ -207,10 +169,8 @@
 							</tr>
 							
 							<tr>
-								<td id="td-code-${status.count}" class="well-white " style="padding-top: 20px; max-width: 480px;"
-									colspan="5">
-									
-									<c:if test="${status.count > 5}" >style='display:none;'</c:if>
+								<td id="td-code-${status.count}" class="well-white " style="<c:if test="${status.count > 5 && !status.last}" >display:none;</c:if> padding-top: 20px; max-width: 480px;"
+									colspan="6">
 									
 									<c:if test="${!simpleCode.fileName.endsWith('.md')}">
 									
@@ -237,7 +197,7 @@
 
 
 				<!-- 답변에 관련된 테이블 시작-->
-
+				<sec:authorize access="isAuthenticated()">
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/code/${code.codeID}/add-repost" method="POST">
 
@@ -248,21 +208,15 @@
 					</div>
 					<div class="span1">
 						<span>
-							<sec:authorize access="isAnonymous()">
-						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
-								<i class="fa fa-check"></i>
-							</button>
-					</sec:authorize>
-					<sec:authorize access="isAuthenticated()">
 						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
 								<i class="fa fa-check"></i>
 							</button>
-					</sec:authorize>
 						</span>
 					</div>
 					<div class="file-div"></div>
 				</form>
-
+				</sec:authorize>
+				
 				<c:if test="${code.rePostCount != 0}">
 
 					<div class="span12"></div>

@@ -16,7 +16,7 @@
 	var fileArray = [];
 	var fileHash = {};
 	function checkPost(){
-			
+		
 		for(var i=0;i<fileCount;i++){
 			var fileName = $("#file"+(i+1)).val();
 			
@@ -87,7 +87,7 @@
 					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
+						"<input onchange ='fileUploadChange(this,\"#post-content-textarea\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 					  "</div>"+
 					"</div>");
@@ -148,7 +148,7 @@
 							});
 					
 					
-					var pageCount = ${postCount}/${number};
+					var pageCount = ${postCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -163,8 +163,8 @@
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
 				        
 				        $("#post-content-textarea").focus(function(){	
-							if($("#post-content-textarea").val().length == 0)
-								$("#post-content-textarea").css('height','300px');
+				        	if($("#post-content-textarea").val().length >= 0)
+								$("#post-content-textarea").css('height','380px');
 						});
 						
 						$("#post-content-textarea").focusout(function(){	
@@ -173,61 +173,7 @@
 						});
 		});
 
-		function fileUploadChange(fileUploader){
-			var fileName = $(fileUploader).val();			
-
-			$(function (){
-			
-			if( fileName.length > 70 ){
-				alert("파일 이름이 너무 깁니다!");
-				return;
-			}
-			if(fileName !=""){ // 파일을 업로드하거나 수정함
-				if(fileName.indexOf("C:\\fakepath\\") != -1)
-					fileName = fileName.substring(12);
-				fileName = replaceAll(fileName,"?","_");
-				fileName = replaceAll(fileName,"#","_");
-				fileName = replaceAll(fileName," ","_");
 				
-				fileHash[fileName] = mongoObjectId();
-				$.ajax({
-				    url: '/data/tmp',
-	                type: "POST",
-	                contentType: false,
-	                processData: false,
-	                data: function() {
-	                    var data = new FormData();
-	                    data.append("objectID", fileHash[fileName]);
-	                    data.append("file", fileUploader.files[0]);
-	                    return data;
-	                }()
-				});	
-				if(filename(fileName))
-				$("#post-content-textarea").val($("#post-content-textarea").val()+'\n!['+fileName+'](/data/'+fileHash[fileName]+'/'+fileName+')');
-			
-				if(fileUploader.id == "file"+fileCount){ // 업로더의 마지막 부분을 수정함
-			fileCount++;
-			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
-					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
-					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
-						"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-					   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
-					  "</div>"+
-					"</div>");
-				}
-			}else{
-				if(fileUploader.id == "file"+(fileCount-1)){ // 업로더의 마지막 부분을 수정함
-					
-				$("#file"+fileCount).parent().parent().remove();
-
-					--fileCount;
-			}}});
-		}
-		
-		
-		
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
@@ -264,6 +210,10 @@
 					<li id="repost-null"><a
 						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변
 							없는 글</a></li>
+					<sec:authorize access="isAuthenticated()">
+					<li id="my"><a
+						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">내가 쓴 글</a></li>		
+					</sec:authorize>
 				</ul>
 			</div>
 

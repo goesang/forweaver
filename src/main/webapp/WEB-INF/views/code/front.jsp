@@ -5,6 +5,10 @@
 <title>Forweaver : 공유해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/spin.min.js"></script>
+<%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
+<style>
+.syntaxhighlighter{overflow:hidden;}
+</style>
 </head>
 <body>
 	<script type="text/javascript">
@@ -12,24 +16,23 @@
 	function checkCode(){
 		var objPattern = /^[a-z0-9_]+$/;
 		var fileName = $("#file").val();
+		var output = $("#output").val();
 		var tags = $("#tags-input").val();
 		
 		if(fileName == ""){
 			alert("파일을 업로드해 주세요!");
 			return false;
-		}else if(!objPattern.test($('#code-name').val())){
-			alert("코드명은 영문-소문자 숫자 조합이어야 합니다. 다시 입력해주세요!");
-			return false;
 		}else if(tags.length == 0){
 			alert("태그를 하나라도 입력해주세요!");
-			return false;
-		}else if($('#code-name').val().length <5 ){
-			alert("코드명을 5자 이상 입력하지 않았습니다!");
 			return false;
 		}else if($('#code-content').val().length <5 ){
 			alert("코드 설명을 5자 이상 입력하지 않았습니다!");
 			return false;
-		}else{
+		}else if(output.length > 0 && !isImage(output)){
+			alert("결과화면이 이미지 파일이 아닙니다!");
+			return false;
+		}
+		
 			$("form:first").append($("input[name='tags']"));
 			
 			var opts = {
@@ -53,7 +56,6 @@
 					var spinner = new Spinner(opts).spin(document.getElementById('codeForm'));
 			
 			return true;
-		}
 	}
 	
 		function showCodeContent() {
@@ -136,7 +138,7 @@
 									movePage(tagNames,$('#post-search-input').val());
 								}
 							});
-					var pageCount = ${codeCount}/${number};
+					var pageCount = ${codeCount+1}/${number};
 					pageCount = Math.ceil(pageCount);					
 					var options = {
 				            currentPage: ${pageIndex},
@@ -149,9 +151,20 @@
 				        }
 
 				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+				        
+				        
+			 <c:forEach	items="${codes}" var="code" varStatus="status">	
+				 $("#code-${status.count}").addClass("brush: "+extensionSeach('${code.getFirstCodeName()}')+";");
+			 </c:forEach>
 		});
 
+		SyntaxHighlighter.all();
 		
+		function fileUploadChange(fileUploader){
+			var fileName = $(fileUploader).val();	
+			if(fileName !="" && !isImage(fileName))
+				alert("이미지 파일이 아닙니다!");
+		}
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
@@ -186,7 +199,10 @@
 							답변순</a></li>
 					<li id="age-asc"><a
 						href="/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-					<li id="repost-null"></li>
+					<sec:authorize access="isAuthenticated()">
+					<li id="my"><a
+						href="/code<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">내가 올린 코드</a></li>
+					</sec:authorize>
 				</ul>
 			</div>
 			<div id="search-div" class="span10">
@@ -197,13 +213,16 @@
 				enctype="multipart/form-data" method="post">
 
 				<div id="post-div" class="span10">
-					<input maxlength="15" name="name" id="code-name" class="title span3"
-						placeholder="코드명 (소문자 숫자 최소 5자)" type="text" /> <input name="content"
-						id="code-content" class="title span7" maxlength="50"
+					<input name="content" 
+						id="code-content" class="span10" maxlength="50"
 						placeholder="소스 코드에 대해 소개해주세요!" type="text" />
+						<input name="url"
+						id="code-url" class="span10" maxlength="50"
+						placeholder="만일 다른곳에서 퍼오셨다면 원본 출처를 입력해주세요!" type="text" />
 				</div>
+				
 
-				<div style="margin-left:5px;" class="span2">
+				<div style="margin-left:5px; width:150px" class="span2">
 
 
 					<span> 
@@ -236,14 +255,33 @@
 				<div id="file-div" style="padding-left: 20px;">
 					<div class='fileinput fileinput-new' data-provides='fileinput'>
 						<div class='input-group'>
-							<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'>
+							<div class='form-control' data-trigger='fileinput'
+								title='업로드할 파일을 선택하세요!'>
 								<i class='icon-file '></i> <span class='fileinput-filename'></span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span
-								class='fileinput-new'><i class='fa fa-arrow-circle-o-up icon-white'></i> ZIP파일 혹은 소스코드</span>
-								<span class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input  type='file'
-								id='file' multiple='true' name='file'></span> <a href='#'
+								class='fileinput-new'>ZIP파일 혹은 소스파일</span> <span
+								class='fileinput-exists'><i
+									class='icon-repeat icon-white'></i></span><input type='file' id='file'
+								multiple='true' name='file'></span> <a href='#'
+								class='input-group-addon btn btn-primary fileinput-exists'
+								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+						</div>
+					</div>
+					<div class='fileinput fileinput-new' data-provides='fileinput'>
+						<div class='input-group'>
+							<div class='form-control' data-trigger='fileinput'
+								title='업로드할 파일을 선택하세요!'>
+								<i class='icon-file '></i> <span class='fileinput-filename'></span>
+							</div>
+							<span class='input-group-addon btn btn-primary btn-file'><span
+								class='fileinput-new'><i
+									class='fa fa-file-photo-o'></i> 결과 화면</span> <span
+								class='fileinput-exists'><i
+									class='icon-repeat icon-white'></i></span><input 
+									onchange ='fileUploadChange(this);'
+									type='file' id='output'
+								multiple='true' name='output'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
 								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
 						</div>
@@ -278,14 +316,13 @@
 
 				<table id="post-table" class="table table-hover">
 					<tbody>
-						<c:forEach items="${codes}" var="code">
+						<c:forEach items="${codes}" var="code" varStatus="status">
 							<tr>
 								<td class="td-post-writer-img" rowspan="2"><a href="/${code.writerName}"><img
 									src="${code.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/code/${code.codeID}"> <i
-										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
-										${cov:htmlEscape(code.content)}
+										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 								</a></td>
 								<td class="td-button" rowspan="2"><a
 									href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
@@ -305,6 +342,12 @@
 										var="tag">
 										<span class="tag-name">${tag}</span>
 									</c:forEach></td>
+							</tr>
+							<tr><td style="padding-top: 20px; max-width: 480px;" class="none-top-border"colspan="5">
+							<a href="/code/${code.codeID}">
+							<pre id="code-${status.count}">${cov:htmlEscape(code.getFirstCode())}</pre>
+							</a>
+							 </td>
 							</tr>
 						</c:forEach>
 

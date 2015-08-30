@@ -14,15 +14,21 @@
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
-					<li><a href="/intro/forweaver"><i class="fa fa-flickr"></i>&nbsp;도움말</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown"> <i class="fa fa-flickr"></i>&nbsp;도움말</a>
+							<ul class="dropdown-menu">
+							
+								<li><a href="/intro/forweaver"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;기본 사용법</a></li>
+								<li><a href='/intro/tutorial/default' ><i class="fa fa-git"></i>&nbsp;&nbsp;개발툴과 연동</a></li>
+							</ul></li>
 					<li><a href="/contactUs"><i class="fa fa-phone-square"></i>&nbsp;고객센터</a></li>
 				</ul>
 
 				<ul class="nav pull-right">
-					<sec:authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
-						<li><a href="<c:url value="/login" />"><i class="fa fa-user"></i>&nbsp;로그인</a></li>
+					<sec:authorize ifNotGranted="ROLE_USER, ROLE_ADMIN">
+						<li><a href="<c:url value="/login?state=null" />"><i class="fa fa-user"></i>&nbsp;로그인</a></li>
 					</sec:authorize>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
 
 						<li class="dropdown"><a href="#" class="dropdown-toggle"
 							data-toggle="dropdown"> 
@@ -30,8 +36,8 @@
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 							
-								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;개인화면</a></li>
-								<li><a href='/${currentUser.username}/edit' ><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
+								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;마이페이지</a></li>
+								<li><a href='/edit' ><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
 										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>
@@ -100,6 +106,7 @@
 						});
 					
 					$('#tags-input').tagsinput('focus');
+					
 					</script>
 				</div>
 			</div>

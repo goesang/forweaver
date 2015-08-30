@@ -25,7 +25,7 @@ public class GitService {
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private GitUtil gitUtil;
 
-	
+
 	public GitFileInfo getFileInfo(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){
 		gitUtil.Init(parentDirctoryName,repositoryName);
@@ -33,11 +33,11 @@ public class GitService {
 			return null;
 		else
 			filePath = filePath.substring(1);
-		
+
 		GitFileInfo gitFileInfo = gitUtil.getFileInfo(commitID, filePath);
 		return gitFileInfo;
 	}
-	
+
 	public GitFileInfo getFileInfoWithBlame(String parentDirctoryName,String repositoryName,
 			String commitID,String filePath){
 		gitUtil.Init(parentDirctoryName,repositoryName);
@@ -45,7 +45,7 @@ public class GitService {
 			return null;
 		else
 			filePath = filePath.substring(1);
-		
+
 		GitFileInfo gitFileInfo = gitUtil.getFileInfo(commitID, filePath);
 		if(!gitFileInfo.isDirectory())
 			gitFileInfo.setGitBlames(gitUtil.getBlame(filePath, commitID));
@@ -94,12 +94,12 @@ public class GitService {
 	public List<GitSimpleFileInfo> getGitSimpleFileInfoList(String parentDirctoryName,
 			String repositoryName,String commitID,String filePath) {
 		gitUtil.Init(parentDirctoryName,repositoryName);
-		
+
 		if(filePath.equals("/") || !filePath.startsWith("/"))
 			filePath = "";
 		else
 			filePath = filePath.substring(1);
-		
+
 		List<GitSimpleFileInfo> gitFileInfoList = gitUtil.getGitFileInfoList(commitID,filePath);
 		return gitFileInfoList;
 	}
@@ -152,12 +152,12 @@ public class GitService {
 			for(GitSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 				if(gitSimpleFileInfo.getName().toUpperCase().contains("README.MD"))
 					readme = getFileInfo(
-									creatorName, 
-									projectName, 
-									commit, 
-									"/"+gitSimpleFileInfo.getName()).getContent();
+							creatorName, 
+							projectName, 
+							commit, 
+							"/"+gitSimpleFileInfo.getName()).getContent();
 		return readme;
 	}
-
+	
 
 }

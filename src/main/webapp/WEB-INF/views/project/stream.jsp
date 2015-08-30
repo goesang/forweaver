@@ -38,7 +38,7 @@ $(document).ready(function() {
 					<li><a href="javascript:void(0);"
 						onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
-					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_PROF">
+					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
 					<c:if test="${project.getCreator().equals(currentUser) }">
 					<li><a href="/project/${project.name}/edit">관리</a></li>
 					</c:if>
@@ -240,7 +240,7 @@ $(document).ready(function() {
 							.classed("hover", true)
 							.attr("stroke", strokecolor)
 							.attr("stroke-width", "1px"), 
-							tooltip.html( "<p> <img style='width:32px;' src = '/"+(d.key).replace(".",",")+"/img'> " + d.key + " " + pro + " "+say+"</p>" ).style("visibility", "visible");
+							tooltip.html( "<p> <img style='width:32px;' src = '/"+d.key+"/img'> " + d.key + " " + pro + " "+say+"</p>" ).style("visibility", "visible");
 				
 						})
 						.on("mouseout", function(d, i) {

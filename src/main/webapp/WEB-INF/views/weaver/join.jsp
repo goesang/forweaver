@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
+<title>Forweaver : 회원가입</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 </head>
 <body>
@@ -17,6 +18,11 @@ function checkWeaver(){
 			return false;
 		}
 		
+		if($("#key").val().length < 1){
+			alert("인증키를 입력해주세요!");
+			return false;
+		}
+		
 		if(!idCheck || !passwordCheck || !emailCheck){
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
 			return false;
@@ -27,7 +33,7 @@ function checkWeaver(){
 
 $(document).ready(function() {
 	
-	 $('#tags-input').tagsinput('add',"한신대");
+   $('#tags-input').tagsinput('add',"한신대");
 	
 	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!");
 
@@ -200,7 +206,18 @@ $(document).ready(function() {
 								<input maxlength="50"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 
 							</div>
+							<br>
+							
+							<div class="control-group">
+							<label for="key" class="control-label">인증키</label>
+							<div class="controls">
+								<input maxlength="50"  name="key" placeholder="회원 가입을 원하시면 goesanghan@gmail.com으로 연락하셔서 인증키를 받으세요!"  id="key" style="width:90%;" type="text"/>
+
+							</div>
+						
 						</div>
+						
+						
 						<div class="join-form-actions-white">
 
 							<button type="submit" class="btn btn-block btn-inverse"><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;가입하기</button>

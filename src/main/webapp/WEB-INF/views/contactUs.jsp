@@ -38,15 +38,6 @@
 							</div>
 							<br>
 							<div class="control-group">
-							<label for="say" class="control-label">인증 질문</label>
-							<div class="controls">
-								<input name="question"
-									placeholder="우리 학교 근처 지하철역 이름!" id="question"
-									style="width: 80%;" type="text" />
-
-							</div>
-							</div>
-							<div class="control-group">
 							<label for="content" class="control-label">내용</label>
 							<div class="controls">
 								<textarea name="content"

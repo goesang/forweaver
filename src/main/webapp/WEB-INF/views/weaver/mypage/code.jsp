@@ -4,8 +4,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Forweaver : 소통해보세요!</title>
+<title>Forweaver : ${weaver.getId()}님의 코드</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
+<%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
+<style>
+.syntaxhighlighter{overflow:hidden;}
+</style>
 </head>
 <body>
 	<script type="text/javascript">	
@@ -17,17 +21,15 @@
 								var tagname = $(this).text();
 								var exist = false;
 								var tagNames = $("#tags-input").val();
-								if (tagNames.length == 2)
-									moveUserPage("/${weaver.getId()}/code/","[\"" + tagname + "\"]","");
+								if (tagNames.length == 0 || tagNames == "")
+									moveUserPage("/${weaver.getId()}/code/",tagname,"");
 								
 								$.each(tagNames.split(","), function(index, value) {
 									if (value == tagname)
 										exist = true;
 								});
 								if (!exist){
-									moveUserPage("/${weaver.getId()}/code/",tagNames.substring(0,
-											tagNames.length - 1)
-											+ ",\"" + tagname + "\"]","");
+									moveUserPage("/${weaver.getId()}/code/",tagNames+ ","+ tagname+" ","");
 								}
 							});
 					
@@ -53,10 +55,16 @@
 				            }
 				        }
 
-				        $('#page-pagination').bootstrapPaginator(options);$('a').attr('rel', 'external');
+					<c:forEach	items="${codes}" var="code" varStatus="status">	
+					 $("#code-${status.count}").addClass("brush: "+extensionSeach('${code.getFirstCodeName()}')+";");
+				 	</c:forEach>
+					
+				    $('#page-pagination').bootstrapPaginator(options);
+				        
 		});
-
 		
+		SyntaxHighlighter.all();
+	
 	</script>
 	<div class="container">
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
@@ -117,7 +125,7 @@
 				</div>
 			</div>
 			<div class="span11">
-				<input name="title" id="post-title-input" class="title span11"
+				<input maxlength="200" name="title" id="post-title-input" class="title span11"
 					placeholder="찾고 싶은 검색어를 입력해주세요!" type="text" />
 			</div>
 			<div class="span1">
@@ -131,14 +139,13 @@
 			<div class="span12">
 				<table id="post-table" class="table table-hover">
 					<tbody>
-						<c:forEach items="${codes}" var="code">
+						<c:forEach items="${codes}" var="code" varStatus="status">
 							<tr>
 								<td class="td-post-writer-img" rowspan="2"><a href="/${code.writerName}"><img
 									src="${code.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/code/${code.codeID}"> <i
-										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.name)} -
-										${cov:htmlEscape(code.content)}
+										class="fa fa-download"></i>&nbsp;${cov:htmlEscape(code.content)}
 								</a></td>
 								<td class="td-button" rowspan="2"><a
 									href="/code/${code.codeID}/${cov:htmlEscape(code.name)}.zip"> <span
@@ -158,6 +165,12 @@
 										var="tag">
 										<span class="tag-name">${tag}</span>
 									</c:forEach></td>
+							</tr>
+							<tr><td style="padding-top: 20px; max-width: 480px;" class="none-top-border"colspan="5">
+							<a href="/code/${code.codeID}">
+							<pre id="code-${status.count}">${cov:htmlEscape(code.getFirstCode())}</pre>
+							</a>
+							 </td>
 							</tr>
 						</c:forEach>
 

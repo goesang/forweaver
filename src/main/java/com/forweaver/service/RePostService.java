@@ -44,14 +44,14 @@ public class RePostService {
 		if(datas != null)
 			for(Data data:datas){
 				dataDao.insert(data);
-				rePost.addData(dataDao.getLast());
+				rePost.addData(data);
 			}
 
 		weaverDao.update(rePost.getWriter());
 		rePostDao.insert(rePost);
 		return true;
 	}
-	
+
 
 	/** 댓글을 추가함.
 	 * @param rePost
@@ -65,27 +65,47 @@ public class RePostService {
 		rePostDao.update(rePost);
 		return true;
 	}
-	
+
 	/** 댓글을 삭제함.
 	 * @param rePost
 	 * @param reply
 	 * @return
 	 */
 	public boolean deleteReply(RePost rePost,Weaver weaver,int number) {
-		
+
 		if(rePost == null || weaver == null)
 			return false;
-		
+
 		Weaver replyWriter = rePost.getReplyWriter(number);
-		
+
 		if(replyWriter == null || !replyWriter.equals(weaver))
 			return false;
-		
+
 		if(!rePost.removeReply(weaver, number))
 			return false;
-		
+
 		rePostDao.update(rePost);
 		return true;
+	}
+
+	/** 댓글을 전부 삭제함.
+	 * @param rePost
+	 * @param reply
+	 * @return
+	 */
+	public boolean deleteAllReply(Weaver currentWeaver,Weaver weaver) {
+
+		if(weaver == null || currentWeaver == null)
+			return false;
+
+		if(currentWeaver.isAdmin() || weaver.equals(currentWeaver)){
+			for(RePost rePost:rePostDao.getsAsReply(weaver)){
+				rePost.deleteAllReply(weaver);
+				rePostDao.update(rePost);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/** 답변들을 가져옴
@@ -97,10 +117,16 @@ public class RePostService {
 	public List<RePost> gets(int ID,int kind,String sort) {
 		return rePostDao.gets(ID,kind,sort);
 	}
+	
+	public List<RePost> gets(Weaver weaver) {
+		return rePostDao.gets(weaver);
+	}
 
 	public RePost get(int rePostID) {
 		return rePostDao.get(rePostID);
 	}
+	
+
 
 	/** 답변을 추천하면 캐시에 저장하고 24시간 제한을 둠.
 	 * @param rePost
@@ -124,13 +150,21 @@ public class RePostService {
 		return false;
 	}
 
-	public boolean update(RePost rePost,String[] removeDataList){
+	public boolean update(RePost rePost,List<Data> datas,String[] removeDataList){
 		if(rePost == null)
 			return false;
+
+		//만약 자료를 올렸다면.
+		if(datas != null && datas.size() >0)
+			for(Data data:datas){
+				dataDao.insert(data);
+				rePost.addData(dataDao.getLast());
+			}
+
 		if(removeDataList != null)
-			for(String dataName: removeDataList){
-				dataDao.delete(rePost.getData(dataName));
-				rePost.deleteData(dataName);
+			for(String dataID: removeDataList){
+				dataDao.delete(rePost.getData(dataID));
+				rePost.deleteData(dataID);
 			}
 		rePostDao.update(rePost);
 		return true;
@@ -146,19 +180,19 @@ public class RePostService {
 
 		if(post == null ||rePost == null || weaver == null)
 			return false;
-		
+
 		if(rePost.getWriterName().equals(weaver.getId()) 
 				||  weaver.isAdmin()){
-			
+
 			post.rePostCountDown();
 			postDao.update(post);
-			rePostDao.delete(rePost);
+			this.delete(rePost);
 			return true;
 		}
 		return false;
 	}
 
-	/** 코드에 단 댓글을 삭제할 때
+	/** 코드에 단 답변을 삭제할 때
 	 * @param code
 	 * @param rePost
 	 * @param weaver
@@ -168,15 +202,27 @@ public class RePostService {
 
 		if(code == null ||rePost == null || weaver == null)
 			return false;
-		
+
 		if(rePost.getWriterName().equals(weaver.getId()) ||  weaver.isAdmin()){
 
 			code.rePostCountDown();
 			codeDao.update(code);
-			rePostDao.delete(rePost);
+			this.delete(rePost);
 			return true;
 		}
 		return false;
+	}
+	
+
+	/** 그냥 답변을 삭제함.
+	 * @param rePost
+	 */
+	public void delete(RePost rePost){
+		
+		for(Data data:rePost.getDatas())
+			dataDao.delete(data);
+		
+		rePostDao.delete(rePost);
 	}
 
 }

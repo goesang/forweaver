@@ -10,6 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.forweaver.util.WebUtil;
+
 /**<pre> 글 정보를 담는 클래스. 
  * postID 글 아이디
  * title 글 제목
@@ -24,6 +26,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * rePostCount 답변수
  * tags 태그들
  * datas 자료들
+ * diffs 바뀐 정보들
  *</pre>
  */
 @Document
@@ -196,9 +199,9 @@ public class Post implements Serializable {
 		this.datas.add(data);
 	}
 	
-	public void deleteData(String name){
+	public void deleteData(String id){
 		for(int i = 0 ; i< this.datas.size() ; i++){
-			if(this.datas.get(i).getName().equals(name)){
+			if(this.datas.get(i).getId().equals(id)){
 				this.datas.remove(i);
 				return;
 			}
@@ -206,9 +209,9 @@ public class Post implements Serializable {
 		
 	}
 	
-	public Data getData(String dataName){
+	public Data getData(String id){
 		for(Data data:this.datas)
-			if(data.getName().equals(dataName))
+			if(data.getId().equals(id))
 				return data;
 		return null;
 	}
@@ -237,5 +240,12 @@ public class Post implements Serializable {
 				return 3;
 		
 		return 1;
+	}
+	
+	public String getFirstImageURL(){
+		for(Data data:this.datas)
+			if(WebUtil.isImageName(data.getName()))
+				return "/data/"+data.getId()+"/"+data.getName();
+		return "";
 	}
 }
