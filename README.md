@@ -30,23 +30,17 @@
 
 ## 주요 스크린샷
 ### 로그인 화면
-![Screenshot - 2014년 09월 01일 - 00시 32분 57초.png](http://yobi.d2fest.kr/files/1364)
+![](http://i.imgur.com/E6BfGLE.png)
 
 ### 프로젝트 관리 화면
-![Screenshot - 2014년 09월 01일 - 00시 45분 02초.png](http://yobi.d2fest.kr/files/1379)
+![](http://i.imgur.com/PVMS0Rp.png)
 
-### 태그 게시판 화면 
-![Screenshot - 2014년 09월 01일 - 00시 44분 07초.png](http://yobi.d2fest.kr/files/1363)
+### 코드뷰어 화면 
+![](http://i.imgur.com/qK6aybj.png)
 
-### 위버 관리 화면 
-![Screenshot - 2014년 09월 01일 - 00시 43분 45초.png](http://yobi.d2fest.kr/files/1361)
+### 프로젝트 시각화 화면
+![](http://i.imgur.com/p82fvHH.png)
+![](http://i.imgur.com/LZ0AbW0.png)
 
-## 링크
-
-###  동영상
-* 예선 동영상 [fornaver.mp4](http://yobi.d2fest.kr/files/1141)
-* 최종 동영상 [forweaver.mkv](http://yobi.d2fest.kr/files/1335)
-
-###  소개자료
-* 예선 소개 자료 [forweaver.pdf](http://yobi.d2fest.kr/files/1142)
-* 최종 소개 자료 [forweaver.pptx](http://yobi.d2fest.kr/files/1356)
+### 태그 커뮤니티 화면 
+![](http://i.imgur.com/KbYStPA.png)
