@@ -252,7 +252,7 @@ function readURL(input) {
 }
 
 function openWindow(url, width, height){
-	window.open(url,'','width='+width+',height='+height+',top='+((screen.height-height)/2)+',left='+((screen.width-width)/2)+',location =no,scrollbars=no, status=no;');
+	window.open(url,'','width='+width+',height='+height+',top='+((screen.height-height)/2)+',left='+((screen.width-width)/2)+',location =no,status=no;');
 }
 
 function isImage(filename) { // 파일이 이미지 파일인지 검사

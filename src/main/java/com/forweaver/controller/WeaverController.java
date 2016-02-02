@@ -84,12 +84,11 @@ public class WeaverController {
 			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
 			@RequestParam("tags") String tags,
-			@RequestParam("key") String key,
+			/*@RequestParam("key") String key,*/
 			@RequestParam("image") MultipartFile image,
 			HttpServletRequest request,Model model) {
 
-		String aKey =  mongoTemplate.findOne(new Query(Criteria.where("_id").is("hello")), String.class,"key");
-
+		//String aKey =  mongoTemplate.findOne(new Query(Criteria.where("_id").is("hello")), String.class,"key");
 
 		List<String> tagList = tagService.stringToTagList(tags);
 
@@ -118,7 +117,6 @@ public class WeaverController {
 			model.addAttribute("url", "/join");
 			return "/alert";
 		}
-
 		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
@@ -592,7 +590,7 @@ public class WeaverController {
 			model.addAttribute("url", "/del");
 			return "/alert";
 		}
-		/*
+		
 		for(String projectName:weaver.getJoinProjects()) // 가입한 프로젝트 모두 탈퇴
 			projectService.deleteWeaver(projectService.get(projectName), weaver, weaver);
 
@@ -622,7 +620,7 @@ public class WeaverController {
 		rePostService.deleteAllReply(weaver, weaver);
 
 		weaverService.delete(weaver);
-		*/
+		
 		model.addAttribute("say", "성공적으로 탈퇴 처리됐습니다!");
 		model.addAttribute("url", "/j_spring_security_logout");
 		return "/alert";

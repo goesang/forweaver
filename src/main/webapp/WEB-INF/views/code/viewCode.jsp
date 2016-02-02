@@ -2,10 +2,10 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>Forweaver! : ${code.name}</title>
+<title>Forweaver! : ${cov:htmlEscape(code.name)}</title>
 <meta property="og:image" content="/resources/forweaver/img/previewCode.png" />
-<meta property="og:title" content="${code.name}" />
-<meta property="og:description" content="${code.content}" />
+<meta property="og:title" content="${cov:htmlEscape(code.name)}" />
+<meta property="og:description" content="${fn:substring(cov:htmlEscape(code.content),0,100)}"/>
 
 
 <%@ include file="/WEB-INF/includes/src.jsp"%>

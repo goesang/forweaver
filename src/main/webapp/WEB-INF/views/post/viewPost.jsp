@@ -2,11 +2,11 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>Forweaver! : ${post.title}</title>
+<title>Forweaver! : ${cov:htmlEscape(post.title)}</title>
 <meta property='og:image' content='<c:if test="${post.getFirstImageURL() == ''}">/resources/forweaver/img/preview.png</c:if>
 										<c:if test="${post.getFirstImageURL() != ''}"> ${post.getFirstImageURL()} </c:if>' />
-<meta property='og:title' content='${post.title}' />
-<meta property='og:description' content='<c:if test="${post.isLong()}">${post.content}</c:if><c:if test="${!post.isLong()}">학생들을 위한 소셜 코딩!</c:if>' />			
+<meta property='og:title' content='${cov:htmlEscape(post.title)}' />
+<meta property='og:description' content='<c:if test="${post.isLong()}">${fn:substring(cov:htmlEscape(post.content),0,100)}</c:if><c:if test="${!post.isLong()}">학생들을 위한 소셜 코딩!</c:if>' />			
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>

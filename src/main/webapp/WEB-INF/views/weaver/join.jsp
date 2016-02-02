@@ -17,12 +17,12 @@ function checkWeaver(){
 			alert("태그를 하나 이상 입력해주세요!");
 			return false;
 		}
-		
+		/*
 		if($("#key").val().length < 1){
 			alert("인증키를 입력해주세요!");
 			return false;
 		}
-		
+		*/
 		if(!idCheck || !passwordCheck || !emailCheck){
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
 			return false;
@@ -207,14 +207,14 @@ $(document).ready(function() {
 
 							</div>
 							<br>
-							
+							<!--
 							<div class="control-group">
 							<label for="key" class="control-label">인증키</label>
 							<div class="controls">
 								<input maxlength="50"  name="key" placeholder="회원 가입을 원하시면 goesanghan@gmail.com으로 연락하셔서 인증키를 받으세요!"  id="key" style="width:90%;" type="text"/>
 
 							</div>
-						
+						  -->
 						</div>
 						
 						
