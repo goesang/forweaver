@@ -72,7 +72,7 @@ public class GitUtil {
 		this.gitPath = gitPath;
 	}
 	public GitUtil(){
-		this.gitPath = "/home/git/";
+		this.gitPath = "D:/git/";
 	}
 	/** 과제 저장소용 초기화 메서드
 	 * @param repo
@@ -320,7 +320,7 @@ public class GitUtil {
 				df.setRepository(this.localRepo);
 				df.format(preCommit, commit);
 				df.flush();
-				df.release();
+				df.close();
 				diffs+=out.toString();
 			} catch (Exception e) {
 				diffs += simpleFileBrowser(commit);
@@ -793,7 +793,7 @@ public class GitUtil {
 					df.setRepository(this.localRepo);
 					df.format(rc.getParent(0), rc);
 					df.flush();
-					df.release();
+					df.close();
 					diffs = out.toString();
 				} else {
 					diffs = simpleFileBrowser(rc);
