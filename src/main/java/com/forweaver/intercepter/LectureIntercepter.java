@@ -23,6 +23,7 @@ public class LectureIntercepter extends HandlerInterceptorAdapter {
 	@Autowired LectureService lectureService;
 	@Autowired TagService tagService;
 
+	@Override
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)
 					throws Exception {

@@ -2,10 +2,7 @@ package com.forweaver.domain;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 /** <pre> 과제 저장소 정보를 보관하는 클래스

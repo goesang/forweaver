@@ -25,6 +25,7 @@ public class ProjectIntercepter extends HandlerInterceptorAdapter {
 	@Autowired TagService tagService;
 
 	@Autowired ProjectService projectService;
+	@Override
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)
 					throws Exception {

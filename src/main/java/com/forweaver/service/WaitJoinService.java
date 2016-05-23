@@ -7,7 +7,6 @@ import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.WaitJoinDao;
 
 /** 초대장 관리 서비스

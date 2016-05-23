@@ -31,7 +31,6 @@ import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
-import com.forweaver.intercepter.LoggerInterceptor;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 import com.forweaver.util.MailUtil;

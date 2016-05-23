@@ -47,8 +47,8 @@
 				rel="external" data-icon="bookmark" data-role="button"
 				data-theme="b" href="/project/"> 프로젝트 </a> <a rel="external"
 				data-icon="rocket" data-role="button" data-theme="b"
-				href="/code/"> 코드 </a> <a rel="external" data-icon="twitter"
-				data-role="button" data-theme="b" href="/weaver/"> 위버 </a>
+				href="/code/"> 코드 </a> <!-- <a rel="external" data-icon="twitter"
+				data-role="button" data-theme="b" href="/weaver/"> 위버 </a> -->
 
 		</div>
 		

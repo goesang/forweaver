@@ -20,6 +20,7 @@ public class CommunityIntercepter extends HandlerInterceptorAdapter {
 	@Autowired WeaverService weaverService;
 	@Autowired TagService tagService;
 
+	@Override
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)
 					throws Exception {

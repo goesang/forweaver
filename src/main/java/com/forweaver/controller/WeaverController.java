@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,7 +79,6 @@ public class WeaverController {
 	public String join(@RequestParam("id") String id,
 			@RequestParam("email") String email,
 			@RequestParam("password") String password,
-			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
 			@RequestParam("tags") String tags,
 			/*@RequestParam("key") String key,*/
@@ -91,13 +88,13 @@ public class WeaverController {
 		//String aKey =  mongoTemplate.findOne(new Query(Criteria.where("_id").is("hello")), String.class,"key");
 
 		List<String> tagList = tagService.stringToTagList(tags);
-
+/*
 		if(!tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
 			model.addAttribute("url", "/join");
 			return "/alert";
 		}
-
+*/
 		//if(key == null || key.length() < 1 || !key.equals(aKey)){
 		//	model.addAttribute("say", "인증키를 잘못 입력하셨습니다!");
 		//	model.addAttribute("url", "/join");
@@ -105,7 +102,7 @@ public class WeaverController {
 		//}
 
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
-				say.length()>50 || studentID.length()>30 || 
+				say.length()>50 ||
 				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
 			model.addAttribute("say", "잘못 입력하셨습니다!");
 			model.addAttribute("url", "/join");
@@ -117,13 +114,13 @@ public class WeaverController {
 			model.addAttribute("url", "/join");
 			return "/alert";
 		}
-		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image));
+		Weaver weaver = new Weaver(id, password, email,tagList,null,say, new Data(image));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
 		return "redirect:/";
 	}
 
-
+/*
 	@RequestMapping("/weaver")
 	public String weavers(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"page:1";
@@ -173,7 +170,7 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/weaver/tags:"+tagNames+"/page:");
 		return "/weaver/weavers";
 	}
-
+*/
 	@RequestMapping({"/{id}","/{id}/code","/{id}/project","/{id}/lecture"})
 	public String home(@PathVariable("id") String id,HttpServletRequest request) {
 		Weaver weaver = weaverService.get(id);

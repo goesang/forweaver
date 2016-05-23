@@ -49,9 +49,11 @@ public class RePostDao {
 	 */
 	public List<RePost> gets(int ID,int kind, String sort) {
 
+		new Criteria();
+		new Criteria();
 		Criteria criteria = new Criteria().orOperator(
-				new Criteria().where("originalPost.$id").is(ID).and("kind").is(kind),
-				new Criteria().where("originalCode.$id").is(ID).and("kind").is(kind));
+				Criteria.where("originalPost.$id").is(ID).and("kind").is(kind),
+				Criteria.where("originalCode.$id").is(ID).and("kind").is(kind));
 
 		this.filter(criteria, sort);
 

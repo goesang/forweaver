@@ -1,6 +1,5 @@
 package com.forweaver.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.ehcache.Cache;

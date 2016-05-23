@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.ArchiveCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.archive.ArchiveFormats;
 import org.eclipse.jgit.archive.TarFormat;
 import org.eclipse.jgit.archive.ZipFormat;
 import org.eclipse.jgit.blame.BlameResult;
@@ -72,7 +73,7 @@ public class GitUtil {
 		this.gitPath = gitPath;
 	}
 	public GitUtil(){
-		this.gitPath = "D:/git/";
+		this.gitPath = "/home/git/";
 	}
 	/** 과제 저장소용 초기화 메서드
 	 * @param repo
@@ -142,7 +143,7 @@ public class GitUtil {
 	 * @throws Exception
 	 */
 	public void createRepository() throws Exception {
-		git.init().setBare(true).setDirectory(new File(this.path)).call();
+		Git.init().setBare(true).setDirectory(new File(this.path)).call();
 		StoredConfig config = localRepo.getConfig();
 		config.setString("http", null, "receivepack", "true");
 		config.save();
@@ -166,27 +167,36 @@ public class GitUtil {
 	 * @return
 	 */
 	public boolean isDirectory(String commitID, String filePath){
+		
 		if(filePath.length() == 0)
 			return true;
+		
+		TreeWalk treeWalk = new TreeWalk(this.localRepo);
+		RevWalk revWalk = new RevWalk(this.localRepo);
+		
 		try{
 			ObjectId revId = this.localRepo.resolve(commitID);
-			TreeWalk treeWalk = new TreeWalk(this.localRepo);
-			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+			treeWalk.addTree(revWalk.parseTree(revId));
 			treeWalk.setRecursive(true);
 			while (treeWalk.next()) {
 				if(treeWalk.getPathString().equals(filePath)){
 					return false;
 				}
 			}
-			treeWalk.reset(new RevWalk(this.localRepo).parseTree(revId));
+			treeWalk.reset(revWalk.parseTree(revId));
 			while (treeWalk.next()) {
 				if(treeWalk.getPathString().startsWith(filePath)){
 					return true;
 				}
 			}
+			
 		}catch(Exception e){
+			treeWalk.close();
+			revWalk.close();
 			return false;
 		}
+		treeWalk.close();
+		revWalk.close();
 		return false;
 	}
 
@@ -446,8 +456,7 @@ public class GitUtil {
 	public void getProjectZip(String commitName,String format, HttpServletResponse response) {
 
 		try {
-			ArchiveCommand.registerFormat("zip", new ZipFormat());
-			ArchiveCommand.registerFormat("tar", new TarFormat());
+			ArchiveFormats.registerAll();
 			ObjectId revId = this.localRepo.resolve(commitName);
 			git.archive().setOutputStream(response.getOutputStream())
 			.setFormat(format)

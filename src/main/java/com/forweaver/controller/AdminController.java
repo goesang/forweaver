@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.forweaver.domain.Post;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;

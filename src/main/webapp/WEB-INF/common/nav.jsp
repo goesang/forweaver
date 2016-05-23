@@ -10,7 +10,7 @@
 		<div class="container-fluid">
 			<div class="nav-collapse collapse">
 				<ul class="nav">
-					<li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li>
+					<!--  <li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li>-->
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>

@@ -7,7 +7,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.session.SessionRegistry;
@@ -24,7 +23,6 @@ import com.forweaver.mongodb.dao.ProjectDao;
 import com.forweaver.mongodb.dao.WaitJoinDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
-import com.forweaver.util.WebUtil;
 
 /** 프로젝트 관리 서비스
  *

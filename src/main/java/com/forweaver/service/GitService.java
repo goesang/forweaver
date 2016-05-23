@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.git.GitCommitLog;
@@ -14,15 +13,12 @@ import com.forweaver.domain.git.GitFileInfo;
 import com.forweaver.domain.git.GitSimpleCommitLog;
 import com.forweaver.domain.git.GitSimpleFileInfo;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
-import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitInfo;
 import com.forweaver.util.GitUtil;
-import com.forweaver.util.WebUtil;
 
 @Service
 public class GitService {
 
-	@Autowired private WeaverDao weaverDao;
 	@Autowired private GitUtil gitUtil;
 
 

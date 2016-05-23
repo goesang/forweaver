@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 import com.forweaver.util.WebUtil;
 

@@ -268,8 +268,8 @@ public class WebUtil {
 		if (sec < 60) {
 			min = 0;
 		} else {
-			min = (int) (sec / 60);
-			sec = (int) (sec % 60);
+			min = sec / 60;
+			sec = sec % 60;
 		}
 
 		if (min < 60) {
