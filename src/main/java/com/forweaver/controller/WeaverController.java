@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +27,6 @@ import com.forweaver.domain.RePost;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
 import com.forweaver.service.DataService;
-import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
 import com.forweaver.service.RePostService;
@@ -48,8 +45,6 @@ public class WeaverController {
 	private RePostService rePostService;
 	@Autowired
 	private ProjectService projectService;
-	@Autowired
-	private LectureService lectureService;
 	@Autowired
 	private CodeService codeService;
 	@Autowired
@@ -81,32 +76,13 @@ public class WeaverController {
 	public String join(@RequestParam("id") String id,
 			@RequestParam("email") String email,
 			@RequestParam("password") String password,
-			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
-			@RequestParam("tags") String tags,
-			/*@RequestParam("key") String key,*/
 			@RequestParam("image") MultipartFile image,
 			HttpServletRequest request,Model model) {
 
-		//String aKey =  mongoTemplate.findOne(new Query(Criteria.where("_id").is("hello")), String.class,"key");
-
-		List<String> tagList = tagService.stringToTagList(tags);
-
-		if(!tagService.isPublicTags(tagList)){
-			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
-			model.addAttribute("url", "/join");
-			return "/alert";
-		}
-
-		//if(key == null || key.length() < 1 || !key.equals(aKey)){
-		//	model.addAttribute("say", "인증키를 잘못 입력하셨습니다!");
-		//	model.addAttribute("url", "/join");
-		//	return "/alert";
-		//}
 
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
-				say.length()>50 || studentID.length()>30 || 
-				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
+				say.length()>50 || !Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
 			model.addAttribute("say", "잘못 입력하셨습니다!");
 			model.addAttribute("url", "/join");
 			return "/alert";
@@ -117,7 +93,7 @@ public class WeaverController {
 			model.addAttribute("url", "/join");
 			return "/alert";
 		}
-		Weaver weaver = new Weaver(id, password, email,tagList,studentID,say, new Data(image));
+		Weaver weaver = new Weaver(id, password, email,say, new Data(image));
 		weaverService.add(weaver);
 		weaverService.autoLoginWeaver(weaver, request);
 		return "redirect:/";
@@ -174,7 +150,7 @@ public class WeaverController {
 		return "/weaver/weavers";
 	}
 
-	@RequestMapping({"/{id}","/{id}/code","/{id}/project","/{id}/lecture"})
+	@RequestMapping({"/{id}","/{id}/code","/{id}/project"})
 	public String home(@PathVariable("id") String id,HttpServletRequest request) {
 		Weaver weaver = weaverService.get(id);
 		if(weaver == null || weaver.isLeave())
@@ -250,29 +226,6 @@ public class WeaverController {
 		model.addAttribute("pageUrl", "/"+id+"/project/sort:" + sort + "/page:");
 		return "/weaver/mypage/project";
 	}
-
-	@RequestMapping("/{id}/lecture/sort:{sort}/page:{page}")
-	public String lecturePage(@PathVariable("id") String id,
-			@PathVariable("sort") String sort,
-			@PathVariable("page") String page, Model model) {
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		Weaver weaver = weaverService.get(id);
-		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page,0);
-
-		if (weaver == null || weaver.isLeave()) 
-			return "redirect:/";
-
-		model.addAttribute("weaver", weaver);
-		model.addAttribute("lectures", lectureService.getLecturesAsWeaver(currentWeaver, weaver, null, sort, pageNum, size));
-		model.addAttribute("lectureCount", lectureService.countLecturesAsWeaver(weaver, null, sort));
-		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/"+id+"/lecture/sort:" + sort + "/page:");
-		return "/weaver/mypage/lecture";
-	}
-
-
 
 	@RequestMapping({"/{id}/tags:{tagNames}",
 		"/{id}/code/tags:{tagNames}",
@@ -381,37 +334,6 @@ public class WeaverController {
 		return "/weaver/mypage/project";
 	}
 
-	@RequestMapping("/{id}/lecture/tags:{tagNames}/sort:{sort}/page:{page}")
-	public String lectureTagsWithPage(@PathVariable("tagNames") String tagNames,
-			@PathVariable("id") String id, @PathVariable("page") String page,
-			@PathVariable("sort") String sort, Model model) {
-		List<String> tags = tagService.stringToTagList(tagNames);
-
-		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page,0);
-
-		Weaver weaver = weaverService.get(id);
-
-		if (weaver == null || weaver.isLeave())
-			return "redirect:/";
-
-		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
-		if (!tagService.validateTag(tags, currentWeaver))
-			return "redirect:/";
-
-		model.addAttribute("weaver", weaver);
-		model.addAttribute("lectures", lectureService
-				.getLecturesAsWeaver(currentWeaver, weaver, tags, sort, pageNum, size));
-		model.addAttribute("lectureCount", lectureService
-				.countLecturesAsWeaver(weaver, tags, sort));
-		model.addAttribute("tagNames", tagNames);
-		model.addAttribute("pageIndex", page);
-		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/"+id+"/code/tags:" + tagNames+ "/sort:" + sort + "/page:");
-
-		return "/weaver/mypage/lecture";
-	}
 
 	@RequestMapping({"/{id}/tags:{tagNames}/search:{search}",
 	"/{id}/code/tags:{tagNames}/search:{search}"})

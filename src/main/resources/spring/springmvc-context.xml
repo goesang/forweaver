@@ -34,10 +34,6 @@
 	<!-- Interceptor -->
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/lecture/**" />
-			<bean class="com.forweaver.intercepter.LectureIntercepter" />
-		</mvc:interceptor>
-		<mvc:interceptor>
 			<mvc:mapping path="/**" />
 			<bean class="com.forweaver.intercepter.LoggerInterceptor" />
 		</mvc:interceptor>

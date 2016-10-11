@@ -73,6 +73,9 @@
 
 			hideProjectContent();
 			
+			if( $("#tags-input").val().length == 0) // 태그가 없을 때
+				$('#post-search-input').attr("disabled",true);
+			
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
 			
 					$('.tag-name').click(
@@ -92,15 +95,6 @@
 
 							});
 
-					$( "#post-search-input" ).focus(function() {
-						var tags = $("#tags-input").val();
-						if(tags.length == 0){
-							$( "#post-search-input" ).val('');
-							alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
-							return;
-						}
-					});
-					
 					
 					$('#search-button').click(
 							function() {

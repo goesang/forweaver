@@ -58,28 +58,6 @@ public class WebController {
 		return "redirect:/"+weaver.getId()+"/project";
 	}
 
-	@RequestMapping("/contactUs")
-	public void contactUs( ) {
-
-	}
-
-	@RequestMapping(value="/contactUs", method = RequestMethod.POST)
-	public String contactUs(@RequestParam("title") String title,
-			@RequestParam("email") String email,
-			@RequestParam("content") String content,Model model) {
-		
-		if(title.length() == 0 || content.length() == 0 || email.length() == 0){
-			model.addAttribute("say", "잘못 입력하셨습니다!");
-			model.addAttribute("url", "/contactUs");
-			return "/alert";
-		}
-
-		mailUtil.sendMail("goesanghan@gmail.com", title+" - " +email, content);
-		model.addAttribute("say", "메일을 보냈습니다!");
-		model.addAttribute("url", "/contactUs");
-		return "/alert";
-	}
-
 	@RequestMapping("intro/tutorial/*")
 	public void tutorial() {}
 }

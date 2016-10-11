@@ -253,7 +253,7 @@ function checkPost(){
 						value="" />
 				</div>
 			
-			<form id="postForm" onkeypress="return event.keyCode != 13;" onsubmit="return checkPost()"
+			<form id="postForm" onsubmit="return checkPost()"
 				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
 				
 				<div class="span2">
@@ -282,15 +282,19 @@ function checkPost(){
 					</span>
 				</div>
 				<div class="span12">
-					<textarea data-provide="markdown"  name = content style="display: none;" id="post-content-textarea"
+					<textarea data-provide="markdown"  name = "content" style="display: none;" id="post-content-textarea"
+						class="post-content span12" 
+						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
+						
+						<textarea  name = "content" style="display: none;" id="post-content-textarea"
 						class="post-content span12" 
 						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
 						<div class="file-div"></div>
+						
 				</div>
 				
 				</form>
 				<div class="span12">
-				
 					<table id="post-table" class="table table-hover">
 						<tbody>
 							<c:forEach items="${posts}" var="post">

@@ -3,11 +3,9 @@ package com.forweaver.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Project;
 import com.forweaver.domain.WaitJoin;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.WaitJoinDao;
 
 /** 초대장 관리 서비스
@@ -17,26 +15,6 @@ import com.forweaver.mongodb.dao.WaitJoinDao;
 public class WaitJoinService {
 
 	@Autowired private WaitJoinDao waitJoinDao;
-
-	/** 강의 서비스와 관련하여 초대장을 생성 가능한지 검증함.
-	 * @param lecture
-	 * @param waitingWeaver
-	 * @param proposer
-	 * @return
-	 */
-	public boolean isCreateWaitJoin(Lecture lecture,Weaver waitingWeaver,Weaver proposer) {
-
-		if(	lecture == null || waitingWeaver == null ||
-				waitJoinDao.get(lecture.getName(),waitingWeaver.getId()) != null)
-			return false;
-		
-		if(proposer.isAdmin(lecture.getName())|| // 강의 관리자이거나
-				proposer.equals(waitingWeaver)|| // 아니면 본인이 신청해야함
-				waitingWeaver.getPass(lecture.getName()) != null) // 그리고 가입자가 아니어야함.
-			return true;
-		
-		return false;
-	}
 
 	/** 프로젝트 서비스와 관련하여 초대장을 생성 가능한지 검증함.
 	 * @param project
@@ -87,24 +65,6 @@ public class WaitJoinService {
 		return false;
 	}
 
-	/** 강의의 초대장 삭제
-	 * @param waitJoin
-	 * @param lecture
-	 * @param currentWeaver
-	 * @return
-	 */
-	public boolean deleteWaitJoin(WaitJoin waitJoin,Lecture lecture,Weaver currentWeaver){
-		if(waitJoin == null || lecture == null)
-			return false;
-		
-		if(currentWeaver.isAdmin(lecture.getName()) || 
-				waitJoin.getWaitingWeaver().equals(currentWeaver.getId())){			
-			waitJoinDao.delete(waitJoin);
-			return true;
-		}			
-		
-		return false;
-	}
 
 	/** 초대장 수락 가능한지 여부 검증
 	 * @param waitJoin

@@ -197,10 +197,9 @@ function movePage(tagArrayString,searchWord){
 		else
 			url = url.substring(0,IndexOf("/",url,4))+"/";
 	
-	if(tagArrayString.length == 0){
-		window.location = url;
+	if(tagArrayString.length == 0)
 		return;
-	}
+	
 	if(tagArrayString.indexOf(",") === 0)
 		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
 	

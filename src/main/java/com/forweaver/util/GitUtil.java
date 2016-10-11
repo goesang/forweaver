@@ -39,10 +39,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forweaver.domain.Lecture;
 import com.forweaver.domain.Project;
-import com.forweaver.domain.Repo;
-import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.GitBlame;
 import com.forweaver.domain.git.GitCommitLog;
 import com.forweaver.domain.git.GitFileInfo;
@@ -61,7 +58,6 @@ public class GitUtil {
 	private String path;
 	private Repository localRepo;
 	private Git git;
-	private StoredConfig config;
 	private boolean isRepo;
 
 	public String getGitPath() {
@@ -72,23 +68,9 @@ public class GitUtil {
 		this.gitPath = gitPath;
 	}
 	public GitUtil(){
-		this.gitPath = "D:/git/";
+		this.gitPath = "/home/git/";
 	}
-	/** 과제 저장소용 초기화 메서드
-	 * @param repo
-	 */
-	public void Init(Repo repo) {
-		try {
-			this.path = gitPath + repo.getLectureName() + "/" + repo.getName()
-					+ ".git";
-			this.localRepo = new FileRepository(this.path);
-			this.git = new Git(localRepo);
-			this.config = localRepo.getConfig();
-			this.isRepo = true;
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
+
 
 	/** 프로젝트 초기화 메서드
 	 * @param pro
@@ -98,7 +80,6 @@ public class GitUtil {
 			this.path = gitPath + pro.getName() + ".git";
 			this.localRepo = new FileRepository(this.path);
 			this.git = new Git(localRepo);
-			this.config = localRepo.getConfig();
 			this.isRepo = false;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -552,33 +533,7 @@ public class GitUtil {
 		}
 	}
 
-	/** 강사가 숙제 저장소에 최초로 푸시하면 브랜치를 학생들 이름으로 복사함.
-	 * 예를 들어 처음 그냥 푸시하면 master가 푸시되는데 이때 root라는 아이디의 학생이 있으면 
-	 * master-root 브랜치가 파생되고 이 브랜치는 강사와 root라는 학생만 접근 가능.
-	 * @param beforeBranchList
-	 * @param lecture
-	 */
-	public void createStudentBranch(List<String> beforeBranchList,
-			Lecture lecture) {
-		List<String> createBranch = getBranchList();
-		try {
-			if (createBranch.removeAll(beforeBranchList)
-					|| beforeBranchList.size() == 0) {
-				for (String branchPath : createBranch) {
-					String branchName = branchPath.substring(11);
-					for (Weaver weaver : lecture.getJoinWeavers()) {// 학생들 이름별로 복사함.
-						git.branchCreate()
-						.setStartPoint(branchName)
-						.setName(
-								branchName + "-" + weaver.getId())
-								.call();
-					}
-				}
-			}
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
+	
 	/** GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
 	 * @param name
 	 * @param email

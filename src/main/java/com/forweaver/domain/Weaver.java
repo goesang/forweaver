@@ -42,18 +42,14 @@ public class Weaver implements UserDetails,Serializable {
 	private String password;
 	private String email;
 	private String say;
-	private String studentID;
 	private Data image;
 	private Date joinDate;
 	private boolean isLeave;
 	private List<Pass> passes = new ArrayList<Pass>();
-	private List<String> tags = new ArrayList<String>();
 
 	@Transient
 	private DBObject weaverInfo;
 
-	//private WeaverInfo weaverInfo;
-	
 	public Weaver(){}
 
 
@@ -72,17 +68,14 @@ public class Weaver implements UserDetails,Serializable {
 
 
 
-	public Weaver(String id,String password,String email,List<String> tags,String studentID,String say,Data image){
+	public Weaver(String id,String password,String email,String say,Data image){
 		this.id = id;
 		this.id = this.id.toLowerCase();
 		this.password = password;
 		this.email = email;
-		this.tags = tags;
-		this.studentID = studentID;
 		this.say = say;
 		this.image = image;
 		this.joinDate = new Date();
-		//this.weaverInfo = new WeaverInfo();
 	}
 
 	public String getPassword() {
@@ -104,19 +97,6 @@ public class Weaver implements UserDetails,Serializable {
 	public void setPasses(List<Pass> passes) {
 		this.passes = passes;
 	}
-
-	public String getStudentID() {
-		if(this.studentID != null && this.studentID.length() > 0)
-			return studentID;
-		
-		return "알수없는 사용자!";
-	}
-
-
-	public void setStudentID(String studentID) {
-		this.studentID = studentID;
-	}
-
 
 	public String getSay() {
 		if(this.say != null && this.say.length() > 0)
@@ -370,15 +350,6 @@ public class Weaver implements UserDetails,Serializable {
 
 		return false;
 	}
-
-	public List<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
-	}
-
 
 	public boolean isLeave() {
 		return isLeave;

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Post;
@@ -38,7 +37,6 @@ import com.forweaver.service.ChatService;
 import com.forweaver.service.CherryPickRequestService;
 import com.forweaver.service.DataService;
 import com.forweaver.service.GitService;
-import com.forweaver.service.LectureService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.ProjectService;
 import com.forweaver.service.RePostService;
@@ -69,8 +67,6 @@ public class ProjectController {
 	private ChatService chatService;
 	@Autowired 
 	private CherryPickRequestService cherryPickRequestService;
-	@Autowired 
-	private LectureService lectureService;
 	@Autowired 
 	private DataService dataService;
 

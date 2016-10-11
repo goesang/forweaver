@@ -4,12 +4,14 @@
 *.ear
 *.MF
 *.class
+*.log*
 *.log
 # eclipse specific git ignore
 *.pydevproject
 .project
 .metadata
 bin/**
+log/**
 tmp/**
 tmp/**/*
 *.tmp

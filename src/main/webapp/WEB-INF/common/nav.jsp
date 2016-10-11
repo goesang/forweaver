@@ -10,7 +10,7 @@
 		<div class="container-fluid">
 			<div class="nav-collapse collapse">
 				<ul class="nav">
-					<li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li>
+					<!-- <li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li> -->
 					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
@@ -21,7 +21,6 @@
 								<li><a href="/intro/forweaver"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;기본 사용법</a></li>
 								<li><a href='/intro/tutorial/default' ><i class="fa fa-git"></i>&nbsp;&nbsp;개발툴과 연동</a></li>
 							</ul></li>
-					<li><a href="/contactUs"><i class="fa fa-phone-square"></i>&nbsp;고객센터</a></li>
 				</ul>
 
 				<ul class="nav pull-right">
@@ -55,26 +54,14 @@
 			<div class="span11">
 				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
 				<div title="태그를 입력하시고 나서 꼭 엔터키나 스페이스키를 누르시면 추가가 됩니다."  class="span10 tag-span">
-					<input placeholder="여기에 태그를 입력하고 꼭 엔터!" 
+					<input placeholder="태그를 입력해주세요!" 
 						class="tagarea tagarea-full" id="tags-input" />
 					<input name="tags" type="hidden" id="tag-hidden"/>
 
 					<script>
 					
 					var move = true;
-					function ieVersion () {
-						  var myNav = navigator.userAgent.toLowerCase();
-						  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
-						}
-					
-					if (ieVersion() && ieVersion()<11) {	
-						$(function() {$("#forweaver-nav").after(
-								"<div class='alert'>이 사이트는 인터넷 익스플로러 11 버젼 부터 지원합니다! "+
-								"<a href='http://windows.microsoft.com/ko-kr/internet-explorer/download-ie'>최신버젼</a>으로 업그레이드 "+
-								"하시거나 <a href='http://www.google.co.kr/chrome/browser/desktop/'>크롬</a>"+
-								"이나 <a href='http://www.mozilla.or.kr/ko/firefox/new/'>파이어폭스</a>로 이용해주세요!</div>");
-					});
-						}
+
 					$('#tags-input').tagsinput({
 						  confirmKeys: [13, 32],
 						  maxTags: 6,

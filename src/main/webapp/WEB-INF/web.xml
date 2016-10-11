@@ -105,15 +105,6 @@
      <servlet-name>GitServlet</servlet-name>
      <url-pattern>/g/*</url-pattern>
    </servlet-mapping>
-   <servlet>
-		<servlet-name>TrackerServlet</servlet-name>
-		<servlet-class>log4jwebtracker.servlet.TrackerServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TrackerServlet</servlet-name>
-		<url-pattern>/tracker/*</url-pattern>
-	</servlet-mapping>
-   
 <error-page>
     <error-code>404</error-code>
     <location>/error404</location>

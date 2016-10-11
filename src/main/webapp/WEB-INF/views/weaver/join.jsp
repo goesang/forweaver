@@ -13,30 +13,17 @@ var passwordCheck = false;
 var emailCheck = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 function checkWeaver(){
-		if($("#tags-input").val().length < 1){
-			alert("태그를 하나 이상 입력해주세요!");
-			return false;
-		}
-		/*
-		if($("#key").val().length < 1){
-			alert("인증키를 입력해주세요!");
-			return false;
-		}
-		*/
 		if(!idCheck || !passwordCheck || !emailCheck){
+			alert(idCheck);
+			alert(passwordCheck);
+			alert(emailCheck);
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
 			return false;
 		}
-		$("form:first").append($("input[name='tags']"));
 		return idCheck&&passwordCheck&&emailCheck;
 	}
 
 $(document).ready(function() {
-	
-   $('#tags-input').tagsinput('add',"한신대");
-	
-	$("#signupform").prepend("<div class='alert'>"+close+"자신이 관심있는 태그를 최대 6개정도 추가하시고 아래 정보를 입력해주세요!");
-
 	
 	$("#image").change(function(){
         readURL(this);
@@ -168,19 +155,11 @@ $(document).ready(function() {
 							</div>
 						</div>
 						
-						<div class="control-group">
-							<label for="studentID" class="control-label">학번 (선택)</label>
-							<div class="controls">
-								<input maxlength="30"  name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
-
-							</div>
-						
-						</div>
 						</div>
 						<div class="span4">
 						
 						<div class ="control-group" style="text-align:center;">
-						<img id="preview" style="height:190px;width:190px;" class="img-polaroid" src="">
+						<img id="preview" style="height:160px;width:160px;" class="img-polaroid" src="">
 						</div>
 						
 						
@@ -207,14 +186,7 @@ $(document).ready(function() {
 
 							</div>
 							<br>
-							<!--
-							<div class="control-group">
-							<label for="key" class="control-label">인증키</label>
-							<div class="controls">
-								<input maxlength="50"  name="key" placeholder="회원 가입을 원하시면 goesanghan@gmail.com으로 연락하셔서 인증키를 받으세요!"  id="key" style="width:90%;" type="text"/>
 
-							</div>
-						  -->
 						</div>
 						
 						

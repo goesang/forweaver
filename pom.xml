@@ -27,7 +27,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<java-version>1.8</java-version>
+		<java-version>1.7</java-version>
 		<org.springframework-version>4.1.4.RELEASE</org.springframework-version>
 		<org.springframework.security-version>3.2.9.RELEASE</org.springframework.security-version>
 		<org.aspectj-version>1.6.11</org.aspectj-version>
@@ -116,6 +116,7 @@
 			<artifactId>spring-data-mongodb</artifactId>
 			<version>1.6.2.RELEASE</version>
 		</dependency>
+
 
 		<!-- ehcache -->
 		<dependency>
@@ -271,12 +272,6 @@
 			<artifactId>txtmark</artifactId>
 			<version>0.13</version>
 		</dependency>
-		<!-- log4jwebtracker -->
-		<dependency>
-			<groupId>log4jwebtracker</groupId>
-			<artifactId>log4jwebtracker</artifactId>
-			<version>1.0.2</version>
-		</dependency>
 		<dependency>
 			<groupId>org.gitective</groupId>
 			<artifactId>gitective-core</artifactId>
@@ -305,17 +300,13 @@
 		</repository>
 		<repository>
 			<id>mvn2</id>
-			<url>http://repo1.maven.org/maven2/</url>
+			<url>http://central.maven.org/maven2/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-		</repository>
-		<repository>
-			<id>log4jwebtracker-releases</id>
-			<url>http://repo.log4jwebtracker.com/maven2</url>
 		</repository>
 	</repositories>
 </project>

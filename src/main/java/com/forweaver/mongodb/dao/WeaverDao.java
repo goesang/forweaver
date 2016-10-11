@@ -128,8 +128,6 @@ public class WeaverDao {
 		update.set("image", weaver.getImage());
 		update.set("data", weaver.getImgSrc());
 		update.set("say", weaver.getSay());
-		update.set("studentID", weaver.getStudentID());
-		update.set("tags", weaver.getTags());
 		update.set("isLeave", weaver.isLeave());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}

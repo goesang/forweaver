@@ -5,10 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,12 +27,15 @@ import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
-import com.forweaver.intercepter.LoggerInterceptor;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 import com.forweaver.util.MailUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
@@ -113,13 +112,9 @@ public class WeaverService implements UserDetailsService {
 		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
 			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));
 
-		if(studentID != null && !studentID.equals(""))
-			weaver.setStudentID(studentID);
-
 		if(say != null && !say.equals(""))
 			weaver.setSay(say);
 
-		weaver.setTags(tags);
 		weaverDao.update(weaver);
 	}
 
