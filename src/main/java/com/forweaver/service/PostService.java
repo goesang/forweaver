@@ -1,32 +1,32 @@
 package com.forweaver.service;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.forweaver.domain.AutoIncrement;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Weaver;
+import com.forweaver.mongodb.dao.AutoIncrementDao;
 import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RePostDao;
-import com.forweaver.mongodb.dao.WeaverDao;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 @Service
 public class PostService {
-
+	
+	@Autowired private AutoIncrementDao autoIncrementDao;
 	@Autowired private PostDao postDao;
 	@Autowired private RePostDao rePostDao;
 	@Autowired private DataDao dataDao;
-	@Autowired private WeaverDao weaverDao;
 	@Autowired private CacheManager cacheManager;
 
 	/** 글을 생성함.
@@ -51,6 +51,19 @@ public class PostService {
 				dataDao.insert(data);
 				post.addData(data);
 			}
+		
+		if(post.getKind() == 2){
+			String projectTag = post.getProjectTag();
+			AutoIncrement autoIncrement = autoIncrementDao.get(projectTag);
+			if(autoIncrement == null){
+				autoIncrementDao.insert(new AutoIncrement(post.getProjectTag()));
+				post.setIssueID(1);
+			}else{
+				post.setIssueID(autoIncrement.increament());
+				autoIncrementDao.insert(autoIncrement);
+			}
+				
+		}
 		return postDao.insert(post);
 
 	}

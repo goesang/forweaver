@@ -130,13 +130,13 @@
 									</c:if>
 								<c:if test="${project.category == 1}">
 										<span
-											class="span-button"><i class="fa fa-lock"></i>
-												<p class="p-button">비공개</p> </span>
+											class="span-button"><i class="fa fa-file-archive-o"></i>
+												<p class="p-button">일반</p> </span>
 									</c:if>
 								<c:if test="${project.category == 3}">
 										<span
-											class="span-button"><i class="fa fa-university"></i>
-												<p class="p-button">과제</p> </span>
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
 									</c:if>		
 									</td>
 									<td class="td-button" rowspan="2"><sec:authorize

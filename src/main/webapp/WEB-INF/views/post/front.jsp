@@ -84,7 +84,7 @@
 			
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this,\"#post-content-textarea\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+

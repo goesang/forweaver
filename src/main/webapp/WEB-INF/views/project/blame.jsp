@@ -47,7 +47,7 @@
 	$("#source-code").addClass("brush: "+extensionSeach(document.location.href)+";");
 	SyntaxHighlighter.all();
 	
-	 setTimeout(function(){ // 에러가 있어서 0.3초 뒤에 실행
+	 setTimeout(function(){ // 에러가 있어서 0.6초 뒤에 실행
 		 for(var i=1;i<=blameArray.length;i++)
 			 if(blameArray[i-1][1] != blameArray[i][1])
 		 	$('td.gutter > div.line.number'+i).html(
@@ -55,7 +55,7 @@
 		 			"</a>  <a href='/project/${project.name}/commitlog-viewer/commit:"+blameArray[i][1]+"'>"+
 		 			blameArray[i][1]+"</a>  "+blameArray[i][2]+"</span>  "+i
 		 	);
-	}, 300);
+	}, 600);
 });
 
 </script>
@@ -77,7 +77,7 @@
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="/project/${project.name}/">브라우져</a></li>
 					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="/project/${project.name}/issue">이슈</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
@@ -95,7 +95,7 @@
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>

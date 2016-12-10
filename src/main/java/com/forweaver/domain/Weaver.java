@@ -20,7 +20,6 @@ import com.mongodb.DBObject;
  * id 회원 아이디
  * password  비밀번호
  * email  이메일
- * studentID 학번(과제용 자기소개)
  * say 간단한 소개
  * imgSrc  이미지 주소
  * image  이미지 파일

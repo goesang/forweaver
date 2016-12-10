@@ -13,10 +13,6 @@ editorMode = true;
 
 $(document).ready(function() {
 	
-	move = false;
-	<c:forEach items='${weaver.tags}' var='tag'>
-	$('#tags-input').tagsinput('add',"${tag}");
-	</c:forEach>
 	move = true;
 
 	
@@ -58,14 +54,6 @@ $(document).ready(function() {
 							</div>
 						</div>
 						
-						<div class="control-group">
-							<label for="studentID" class="control-label">학번</label>
-							<div class="controls">
-								<input value="${cov:htmlEscape(weaver.studentID)}" name="studentID" placeholder="과제 진행시 나타낼 학번이나 소개"  id="studentID" class="input-large" type="text"/>
-
-							</div>
-						
-						</div>
 						</div>
 						<div class="span4">
 						

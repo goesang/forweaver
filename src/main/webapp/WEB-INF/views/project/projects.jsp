@@ -141,9 +141,9 @@
 					<li id="public"><a
 							href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">공개</a></li>
 					<li id="homework"><a
-						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:homework/page:1">과제</a></li>
+						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:homework/page:1">비공개</a></li>
 					<li id="private"><a
-						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">비공개</a></li>	
+						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">일반</a></li>	
 					<li id="age-asc"><a
 						href="/project<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
 					<sec:authorize access="isAuthenticated()">
@@ -167,9 +167,9 @@
 					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 <input type="radio"
 						name="group"data-toggle="radio" checked="checked">
 					</label> <label onclick="changeValue(1);" class="radio radio-period"> <input type="radio"
-						name="group" data-toggle="radio"> 비공개
+						name="group" data-toggle="radio"> 일반
 					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
-						name="group"  data-toggle="radio"> 과제
+						name="group"  data-toggle="radio"> 비공개
 					</label> 
 						<input maxlength="50" name ="description"class="title span12" type="text" id="project-description"
 						placeholder="프로젝트에 대해 설명해주세요! (최대 50자까지)"></input>
@@ -230,8 +230,8 @@
 									</c:if>
 								<c:if test="${project.category == 1}">
 										<span
-											class="span-button"><i class="fa fa-lock"></i>
-												<p class="p-button">비공개</p> </span>
+											class="span-button"><i class="fa fa-file-archive-o"></i>
+												<p class="p-button">일반</p> </span>
 									</c:if>
 								<c:if test="${project.category == -1}">
 										<a href="/project/${project.name}"> <span
@@ -241,8 +241,8 @@
 									</c:if>	
 								<c:if test="${project.category == 3}">
 										<span
-											class="span-button"><i class="fa fa-university"></i>
-												<p class="p-button">과제</p> </span>
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
 									</c:if>		
 									</td>
 								<td class="td-button" rowspan="2"><sec:authorize

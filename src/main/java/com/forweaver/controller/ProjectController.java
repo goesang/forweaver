@@ -386,12 +386,12 @@ public class ProjectController {
 		return "/project/blame";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/community")
+	@RequestMapping("/{creatorName}/{projectName}/issue")
 	public String community(HttpServletRequest request) {
 		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/community/sort:{sort}/page:{page}")
+	@RequestMapping("/{creatorName}/{projectName}/issue/sort:{sort}/page:{page}")
 	public String community(@PathVariable("projectName") String projectName,
 			@PathVariable("sort") String sort,
 			@PathVariable("creatorName") String creatorName,
@@ -409,16 +409,16 @@ public class ProjectController {
 		model.addAttribute("postCount", 
 				postService.countPosts(tags, null, null, sort));
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/community/sort:"+sort+"/page:");
-		return "/project/community";
+		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/issue/sort:"+sort+"/page:");
+		return "/project/issue";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/community/tags:{tagNames}")
+	@RequestMapping("/{creatorName}/{projectName}/issue/tags:{tagNames}")
 	public String tags(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
 	}
 
-	@RequestMapping("/{creatorName}/{projectName}/community/tags:{tagNames}/sort:{sort}/page:{page}")
+	@RequestMapping("/{creatorName}/{projectName}/issue/tags:{tagNames}/sort:{sort}/page:{page}")
 	public String tags(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("tagNames") String tagNames,
@@ -439,11 +439,11 @@ public class ProjectController {
 
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", 
-				"/project/"+projectName+"/community/tags:"+tagNames+"/sort:"+sort+"/page:");
-		return "/project/community";
+				"/project/"+projectName+"/issue/tags:"+tagNames+"/sort:"+sort+"/page:");
+		return "/project/issue";
 	}
 
-	@RequestMapping(value = "/{creatorName}/{projectName}/community/add", method = RequestMethod.POST)
+	@RequestMapping(value = "/{creatorName}/{projectName}/issue/add", method = RequestMethod.POST)
 	public String addPost(@PathVariable("projectName") String projectName,
 			@PathVariable("creatorName") String creatorName,
 			HttpServletRequest request,Model model) {
@@ -458,7 +458,7 @@ public class ProjectController {
 		if(title.length() < 5 || title.length() > 200
 				|| (content.length() >0 && content.length() < 5)){ // 검증함
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
-			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/issue/");
 			return "/alert";
 		}
 
@@ -468,7 +468,7 @@ public class ProjectController {
 
 		if(!tagService.validateTag(tagList,weaver)){ // 태그에 권한이 없을때
 			model.addAttribute("say", "태그에 권한이 없습니다!!!");
-			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/community/");
+			model.addAttribute("url", "/project/"+creatorName+"/"+projectName+"/issue/");
 			return "/alert";
 		}
 
@@ -482,7 +482,7 @@ public class ProjectController {
 		Post post = new Post(weaver,title,content,tagList);
 
 		postService.add(post,datas);
-		return "redirect:/project/"+creatorName+"/"+projectName+"/community/";
+		return "redirect:/project/"+creatorName+"/"+projectName+"/issue/";
 	}
 
 	@RequestMapping("/{creatorName}/{projectName}/commitlog")

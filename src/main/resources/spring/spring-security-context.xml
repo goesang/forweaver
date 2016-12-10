@@ -106,16 +106,12 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/m/project/*/*/join"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/m/project/*/*/community/add"
+		<security:intercept-url pattern="/m/project/*/*/issue/add"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/m/project/*/*/fork"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/m/project/**"
 			access="isAnonymous() or isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/**'
-			access="denyAll" />
-		<security:intercept-url pattern='/admin/**'
-			access="denyAll" />
 
 		<security:intercept-url pattern="/m/weaver/**"
 			access="isAuthenticated()" />
@@ -233,7 +229,7 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/*/*/join"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/community/add"
+		<security:intercept-url pattern="/project/*/*/issue/add"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/*/*/fork"
 			access="isAuthenticated()" />

@@ -70,13 +70,14 @@ function checkPost(){
 		
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span></div>"+
 				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 					"<input onchange ='fileUploadChange(this,\"#post-content-textarea\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 				  "</div>"+
 				"</div>");
+		
 			
 			$('#showCommunity').click(function() {
 				if(communityOn){
@@ -210,7 +211,7 @@ function checkPost(){
 				<ul id="myTab" class="nav nav-tabs">
 					<li><a href="/project/${project.name}/">브라우져</a></li>
 					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li class="active"><a href="/project/${project.name}/issue">이슈</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li><a href="/project/${project.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
@@ -243,7 +244,7 @@ function checkPost(){
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>

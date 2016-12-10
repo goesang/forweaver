@@ -112,8 +112,8 @@ $(document).ready(function() {
 									</c:if>
 								<c:if test="${project.category == 1}">
 										<span
-											class="span-button"><i class="fa fa-lock"></i>
-												<p class="p-button">비공개</p> </span>
+											class="span-button"><i class="fa fa-file-archive-o"></i>
+												<p class="p-button">일반</p> </span>
 									</c:if>
 								<c:if test="${project.category == -1}">
 										<a href="/project/${project.name}"> <span
@@ -123,8 +123,8 @@ $(document).ready(function() {
 									</c:if>	
 								<c:if test="${project.category == 3}">
 										<span
-											class="span-button"><i class="fa fa-university"></i>
-												<p class="p-button">과제</p> </span>
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
 									</c:if>
 									<sec:authorize
 										access="isAnonymous()">

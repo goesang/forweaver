@@ -134,7 +134,7 @@ $(document).ready(function() {
 				<ul class="nav nav-tabs">
 					<li><a href="/project/${project.name}/">브라우져</a></li>
 					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="/project/${project.name}/issue">이슈</a></li>
 					<li><a href="javascript:void(0);" onclick="openWindow('/project/${project.name}/chat', 400, 500);">채팅</a></li>
 					<li  class="active"><a href="/project/${project.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
@@ -152,7 +152,7 @@ $(document).ready(function() {
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/g/${project.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>

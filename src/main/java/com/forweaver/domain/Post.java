@@ -35,6 +35,7 @@ public class Post implements Serializable {
 	static final long serialVersionUID = 11666661134L;
 	@Id
 	private int postID;
+	private int issueID;
 	private String title;
 	private String content;
 	private boolean isLong;
@@ -49,9 +50,9 @@ public class Post implements Serializable {
 	private List<String> tags = new ArrayList<String>();
 	@DBRef
 	private List<Data> datas = new ArrayList<Data>();
-	
+
 	public Post(){}
-		
+
 	public Post(Weaver weaver,
 			String title, String content,List<String> tags) {
 		this.writer = weaver;
@@ -61,7 +62,7 @@ public class Post implements Serializable {
 		this.tags = tags;
 		this.kind = getKind(this.tags);
 	}
-	
+
 	public Post(Weaver weaver,
 			String title, String content,List<String> tags,boolean isNotice) {
 		this.writer = weaver;
@@ -97,12 +98,12 @@ public class Post implements Serializable {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-	
+
 	public String getFormatCreated() {
 		SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
 		return df.format(created); 
 	}
-	
+
 
 	public Weaver getWriter() {
 		return writer;
@@ -111,11 +112,11 @@ public class Post implements Serializable {
 	public void setWriter(Weaver writer) {
 		this.writer = writer;
 	}
-	
+
 	public String getWriterName() {
 		return writer.getId();
 	}
-	
+
 	public String getWriterEmail() {
 		return writer.getEmail();
 	}
@@ -141,7 +142,7 @@ public class Post implements Serializable {
 		this.isLong = isLong;
 	}
 
-	
+
 	public void addTag(String tag){
 		this.tags.add(tag);
 	}
@@ -153,7 +154,7 @@ public class Post implements Serializable {
 	public void setRePostCount(int rePostCount) {
 		this.rePostCount = rePostCount;
 	}
-	
+
 	public void rePostCountDown() {
 		this.rePostCount -=1;
 	}
@@ -174,7 +175,7 @@ public class Post implements Serializable {
 	public void push(){
 		this.push +=1;
 	}
-	
+
 	public void addRePostCount(){
 		this.rePostCount +=1;
 	}
@@ -198,7 +199,7 @@ public class Post implements Serializable {
 	public void addData(Data data){
 		this.datas.add(data);
 	}
-	
+
 	public void deleteData(String id){
 		for(int i = 0 ; i< this.datas.size() ; i++){
 			if(this.datas.get(i).getId().equals(id)){
@@ -206,9 +207,9 @@ public class Post implements Serializable {
 				return;
 			}
 		}
-		
+
 	}
-	
+
 	public Data getData(String id){
 		for(Data data:this.datas)
 			if(data.getId().equals(id))
@@ -231,21 +232,40 @@ public class Post implements Serializable {
 	public void setNotice(boolean isNotice) {
 		this.isNotice = isNotice;
 	}
-	
+
 	private int getKind(List<String> tags){
 		for (String tag :tags)
 			if (tag.startsWith("@"))
 				return 2;
 			else if (tag.startsWith("$")) 
 				return 3;
-		
+
 		return 1;
 	}
-	
+
+	public int getIssueID() {
+		return issueID;
+	}
+
+	public void setIssueID(int issueID) {
+		this.issueID = issueID;
+	}
+
 	public String getFirstImageURL(){
 		for(Data data:this.datas)
 			if(WebUtil.isImageName(data.getName()))
 				return "/data/"+data.getId()+"/"+data.getName();
 		return "";
+	}
+
+	public String getProjectTag(){		
+		if(this.kind != 2)
+			return null;
+		
+		for(String tmp : this.getTags())
+			if(tmp.startsWith("@"))
+				return tmp;
+		
+		return null;
 	}
 }
