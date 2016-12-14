@@ -14,9 +14,6 @@ var emailCheck = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 function checkWeaver(){
 		if(!idCheck || !passwordCheck || !emailCheck){
-			alert(idCheck);
-			alert(passwordCheck);
-			alert(emailCheck);
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
 			return false;
 		}

@@ -412,6 +412,9 @@ public class ProjectController {
 		model.addAttribute("pageUrl", "/project/"+creatorName+"/"+projectName+"/issue/sort:"+sort+"/page:");
 		return "/project/issue";
 	}
+	
+	
+	
 
 	@RequestMapping("/{creatorName}/{projectName}/issue/tags:{tagNames}")
 	public String tags(HttpServletRequest request){
@@ -440,6 +443,37 @@ public class ProjectController {
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", 
 				"/project/"+projectName+"/issue/tags:"+tagNames+"/sort:"+sort+"/page:");
+		return "/project/issue";
+	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/issue/tags:{tagNames}/search:{search}")
+	public String tagsAndSearch(HttpServletRequest request){
+		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
+	}
+	
+	@RequestMapping("/{creatorName}/{projectName}/issue/tags:{tagNames}/search:{search}/sort:{sort}/page:{page}")
+	public String tagsAndSearch(@PathVariable("projectName") String projectName,
+			@PathVariable("creatorName") String creatorName,
+			@PathVariable("tagNames") String tagNames,
+			@PathVariable("search") String search,
+			@PathVariable("sort") String sort,
+			@PathVariable("page") String page,Model model){
+		int pageNum = WebUtil.getPageNumber(page);
+		int size = WebUtil.getPageSize(page,0);	
+
+		Project project = projectService.get(creatorName+"/"+projectName);
+		List<String> tagList = tagService.stringToTagList(tagNames);
+		tagList.add("@"+project.getName());
+		
+		model.addAttribute("project", project);
+		model.addAttribute("posts", 
+				postService.getPosts(tagList, search, null, sort, pageNum, size));
+		model.addAttribute("postCount", 
+				postService.countPosts(tagList, search, null, sort));
+
+		model.addAttribute("pageIndex", pageNum);
+		model.addAttribute("pageUrl", 
+				"/project/"+projectName+"/issue/tags:"+tagNames+"/search:"+search+"/sort:"+sort+"/page:");
 		return "/project/issue";
 	}
 

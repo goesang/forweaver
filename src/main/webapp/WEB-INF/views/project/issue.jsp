@@ -8,6 +8,7 @@
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>
 <script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
 <script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
+<script src="/resources/forweaver/js/markdown/markdown-ext.js"></script>
 </head>
 <body>
 <script>
@@ -91,6 +92,13 @@ function checkPost(){
 				}
 			});
 			
+			$('#post-title-input').val(getSearchWord(document.location.href));
+			
+			$('#search-button').click(
+					function() {
+							var tagNames = $("#tags-input").val();
+							movePage(tagNames,$('#post-title-input').val());							
+					});
 			
 			$('.tag-name').click(
 					function() {
@@ -167,7 +175,7 @@ function checkPost(){
 			fileCount++;
 			$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 					  "<div class='input-group'>"+
-					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+					    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 파일을 선택하세요!</span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 						"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
@@ -227,12 +235,12 @@ function checkPost(){
 				</ul>
 				
 				<ul style="display:none;" class="nav nav-tabs" id="communityTab">
-					<li id = "age-desc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/<c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
-					<li id = "push-desc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-desc/page:1">추천순</a></li>
-					<li id = "repost-desc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신 답변순</a></li>
-					<li id = "repost-many"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은 답변순</a></li>
-					<li id = "age-asc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-					<li id = "repost-null"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변 없는 글</a></li>
+					<li id = "age-desc"><a href="/project/${project.name}/issue<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/<c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+					<li id = "push-desc"><a href="/project/${project.name}/issue<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-desc/page:1">추천순</a></li>
+					<li id = "repost-desc"><a href="/project/${project.name}/issue<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신 답변순</a></li>
+					<li id = "repost-many"><a href="/project/${project.name}/issue<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은 답변순</a></li>
+					<li id = "age-asc"><a href="/project/${project.name}/issue<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+					<li id = "repost-null"><a href="/project/${project.name}/issue<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변 없는 글</a></li>
 				</ul>
 				
 			</div>
@@ -248,17 +256,20 @@ function checkPost(){
 						class="input-block-level">
 				</div>
 			</div>
-			<div class="span10">
-					<input maxlength="200"  id="post-title-input" class="title span10" name="title"
+			<div class="span9">
+					<input maxlength="200"  id="post-title-input" class="title span9" name="title"
 						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 200자 입력)" type="text"
 						value="" />
 				</div>
 			
 			<form id="postForm" onsubmit="return checkPost()"
-				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
+				action="/project/${project.name}/issue/add" enctype="multipart/form-data" METHOD="POST">
 				
-				<div class="span2">
-					<span> 
+				<div class="span3">
+					<span>
+					<a id='search-button' title="글 검색하기"
+						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
+					</a> 
 					<sec:authorize access="isAnonymous()">
 					<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
 						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
@@ -309,8 +320,8 @@ function checkPost(){
 											<i class=" icon-align-justify"></i>
 										</c:if> <c:if test="${!post.isLong()}">
 											<i class=" icon-comment"></i>
-										</c:if> &nbsp;<c:if test="${!post.isNotice()}">${cov:htmlEscape(post.title)}</c:if>
-										<c:if test="${post.isNotice()}">${post.title}</c:if>
+										</c:if>&nbsp;${cov:htmlEscape(post.title)}
+										
 								</a></td>
 								<td class="td-button" rowspan="2">
 										<span class = "span-button">${post.push}

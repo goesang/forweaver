@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <%@ include file="/WEB-INF/includes/mobileSrc.jsp"%>
-<title>ForWeaver : 학생들을 위한 소셜 코딩!</title>
+<title>ForWeaver : 모두를 위한 소셜 코딩!</title>
 </head>
 
 <body>

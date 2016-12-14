@@ -183,6 +183,8 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/tags:"))+'/';
 	else if(url.indexOf("/community") != -1)
 		url = url.substring(0,url.indexOf("/community")+10)+'/';
+	else if(url.indexOf("/issue") != -1)
+		url = url.substring(0,url.indexOf("/issue")+6)+'/';
 	else if(url.indexOf("/weaver") != -1)
 		url = url.substring(0,url.indexOf("/weaver")+7)+'/';
 	else if(url.indexOf("/project") != -1)
@@ -197,9 +199,10 @@ function movePage(tagArrayString,searchWord){
 		else
 			url = url.substring(0,IndexOf("/",url,4))+"/";
 	
-	if(tagArrayString.length == 0)
+	if(tagArrayString.length == 0){
+		window.location = url;
 		return;
-	
+	}
 	if(tagArrayString.indexOf(",") === 0)
 		tagArrayString = tagArrayString.substring(1,tagArrayString.length);
 	
@@ -307,7 +310,7 @@ function fileUploadChange(fileUploader,textarea){
 	fileCount++;
 	$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 			  "<div class='input-group'>"+
-			    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+			    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 파일을 선택하세요!</span></div>"+
 			    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
 			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
 				"<input onchange ='fileUploadChange(this,\""+textarea+"\");' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+

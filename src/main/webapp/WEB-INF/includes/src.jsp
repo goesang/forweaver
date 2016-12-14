@@ -12,7 +12,7 @@
 <link rel="SHORTCUT ICON" type="image/x-icon" href="/resources/forweaver/img/favicon.ico"/>
 
 <script src="/resources/forweaver/js/forweaver-util.js"></script>
-<script src="/resources/forweaver/js/jquery-1.11.0.min.js"></script>
+<script src="/resources/forweaver/js/jquery-1.12.4.min.js"></script>
 <script src="/resources/forweaver/js/bootstrap.min.js"></script>
 <script src="/resources/forweaver/js/bootstrap-select.js"></script>
 <script src="/resources/forweaver/js/flatui-checkbox.js"></script>

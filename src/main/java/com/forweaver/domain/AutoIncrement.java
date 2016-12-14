@@ -31,6 +31,6 @@ public class AutoIncrement implements Serializable  {
 		this.count = count;
 	}
 	public int increament(){
-		return count++;
+		return ++count;
 	}
 }

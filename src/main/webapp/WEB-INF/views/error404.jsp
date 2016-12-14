@@ -10,7 +10,7 @@
 <body>
 	<div class="container">
 		<h1>
-			<a href="/">ForWeaver</a> <small>학생들을 위한 소셜 코딩!</small>
+			<a href="/">ForWeaver</a> <small>모두를 위한 소셜 코딩!</small>
 		</h1>
 		<div
 			style="padding-top: 60px; padding-bottom: 60px; text-align: center; background-color: #fff;"

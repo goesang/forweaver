@@ -21,9 +21,6 @@
 		use-expressions="true">
 	
 	<security:intercept-url pattern="/m/login" access="isAnonymous()" />
-	
-	<security:intercept-url pattern="/tracker/**"
-			access="hasRole('ROLE_ADMIN')" />
 
 		<security:intercept-url pattern="/m/repassword**"
 			access="isAnonymous()" />
@@ -113,15 +110,6 @@
 		<security:intercept-url pattern="/m/project/**"
 			access="isAnonymous() or isAuthenticated()" />
 
-		<security:intercept-url pattern="/m/weaver/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/m/*/project/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/m/*/code/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/m/*/sort:*/page:*"
-			access="isAuthenticated()" />
-
 		<security:intercept-url pattern='/m/chat/**'
 			access="isAuthenticated()" />		
 			
@@ -143,8 +131,8 @@
 	<security:http pattern="/**" auto-config='true'
 		use-expressions="true">
 
-		<security:intercept-url pattern="/tracker/**"
-			access="hasRole('ROLE_ADMIN')" />
+	<security:intercept-url pattern="/test"
+			access="isAnonymous()" />
 
 		<security:intercept-url pattern="/login"
 			access="isAnonymous()" />
@@ -235,19 +223,6 @@
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/project/**"
 			access="isAnonymous() or isAuthenticated()" />
-		<security:intercept-url pattern='/lecture/**'
-			access="denyAll" />
-		<security:intercept-url pattern='/admin/**'
-			access="denyAll" />
-
-		<security:intercept-url pattern="/weaver/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/*/project/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/*/code/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/*/sort:*/page:*"
-			access="isAuthenticated()" />
 
 		<security:intercept-url pattern='/chat/**'
 			access="isAuthenticated()" />

@@ -87,20 +87,7 @@
 										class="fa fa-bookmark"></i>
 										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.countProject()}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
 							</tr>
-							<tr>
-							<td class="post-bottom-tag"><c:forEach items="${weaver.tags}"
-										var="tag">
-										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
-											class="tag-name
-										<c:if test="${tag.startsWith('@')}">
-										tag-private
-										</c:if>
-										<c:if test="${tag.startsWith('$')}">
-										tag-massage
-										</c:if>
-										">${tag}</span>
-									</c:forEach></td>
-							</tr>
+							<tr></tr>
 						</c:forEach>
 					</tbody>
 				</table>

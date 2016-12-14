@@ -10,7 +10,7 @@
 <meta property='og:image' content='<c:if test="${post.getFirstImageURL() == ''}">/resources/forweaver/img/preview.png</c:if>
 										<c:if test="${post.getFirstImageURL() != ''}"> ${post.getFirstImageURL()} </c:if>' />
 <meta property='og:title' content='${cov:htmlEscape(post.title)}' />
-<meta property='og:description' content='<c:if test="${post.isLong()}">${fn:substring(cov:htmlEscape(post.content),0,100)}</c:if><c:if test="${!post.isLong()}">학생들을 위한 소셜 코딩!</c:if>' />			
+<meta property='og:description' content='<c:if test="${post.isLong()}">${fn:substring(cov:htmlEscape(post.content),0,100)}</c:if><c:if test="${!post.isLong()}">모두를 위한 소셜 코딩!</c:if>' />			
 </head>
 <script>
 

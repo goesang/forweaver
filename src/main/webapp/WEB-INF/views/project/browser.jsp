@@ -83,7 +83,7 @@ fileBrowser.push({
 	"name" : "${fn:substring(gitFileInfo.name,0,20)}",
 	"path" : "${gitFileInfo.path}",
 	"directory" : ${gitFileInfo.isDirectory},
-	"commitLog" :  "${fn:substring(gitFileInfo.simpleCommitLog,0,35)}",
+	"commitLog" :  "${cov:htmlEscape(gitFileInfo.simpleCommitLog)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
 	"commiterName" :  "${gitFileInfo.commiterName}",
 	"commiterEmail" :  "${gitFileInfo.commiterEmail}",

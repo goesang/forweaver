@@ -40,9 +40,10 @@ public class GitFilter implements Filter {
 		String lectureName = requstUrlArray[2];
 		String repoName = requstUrlArray[3].substring(0, requstUrlArray[3].indexOf(".git"));
 
-		if (!new File(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git").exists()) // 저장소가 없는 경우
+		if (!new File(gitUtil.getGitPath() + lectureName + "/" + repoName + ".git").exists()){ // 저장소가 없는 경우
+			((HttpServletResponse) res).sendError(500);
 			return;
-
+		}
 		Weaver weaver = weaverService.getCurrentWeaver();
 		Pass pass = weaver.getPass(lectureName + "/" + repoName);
 		Project project = projectService.get(lectureName + "/" + repoName);
@@ -55,13 +56,13 @@ public class GitFilter implements Filter {
 		if(project.getCategory()==0){ // 프로젝트가 공개 프로젝트일때
 			filterchain.doFilter(req, res);
 			return;
-		}
+		}else
 
-		if(project.getCategory()>0 && pass != null){ // 프로젝트가 비공개이고 권한이 있을 때
+		if(project.getCategory()==0 && pass != null){ // 프로젝트가 공개 프로젝트가 아닐 때 권한까지 체크
 			filterchain.doFilter(req, res);
 			return;
 		}
-
+		
 		((HttpServletResponse) res).sendError(403);
 		
 	}

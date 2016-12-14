@@ -51,19 +51,7 @@ public class PostService {
 				dataDao.insert(data);
 				post.addData(data);
 			}
-		
-		if(post.getKind() == 2){
-			String projectTag = post.getProjectTag();
-			AutoIncrement autoIncrement = autoIncrementDao.get(projectTag);
-			if(autoIncrement == null){
-				autoIncrementDao.insert(new AutoIncrement(post.getProjectTag()));
-				post.setIssueID(1);
-			}else{
-				post.setIssueID(autoIncrement.increament());
-				autoIncrementDao.insert(autoIncrement);
-			}
-				
-		}
+
 		return postDao.insert(post);
 
 	}
@@ -536,8 +524,8 @@ public class PostService {
 
 	/**  권한 상관 없이 조건에 따라 글을 가져옴.
 	 * @param tags
-	 * @param writer
 	 * @param search
+	 * @param writer
 	 * @param sort
 	 * @param page
 	 * @param size
