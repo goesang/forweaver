@@ -10,7 +10,7 @@
 
 <link rel="SHORTCUT ICON" type="image/x-icon" href="/m/resources/forweaver/img/favicon.ico"/>
 
-<script src="/m/resources/forweaver/js/jquery-1.11.0.min.js"></script>
+<script src="/m/resources/forweaver/js/jquery-1.12.4.min.js"></script>
 <script src="/m/resources/forweaver/js/jquery.tagsinput.js"></script>
 <script src="/m/resources/forweaver/js/jquery.mobile-1.3.1.min.js"></script>
 <script src="/m/resources/forweaver/js/forweaver-util.js"></script>
