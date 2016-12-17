@@ -39,14 +39,19 @@
 		
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+				    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span></div>"+
 				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-upload'></i></span>"+
 					"<input onchange ='fileUploadChange(this,\"#repost-content\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 				  "</div>"+
 				"</div>");
 		});
+	
+		// 보내기 버튼 추가!
+	    var style = "float:right; margin-right:10px;";
+	    $('div.md-header').append("<input style='"+style+"' class='btn btn-small' type='submit' value='보내기' />");
+	
 		SyntaxHighlighter.all();
 	</script>
 	<div class="container">
@@ -146,7 +151,7 @@
 				<form enctype="multipart/form-data" id="repost-form"
 					action="/code/${code.codeID}/${rePost.rePostID}/update" method="POST">
 
-					<div style="margin-left: 0px; margin-bottom:10px" class="span11">
+					<div style="margin-left: 0px; margin-bottom:10px" class="span12">
 						<textarea  data-provide="markdown" style="height:250px"  name="content" id="repost-content"
 							class="post-content span10" 
 							placeholder="답변할 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)">${rePost.content}</textarea>
@@ -155,11 +160,6 @@
 						<span>
 							<sec:authorize access="isAnonymous()">
 						<button disabled="disabled" type="submit" class="post-button btn btn-primary" title='로그인을 하셔야 답변을 달 수 있습니다!'>
-								<i class="fa fa-check"></i>
-							</button>
-					</sec:authorize>
-					<sec:authorize access="isAuthenticated()">
-						<button type="submit" class="post-button btn btn-primary" title='답변 작성하기'>
 								<i class="fa fa-check"></i>
 							</button>
 					</sec:authorize>

@@ -38,9 +38,9 @@ function fileUploadChange(fileUploader){
 	fileCount++;
 	$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 			  "<div class='input-group'>"+
-			    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+			    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span></div>"+
 			    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-upload'></i></span>"+
 				"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
 			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 			  "</div>"+
@@ -92,9 +92,9 @@ function fileUploadChange(fileUploader){
 		
 		$(".file-div").append("<div class='fileinput fileinput-new' data-provides='fileinput'>"+
 				  "<div class='input-group'>"+
-				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
+				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span></div>"+
 				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-upload'></i></span>"+
 					"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
 				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
 				  "</div>"+

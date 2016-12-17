@@ -250,12 +250,12 @@
 						<div class='input-group'>
 							<div class='form-control' data-trigger='fileinput'
 								title='업로드할 파일을 선택하세요!'>
-								<i class='icon-file '></i> <span class='fileinput-filename'></span>
+								<i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span
-								class='fileinput-new'>ZIP파일 혹은 소스파일</span> <span
+								class='fileinput-new'><i class='fa fa-upload'></i></span> <span
 								class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input type='file' id='file'
+									class='fa fa-upload'></i></span><input type='file' id='file'
 								multiple='true' name='file'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
 								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
@@ -265,13 +265,13 @@
 						<div class='input-group'>
 							<div class='form-control' data-trigger='fileinput'
 								title='업로드할 파일을 선택하세요!'>
-								<i class='icon-file '></i> <span class='fileinput-filename'></span>
+								<i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지나 파일을 선택하세요!</span>
 							</div>
 							<span class='input-group-addon btn btn-primary btn-file'><span
 								class='fileinput-new'><i
 									class='fa fa-file-photo-o'></i> 결과 화면</span> <span
 								class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input 
+									class='fa fa-upload'></i></span><input 
 									onchange ='fileUploadChange(this);'
 									type='file' id='output'
 								multiple='true' name='output'></span> <a href='#'

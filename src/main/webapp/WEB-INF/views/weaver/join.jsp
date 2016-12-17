@@ -164,10 +164,10 @@ $(document).ready(function() {
 							<div id="file-div" style="padding-left: 20px;">
 					<div class='fileinput fileinput-new' data-provides='fileinput'>
 					  <div class='input-group' style="width: 340px;">
-					    <div class='form-control' data-trigger='fileinput' style="width: 210px;" ><i class='icon-file '></i> <span class='fileinput-filename'></span></div>
+					    <div class='form-control' data-trigger='fileinput' style="width: 210px;" ><i class='icon-file '></i> <span class='fileinput-filename'>업로드할 이미지를 선택하세요!</span></div>
 					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
 					    <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
-					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
+					    <span class='fileinput-exists'><i class='fa fa-upload'></i></span>
 						<input onchange ='fileUploadChange(this);' type='file' id='image' multiple='true' name='image'></span>
 					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
 					  </div>
