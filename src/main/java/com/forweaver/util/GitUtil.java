@@ -35,6 +35,8 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +55,7 @@ import com.forweaver.domain.git.statistics.GitParentStatistics;
  */
 @Component
 public class GitUtil {
-
+	private Logger logger = LoggerFactory.getLogger(GitUtil.class);
 	private String gitPath;
 	private String path;
 	private Repository localRepo;
@@ -82,7 +84,7 @@ public class GitUtil {
 			this.git = new Git(localRepo);
 			this.isRepo = false;
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -98,7 +100,7 @@ public class GitUtil {
 					.lenient(new File(this.path), FS.DETECTED), true);
 			this.git = new Git(localRepo);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -115,7 +117,7 @@ public class GitUtil {
 					.lenient(new File(this.path), FS.DETECTED), true);
 			this.git = new Git(localRepo);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -147,27 +149,38 @@ public class GitUtil {
 	 * @return
 	 */
 	public boolean isDirectory(String commitID, String filePath){
+		
+		
 		if(filePath.length() == 0)
 			return true;
+		
+		TreeWalk treeWalk = new TreeWalk(this.localRepo);
+		
 		try{
 			ObjectId revId = this.localRepo.resolve(commitID);
-			TreeWalk treeWalk = new TreeWalk(this.localRepo);
-			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+			RevWalk revWalk = new RevWalk(this.localRepo);
+			treeWalk.addTree(revWalk.parseTree(revId));
 			treeWalk.setRecursive(true);
 			while (treeWalk.next()) {
 				if(treeWalk.getPathString().equals(filePath)){
+					revWalk.close();
 					return false;
 				}
 			}
-			treeWalk.reset(new RevWalk(this.localRepo).parseTree(revId));
+			treeWalk.reset(revWalk.parseTree(revId));
 			while (treeWalk.next()) {
 				if(treeWalk.getPathString().startsWith(filePath)){
+					revWalk.close();
 					return true;
 				}
 			}
+			revWalk.close();
 		}catch(Exception e){
+			logger.error(e.getMessage());
+			treeWalk.close();
 			return false;
 		}
+		treeWalk.close();
 		return false;
 	}
 
@@ -183,25 +196,27 @@ public class GitUtil {
 		int selectCommitIndex= 0;
 		if (selectCommit == null)
 			return null;
-		
+
 		try {
 			Iterable<RevCommit> gitLogIterable = git.log().all().addPath(filePath).call();
-			
+
 			for (RevCommit revCommit : gitLogIterable) 
-					gitLogList.add(revCommit);
-			
+				gitLogList.add(revCommit);
+
 			for(;selectCommitIndex<gitLogList.size();selectCommitIndex++)
 				if(gitLogList.get(selectCommitIndex).getId().equals(selectCommit.getId()))
 					break;
 
-		} finally {
-
-			return new GitFileInfo(filePath, BlobUtils.getContent(
-					this.localRepo, selectCommit.getId(), filePath),
-					BlobUtils.getRawContent(this.localRepo, selectCommit.getId(), filePath),
-					gitLogList, selectCommitIndex,isDirectory(commitID,filePath));
-
+		}catch(Exception e){
+			logger.error(e.getMessage());
 		}
+
+		return new GitFileInfo(filePath, BlobUtils.getContent(
+				this.localRepo, selectCommit.getId(), filePath),
+				BlobUtils.getRawContent(this.localRepo, selectCommit.getId(), filePath),
+				gitLogList, selectCommitIndex,isDirectory(commitID,filePath));
+
+
 	}
 
 	/** 저장소에서 커밋을 갖고 옴
@@ -221,7 +236,7 @@ public class GitUtil {
 					.log()
 					.add(
 							this.getCommit(refName))
-							.call();
+					.call();
 			int length = 0;
 
 			for (RevCommit revCommit : gitLogIterable) {
@@ -229,6 +244,7 @@ public class GitUtil {
 			}
 			return length;
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			return 0;
 		}
 
@@ -257,7 +273,9 @@ public class GitUtil {
 				gitFileInfoList.add(gitFileInfo);
 			}
 
-		}catch(Exception e){}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
 		return gitFileInfoList;
 	}
 
@@ -270,15 +288,17 @@ public class GitUtil {
 		try{
 			ObjectId revId = this.localRepo.resolve(commitID);
 			TreeWalk treeWalk = new TreeWalk(this.localRepo);
-			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(revId));
+			RevWalk revWalk = new RevWalk(this.localRepo);
+			treeWalk.addTree(revWalk.parseTree(revId));
 			treeWalk.setRecursive(true);
 
 			while (treeWalk.next()) {
 				fileList.add("/"+treeWalk.getPathString());
 			}
-
+			treeWalk.close();
+			revWalk.close();
 		}catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return fileList;
 	}
@@ -305,6 +325,7 @@ public class GitUtil {
 				diffs+=out.toString();
 			} catch (Exception e) {
 				diffs += simpleFileBrowser(commit);
+				logger.error(e.getMessage());
 			}
 
 			gitCommitLog = new GitCommitLog(commit.getId().getName(),
@@ -313,11 +334,9 @@ public class GitUtil {
 					.getCommitterIdent().getEmailAddress(),
 					diffs, this.getNote(commitID),commit.getCommitTime());
 		}catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
-		finally {
-			return gitCommitLog;
-		}
+		return gitCommitLog;
 	}
 
 	/** 단순하게 커밋을 트리워크를 이용하여 당시 파일 내역을 출력.
@@ -329,7 +348,8 @@ public class GitUtil {
 		try
 		{
 			TreeWalk treeWalk = new TreeWalk(this.localRepo);
-			treeWalk.addTree(new RevWalk(this.localRepo).parseTree(	commit));
+			RevWalk revWalk = new RevWalk(this.localRepo);
+			treeWalk.addTree(revWalk.parseTree(commit));
 
 			while (treeWalk.next())
 			{
@@ -338,9 +358,12 @@ public class GitUtil {
 				out+= "+"+BlobUtils.getContent(this.localRepo, commit,treeWalk.getPathString().replace("\n", "\n+"));
 				out+="\n";
 			}
-		}finally{
-			return out;
+			treeWalk.close();
+			revWalk.close();
+		}catch(Exception e){
+			logger.error(e.getMessage());
 		}
+		return out;
 	}
 
 	// 커밋 로그 목록를 가져옴
@@ -362,9 +385,11 @@ public class GitUtil {
 				gitCommitLogList.add(gitCommitLog);
 			}
 
-		} finally {
-			return gitCommitLogList;
+		}catch(Exception e){
+			logger.error(e.getMessage());
 		}
+		return gitCommitLogList;
+
 	}
 
 	/** 저장소에서 브랜치 정보를 가져옴
@@ -378,7 +403,7 @@ public class GitUtil {
 				branchList.add(ref.getName());
 			}
 		} catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 		return branchList;
@@ -404,18 +429,19 @@ public class GitUtil {
 			}
 		} catch (IOException e) {
 			branchName = "empty_Branch";
+			logger.error(e.getMessage());
 		} catch (GitAPIException e) {
-			System.err.println(e.getMessage());
-		} finally {
-			if (branchList.size() == 0)
-				branchList.add("empty_Branch");
-			else {
-				branchList.remove(branchName);
-				branchList.add(0, branchName);
-			}
-			branchList.addAll(tagList);
-			return branchList;
+			logger.error(e.getMessage());
+		} 
+		if (branchList.size() == 0)
+			branchList.add("empty_Branch");
+		else {
+			branchList.remove(branchName);
+			branchList.add(0, branchName);
 		}
+		branchList.addAll(tagList);
+		return branchList;
+
 	}
 
 
@@ -439,7 +465,7 @@ public class GitUtil {
 			ArchiveCommand.unregisterFormat("tar");
 			response.flushBuffer();
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 
 	}
@@ -512,7 +538,7 @@ public class GitUtil {
 				}				
 			}
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -529,11 +555,11 @@ public class GitUtil {
 				}				
 			}
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
-	
+
 	/** GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
 	 * @param name
 	 * @param email
@@ -582,8 +608,9 @@ public class GitUtil {
 
 			FileUtils.deleteDirectory(new File(directoryPath));
 			new File(directoryPath+".zip").delete();
+			git.close();
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 			try{
 				FileUtils.deleteDirectory(new File(directoryPath));
 				new File(directoryPath+".zip").delete();
@@ -599,7 +626,7 @@ public class GitUtil {
 		try{
 			FileUtils.copyDirectory(new File(gitPath+originRepo+".git"),  new File(gitPath+newRepo+".git"));
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -638,12 +665,13 @@ public class GitUtil {
 			{
 				git.checkout().setName(branchName).call();
 			}
-			
+
 			File file = new File(directoryPath+"/"+path);
-			
-			if(!file.exists()) // 파일이 존재하지 않는다면.
+
+			if(!file.exists()){ // 파일이 존재하지 않는다면.
+				git.close();
 				throw new Exception();
-			
+			}
 			FileWriter fw= new FileWriter(file); //파일을 수정함.
 			fw.write(code);
 			fw.close();
@@ -652,11 +680,15 @@ public class GitUtil {
 			git.push().setRemote("origin").call();
 
 			FileUtils.deleteDirectory(new File(directoryPath));
+			
+			git.close();
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 			try{
 				FileUtils.deleteDirectory(new File(directoryPath));
-			}catch(Exception ex){}
+			}catch(Exception ex){
+				logger.error(e.getMessage());
+			}
 		}
 	}
 
@@ -711,8 +743,9 @@ public class GitUtil {
 			git.push().setRemote("origin").call();
 
 			FileUtils.deleteDirectory(new File(directoryPath));
+			git.close();
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -729,7 +762,7 @@ public class GitUtil {
 						[rc.getCommitterIdent().getWhen().getHours()]++;
 
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return array;
 	}
@@ -768,7 +801,7 @@ public class GitUtil {
 			}
 
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return gitParentStatistics;
 	}
@@ -789,7 +822,7 @@ public class GitUtil {
 				gitBlames.add(new GitBlame(result.getSourceCommit(i)));
 
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return gitBlames;
 	}
@@ -804,7 +837,7 @@ public class GitUtil {
 		try{
 			gitInfo.run(this.localRepo, branchName);
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return gitInfo;
 	}
@@ -819,9 +852,11 @@ public class GitUtil {
 			Note note = git.notesShow().setObjectId(CommitUtils.getCommit(git.getRepository(), commit)).call();
 			ObjectLoader loader = this.localRepo.open(note.getData());
 			str = new String(loader.getBytes());
-		}finally{
-			return str;
+		}catch(Exception e){
+			logger.error(e.getMessage());	
 		}
+		return str;
+
 	}
 
 	/** 브랜치 대 브랜치 병합이 아닌 커밋 대 브랜치 병합인 채리픽 방식으로 통합하는 기능
@@ -858,8 +893,9 @@ public class GitUtil {
 			returnState = git.cherryPick().include(CommitUtils.getCommit(repo, cherryPickCommit)).call().getStatus().toString();
 			git.push().setRemote("origin").add("org:"+originalRepoBranch).call();
 			// 원래 저장소로 푸시.
+			git.close();
 		}catch(Exception e){
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 			returnState = "Error";
 		}
 		return returnState;
