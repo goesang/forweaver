@@ -9,7 +9,7 @@
 
 실행 데모 및 설명은 아래 내용과 스크린샷을 참조해주세요.
 
-배포 라이센스는 MIT License하의 배포되며 그 외 저희가 사용한 라이브러리는 NOTICE.txt를 참조하시면 됩니다.
+배포 라이센스는 MIT License하에서 배포되며 그 외 저희가 사용한 라이브러리는 NOTICE.txt를 참조하시면 됩니다.
 
 ## 실행방법
 
@@ -21,7 +21,7 @@
 > $ git clone https://github.com/goesang/forweaver.git
 
 3. 몽고디비를 설치하고 실행합니다.
-	- 세부사항 설정 파일 위치 `/src/main/resources/spring/applicationContext.xml`
+	- 세부사항 설정 파일 위치: `/src/main/resources/spring/applicationContext.xml`
 
 4. 리눅스 환경이라면 `/src/main/webapp/WEB-INF/web.xml`에서 git 저장소 `/home/git/`를 설정합니다.
 
